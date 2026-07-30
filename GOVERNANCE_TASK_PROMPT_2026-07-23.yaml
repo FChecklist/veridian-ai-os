@@ -13,7 +13,7 @@ decision_1_model_routing:
   change: replace GLM/OpenRouter proxy routing with real Anthropic auth via Claude Max subscription
   current_mechanism_to_change: scripts/worker-entrypoint.sh lines ~32-35 (unset CLAUDE_CODE_OAUTH_TOKEN; export ANTHROPIC_BASE_URL=http://127.0.0.1:8787; export ANTHROPIC_API_KEY=proxy-routed-not-a-real-anthropic-key)
   target_state: export real CLAUDE_CODE_OAUTH_TOKEN (the token currently in ~/.claude/.credentials.json, NOT the stale one in shared/.env - verify which is current before use), do not set ANTHROPIC_API_KEY or ANTHROPIC_BASE_URL, default model = sonnet, effort = high
-  constraint_do_not_break: preflight/circuit-breaker/budget-cap machinery in worker-entrypoint.sh exists because of a real prior incident (2026-07-20 RCA: 47 failed units, 71.9% task failure rate, documented in repos/compliance-tracker/ai-os/COST-CONTROL.md). Do not delete this machinery.
+  constraint_do_not_break: "preflight/circuit-breaker/budget-cap machinery in worker-entrypoint.sh exists because of a real prior incident (2026-07-20 RCA: 47 failed units, 71.9% task failure rate, documented in repos/compliance-tracker/ai-os/COST-CONTROL.md). Do not delete this machinery."
   known_incompatibility: preflight currently checks live OpenRouter balance as a hard-stop condition. This check is meaningless once OpenRouter routing is removed. Replace with an equivalent guard against Claude Max subscription usage/rate-limit exhaustion if the CLI or account API exposes that signal; if no such signal exists, say so explicitly in the report rather than silently dropping the safety check.
   side_effect_to_flag_in_report: interactive session and all workers will now share ONE Claude Max subscription's usage limits. Multiple concurrent autonomous workers could exhaust the Owner's own interactive weekly quota. Report this risk explicitly, do not just note it in passing.
   glm_proxy_service_veridian-glm-proxy.service: after the switch, determine whether this service has any remaining legitimate use; if none, report that finding rather than deciding unilaterally to remove it.
@@ -101,7 +101,7 @@ execution_constraints:
   checkpoint: required_per_existing_worker_framework_convention
 
 output_required:
-  1: per_item_status_table (1-60), format: yaml, fields: [item_number, status(DONE|PARTIAL|MISSING), evidence_file_or_service, action_taken]
+  1: "per_item_status_table (1-60), format: yaml, fields: [item_number, status(DONE|PARTIAL|MISSING), evidence_file_or_service, action_taken]"
   2: updated STANDING_DIRECTIVE.yaml / MASTER_INDEX.yaml entries per existing convention
   3: explicit unresolved_items list if anything cannot be safely automated - do not force it, surface it
-  4: on_complete: notify_owner (per existing STANDING_DIRECTIVE.yaml on_complete field) - once notification channel from item 27 exists, use it for this notification too
+  4: "on_complete: notify_owner (per existing STANDING_DIRECTIVE.yaml on_complete field) - once notification channel from item 27 exists, use it for this notification too"
