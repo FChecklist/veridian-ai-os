@@ -1,0 +1,471 @@
+id: task-20260720-031725-indyanet-infisuite-in--3-account-reverse
+title: 'indyanet.infisuite.in: 3-account reverse-engineering'
+status: completed
+repo: infisuite-reverse-engineering
+branch: worker/task-20260720-031725-indyanet-infisuite-in--3-account-reverse
+workspace: /opt/veridian/ai-os/tasks/task-20260720-031725-indyanet-infisuite-in--3-account-reverse/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260720-031725-indyanet-infisuite-in--3-account-reverse
+service: veridian-docworker@task-20260720-031725-indyanet-infisuite-in--3-account-reverse.service
+created_at: '2026-07-20T03:17:26.130288+00:00'
+last_checkpoint_at: '2026-07-20T04:59:56.713112+00:00'
+completed_steps: &id002
+- Set up Playwright MCP browser flow (prior custom `scripts/browser.js` got stuck
+  on CAPTCHA; switched to interactive `mcp__playwright__*` tools which can read the
+  CAPTCHA image via screenshot)
+- "Logged in as abhishek@indyanet.com (account 1) \u2014 nav map `docs/indyanet/00-navigation-map-abhishek.md`"
+- "Logged in as aitad@bbtel.in (account 2) \u2014 nav map `docs/indyanet/00-navigation-map-aitad.md`"
+- "Logged in as shrinad@indyanet.com (account 3) \u2014 nav map `docs/indyanet/00-navigation-map-shrinad.md`"
+- "Identified system type: Contract / bandwidth-recharge management system for an\
+  \ ISP/network-infra business (tenant \"IndyaNet\"), NOT a CRM or Billstack system\
+  \ by default \u2014 those exist as sibling modules on the same shared \"Infistaq\"\
+  \ platform, reachable via a Modules switcher"
+- "Three-account permission comparison complete \u2014 key finding: Display Attributes\
+  \ + Application Settings access does NOT correlate with the \"Admin\" role labels;\
+  \ it correlates with NOT holding a Contract role. abhishek (Contract Admin + 4 other\
+  \ module admins) is 403'd on both; aitad and shrinad (no Contract role, and aitad/shrinad\
+  \ are only CRM_USER not CRM_ADMIN) have full access to both. Real tenant super-admin\
+  \ identified: nadiya@bbtel.in (confirmed via Settings > Config, not one of the 3\
+  \ test accounts)"
+- "abhishek chosen for deep module documentation \u2014 only account with Contract\
+  \ module access (the system's primary/defining module)"
+- "Deep-documented Contract module: list view, full create/edit form (6 tabs: Contract\
+  \ Details, Documents, Workflow, Associated Contract [partial], Permissions, Activities),\
+  \ Recharge Plans + Recharge History modals \u2014 `docs/indyanet/contracts.md`"
+- "Deep-documented Masters: Document Categories, Document, Vendors, Invite Vendors,\
+  \ Users (all 10 real users incl. all 3 test accounts identified), Invite Users,\
+  \ Customer (+ create form 8 tabs) \u2014 `docs/indyanet/masters.md`"
+- "Light pass on Purchasing and Stores modules (out-of-depth by design) \u2014 screenshots\
+  \ only, noted item-category data confirms ISP/networking equipment business (Mikrotik,\
+  \ TP-Link, Optical Fiber, etc.)"
+- "Light pass on CRM module dashboard for a CRM_USER account (aitad) \u2014 confirmed\
+  \ reduced chrome (no Masters/New nav, fewer top-bar icons) vs CRM_ADMIN"
+- 'Explicitly out of scope, noted only: CRM module full documentation (separate infisuite
+  system, already documented elsewhere for a different tenant), Billstack module full
+  documentation, Ticketing dashboard, Tickday SSO'
+- 'Written `docs/indyanet/SUMMARY.md`: system type, full inferred data model, function
+  list, 3-account permission comparison, Known Gaps section'
+- All work committed and pushed in 3 checkpoints (abhishek batch, aitad batch, this
+  final batch)
+remaining_steps: &id003
+- Final commit + push of shrinad nav map + SUMMARY.md + PROGRESS.md (this batch)
+- "Optional/low-priority gaps listed in SUMMARY.md \xA75 (Notifications panel contents,\
+  \ My Messages inbox, Vendor/User create forms, Customer form's Note/Tax Info/Payment/Attachments\
+  \ tabs, Contract Status dropdown + Import page, Contract Approval Status full enum)\
+  \ \u2014 not blocking, task's core deliverables are complete"
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-20T03:17:27.151241+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 1aa4a92 Add indyanet.infisuite.in (3 logins) to scope
+  - 9365f68 Initial repo structure for infisuite reverse-engineering docs
+  note: worker started (resume=0, lifetime invocation 1/20)
+- at: '2026-07-20T03:17:47.629786+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 1aa4a92 Add indyanet.infisuite.in (3 logins) to scope
+  - 9365f68 Initial repo structure for infisuite reverse-engineering docs
+  note: doc-worker started (resume=1, lifetime invocation 2/8, real-subscription mode)
+- at: '2026-07-20T03:22:27.461271+00:00'
+  status: in_progress
+  files_modified:
+  - .mcp.json
+  - PROGRESS.md
+  - screenshots/
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 1aa4a92 Add indyanet.infisuite.in (3 logins) to scope
+  - 9365f68 Initial repo structure for infisuite reverse-engineering docs
+  note: periodic checkpoint
+- at: '2026-07-20T03:22:47.967359+00:00'
+  status: in_progress
+  files_modified:
+  - .mcp.json
+  - PROGRESS.md
+  - screenshots/
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 1aa4a92 Add indyanet.infisuite.in (3 logins) to scope
+  - 9365f68 Initial repo structure for infisuite reverse-engineering docs
+  note: periodic checkpoint
+- at: '2026-07-20T03:23:22.426887+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '4513bc7 Pause checkpoint: Owner reprioritized capacity to Odoo task'
+  - 1aa4a92 Add indyanet.infisuite.in (3 logins) to scope
+  - 9365f68 Initial repo structure for infisuite reverse-engineering docs
+  note: 'PAUSED (not failed): Owner reprioritized to make Odoo the sole focus, freeing
+    shared Claude-subscription capacity. In-progress work committed+pushed before
+    stopping. Resume by re-enabling + starting the systemd service.'
+- at: '2026-07-20T03:27:27.751570+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '4513bc7 Pause checkpoint: Owner reprioritized capacity to Odoo task'
+  - 1aa4a92 Add indyanet.infisuite.in (3 logins) to scope
+  - 9365f68 Initial repo structure for infisuite reverse-engineering docs
+  note: periodic checkpoint
+- at: '2026-07-20T03:34:23.948597+00:00'
+  status: in_progress
+  files_modified:
+  - screenshots/indyanet/00-login-page.png
+  - screenshots/indyanet/ERROR-login.png
+  - scripts/
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '4513bc7 Pause checkpoint: Owner reprioritized capacity to Odoo task'
+  - 1aa4a92 Add indyanet.infisuite.in (3 logins) to scope
+  - 9365f68 Initial repo structure for infisuite reverse-engineering docs
+  note: worker started (resume=1, lifetime invocation 3/20)
+- at: '2026-07-20T04:34:58.751348+00:00'
+  status: in_progress
+  files_modified:
+  - screenshots/indyanet/00-login-page.png
+  - screenshots/indyanet/ERROR-login.png
+  - scripts/
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '4513bc7 Pause checkpoint: Owner reprioritized capacity to Odoo task'
+  - 1aa4a92 Add indyanet.infisuite.in (3 logins) to scope
+  - 9365f68 Initial repo structure for infisuite reverse-engineering docs
+  note: doc-worker started (resume=1, lifetime invocation 4/8, real-subscription mode)
+- at: '2026-07-20T04:39:59.120801+00:00'
+  status: in_progress
+  files_modified:
+  - screenshots/indyanet/00-login-page.png
+  - screenshots/console-2026-07-20T04-35-19-929Z.log
+  - screenshots/console-2026-07-20T04-38-42-040Z.log
+  - screenshots/indyanet/ERROR-login.png
+  - screenshots/indyanet/abhishek-contract-edit-form.png
+  - screenshots/indyanet/abhishek-contract-tab-documents.png
+  - screenshots/indyanet/abhishek-contract-tab-workflow.png
+  - screenshots/indyanet/abhishek-contracts-list.png
+  - screenshots/indyanet/abhishek-masters-menu-open.png
+  - screenshots/indyanet/abhishek-modules-dropdown.png
+  - screenshots/page-2026-07-20T04-35-22-666Z.yml
+  - screenshots/page-2026-07-20T04-36-01-070Z.yml
+  - screenshots/page-2026-07-20T04-36-42-689Z.yml
+  - screenshots/page-2026-07-20T04-37-10-105Z.yml
+  - screenshots/page-2026-07-20T04-38-04-999Z.yml
+  - screenshots/page-2026-07-20T04-38-47-018Z.yml
+  - screenshots/page-2026-07-20T04-39-12-757Z.yml
+  - screenshots/page-2026-07-20T04-39-41-379Z.yml
+  - screenshots/page-2026-07-20T04-39-50-875Z.yml
+  - scripts/
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '4513bc7 Pause checkpoint: Owner reprioritized capacity to Odoo task'
+  - 1aa4a92 Add indyanet.infisuite.in (3 logins) to scope
+  - 9365f68 Initial repo structure for infisuite reverse-engineering docs
+  note: periodic checkpoint
+- at: '2026-07-20T04:44:59.460000+00:00'
+  status: in_progress
+  files_modified:
+  - screenshots/indyanet/00-login-page.png
+  - screenshots/console-2026-07-20T04-35-19-929Z.log
+  - screenshots/console-2026-07-20T04-38-42-040Z.log
+  - screenshots/console-2026-07-20T04-40-24-628Z.log
+  - screenshots/console-2026-07-20T04-41-12-207Z.log
+  - screenshots/console-2026-07-20T04-41-43-880Z.log
+  - screenshots/console-2026-07-20T04-41-57-120Z.log
+  - screenshots/console-2026-07-20T04-42-11-226Z.log
+  - screenshots/console-2026-07-20T04-42-24-927Z.log
+  - screenshots/console-2026-07-20T04-42-45-351Z.log
+  - screenshots/console-2026-07-20T04-43-39-315Z.log
+  - screenshots/console-2026-07-20T04-43-59-300Z.log
+  - screenshots/console-2026-07-20T04-44-21-909Z.log
+  - screenshots/console-2026-07-20T04-44-43-656Z.log
+  - screenshots/indyanet/ERROR-login.png
+  - screenshots/indyanet/abhishek-contract-edit-form.png
+  - screenshots/indyanet/abhishek-contract-recharge-history-modal.png
+  - screenshots/indyanet/abhishek-contract-recharge-plans-modal.png
+  - screenshots/indyanet/abhishek-contract-tab-activities.png
+  - screenshots/indyanet/abhishek-contract-tab-documents.png
+  - screenshots/indyanet/abhishek-contract-tab-permissions.png
+  - screenshots/indyanet/abhishek-contract-tab-workflow.png
+  - screenshots/indyanet/abhishek-contracts-list.png
+  - screenshots/indyanet/abhishek-customer-create-form.png
+  - screenshots/indyanet/abhishek-customer-tab-contactdetails.png
+  - screenshots/indyanet/abhishek-customer-tab-rentalproperties.png
+  - screenshots/indyanet/abhishek-display-attributes.png
+  - screenshots/indyanet/abhishek-masters-customers.png
+  - screenshots/indyanet/abhishek-masters-document-categories.png
+  - screenshots/indyanet/abhishek-masters-documents.png
+  - screenshots/indyanet/abhishek-masters-invite-users.png
+  - screenshots/indyanet/abhishek-masters-invite-vendors.png
+  - screenshots/indyanet/abhishek-masters-menu-open.png
+  - screenshots/indyanet/abhishek-masters-users.png
+  - screenshots/indyanet/abhishek-masters-vendors.png
+  - screenshots/indyanet/abhishek-modules-dropdown.png
+  - screenshots/page-2026-07-20T04-35-22-666Z.yml
+  - screenshots/page-2026-07-20T04-36-01-070Z.yml
+  - screenshots/page-2026-07-20T04-36-42-689Z.yml
+  - screenshots/page-2026-07-20T04-37-10-105Z.yml
+  - screenshots/page-2026-07-20T04-38-04-999Z.yml
+  - screenshots/page-2026-07-20T04-38-47-018Z.yml
+  - screenshots/page-2026-07-20T04-39-12-757Z.yml
+  - screenshots/page-2026-07-20T04-39-41-379Z.yml
+  - screenshots/page-2026-07-20T04-39-50-875Z.yml
+  - screenshots/page-2026-07-20T04-40-00-379Z.yml
+  - screenshots/page-2026-07-20T04-40-11-358Z.yml
+  - screenshots/page-2026-07-20T04-40-27-268Z.yml
+  - screenshots/page-2026-07-20T04-40-36-680Z.yml
+  - screenshots/page-2026-07-20T04-40-52-131Z.yml
+  - screenshots/page-2026-07-20T04-41-14-859Z.yml
+  - screenshots/page-2026-07-20T04-41-27-515Z.yml
+  - screenshots/page-2026-07-20T04-41-46-158Z.yml
+  - screenshots/page-2026-07-20T04-41-59-313Z.yml
+  - screenshots/page-2026-07-20T04-42-13-240Z.yml
+  - screenshots/page-2026-07-20T04-42-27-122Z.yml
+  - screenshots/page-2026-07-20T04-42-48-478Z.yml
+  - screenshots/page-2026-07-20T04-43-13-254Z.yml
+  - screenshots/page-2026-07-20T04-43-25-686Z.yml
+  - screenshots/page-2026-07-20T04-43-41-448Z.yml
+  - screenshots/page-2026-07-20T04-44-02-254Z.yml
+  - screenshots/page-2026-07-20T04-44-29-786Z.yml
+  - screenshots/page-2026-07-20T04-44-45-637Z.yml
+  - scripts/
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '4513bc7 Pause checkpoint: Owner reprioritized capacity to Odoo task'
+  - 1aa4a92 Add indyanet.infisuite.in (3 logins) to scope
+  - 9365f68 Initial repo structure for infisuite reverse-engineering docs
+  note: periodic checkpoint
+- at: '2026-07-20T04:49:59.823310+00:00'
+  status: in_progress
+  files_modified:
+  - screenshots/indyanet/00-login-page.png
+  - docs/
+  - screenshots/console-2026-07-20T04-35-19-929Z.log
+  - screenshots/console-2026-07-20T04-38-42-040Z.log
+  - screenshots/console-2026-07-20T04-40-24-628Z.log
+  - screenshots/console-2026-07-20T04-41-12-207Z.log
+  - screenshots/console-2026-07-20T04-41-43-880Z.log
+  - screenshots/console-2026-07-20T04-41-57-120Z.log
+  - screenshots/console-2026-07-20T04-42-11-226Z.log
+  - screenshots/console-2026-07-20T04-42-24-927Z.log
+  - screenshots/console-2026-07-20T04-42-45-351Z.log
+  - screenshots/console-2026-07-20T04-43-39-315Z.log
+  - screenshots/console-2026-07-20T04-43-59-300Z.log
+  - screenshots/console-2026-07-20T04-44-21-909Z.log
+  - screenshots/console-2026-07-20T04-44-43-656Z.log
+  - screenshots/console-2026-07-20T04-45-00-010Z.log
+  - screenshots/console-2026-07-20T04-45-15-737Z.log
+  - screenshots/console-2026-07-20T04-45-30-894Z.log
+  - screenshots/console-2026-07-20T04-46-06-436Z.log
+  - screenshots/console-2026-07-20T04-46-20-338Z.log
+  - screenshots/indyanet/ERROR-login.png
+  - screenshots/indyanet/abhishek-announcements.png
+  - screenshots/indyanet/abhishek-contract-create-form-blank.png
+  - screenshots/indyanet/abhishek-contract-edit-form.png
+  - screenshots/indyanet/abhishek-contract-recharge-history-modal.png
+  - screenshots/indyanet/abhishek-contract-recharge-plans-modal.png
+  - screenshots/indyanet/abhishek-contract-tab-activities.png
+  - screenshots/indyanet/abhishek-contract-tab-documents.png
+  - screenshots/indyanet/abhishek-contract-tab-permissions.png
+  - screenshots/indyanet/abhishek-contract-tab-workflow.png
+  - screenshots/indyanet/abhishek-contracts-list.png
+  - screenshots/indyanet/abhishek-customer-create-form.png
+  - screenshots/indyanet/abhishek-customer-tab-contactdetails.png
+  - screenshots/indyanet/abhishek-customer-tab-rentalproperties.png
+  - screenshots/indyanet/abhishek-display-attributes.png
+  - screenshots/indyanet/abhishek-masters-customers.png
+  - screenshots/indyanet/abhishek-masters-document-categories.png
+  - screenshots/indyanet/abhishek-masters-documents.png
+  - screenshots/indyanet/abhishek-masters-invite-users.png
+  - screenshots/indyanet/abhishek-masters-invite-vendors.png
+  - screenshots/indyanet/abhishek-masters-menu-open.png
+  - screenshots/indyanet/abhishek-masters-users.png
+  - screenshots/indyanet/abhishek-masters-vendors.png
+  - screenshots/indyanet/abhishek-module-purchasing-home.png
+  - screenshots/indyanet/abhishek-module-stores-home.png
+  - screenshots/indyanet/abhishek-modules-dropdown.png
+  - screenshots/indyanet/abhishek-profile.png
+  - screenshots/indyanet/abhishek-settings.png
+  - screenshots/page-2026-07-20T04-35-22-666Z.yml
+  - screenshots/page-2026-07-20T04-36-01-070Z.yml
+  - screenshots/page-2026-07-20T04-36-42-689Z.yml
+  - screenshots/page-2026-07-20T04-37-10-105Z.yml
+  - screenshots/page-2026-07-20T04-38-04-999Z.yml
+  - screenshots/page-2026-07-20T04-38-47-018Z.yml
+  - screenshots/page-2026-07-20T04-39-12-757Z.yml
+  - screenshots/page-2026-07-20T04-39-41-379Z.yml
+  - screenshots/page-2026-07-20T04-39-50-875Z.yml
+  - screenshots/page-2026-07-20T04-40-00-379Z.yml
+  - screenshots/page-2026-07-20T04-40-11-358Z.yml
+  - screenshots/page-2026-07-20T04-40-27-268Z.yml
+  - screenshots/page-2026-07-20T04-40-36-680Z.yml
+  - screenshots/page-2026-07-20T04-40-52-131Z.yml
+  - screenshots/page-2026-07-20T04-41-14-859Z.yml
+  - screenshots/page-2026-07-20T04-41-27-515Z.yml
+  - screenshots/page-2026-07-20T04-41-46-158Z.yml
+  - screenshots/page-2026-07-20T04-41-59-313Z.yml
+  - screenshots/page-2026-07-20T04-42-13-240Z.yml
+  - screenshots/page-2026-07-20T04-42-27-122Z.yml
+  - screenshots/page-2026-07-20T04-42-48-478Z.yml
+  - screenshots/page-2026-07-20T04-43-13-254Z.yml
+  - screenshots/page-2026-07-20T04-43-25-686Z.yml
+  - screenshots/page-2026-07-20T04-43-41-448Z.yml
+  - screenshots/page-2026-07-20T04-44-02-254Z.yml
+  - screenshots/page-2026-07-20T04-44-29-786Z.yml
+  - screenshots/page-2026-07-20T04-44-45-637Z.yml
+  - screenshots/page-2026-07-20T04-45-02-190Z.yml
+  - screenshots/page-2026-07-20T04-45-18-147Z.yml
+  - screenshots/page-2026-07-20T04-45-33-748Z.yml
+  - screenshots/page-2026-07-20T04-46-09-393Z.yml
+  - screenshots/page-2026-07-20T04-46-22-632Z.yml
+  - scripts/
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '4513bc7 Pause checkpoint: Owner reprioritized capacity to Odoo task'
+  - 1aa4a92 Add indyanet.infisuite.in (3 logins) to scope
+  - 9365f68 Initial repo structure for infisuite reverse-engineering docs
+  note: periodic checkpoint
+- at: '2026-07-20T04:55:00.151819+00:00'
+  status: in_progress
+  files_modified:
+  - login-captcha-2.png
+  - screenshots/console-2026-07-20T04-50-55-816Z.log
+  - screenshots/console-2026-07-20T04-51-06-349Z.log
+  - screenshots/console-2026-07-20T04-51-20-919Z.log
+  - screenshots/console-2026-07-20T04-52-04-321Z.log
+  - screenshots/console-2026-07-20T04-52-30-534Z.log
+  - screenshots/console-2026-07-20T04-52-45-296Z.log
+  - screenshots/console-2026-07-20T04-53-02-116Z.log
+  - screenshots/console-2026-07-20T04-53-25-064Z.log
+  - screenshots/console-2026-07-20T04-54-15-026Z.log
+  - screenshots/indyanet/aitad-01-dashboard-home.png
+  - screenshots/indyanet/aitad-display-attributes.png
+  - screenshots/indyanet/aitad-modules-dropdown.png
+  - screenshots/indyanet/aitad-profile.png
+  - screenshots/indyanet/aitad-settings.png
+  - screenshots/page-2026-07-20T04-50-58-429Z.yml
+  - screenshots/page-2026-07-20T04-51-08-647Z.yml
+  - screenshots/page-2026-07-20T04-51-22-438Z.yml
+  - screenshots/page-2026-07-20T04-51-48-577Z.yml
+  - screenshots/page-2026-07-20T04-52-07-194Z.yml
+  - screenshots/page-2026-07-20T04-52-33-187Z.yml
+  - screenshots/page-2026-07-20T04-52-47-740Z.yml
+  - screenshots/page-2026-07-20T04-53-05-143Z.yml
+  - screenshots/page-2026-07-20T04-53-27-862Z.yml
+  - screenshots/page-2026-07-20T04-53-43-963Z.yml
+  - screenshots/page-2026-07-20T04-54-17-372Z.yml
+  completed_steps:
+  - Set up Playwright MCP browser flow (prior custom `scripts/browser.js` got stuck
+    on CAPTCHA; switched to interactive `mcp__playwright__*` tools which can read
+    the CAPTCHA image via screenshot)
+  - Logged in as abhishek@indyanet.com (account 1)
+  - "Identified system type: Contract / bandwidth-recharge management system for an\
+    \ ISP/network-infra business (tenant \"IndyaNet\"), NOT a CRM or Billstack system\
+    \ by default \u2014 those exist as sibling modules on the same shared \"Infistaq\"\
+    \ platform, reachable via a Modules switcher"
+  - "abhishek: full navigation map written \u2014 `docs/indyanet/00-navigation-map-abhishek.md`"
+  - "abhishek: role/permission findings \u2014 tenant admin across 5 modules (CRM\
+    \ Admin, Contract Admin, Purchase Admin, Store Admin, Billstack Admin) per own\
+    \ Profile page, but 403'd on platform Display Attributes + Application Settings\
+    \ (real super-admin is nadiya@bbtel.in, not one of the 3 test accounts)"
+  - "abhishek identified as broadest-access account (see profile Modules/Roles data)\
+    \ \u2014 will be used for deep module documentation"
+  - "Deep-documented Contract module: list view, full create/edit form (6 tabs: Contract\
+    \ Details, Documents, Workflow, Associated Contract [partial], Permissions, Activities),\
+    \ Recharge Plans + Recharge History modals \u2014 `docs/indyanet/contracts.md`"
+  - "Deep-documented Masters: Document Categories, Document, Vendors, Invite Vendors,\
+    \ Users (all 10 real users incl. all 3 test accounts identified), Invite Users,\
+    \ Customer (+ create form 8 tabs) \u2014 `docs/indyanet/masters.md`"
+  - "Light pass on Purchasing and Stores modules (out-of-depth by design, see nav\
+    \ map \xA77) \u2014 screenshots only, noted item-category data confirms ISP/networking\
+    \ equipment business (Mikrotik, TP-Link, Optical Fiber, etc.)"
+  - 'Explicitly out of scope, noted only: CRM module on this tenant (separate infisuite
+    system, already documented elsewhere for a different tenant), Billstack module,
+    Ticketing dashboard, Tickday SSO'
+  remaining_steps:
+  - "Log in as aitad@bbtel.in (account 2) \u2014 navigation map + role comparison"
+  - "Log in as shrinad@indyanet.com (account 3) \u2014 navigation map + role comparison"
+  - "Write three-account permission comparison (which account is broadest, what differs)\
+    \ \u2014 fold into SUMMARY.md"
+  - 'Gaps to fill on abhishek''s pass if time allows: Notifications bell panel contents,
+    My Messages inbox, Vendor/User create forms, card "..." overflow menus, Customer
+    form''s Note/Tax Info/Payment and Billing/Attachments tabs, Contract list''s Status
+    dropdown and Import page, Associated Contract tab content'
+  - 'Write docs/indyanet/SUMMARY.md: system type, full data model, function list,
+    3-account permission comparison, Known Gaps'
+  - Final commit + push
+  recent_commits:
+  - '58878c2 Document indyanet.infisuite.in: abhishek account nav map + Contract/Masters
+    modules'
+  - '4513bc7 Pause checkpoint: Owner reprioritized capacity to Odoo task'
+  - 1aa4a92 Add indyanet.infisuite.in (3 logins) to scope
+  - 9365f68 Initial repo structure for infisuite reverse-engineering docs
+  note: periodic checkpoint
+- at: '2026-07-20T04:59:56.713112+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '74a7d03 Document indyanet.infisuite.in: shrinad account nav map + SUMMARY.md'
+  - 'b1faafe Document indyanet.infisuite.in: aitad account nav map + key permission
+    finding'
+  - '58878c2 Document indyanet.infisuite.in: abhishek account nav map + Contract/Masters
+    modules'
+  - '4513bc7 Pause checkpoint: Owner reprioritized capacity to Odoo task'
+  - 1aa4a92 Add indyanet.infisuite.in (3 logins) to scope
+  - 9365f68 Initial repo structure for infisuite reverse-engineering docs
+  note: worker finished, no changes to commit
+execution_seconds: 1498
+restart_count: 3
+token_usage:
+  input_tokens: 4248
+  cache_creation_input_tokens: 301715
+  cache_read_input_tokens: 38060936
+  output_tokens: 77603
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 301715
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 564
+    cache_read_input_tokens: 324412
+    cache_creation_input_tokens: 841
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 841
+    type: message
+  speed: standard
+master_synced_at: '2026-07-20T03:30:05.609586+00:00'

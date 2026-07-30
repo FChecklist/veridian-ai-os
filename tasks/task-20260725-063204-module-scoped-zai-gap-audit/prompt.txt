@@ -1,0 +1,31 @@
+## OBJECTIVE
+Extend the existing ChatGPT/Z.AI manual-bridge audit system (scripts/generate_chatgpt_audit_request.py + scripts/ingest_chatgpt_audit_response.py, proven working today for the Security domain with both ChatGPT and Z.AI -- AUDIT-000009/AUDIT-000010) from domain-scoped to real MODULE-scoped requests, covering compliance-tracker and projexa, so the Owner can have Z.AI's free chat engine analyze every real module's function, business logic, and input/output for gaps.
+
+## KNOWN_CONTEXT
+- Reuse everything that already exists: CHATGPT_AUDIT_RECORD_SCHEMA_2026-07-24.yaml, chatgpt_audit_guard.py, chatgpt_audit_versioning.py, the 22 real domain subfolders under /opt/veridian/chatgpt-audit/. Do not rebuild the schema or the guard/versioning layer -- add a module-scoping mode alongside the existing domain-scoping mode, not a parallel system.
+- "Module" must come from a real, already-existing boundary in each repo -- do not invent a new taxonomy. Check for an existing module registry first (this session's knowledge_engine entries already tag things like module:dispatch, module:audit, module:validation for claude-control's own scripts -- check whether compliance-tracker and projexa have an equivalent real module/domain grouping already, e.g. in their own route registries, directory structure under src/app/api/, or a catalog file). If no explicit module registry exists for compliance-tracker/projexa, derive real module boundaries mechanically from their actual directory structure (e.g. each top-level src/app/api/<x>/ or src/lib/services/<x>/ grouping) -- state clearly which source you used.
+- compliance-tracker has ~614 API routes and ~377 tables (per this session's system-tree scan); projexa is smaller. A single request per individual file (like the 6-file Security audit) does not scale to hundreds of routes -- batch by module, and within a module, cap the real pasted source content to a size a human can realistically copy into a free Z.AI web chat (target similar order of magnitude to the working Security request: roughly 400 lines / 20KB as the reference ceiling per single request). If a module's real content exceeds that ceiling, split it into multiple numbered request files for that same module rather than truncating content silently.
+- The request must explicitly ask Z.AI to identify, for each real file/function in the module: (a) what it does (function), (b) the business logic/rule it implements, (c) its real inputs and outputs, and (d) any gap versus what the module's own apparent purpose requires -- extending the existing schema's missing_items/duplicate_items/incomplete_items fields, which already fit this without schema changes.
+
+## SCOPE
+1. Determine the real module list for compliance-tracker and projexa per KNOWN_CONTEXT above -- produce ai-os/MODULE_GAP_AUDIT_MODULE_LIST_2026-07-25.yaml listing every real module, its repo, its real file count, and an estimated real line/byte count (mechanically computed, not guessed).
+2. Extend scripts/generate_chatgpt_audit_request.py with a `--module` mode (alongside the existing `--domain` mode) that takes a module name + repo, gathers that module's real files, and produces one or more real, complete, ready-to-copy request files under /opt/veridian/chatgpt-audit/_pending_requests/, chunked per the size ceiling in KNOWN_CONTEXT, using the same schema and instructions format as the working Security request.
+3. Extend scripts/ingest_chatgpt_audit_response.py so it correctly files a module-scoped response (linking it to the right module/repo in its metadata, using the schema's existing linkage fields rather than adding new ones) -- reuse chatgpt_audit_guard.py/versioning.py unchanged.
+4. Generate the REAL first batch of request files for real modules (do not generate all of them if the total count is very large -- generate the first 5 real modules across both repos as real, working proof, and report the real total remaining count so the Owner knows the true scope).
+5. Write ai-os/MODULE_GAP_AUDIT_2026-07-25.yaml documenting: the real module list, the real total request-file count needed for full coverage, the batching/chunking rule used, and the exact Owner-facing procedure (open request file N, paste into a new Z.AI chat, save the response, run the ingest command) -- same simple procedure already proven for the Security domain.
+6. Register in MASTER_INDEX.yaml (registries.module_gap_audit) and via superboss-register.py register-knowledge.
+
+## SUCCESS_CRITERIA
+- `test -f ai-os/MODULE_GAP_AUDIT_MODULE_LIST_2026-07-25.yaml` exits 0 and lists a real, non-zero module count for both repos.
+- `python3 scripts/generate_chatgpt_audit_request.py --module <a-real-module-name> --repo compliance-tracker` exits 0 and produces a real request file.
+- At least 5 real request files exist under /opt/veridian/chatgpt-audit/_pending_requests/ after this task, covering real modules from both compliance-tracker and projexa.
+- `test -f ai-os/MODULE_GAP_AUDIT_2026-07-25.yaml` exits 0.
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on claude-control) for the extended generate/ingest scripts, the real module list, the first 5 real generated request files (or a clear note if fewer than 5 real modules exist), the documentation file, the MASTER_INDEX + knowledge-engine registration, and a final checkpoint stating the real total number of request files still needed for full coverage across both repos so the Owner knows the true remaining scope before starting to paste.
+
+## CONSTRAINTS
+Stop at the batch size SCOPE item 4 specifies even if the real module count across both repos is much larger -- report the true remaining count honestly rather than claiming full coverage in this one task.
+
+## COMPLEXITY_TIER
+integrative

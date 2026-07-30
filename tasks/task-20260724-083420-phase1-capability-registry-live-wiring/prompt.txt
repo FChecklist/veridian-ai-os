@@ -1,0 +1,27 @@
+## OBJECTIVE
+Execute Phase 1 of the real, already-designed 20-Engines/10-Gateways plan for real: live code, not more design. Instruction covers ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml's own phase_1_capability_registry_live_wiring entry (closes_engines: [3], closes_capability_registry_gap: true).
+
+## SCOPE
+1. Read ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml in full (repo path claude-control/ai-os/), specifically phase_1_capability_registry_live_wiring's objective and real_mechanism_reused fields, and ai-os/CAPABILITY_REGISTRY_SCHEMA_2026-07-24.yaml for the schema to wire.
+2. Implement it for real: wire the Capability Registry live, reusing the real existing capability-registry-service.ts (indexCapability/findSimilar) and capability-tree-service code already found during Phase 0 -- extend, do not rewrite from scratch. Live table extends ai-os/memory/superboss-register.sqlite per the plan's own design.
+3. Populate it with real, currently-existing VERIDIAN capabilities (not invented examples), confirmed queryable.
+4. Update the phase plan file marking phase_1 status as done with real evidence (command output, row counts), and register the live wiring in knowledge_engine + MASTER_INDEX.yaml.
+
+## KNOWN_CONTEXT
+- Owner directive: 100% real live implementation, no more shallow planning-only work. Use existing OSS/existing VERIDIAN code, do not reinvent.
+- Standing rules from this session apply: crontab changes need an OWNER_DECISIONS_NEEDED_2026-07-23.yaml approval entry (Owner's blanket approval covers it, record then update CRONTAB_APPROVED_SNAPSHOT.txt); registry/catalog writes come from scripts not hand-authored prose; verify real PR/merge state via `gh pr view`, never trust task.yaml's self-report alone.
+- A real drift was found this session between /opt/veridian/ai-os (live) and /opt/veridian/repos/claude-control/ai-os (git-tracked) for some files -- when writing new artifacts, write to the git-tracked repo copy (this is what PRs are built from) and additionally sync to the live path if the existing pattern for similar files does so, to avoid worsening the drift.
+
+## SUCCESS_CRITERIA
+- Capability Registry has a real, live, queryable table populated with real VERIDIAN capabilities (not zero, not placeholder).
+- phase_1_capability_registry_live_wiring in the phase plan file shows a real completed status with evidence.
+- Engine 3 (Capability Registry) can now be marked "live", not "planned-only", in any future audit of engine coverage.
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on claude-control), real DB rows as evidence, and a final checkpoint stating exactly what Phase 1 delivered vs what remains for Phase 2+.
+
+## CONSTRAINTS
+Limit this task to Phase 1 of the existing plan only -- do not attempt Phase 2 or later phases in this same task. Any crontab need follows the existing Owner-approval-citation pattern rather than a fresh confirmation.
+
+## COMPLEXITY_TIER
+integrative

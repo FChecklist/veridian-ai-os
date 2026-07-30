@@ -1,0 +1,20 @@
+VERIDIAN Review Framework gap-closure: AI Architecture / Domain Accuracy & Quality.
+This covers 4 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] Domain Accuracy
+  Gap: No systematic grounding/validation of free-text AI answers
+  Recommended approach: Extend policy-enforcement-engine.ts's domain gating to conversational responses
+- [Medium] AI Tests
+  Gap: AI output quality tests are narrow and not automated in CI
+  Recommended approach: Add promptfoo evals for each major system prompt (chat, reports, capability audit) and gate PRs touching them
+- [Low] AI Innovation
+  Gap: Innovation exists but is architecture-level, not user-visible product innovation
+  Recommended approach: Market the software-first/AI-second architecture as a differentiator
+- [Medium] Cognitive AI OS consistency
+  Gap: Two known bypass points plus inconsistent capability-tree application
+  Recommended approach: Add explicit constitution entries documenting embeddings/audio as approved exceptions
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

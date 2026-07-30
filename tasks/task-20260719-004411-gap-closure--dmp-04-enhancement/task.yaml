@@ -1,0 +1,229 @@
+id: task-20260719-004411-gap-closure--dmp-04-enhancement
+title: 'Gap closure: DMP-04-enhancement'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260719-004411-gap-closure--dmp-04-enhancement
+workspace: /opt/veridian/ai-os/tasks/task-20260719-004411-gap-closure--dmp-04-enhancement/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260719-004411-gap-closure--dmp-04-enhancement
+service: veridian-worker@task-20260719-004411-gap-closure--dmp-04-enhancement.service
+created_at: '2026-07-19T00:44:12.611725+00:00'
+last_checkpoint_at: '2026-07-19T01:02:03.789288+00:00'
+completed_steps: &id002
+- Read CONSTITUTION.yaml DMP-04 entry in full
+- Checked ACTIVE-CLAIMS.yaml + `gh pr list` for duplicate work (none found)
+- Read src/lib/services/fde-service.ts, worker-agent-service.ts (proposeWorkerAgent),
+  dynamic-chain-directory-service.ts, capability-tree-service.ts, dynamicChains schema,
+  approvals/[id]/route.ts
+- Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml (this commit)
+- Implemented proposeDynamicChain() + buildDynamicChainProposalFields() (pure builder)
+  in dynamic-chain-directory-service.ts
+- Wired submitFdeRequest()'s no_match branch to call proposeDynamicChain() alongside
+  proposeWorkerAgent() (best-effort, non-blocking)
+- Extended FdeEvaluation.proposal type + bumped fde.evaluate_request prompt template
+  to v3 (moduleRef/businessRules/permissions/workflowSteps/kpis)
+- Added fdeRequests.createdDynamicChainId column (schema.ts + drizzle/0242_dmp04_fde_dynamic_chain_bundle.sql)
+- Extended approvals/[id]/route.ts to handle requestType 'dynamic_chain_proposal'
+  (approve -> status 'approved', reject -> status 'retired' + deprecationReason; gated
+  at veridian_admin like worker_agent_proposal)
+- Added unit tests for buildDynamicChainProposalFields (dynamic-chain-directory-service.test.ts,
+  4 tests)
+- bunx tsc --noEmit clean, bun run lint clean (0 errors), bun test 1692 pass / 0 fail
+remaining_steps: &id003
+- 'Push, open PR, post AUDIT: PASS comment'
+- Watch CI
+- Classify tier (touches schema.ts/migration -> TIER2, report for Owner sign-off,
+  do not self-merge)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-19T00:44:13.600397+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  note: worker started (resume=0)
+- at: '2026-07-19T00:49:14.114447+00:00'
+  status: in_progress
+  files_modified:
+  - src/lib/services/dynamic-chain-directory-service.ts
+  completed_steps:
+  - Read CONSTITUTION.yaml DMP-04 entry in full
+  - Checked ACTIVE-CLAIMS.yaml + `gh pr list` for duplicate work (none found)
+  - Read src/lib/services/fde-service.ts, worker-agent-service.ts (proposeWorkerAgent),
+    dynamic-chain-directory-service.ts, capability-tree-service.ts, dynamicChains
+    schema, approvals/[id]/route.ts
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml (this commit)
+  remaining_steps:
+  - Implement proposeDynamicChain() in dynamic-chain-directory-service.ts (pure builder
+    + DB-touching function)
+  - Wire submitFdeRequest()'s no_match branch to call proposeDynamicChain() alongside
+    proposeWorkerAgent()
+  - Extend FdeEvaluation.proposal type + bump fde.evaluate_request prompt template
+    to v3 (moduleRef/businessRules/permissions/workflowSteps/kpis)
+  - Add fdeRequests.createdDynamicChainId column (schema.ts + migration)
+  - Extend approvals/[id]/route.ts to handle requestType 'dynamic_chain_proposal'
+    (approve -> status 'approved', reject -> status 'retired' + deprecationReason;
+    gate at veridian_admin like worker_agent_proposal)
+  - Add unit tests for the new pure builder function
+  - Run bunx tsc --noEmit, bun run lint, bun test
+  - 'Push, open PR, post AUDIT: PASS comment'
+  - Watch CI
+  - Classify tier (touches schema.ts/migration -> TIER2, report for Owner sign-off,
+    do not self-merge)
+  recent_commits:
+  - 695f0914 Register DMP-04 FDE full-bundle claim in ACTIVE-CLAIMS.yaml
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  note: periodic checkpoint
+- at: '2026-07-19T00:54:14.469236+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read CONSTITUTION.yaml DMP-04 entry in full
+  - Checked ACTIVE-CLAIMS.yaml + `gh pr list` for duplicate work (none found)
+  - Read src/lib/services/fde-service.ts, worker-agent-service.ts (proposeWorkerAgent),
+    dynamic-chain-directory-service.ts, capability-tree-service.ts, dynamicChains
+    schema, approvals/[id]/route.ts
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml (this commit)
+  - Implemented proposeDynamicChain() + buildDynamicChainProposalFields() (pure builder)
+    in dynamic-chain-directory-service.ts
+  - Wired submitFdeRequest()'s no_match branch to call proposeDynamicChain() alongside
+    proposeWorkerAgent() (best-effort, non-blocking)
+  - Extended FdeEvaluation.proposal type + bumped fde.evaluate_request prompt template
+    to v3 (moduleRef/businessRules/permissions/workflowSteps/kpis)
+  - Added fdeRequests.createdDynamicChainId column (schema.ts + drizzle/0242_dmp04_fde_dynamic_chain_bundle.sql)
+  - Extended approvals/[id]/route.ts to handle requestType 'dynamic_chain_proposal'
+    (approve -> status 'approved', reject -> status 'retired' + deprecationReason;
+    gated at veridian_admin like worker_agent_proposal)
+  - Added unit tests for buildDynamicChainProposalFields (dynamic-chain-directory-service.test.ts,
+    4 tests)
+  - bunx tsc --noEmit clean, bun run lint clean (0 errors), bun test 1692 pass / 0
+    fail
+  remaining_steps:
+  - 'Push, open PR, post AUDIT: PASS comment'
+  - Watch CI
+  - Classify tier (touches schema.ts/migration -> TIER2, report for Owner sign-off,
+    do not self-merge)
+  recent_commits:
+  - 'c2f25d73 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle'
+  - 695f0914 Register DMP-04 FDE full-bundle claim in ACTIVE-CLAIMS.yaml
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  note: periodic checkpoint
+- at: '2026-07-19T00:59:14.818154+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read CONSTITUTION.yaml DMP-04 entry in full
+  - Checked ACTIVE-CLAIMS.yaml + `gh pr list` for duplicate work (none found)
+  - Read src/lib/services/fde-service.ts, worker-agent-service.ts (proposeWorkerAgent),
+    dynamic-chain-directory-service.ts, capability-tree-service.ts, dynamicChains
+    schema, approvals/[id]/route.ts
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml (this commit)
+  - Implemented proposeDynamicChain() + buildDynamicChainProposalFields() (pure builder)
+    in dynamic-chain-directory-service.ts
+  - Wired submitFdeRequest()'s no_match branch to call proposeDynamicChain() alongside
+    proposeWorkerAgent() (best-effort, non-blocking)
+  - Extended FdeEvaluation.proposal type + bumped fde.evaluate_request prompt template
+    to v3 (moduleRef/businessRules/permissions/workflowSteps/kpis)
+  - Added fdeRequests.createdDynamicChainId column (schema.ts + drizzle/0242_dmp04_fde_dynamic_chain_bundle.sql)
+  - Extended approvals/[id]/route.ts to handle requestType 'dynamic_chain_proposal'
+    (approve -> status 'approved', reject -> status 'retired' + deprecationReason;
+    gated at veridian_admin like worker_agent_proposal)
+  - Added unit tests for buildDynamicChainProposalFields (dynamic-chain-directory-service.test.ts,
+    4 tests)
+  - bunx tsc --noEmit clean, bun run lint clean (0 errors), bun test 1692 pass / 0
+    fail
+  remaining_steps:
+  - 'Push, open PR, post AUDIT: PASS comment'
+  - Watch CI
+  - Classify tier (touches schema.ts/migration -> TIER2, report for Owner sign-off,
+    do not self-merge)
+  recent_commits:
+  - 'd286c4bc Retrigger CI: audit verdict comment reposted in plain Label: value format'
+  - 'ad67c534 Retrigger CI: audit verdict comment now present on PR #459'
+  - 'c2f25d73 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle'
+  - 695f0914 Register DMP-04 FDE full-bundle claim in ACTIVE-CLAIMS.yaml
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  note: periodic checkpoint
+- at: '2026-07-19T01:02:03.789288+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'd286c4bc Retrigger CI: audit verdict comment reposted in plain Label: value format'
+  - 'ad67c534 Retrigger CI: audit verdict comment now present on PR #459'
+  - 'c2f25d73 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle'
+  - 695f0914 Register DMP-04 FDE full-bundle claim in ACTIVE-CLAIMS.yaml
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  note: worker finished, no changes to commit
+execution_seconds: 1070
+restart_count: 0
+token_usage:
+  input_tokens: 190
+  cache_creation_input_tokens: 160935
+  cache_read_input_tokens: 12519871
+  output_tokens: 52267
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 160935
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 111
+    cache_read_input_tokens: 184349
+    cache_creation_input_tokens: 124
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 124
+    type: message
+  speed: standard
+master_synced_at: '2026-07-19T01:30:04.673356+00:00'

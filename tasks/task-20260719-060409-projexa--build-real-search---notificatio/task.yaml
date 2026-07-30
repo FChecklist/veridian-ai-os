@@ -1,0 +1,308 @@
+id: task-20260719-060409-projexa--build-real-search---notificatio
+title: 'PROJEXA: build real search + notifications'
+status: completed
+repo: projexa
+branch: worker/task-20260719-060409-projexa--build-real-search---notificatio
+workspace: /opt/veridian/ai-os/tasks/task-20260719-060409-projexa--build-real-search---notificatio/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260719-060409-projexa--build-real-search---notificatio
+service: veridian-worker@task-20260719-060409-projexa--build-real-search---notificatio.service
+created_at: '2026-07-19T06:04:10.468879+00:00'
+last_checkpoint_at: '2026-07-19T06:22:16.036635+00:00'
+completed_steps: &id002
+- Read compliance-tracker's search-command.tsx, /api/search route, search-service.ts
+- Read compliance-tracker's notifications schema/route + AppTopbar notification bell
+  UI
+- Read veridian-ui-kit AppHeader.tsx slot contract (searchSlot/notificationSlot)
+- Read PROJEXA's real schema.ts, veridian-client.ts, AppTopbar.tsx, RFI/submittal/punch-list/project
+  routes -- confirmed PROJEXA's construction entities live in VERIDIAN (proxied),
+  not in PROJEXA's own Postgres; only todos/orgs/memberships are real local tables
+- Confirmed no live DB/Supabase credentials available in this environment (no .env.local,
+  SUPABASE_ACCESS_TOKEN unauthorized) -- migration will be committed as the durable
+  record, not applied live
+- Bootstrap ai-os/boss/ACTIVE-CLAIMS.yaml for PROJEXA (didn't exist before)
+- 'Design: search aggregates projects (name), RFIs (subject), submittals (title),
+  punch list (description), change orders (title) via VERIDIAN proxy + in-app filtering,
+  plus real local todos ILIKE'
+- 'Design: notifications table (mirrors compliance-tracker shape + orgId), RLS following
+  PROJEXA''s own auth.uid()/memberships convention (not compliance-tracker''s app_runtime/service_role
+  convention)'
+- Add `notifications` table to src/lib/db/schema.ts
+- Add drizzle/0011_notifications.sql migration
+- Build src/lib/services/search-service.ts (pure matching helpers + VERIDIAN/todos
+  search)
+- Build src/lib/services/notification-service.ts (pure content builders + notifyOrgMembers)
+- Build src/app/api/search/route.ts
+- Build src/app/api/notifications/route.ts (GET) + src/app/api/notifications/[id]/read/route.ts
+  (PATCH)
+- Build src/components/search-command.tsx (command palette, no semantic tab -- out
+  of scope)
+- Build src/components/NotificationBell.tsx
+- Wire both into src/components/AppTopbar.tsx (searchSlot/notificationSlot)
+- 'Wire real notification triggers: RFI created (api/rfis POST), submittal status
+  changed (api/submittals/[id] PATCH, also had to add projectId to SubmittalsClient''s
+  PATCH body), punch list item created (api/punch-list POST)'
+- 'Add tests: search-service.test.ts, notification-service.test.ts (12 tests, all
+  pass)'
+- 'Attempted to add a `test` job to .github/workflows/ci.yml -- reverted: `git push`
+  was rejected ("refusing to allow an OAuth App to create or update workflow `.github/workflows/ci.yml`
+  without `workflow` scope"), this session''s gh token doesn''t have that scope. Tests
+  exist and pass locally (`bun test`) but are NOT yet wired into CI -- disclosed in
+  the PR description; whoever has `workflow` scope should add the 6-line job (see
+  this commit''s history for the exact diff) as a fast follow-up'
+- bunx tsc --noEmit clean
+- bun run lint clean (1 pre-existing unrelated warning)
+- bun test clean (12 pass)
+- bun run build clean (verified /api/search + /api/notifications routes compile)
+- 'Dev-server smoke test: root/login 200, dashboard 307 (auth redirect, expected),
+  /api/search + /api/notifications return 401 unauthenticated (not 500) -- no runtime
+  exceptions from new wiring'
+- 'Push branch, open PR (#44), post AUDIT: PASS comment, watch CI -- Lint/Type Check/Build
+  all pass. Vercel preview check failed with "Deployment rate limited -- retry in
+  24 hours" (infra rate limit, unrelated to this PR''s code)'
+remaining_steps: &id003
+- Owner sign-off (TIER2 -- new migration/schema, not self-merged)
+- Someone with Supabase MCP/DB access must apply drizzle/0011_notifications.sql against
+  PROJEXA's live Postgres before the notifications feature actually works end-to-end
+  (disclosed in PR description)
+- Someone with `workflow` OAuth scope should add the `test` job to .github/workflows/ci.yml
+  (this session's token lacked that scope; the diff is described in this PR's description
+  and commit history)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-19T06:04:11.577798+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  note: worker started (resume=0)
+- at: '2026-07-19T06:09:11.879977+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  note: periodic checkpoint
+- at: '2026-07-19T06:14:12.180560+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/api/punch-list/route.ts
+  - src/app/api/rfis/route.ts
+  - src/app/api/submittals/[id]/route.ts
+  - src/components/SubmittalsClient.tsx
+  - src/lib/db/schema.ts
+  - ai-os/
+  - drizzle/0011_notifications.sql
+  - src/app/api/notifications/
+  - src/app/api/search/
+  - src/components/search-command.tsx
+  - src/lib/services/notification-service.ts
+  - src/lib/services/search-service.ts
+  completed_steps:
+  - Read compliance-tracker's search-command.tsx, /api/search route, search-service.ts
+  - Read compliance-tracker's notifications schema/route + AppTopbar notification
+    bell UI
+  - Read veridian-ui-kit AppHeader.tsx slot contract (searchSlot/notificationSlot)
+  - Read PROJEXA's real schema.ts, veridian-client.ts, AppTopbar.tsx, RFI/submittal/punch-list/project
+    routes -- confirmed PROJEXA's construction entities live in VERIDIAN (proxied),
+    not in PROJEXA's own Postgres; only todos/orgs/memberships are real local tables
+  - Confirmed no live DB/Supabase credentials available in this environment (no .env.local,
+    SUPABASE_ACCESS_TOKEN unauthorized) -- migration will be committed as the durable
+    record, not applied live
+  - Bootstrap ai-os/boss/ACTIVE-CLAIMS.yaml for PROJEXA (didn't exist before)
+  - 'Design: search aggregates projects (name), RFIs (subject), submittals (title),
+    punch list (description), change orders (title) via VERIDIAN proxy + in-app filtering,
+    plus real local todos ILIKE'
+  - 'Design: notifications table (mirrors compliance-tracker shape + orgId), RLS following
+    PROJEXA''s own auth.uid()/memberships convention (not compliance-tracker''s app_runtime/service_role
+    convention)'
+  remaining_steps:
+  - Add `notifications` table to src/lib/db/schema.ts
+  - Add drizzle/0011_notifications.sql migration
+  - Build src/lib/services/search-service.ts (pure matching helpers + VERIDIAN/todos
+    search)
+  - Build src/lib/services/notification-service.ts (pure content builders + notifyOrgMembers)
+  - Build src/app/api/search/route.ts
+  - Build src/app/api/notifications/route.ts (GET) + src/app/api/notifications/[id]/read/route.ts
+    (PATCH)
+  - Build src/components/search-command.tsx (command palette, no semantic tab -- out
+    of scope)
+  - Build src/components/NotificationBell.tsx
+  - Wire both into src/components/AppTopbar.tsx (searchSlot/notificationSlot)
+  - 'Wire real notification triggers: RFI created (api/rfis POST), submittal status
+    changed (api/submittals/[id] PATCH), punch list item created (api/punch-list POST)'
+  - 'Add tests: search-service.test.ts, notification-service.test.ts'
+  - Add `test` job to .github/workflows/ci.yml (repo's first tests)
+  - bunx tsc --noEmit clean
+  - bun run lint clean
+  - bun test clean
+  - bun run build clean
+  - Push branch, open PR, post AUDIT comment, watch CI
+  - Owner sign-off (TIER2 -- new migration/schema, not self-merged)
+  - Someone with Supabase MCP/DB access must apply drizzle/0011_notifications.sql
+    against PROJEXA's live Postgres before the notifications feature actually works
+    end-to-end (disclosed in PR description)
+  recent_commits:
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  note: periodic checkpoint
+- at: '2026-07-19T06:19:12.522098+00:00'
+  status: in_progress
+  files_modified:
+  - .github/workflows/ci.yml
+  completed_steps:
+  - Read compliance-tracker's search-command.tsx, /api/search route, search-service.ts
+  - Read compliance-tracker's notifications schema/route + AppTopbar notification
+    bell UI
+  - Read veridian-ui-kit AppHeader.tsx slot contract (searchSlot/notificationSlot)
+  - Read PROJEXA's real schema.ts, veridian-client.ts, AppTopbar.tsx, RFI/submittal/punch-list/project
+    routes -- confirmed PROJEXA's construction entities live in VERIDIAN (proxied),
+    not in PROJEXA's own Postgres; only todos/orgs/memberships are real local tables
+  - Confirmed no live DB/Supabase credentials available in this environment (no .env.local,
+    SUPABASE_ACCESS_TOKEN unauthorized) -- migration will be committed as the durable
+    record, not applied live
+  - Bootstrap ai-os/boss/ACTIVE-CLAIMS.yaml for PROJEXA (didn't exist before)
+  - 'Design: search aggregates projects (name), RFIs (subject), submittals (title),
+    punch list (description), change orders (title) via VERIDIAN proxy + in-app filtering,
+    plus real local todos ILIKE'
+  - 'Design: notifications table (mirrors compliance-tracker shape + orgId), RLS following
+    PROJEXA''s own auth.uid()/memberships convention (not compliance-tracker''s app_runtime/service_role
+    convention)'
+  - Add `notifications` table to src/lib/db/schema.ts
+  - Add drizzle/0011_notifications.sql migration
+  - Build src/lib/services/search-service.ts (pure matching helpers + VERIDIAN/todos
+    search)
+  - Build src/lib/services/notification-service.ts (pure content builders + notifyOrgMembers)
+  - Build src/app/api/search/route.ts
+  - Build src/app/api/notifications/route.ts (GET) + src/app/api/notifications/[id]/read/route.ts
+    (PATCH)
+  - Build src/components/search-command.tsx (command palette, no semantic tab -- out
+    of scope)
+  - Build src/components/NotificationBell.tsx
+  - Wire both into src/components/AppTopbar.tsx (searchSlot/notificationSlot)
+  - 'Wire real notification triggers: RFI created (api/rfis POST), submittal status
+    changed (api/submittals/[id] PATCH, also had to add projectId to SubmittalsClient''s
+    PATCH body), punch list item created (api/punch-list POST)'
+  - 'Add tests: search-service.test.ts, notification-service.test.ts (12 tests, all
+    pass)'
+  - Add `test` job to .github/workflows/ci.yml (repo's first tests)
+  - bunx tsc --noEmit clean
+  - bun run lint clean (1 pre-existing unrelated warning)
+  - bun test clean (12 pass)
+  - bun run build clean (verified /api/search + /api/notifications routes compile)
+  - 'Dev-server smoke test: root/login 200, dashboard 307 (auth redirect, expected),
+    /api/search + /api/notifications return 401 unauthenticated (not 500) -- no runtime
+    exceptions from new wiring'
+  remaining_steps:
+  - Push branch, open PR, post AUDIT comment, watch CI
+  - Owner sign-off (TIER2 -- new migration/schema, not self-merged)
+  - Someone with Supabase MCP/DB access must apply drizzle/0011_notifications.sql
+    against PROJEXA's live Postgres before the notifications feature actually works
+    end-to-end (disclosed in PR description)
+  recent_commits:
+  - fdc8073 Add real command-palette search and in-app notifications
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  note: periodic checkpoint
+- at: '2026-07-19T06:22:16.036635+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 4e21596 Update PROGRESS.md with final PR/CI status
+  - 03b9a18 Revert CI workflow change -- token lacks workflow scope
+  - fdc8073 Add real command-palette search and in-app notifications
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  note: worker finished, no changes to commit
+execution_seconds: 1084
+restart_count: 0
+token_usage:
+  input_tokens: 248
+  cache_creation_input_tokens: 187722
+  cache_read_input_tokens: 19001146
+  output_tokens: 78324
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 187722
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 690
+    cache_read_input_tokens: 210946
+    cache_creation_input_tokens: 314
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 314
+    type: message
+  speed: standard
+master_synced_at: '2026-07-19T06:30:05.377445+00:00'

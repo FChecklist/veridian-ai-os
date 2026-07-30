@@ -1,0 +1,242 @@
+id: task-20260724-133622-phase4-unify-document-pipeline-pdf-gener
+title: phase4-unify-document-pipeline-pdf-generator-ts
+status: completed
+repo: claude-control
+branch: worker/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener
+workspace: /opt/veridian/ai-os/tasks/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener
+service: veridian-worker@task-20260724-133622-phase4-unify-document-pipeline-pdf-gener.service
+created_at: '2026-07-24T13:36:23.682903+00:00'
+last_checkpoint_at: '2026-07-24T13:53:21.850896+00:00'
+completed_steps: &id002
+- Read 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml in full; confirmed phase_1/2/3
+  status/precedent.
+- Investigated real shapes of pdf-generator.ts, document-processing-engine.ts,
+- scripts/notify-owner.py added to claude-control git (real, live file, previously
+  untracked).
+- ai-os/DOCUMENT_ENGINE_CONTRACT_2026-07-24.yaml -- facade schema + honest no-speculative-ETL
+- ai-os/NOTIFICATION_ENGINE_CONTRACT_2026-07-24.yaml -- shared notification_envelope
+  schema
+- scripts/document_engine.py -- register-capabilities/detect-duplicates/report-failure,
+  live-tested
+- scripts/notification_engine.py -- send-owner/validate-envelope, live-tested including
+  the
+- Registered a live automation_rule (document-pipeline-failure-notify-owner) realizing
+- Registered both contract schemas in knowledge_engine (domain:veridian-20-engine-10-gateway,
+- ai-os-scripts/close_phase4_document_notification_data.py written and run -- phase
+  plan YAML's
+- Copied all deliverables from the shared /opt/veridian/repos/claude-control worktree
+  into this
+remaining_steps: &id003
+- 'Commit + push this worktree''s branch, open PR: https://github.com/FChecklist/claude-control/pull/39'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-24T13:36:25.368035+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 9bb335a Auto-sync 3 server task(s) to master controller
+  - '410f0fb Merge pull request #36 from FChecklist/worker/task-20260724-122137-phase3-formalize-task-gateway-py-task-ex'
+  - 'a773d73 Worker task-20260724-122137-phase3-formalize-task-gateway-py-task-ex:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'a53e924 Phase 3: formalize workflow contract, build AI-OS automation rule engine,
+    stand up inbound webhook receiver'
+  - '1a8bbb2 Merge pull request #35 from FChecklist/worker/task-20260724-122146-phase4-dependency-graph-validation'
+  - 9066923 Auto-sync 4 server task(s) to master controller
+  - '88d7c56 Phase 4: dependency graph validation (static hop + engine-graph cross-check)'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-24T13:41:26.495987+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 9bb335a Auto-sync 3 server task(s) to master controller
+  - '410f0fb Merge pull request #36 from FChecklist/worker/task-20260724-122137-phase3-formalize-task-gateway-py-task-ex'
+  - 'a773d73 Worker task-20260724-122137-phase3-formalize-task-gateway-py-task-ex:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'a53e924 Phase 3: formalize workflow contract, build AI-OS automation rule engine,
+    stand up inbound webhook receiver'
+  - '1a8bbb2 Merge pull request #35 from FChecklist/worker/task-20260724-122146-phase4-dependency-graph-validation'
+  - 9066923 Auto-sync 4 server task(s) to master controller
+  - '88d7c56 Phase 4: dependency graph validation (static hop + engine-graph cross-check)'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  note: periodic checkpoint
+- at: '2026-07-24T13:46:27.712149+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml in full; confirmed phase_1/2/3
+    status/precedent.
+  - 'Investigated real shapes of: pdf-generator.ts, document-processing-engine.ts,
+    document-extraction-service.ts,'
+  - 'Key findings: (1) services/doc-processing (PaddleOCR) is real and reachable only
+    via ocr-client.ts''s'
+  remaining_steps:
+  - scripts/notify-owner.py -- add real live file to claude-control git (mirrors phase
+    2 precedent)
+  - ai-os/DOCUMENT_ENGINE_CONTRACT_2026-07-24.yaml -- facade schema grounding real
+    doc-pipeline shapes
+  - ai-os/NOTIFICATION_ENGINE_CONTRACT_2026-07-24.yaml -- shared notification envelope
+    schema
+  - scripts/document_engine.py -- register-capabilities / detect-duplicates / report-failure
+    CLI
+  - scripts/notification_engine.py -- unified envelope CLI wrapping notify-owner.py
+    + automation_rule_engine cross-call
+  - Register 5 document capability_registry rows live
+  - Wire Document Engine -> Notification Engine dependency_table edge live (via automation_rule_engine.py)
+  - 'Data Engine (13): document "no speculative ETL" finding with real evidence, no
+    new infra'
+  - Register phase deliverable in knowledge_engine (domain:veridian-20-engine-10-gateway
+    tag)
+  - 'ai-os-scripts/close_phase4_document_notification_data.py -- patch phase plan
+    YAML to status: done'
+  - Commit + push, open PR
+  recent_commits:
+  - 9bb335a Auto-sync 3 server task(s) to master controller
+  - '410f0fb Merge pull request #36 from FChecklist/worker/task-20260724-122137-phase3-formalize-task-gateway-py-task-ex'
+  - 'a773d73 Worker task-20260724-122137-phase3-formalize-task-gateway-py-task-ex:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'a53e924 Phase 3: formalize workflow contract, build AI-OS automation rule engine,
+    stand up inbound webhook receiver'
+  - '1a8bbb2 Merge pull request #35 from FChecklist/worker/task-20260724-122146-phase4-dependency-graph-validation'
+  - 9066923 Auto-sync 4 server task(s) to master controller
+  - '88d7c56 Phase 4: dependency graph validation (static hop + engine-graph cross-check)'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  note: periodic checkpoint
+- at: '2026-07-24T13:51:28.781651+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml in full; confirmed phase_1/2/3
+    status/precedent.
+  - Investigated real shapes of pdf-generator.ts, document-processing-engine.ts,
+  - scripts/notify-owner.py added to claude-control git (real, live file, previously
+    untracked).
+  - ai-os/DOCUMENT_ENGINE_CONTRACT_2026-07-24.yaml -- facade schema + honest no-speculative-ETL
+  - ai-os/NOTIFICATION_ENGINE_CONTRACT_2026-07-24.yaml -- shared notification_envelope
+    schema
+  - scripts/document_engine.py -- register-capabilities/detect-duplicates/report-failure,
+    live-tested
+  - scripts/notification_engine.py -- send-owner/validate-envelope, live-tested including
+    the
+  - Registered a live automation_rule (document-pipeline-failure-notify-owner) realizing
+  - Registered both contract schemas in knowledge_engine (domain:veridian-20-engine-10-gateway,
+  - ai-os-scripts/close_phase4_document_notification_data.py written and run -- phase
+    plan YAML's
+  - Copied all deliverables from the shared /opt/veridian/repos/claude-control worktree
+    into this
+  remaining_steps:
+  - Commit + push this worktree's branch, open PR.
+  recent_commits:
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  - 9bb335a Auto-sync 3 server task(s) to master controller
+  - '410f0fb Merge pull request #36 from FChecklist/worker/task-20260724-122137-phase3-formalize-task-gateway-py-task-ex'
+  - 'a773d73 Worker task-20260724-122137-phase3-formalize-task-gateway-py-task-ex:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'a53e924 Phase 3: formalize workflow contract, build AI-OS automation rule engine,
+    stand up inbound webhook receiver'
+  - '1a8bbb2 Merge pull request #35 from FChecklist/worker/task-20260724-122146-phase4-dependency-graph-validation'
+  - 9066923 Auto-sync 4 server task(s) to master controller
+  - '88d7c56 Phase 4: dependency graph validation (static hop + engine-graph cross-check)'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  note: periodic checkpoint
+- at: '2026-07-24T13:52:01.279584+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml in full; confirmed phase_1/2/3
+    status/precedent.
+  - Investigated real shapes of pdf-generator.ts, document-processing-engine.ts,
+  - scripts/notify-owner.py added to claude-control git (real, live file, previously
+    untracked).
+  - ai-os/DOCUMENT_ENGINE_CONTRACT_2026-07-24.yaml -- facade schema + honest no-speculative-ETL
+  - ai-os/NOTIFICATION_ENGINE_CONTRACT_2026-07-24.yaml -- shared notification_envelope
+    schema
+  - scripts/document_engine.py -- register-capabilities/detect-duplicates/report-failure,
+    live-tested
+  - scripts/notification_engine.py -- send-owner/validate-envelope, live-tested including
+    the
+  - Registered a live automation_rule (document-pipeline-failure-notify-owner) realizing
+  - Registered both contract schemas in knowledge_engine (domain:veridian-20-engine-10-gateway,
+  - ai-os-scripts/close_phase4_document_notification_data.py written and run -- phase
+    plan YAML's
+  - Copied all deliverables from the shared /opt/veridian/repos/claude-control worktree
+    into this
+  remaining_steps:
+  - 'Commit + push this worktree''s branch, open PR: https://github.com/FChecklist/claude-control/pull/39'
+  recent_commits:
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  - 9bb335a Auto-sync 3 server task(s) to master controller
+  - '410f0fb Merge pull request #36 from FChecklist/worker/task-20260724-122137-phase3-formalize-task-gateway-py-task-ex'
+  - 'a773d73 Worker task-20260724-122137-phase3-formalize-task-gateway-py-task-ex:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'a53e924 Phase 3: formalize workflow contract, build AI-OS automation rule engine,
+    stand up inbound webhook receiver'
+  - '1a8bbb2 Merge pull request #35 from FChecklist/worker/task-20260724-122146-phase4-dependency-graph-validation'
+  - 9066923 Auto-sync 4 server task(s) to master controller
+  - '88d7c56 Phase 4: dependency graph validation (static hop + engine-graph cross-check)'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  note: quality gates passed, pushed branch worker/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener,
+    awaiting review
+- at: '2026-07-24T13:53:21.850896+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  - 9bb335a Auto-sync 3 server task(s) to master controller
+  - '410f0fb Merge pull request #36 from FChecklist/worker/task-20260724-122137-phase3-formalize-task-gateway-py-task-ex'
+  - 'a773d73 Worker task-20260724-122137-phase3-formalize-task-gateway-py-task-ex:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'a53e924 Phase 3: formalize workflow contract, build AI-OS automation rule engine,
+    stand up inbound webhook receiver'
+  - '1a8bbb2 Merge pull request #35 from FChecklist/worker/task-20260724-122146-phase4-dependency-graph-validation'
+  - 9066923 Auto-sync 4 server task(s) to master controller
+  - '88d7c56 Phase 4: dependency graph validation (static hop + engine-graph cross-check)'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/39'
+execution_seconds: 934
+restart_count: 0
+token_usage:
+  input_tokens: 134
+  cache_creation_input_tokens: 146823
+  cache_read_input_tokens: 8150418
+  output_tokens: 60186
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 146823
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 733
+    cache_read_input_tokens: 169977
+    cache_creation_input_tokens: 437
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 437
+    type: message
+  speed: standard
+master_synced_at: '2026-07-24T14:00:08.664834+00:00'

@@ -1,0 +1,20 @@
+TASK: V2-18 -- Multi-office selector correctness audit
+
+### V2-18 — Multi-office selector correctness audit [C9]
+- READY: yes
+- SOFTWARE TEAM LEVEL: L2 Sequential Worker
+- TASK ID: V2-18-MULTI-OFFICE-FILTER-AUDIT
+- MODULE: compliance-tracker
+- OBJECTIVE: Audit each major module (ERP, HR, tasks, reports) for correct `branchId` filtering, mirroring the currency audit. Closes CSV row #61.
+- READ FIRST: the currency audit (CSV parameter 68); `branchId`/`officeId` plumbing across modules.
+- WHAT TO BUILD: An audit doc + fixes for any module missing the filter + tests.
+- CONSTRAINTS: Additive; tier2 only if schema. Register claim.
+- DONE CRITERIA: Audit + fixes + tests; row re-scored; PR open.
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

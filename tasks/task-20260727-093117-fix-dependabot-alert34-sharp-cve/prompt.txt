@@ -1,0 +1,26 @@
+## OBJECTIVE
+Fix GitHub Dependabot security alert #34 on FChecklist/compliance-tracker (main branch): npm package `sharp` at its currently installed version is affected by GHSA-f88m-g3jw-g9cj (CVE-2026-33327, CVE-2026-33328, CVE-2026-35590, CVE-2026-35591 -- vulnerabilities in the inherited libvips dependency), severity high (CVSSv4 score 7.0). The advisory's vulnerable_version_range is `< 0.35.0`; first_patched_version is `0.35.0`; the advisory text itself names `0.35.3` as "the latest version" to upgrade to, which provides libvips 8.18.3. Confirmed live via `gh api repos/FChecklist/compliance-tracker/dependabot/alerts/34` (state: open, dependency.package.name: sharp, manifest_path: package.json, scope: runtime, relationship: direct).
+
+## KNOWN_CONTEXT
+This is a direct runtime dependency declared in `package.json` (not transitive-only). No other in-flight task or ACTIVE-CLAIMS.yaml entry currently covers this alert -- checked before dispatch. AGENTS.md Rule 6 (added 2026-07-10) requires all changes go through a PR that passes CI (Lint/Type Check/Build/Unit Tests); `main` has branch protection with `enforce_admins` on and no bypass, so a direct push will simply be rejected. AGENTS.md Rule 7(c) requires whichever agent did NOT implement a change to be its auditor -- no self-certification. This task is the IMPLEMENTATION half only; a separate supervising session (not this worker) will audit and merge, per Rule 7(c) -- so this worker's job ends at "PR open, CI green", not at merge.
+
+## SCOPE
+1. On a new branch off current `main` (naming convention: `worker/<this task's own task_id>` or `fix/dependabot-alert-34-sharp`), edit `package.json` to bump the `sharp` dependency to `^0.35.3`.
+2. Update whichever lockfile is authoritative in this repo (check for `package-lock.json`, `pnpm-lock.yaml`, or `yarn.lock` -- use the real package manager already in use, do not introduce a second one) so it is consistent with the new `sharp` version, by actually running that package manager's install/update command, not hand-editing the lockfile.
+3. Confirm no unrelated dependency drift crept into the lockfile diff beyond `sharp` and its own transitive tree.
+4. Search the codebase for real `sharp(` usages (image-processing code paths) and run the repo's existing real build/lint/test commands to confirm nothing broke from the version bump. Report the exact real commands used and their real exit codes in your checkpoint/handover.
+5. Commit and push the branch, then open a real PR against `main` via `gh pr create --repo FChecklist/compliance-tracker`, with a PR description that states it closes GitHub security alert https://github.com/FChecklist/compliance-tracker/security/dependabot/34 (GHSA-f88m-g3jw-g9cj).
+6. Do NOT attempt to push directly to `main` -- Rule 6's branch protection has no bypass and will reject it.
+7. Do NOT post an `AUDIT: PASS`/`AUDIT: FAIL` verdict for this PR yourself and do NOT self-merge -- per Rule 7(c) you implemented this change, so you are disqualified from auditing it; leave the PR open, CI green, for the supervising session to audit and merge.
+
+## SUCCESS_CRITERIA
+After this PR is reviewed and merged to main by the supervising session, the following command exits 0, proving the fix actually landed on main (not just on the PR branch): `git -C /opt/veridian/repos/compliance-tracker fetch origin main -q && git -C /opt/veridian/repos/compliance-tracker show origin/main:package.json | grep -q "\"sharp\": \"\^0.35.3\""`
+
+## EXPECTED_OUTPUT
+An open PR on `FChecklist/compliance-tracker` against `main`, from a new branch, bumping `sharp` to `^0.35.3` (with matching lockfile update), CI green, referencing Dependabot alert #34 / GHSA-f88m-g3jw-g9cj in its description. Not merged by this task.
+
+## CONSTRAINTS
+Do not touch any file unrelated to the `sharp` version bump and its lockfile. Do not push directly to `main`. Do not post your own audit verdict or self-merge this PR (Rule 7(c)). Every currently-disabled cron entry and systemd `.timer` unit on the live server must remain in its present disabled state throughout this task.
+
+## COMPLEXITY_TIER
+mechanical

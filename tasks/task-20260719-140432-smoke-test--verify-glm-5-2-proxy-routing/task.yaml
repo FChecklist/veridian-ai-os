@@ -1,0 +1,215 @@
+id: task-20260719-140432-smoke-test--verify-glm-5-2-proxy-routing
+title: 'SMOKE TEST: verify GLM-5.2 proxy routing end-to-end'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260719-140432-smoke-test--verify-glm-5-2-proxy-routing
+workspace: /opt/veridian/ai-os/tasks/task-20260719-140432-smoke-test--verify-glm-5-2-proxy-routing/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260719-140432-smoke-test--verify-glm-5-2-proxy-routing
+service: veridian-worker@task-20260719-140432-smoke-test--verify-glm-5-2-proxy-routing.service
+created_at: '2026-07-19T14:04:33.378902+00:00'
+last_checkpoint_at: '2026-07-19T14:18:59.371854+00:00'
+completed_steps: &id002
+- Added `<!-- glm-proxy-routing-smoke-test 2026-07-19 -->` to end of README.md (file
+  did not exist; created with this line)
+- "Investigated reported quality-gate failure: gate output block was empty (no failure\
+  \ text rendered). Audited every CI gate that could plausibly touch a one-line comment\
+  \ in root README.md \u2014 lint (eslint ignores `.md`), typecheck/build/unit-tests\
+  \ (no code surface), doc-cross-references (README.md not in its allowlist; adds\
+  \ no dangling ref), doc-quarantine-banner/metadata-index/asset-registry/guardrail-presence\
+  \ (none scan README.md, confirmed via grep), no prettier config. On-disk file is\
+  \ byte-clean (`<!-- glm-proxy-routing-smoke-test 2026-07-19 -->\\n`, no hidden chars),\
+  \ not in HEAD, not staged. No underlying issue found to fix; did not fabricate a\
+  \ fix or silently mutate unrelated files."
+- "(2nd gate-failure report) Installed deps (`bun install`, was missing) and EXECUTED\
+  \ every CI gate from `.github/workflows/ci.yml` to get real signal instead of theorizing.\
+  \ Results \u2014 all pass: Lint (0 errors, 3 pre-existing warnings in src/), Type\
+  \ Check (clean), Build (succeeds), Unit Tests (1766 pass / 0 fail; the `error:`\
+  \ log lines are deliberate in-test mocks of failures asserting fail-closed behavior,\
+  \ not real failures), Guardrail Presence (88/88 markers), Asset Registry Coverage\
+  \ (421/421), Metadata Index Coverage (32/32), Doc Quarantine Banner (44/44), Doc\
+  \ Cross-References (341/341 resolved). Conclusion unchanged: no quality-gate failure\
+  \ is caused by this change. The reported gate-output block is empty both times \u2014\
+  \ failure text is not reaching this session; cannot fix an unspecified failure."
+remaining_steps: &id003
+- Nothing remaining
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-19T14:04:34.415055+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '51ac9158 Register claim: PROJEXA E2E Phase 2 Batch B (Resources/Field/Design)
+    (#478)'
+  - 'f28f336c Register claim: PROJEXA E2E Phase 2 Batch C (Finance/Sales/HR + copilot)
+    (#479)'
+  - '9b3312e6 Register claim: PROJEXA E2E Phase 2 Batch A (#480)'
+  - '913dd4e6 AI Architecture: domain accuracy, prompt evals, capability-tree exceptions
+    (#417)'
+  - 815cee95 Add AI Orchestra Hierarchy documentation (4 domains x L0-L5) (#476)
+  - 'a19e4c3c AI Router: registry-backed model resolution (2 gaps + new model + new
+    scope) (#475)'
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  note: worker started (resume=0, lifetime invocation 1/20)
+- at: '2026-07-19T14:06:23.863334+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - README.md
+  completed_steps:
+  - Added `<!-- glm-proxy-routing-smoke-test 2026-07-19 -->` to end of README.md (file
+    did not exist; created with this line)
+  remaining_steps:
+  - Nothing remaining
+  recent_commits:
+  - '51ac9158 Register claim: PROJEXA E2E Phase 2 Batch B (Resources/Field/Design)
+    (#478)'
+  - 'f28f336c Register claim: PROJEXA E2E Phase 2 Batch C (Finance/Sales/HR + copilot)
+    (#479)'
+  - '9b3312e6 Register claim: PROJEXA E2E Phase 2 Batch A (#480)'
+  - '913dd4e6 AI Architecture: domain accuracy, prompt evals, capability-tree exceptions
+    (#417)'
+  - 815cee95 Add AI Orchestra Hierarchy documentation (4 domains x L0-L5) (#476)
+  - 'a19e4c3c AI Router: registry-backed model resolution (2 gaps + new model + new
+    scope) (#475)'
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-19T14:09:50.216771+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - README.md
+  completed_steps:
+  - Added `<!-- glm-proxy-routing-smoke-test 2026-07-19 -->` to end of README.md (file
+    did not exist; created with this line)
+  - "Investigated reported quality-gate failure: gate output block was empty (no failure\
+    \ text rendered). Audited every CI gate that could plausibly touch a one-line\
+    \ comment in root README.md \u2014 lint (eslint ignores `.md`), typecheck/build/unit-tests\
+    \ (no code surface), doc-cross-references (README.md not in its allowlist; adds\
+    \ no dangling ref), doc-quarantine-banner/metadata-index/asset-registry/guardrail-presence\
+    \ (none scan README.md, confirmed via grep), no prettier config. On-disk file\
+    \ is byte-clean (`<!-- glm-proxy-routing-smoke-test 2026-07-19 -->\\n`, no hidden\
+    \ chars), not in HEAD, not staged. No underlying issue found to fix; did not fabricate\
+    \ a fix or silently mutate unrelated files."
+  remaining_steps:
+  - Nothing remaining
+  recent_commits:
+  - '51ac9158 Register claim: PROJEXA E2E Phase 2 Batch B (Resources/Field/Design)
+    (#478)'
+  - 'f28f336c Register claim: PROJEXA E2E Phase 2 Batch C (Finance/Sales/HR + copilot)
+    (#479)'
+  - '9b3312e6 Register claim: PROJEXA E2E Phase 2 Batch A (#480)'
+  - '913dd4e6 AI Architecture: domain accuracy, prompt evals, capability-tree exceptions
+    (#417)'
+  - 815cee95 Add AI Orchestra Hierarchy documentation (4 domains x L0-L5) (#476)
+  - 'a19e4c3c AI Router: registry-backed model resolution (2 gaps + new model + new
+    scope) (#475)'
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  note: quality gate failed, attempting auto-fix (2/2)
+- at: '2026-07-19T14:17:14.166171+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Added `<!-- glm-proxy-routing-smoke-test 2026-07-19 -->` to end of README.md (file
+    did not exist; created with this line)
+  - "Investigated reported quality-gate failure: gate output block was empty (no failure\
+    \ text rendered). Audited every CI gate that could plausibly touch a one-line\
+    \ comment in root README.md \u2014 lint (eslint ignores `.md`), typecheck/build/unit-tests\
+    \ (no code surface), doc-cross-references (README.md not in its allowlist; adds\
+    \ no dangling ref), doc-quarantine-banner/metadata-index/asset-registry/guardrail-presence\
+    \ (none scan README.md, confirmed via grep), no prettier config. On-disk file\
+    \ is byte-clean (`<!-- glm-proxy-routing-smoke-test 2026-07-19 -->\\n`, no hidden\
+    \ chars), not in HEAD, not staged. No underlying issue found to fix; did not fabricate\
+    \ a fix or silently mutate unrelated files."
+  - "(2nd gate-failure report) Installed deps (`bun install`, was missing) and EXECUTED\
+    \ every CI gate from `.github/workflows/ci.yml` to get real signal instead of\
+    \ theorizing. Results \u2014 all pass: Lint (0 errors, 3 pre-existing warnings\
+    \ in src/), Type Check (clean), Build (succeeds), Unit Tests (1766 pass / 0 fail;\
+    \ the `error:` log lines are deliberate in-test mocks of failures asserting fail-closed\
+    \ behavior, not real failures), Guardrail Presence (88/88 markers), Asset Registry\
+    \ Coverage (421/421), Metadata Index Coverage (32/32), Doc Quarantine Banner (44/44),\
+    \ Doc Cross-References (341/341 resolved). Conclusion unchanged: no quality-gate\
+    \ failure is caused by this change. The reported gate-output block is empty both\
+    \ times \u2014 failure text is not reaching this session; cannot fix an unspecified\
+    \ failure."
+  remaining_steps:
+  - Nothing remaining
+  recent_commits:
+  - 'c162130d Worker task-20260719-140432-smoke-test--verify-glm-5-2-proxy-routing:
+    automated checkpoint commit'
+  - '51ac9158 Register claim: PROJEXA E2E Phase 2 Batch B (Resources/Field/Design)
+    (#478)'
+  - 'f28f336c Register claim: PROJEXA E2E Phase 2 Batch C (Finance/Sales/HR + copilot)
+    (#479)'
+  - '9b3312e6 Register claim: PROJEXA E2E Phase 2 Batch A (#480)'
+  - '913dd4e6 AI Architecture: domain accuracy, prompt evals, capability-tree exceptions
+    (#417)'
+  - 815cee95 Add AI Orchestra Hierarchy documentation (4 domains x L0-L5) (#476)
+  - 'a19e4c3c AI Router: registry-backed model resolution (2 gaps + new model + new
+    scope) (#475)'
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  note: quality gates passed, pushed branch worker/task-20260719-140432-smoke-test--verify-glm-5-2-proxy-routing,
+    awaiting review
+- at: '2026-07-19T14:18:59.371854+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'c162130d Worker task-20260719-140432-smoke-test--verify-glm-5-2-proxy-routing:
+    automated checkpoint commit'
+  - '51ac9158 Register claim: PROJEXA E2E Phase 2 Batch B (Resources/Field/Design)
+    (#478)'
+  - 'f28f336c Register claim: PROJEXA E2E Phase 2 Batch C (Finance/Sales/HR + copilot)
+    (#479)'
+  - '9b3312e6 Register claim: PROJEXA E2E Phase 2 Batch A (#480)'
+  - '913dd4e6 AI Architecture: domain accuracy, prompt evals, capability-tree exceptions
+    (#417)'
+  - 815cee95 Add AI Orchestra Hierarchy documentation (4 domains x L0-L5) (#476)
+  - 'a19e4c3c AI Router: registry-backed model resolution (2 gaps + new model + new
+    scope) (#475)'
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  note: "Superboss rejected: https://github.com/FChecklist/compliance-tracker/pull/484\
+    \ \u2014 see review.json for issues"
+execution_seconds: 103
+restart_count: 2
+token_usage:
+  input_tokens: 146174
+  cache_creation_input_tokens: 0
+  cache_read_input_tokens: 0
+  output_tokens: 3160
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 0
+    ephemeral_5m_input_tokens: 0
+  inference_geo: ''
+  iterations: []
+  speed: standard
+master_synced_at: '2026-07-19T14:30:05.436974+00:00'

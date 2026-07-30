@@ -1,0 +1,20 @@
+TASK: V2-22 -- Executive reporting drill-down + cadence scheduled job
+
+### V2-22 — Executive reporting drill-down + cadence scheduled job [C14]
+- READY: yes
+- SOFTWARE TEAM LEVEL: L3 Feature Worker
+- TASK ID: V2-22-EXEC-REPORTING
+- MODULE: compliance-tracker
+- OBJECTIVE: Build/verify the drill-down from each executive dashboard tile to transaction-level detail + a scheduled job that reads `report_definitions.cadence` and triggers delivery. The domain-expert scoring review stays deferred (real-external reviewer). Closes CSV rows #74/#75; #73 stays deferred.
+- READ FIRST: executive dashboard tiles + routes; `report_definitions` cadence field; the scheduler precedent.
+- WHAT TO BUILD: drill-down wiring + cadence job + tests.
+- CONSTRAINTS: Tier2 if schema. Register claim.
+- DONE CRITERIA: Drill-down + cadence job + tests; #73 deferred recorded; rows re-scored; PR open.
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

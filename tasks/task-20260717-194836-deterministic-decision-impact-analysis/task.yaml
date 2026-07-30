@@ -1,0 +1,430 @@
+id: task-20260717-194836-deterministic-decision-impact-analysis
+title: Deterministic decision impact analysis
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260717-194836-deterministic-decision-impact-analysis
+workspace: /opt/veridian/ai-os/tasks/task-20260717-194836-deterministic-decision-impact-analysis/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260717-194836-deterministic-decision-impact-analysis
+service: veridian-worker@task-20260717-194836-deterministic-decision-impact-analysis.service
+created_at: '2026-07-17T19:48:37.427922+00:00'
+last_checkpoint_at: '2026-07-18T04:11:41.563057+00:00'
+completed_steps: &id002
+- Read `src/app/api/veri-chat/approvals/route.ts` in full (5-source read-only aggregator,
+  `UnifiedApprovalItem`)
+- 'Read source services (read-only): `erp-payment-entries-service.ts` (amount + threshold
+  pattern), `risk-register-service.ts`, `construction-change-order-service.ts` (costImpact/scheduleImpactDays),
+  `approval-workflow-service.ts`, `erp-procurement-workflow-service.ts`, `erp-selling-service.ts`
+  (grandTotal)'
+- "Found the existing deterministic risk concept to reuse \u2014 `src/lib/risk-classification.ts`\
+  \ (`classifyRisk` + INR thresholds) + `src/lib/high-impact-action-detector.ts` (`HighImpactCategory`).\
+  \ NOT inventing a parallel risk concept."
+- Confirmed no conflicting active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`; registered
+  own claim
+- 'Write `src/lib/services/decision-impact-service.ts` (deterministic computation:
+  `computeFinancialImpact`, `computeComplianceImpact`, `computeDecisionImpact`, `mapDecisionToComplianceCategory`,
+  `maxRiskLevel`)'
+- Write `src/lib/services/decision-impact-service.test.ts` (23 unit tests, all passing)
+- 'Wire `impact: DecisionImpactSummary` into `UnifiedApprovalItem` and populate it
+  at all 5 push sites in the approvals route (approval_request, workflow_step, drafted_communication,
+  quotation, change_order), sourcing real amounts from each item''s own data (quotation
+  `grandTotal`, change-order `costImpact`/`scheduleImpactDays`) and passing `null`
+  where no amount exists on the read row (approval_request, workflow_step, drafted_communication)'
+- "Found and fixed a real bug during test-writing: `mapDecisionToComplianceCategory`\
+  \ originally included the item's `kind` (e.g. `\"approval_request\"`) in the text\
+  \ passed to the shared keyword detector, which meant every `approval_request`-kind\
+  \ item spuriously matched the generic `\"approval\"` trigger (the word \"approval\"\
+  \ inside \"approval_request\") *before* more specific `requestType` signals like\
+  \ `policy_publish` \u2192 `compliance_submission` or `access_review_cycle` \u2192\
+  \ `access_changes` could be checked. Fixed by excluding `kind` from the detection\
+  \ text (kept only as the fallback default's conceptual justification, per its own\
+  \ comment)."
+- '`bun install` (node_modules was missing in this workspace) then `bunx tsc --noEmit`:
+  **0 errors** repo-wide'
+- '`bun run lint` (eslint over the whole repo): **0 errors**, 3 pre-existing warnings
+  unrelated to this change'
+- '`bun test` (full suite): **1400 pass, 0 fail** across 102 files (2744 expect()
+  calls), including the 23 new tests in `decision-impact-service.test.ts`'
+- "Confirmed no migration needed \u2014 read-time computation is sufficient; `ls drizzle/*.sql\
+  \ | sort -V | tail` shows no migration was added, so no collision risk"
+remaining_steps: &id003
+- "None \u2014 task complete, ready for final commit"
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-17T19:48:37.933599+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker started (resume=0)
+- at: '2026-07-17T19:53:24.140629+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - PROGRESS.md
+  - src/lib/services/decision-impact-service.ts
+  completed_steps:
+  - Read `src/app/api/veri-chat/approvals/route.ts` in full (5-source read-only aggregator,
+    `UnifiedApprovalItem`)
+  - 'Read source services (read-only): `erp-payment-entries-service.ts` (amount +
+    threshold pattern), `risk-register-service.ts`, `construction-change-order-service.ts`
+    (costImpact/scheduleImpactDays), `approval-workflow-service.ts`, `erp-procurement-workflow-service.ts`,
+    `erp-selling-service.ts` (grandTotal)'
+  - "Found the existing deterministic risk concept to reuse \u2014 `src/lib/risk-classification.ts`\
+    \ (`classifyRisk` + INR thresholds) + `src/lib/high-impact-action-detector.ts`\
+    \ (`HighImpactCategory`). NOT inventing a parallel risk concept."
+  - Confirmed no conflicting active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`; registered
+    own claim
+  - Write `src/lib/services/decision-impact-service.ts` (deterministic computation)
+  - Write `src/lib/services/decision-impact-service.test.ts` (unit tests)
+  - Wire impact fields into the approvals feed response (extend `UnifiedApprovalItem`)
+  remaining_steps:
+  - Run `bunx tsc --noEmit`, `eslint`, and `bun test`; report real numbers
+  - "Final commit (check `ls drizzle/*.sql | sort -V | tail` only if a migration was\
+    \ added \u2014 none planned; read-time computation is sufficient)"
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-17T19:53:54.481231+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - PROGRESS.md
+  - src/lib/services/decision-impact-service.ts
+  completed_steps:
+  - Read `src/app/api/veri-chat/approvals/route.ts` in full (5-source read-only aggregator,
+    `UnifiedApprovalItem`)
+  - 'Read source services (read-only): `erp-payment-entries-service.ts` (amount +
+    threshold pattern), `risk-register-service.ts`, `construction-change-order-service.ts`
+    (costImpact/scheduleImpactDays), `approval-workflow-service.ts`, `erp-procurement-workflow-service.ts`,
+    `erp-selling-service.ts` (grandTotal)'
+  - "Found the existing deterministic risk concept to reuse \u2014 `src/lib/risk-classification.ts`\
+    \ (`classifyRisk` + INR thresholds) + `src/lib/high-impact-action-detector.ts`\
+    \ (`HighImpactCategory`). NOT inventing a parallel risk concept."
+  - Confirmed no conflicting active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`; registered
+    own claim
+  - Write `src/lib/services/decision-impact-service.ts` (deterministic computation)
+  - Write `src/lib/services/decision-impact-service.test.ts` (unit tests)
+  - Wire impact fields into the approvals feed response (extend `UnifiedApprovalItem`)
+  remaining_steps:
+  - Run `bunx tsc --noEmit`, `eslint`, and `bun test`; report real numbers
+  - "Final commit (check `ls drizzle/*.sql | sort -V | tail` only if a migration was\
+    \ added \u2014 none planned; read-time computation is sufficient)"
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker started (resume=1)
+- at: '2026-07-17T19:53:56.677973+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - PROGRESS.md
+  - src/lib/services/decision-impact-service.ts
+  completed_steps:
+  - Read `src/app/api/veri-chat/approvals/route.ts` in full (5-source read-only aggregator,
+    `UnifiedApprovalItem`)
+  - 'Read source services (read-only): `erp-payment-entries-service.ts` (amount +
+    threshold pattern), `risk-register-service.ts`, `construction-change-order-service.ts`
+    (costImpact/scheduleImpactDays), `approval-workflow-service.ts`, `erp-procurement-workflow-service.ts`,
+    `erp-selling-service.ts` (grandTotal)'
+  - "Found the existing deterministic risk concept to reuse \u2014 `src/lib/risk-classification.ts`\
+    \ (`classifyRisk` + INR thresholds) + `src/lib/high-impact-action-detector.ts`\
+    \ (`HighImpactCategory`). NOT inventing a parallel risk concept."
+  - Confirmed no conflicting active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`; registered
+    own claim
+  - Write `src/lib/services/decision-impact-service.ts` (deterministic computation)
+  - Write `src/lib/services/decision-impact-service.test.ts` (unit tests)
+  - Wire impact fields into the approvals feed response (extend `UnifiedApprovalItem`)
+  remaining_steps:
+  - Run `bunx tsc --noEmit`, `eslint`, and `bun test`; report real numbers
+  - "Final commit (check `ls drizzle/*.sql | sort -V | tail` only if a migration was\
+    \ added \u2014 none planned; read-time computation is sufficient)"
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-17T19:54:27.253245+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - PROGRESS.md
+  - src/lib/services/decision-impact-service.ts
+  completed_steps:
+  - Read `src/app/api/veri-chat/approvals/route.ts` in full (5-source read-only aggregator,
+    `UnifiedApprovalItem`)
+  - 'Read source services (read-only): `erp-payment-entries-service.ts` (amount +
+    threshold pattern), `risk-register-service.ts`, `construction-change-order-service.ts`
+    (costImpact/scheduleImpactDays), `approval-workflow-service.ts`, `erp-procurement-workflow-service.ts`,
+    `erp-selling-service.ts` (grandTotal)'
+  - "Found the existing deterministic risk concept to reuse \u2014 `src/lib/risk-classification.ts`\
+    \ (`classifyRisk` + INR thresholds) + `src/lib/high-impact-action-detector.ts`\
+    \ (`HighImpactCategory`). NOT inventing a parallel risk concept."
+  - Confirmed no conflicting active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`; registered
+    own claim
+  - Write `src/lib/services/decision-impact-service.ts` (deterministic computation)
+  - Write `src/lib/services/decision-impact-service.test.ts` (unit tests)
+  - Wire impact fields into the approvals feed response (extend `UnifiedApprovalItem`)
+  remaining_steps:
+  - Run `bunx tsc --noEmit`, `eslint`, and `bun test`; report real numbers
+  - "Final commit (check `ls drizzle/*.sql | sort -V | tail` only if a migration was\
+    \ added \u2014 none planned; read-time computation is sufficient)"
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker started (resume=1)
+- at: '2026-07-17T19:54:29.188783+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - PROGRESS.md
+  - src/lib/services/decision-impact-service.ts
+  completed_steps:
+  - Read `src/app/api/veri-chat/approvals/route.ts` in full (5-source read-only aggregator,
+    `UnifiedApprovalItem`)
+  - 'Read source services (read-only): `erp-payment-entries-service.ts` (amount +
+    threshold pattern), `risk-register-service.ts`, `construction-change-order-service.ts`
+    (costImpact/scheduleImpactDays), `approval-workflow-service.ts`, `erp-procurement-workflow-service.ts`,
+    `erp-selling-service.ts` (grandTotal)'
+  - "Found the existing deterministic risk concept to reuse \u2014 `src/lib/risk-classification.ts`\
+    \ (`classifyRisk` + INR thresholds) + `src/lib/high-impact-action-detector.ts`\
+    \ (`HighImpactCategory`). NOT inventing a parallel risk concept."
+  - Confirmed no conflicting active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`; registered
+    own claim
+  - Write `src/lib/services/decision-impact-service.ts` (deterministic computation)
+  - Write `src/lib/services/decision-impact-service.test.ts` (unit tests)
+  - Wire impact fields into the approvals feed response (extend `UnifiedApprovalItem`)
+  remaining_steps:
+  - Run `bunx tsc --noEmit`, `eslint`, and `bun test`; report real numbers
+  - "Final commit (check `ls drizzle/*.sql | sort -V | tail` only if a migration was\
+    \ added \u2014 none planned; read-time computation is sufficient)"
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-18T04:06:20.600878+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - PROGRESS.md
+  - src/lib/services/decision-impact-service.ts
+  completed_steps:
+  - Read `src/app/api/veri-chat/approvals/route.ts` in full (5-source read-only aggregator,
+    `UnifiedApprovalItem`)
+  - 'Read source services (read-only): `erp-payment-entries-service.ts` (amount +
+    threshold pattern), `risk-register-service.ts`, `construction-change-order-service.ts`
+    (costImpact/scheduleImpactDays), `approval-workflow-service.ts`, `erp-procurement-workflow-service.ts`,
+    `erp-selling-service.ts` (grandTotal)'
+  - "Found the existing deterministic risk concept to reuse \u2014 `src/lib/risk-classification.ts`\
+    \ (`classifyRisk` + INR thresholds) + `src/lib/high-impact-action-detector.ts`\
+    \ (`HighImpactCategory`). NOT inventing a parallel risk concept."
+  - Confirmed no conflicting active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`; registered
+    own claim
+  - Write `src/lib/services/decision-impact-service.ts` (deterministic computation)
+  - Write `src/lib/services/decision-impact-service.test.ts` (unit tests)
+  - Wire impact fields into the approvals feed response (extend `UnifiedApprovalItem`)
+  remaining_steps:
+  - Run `bunx tsc --noEmit`, `eslint`, and `bun test`; report real numbers
+  - "Final commit (check `ls drizzle/*.sql | sort -V | tail` only if a migration was\
+    \ added \u2014 none planned; read-time computation is sufficient)"
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker started (resume=1)
+- at: '2026-07-18T04:11:20.730923+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - src/app/api/veri-chat/approvals/route.ts
+  - PROGRESS.md
+  - src/lib/services/decision-impact-service.test.ts
+  - src/lib/services/decision-impact-service.ts
+  completed_steps:
+  - Read `src/app/api/veri-chat/approvals/route.ts` in full (5-source read-only aggregator,
+    `UnifiedApprovalItem`)
+  - 'Read source services (read-only): `erp-payment-entries-service.ts` (amount +
+    threshold pattern), `risk-register-service.ts`, `construction-change-order-service.ts`
+    (costImpact/scheduleImpactDays), `approval-workflow-service.ts`, `erp-procurement-workflow-service.ts`,
+    `erp-selling-service.ts` (grandTotal)'
+  - "Found the existing deterministic risk concept to reuse \u2014 `src/lib/risk-classification.ts`\
+    \ (`classifyRisk` + INR thresholds) + `src/lib/high-impact-action-detector.ts`\
+    \ (`HighImpactCategory`). NOT inventing a parallel risk concept."
+  - Confirmed no conflicting active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`; registered
+    own claim
+  - Write `src/lib/services/decision-impact-service.ts` (deterministic computation)
+  - Write `src/lib/services/decision-impact-service.test.ts` (unit tests)
+  - Wire impact fields into the approvals feed response (extend `UnifiedApprovalItem`)
+  remaining_steps:
+  - Run `bunx tsc --noEmit`, `eslint`, and `bun test`; report real numbers
+  - "Final commit (check `ls drizzle/*.sql | sort -V | tail` only if a migration was\
+    \ added \u2014 none planned; read-time computation is sufficient)"
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: periodic checkpoint
+- at: '2026-07-18T04:11:41.563057+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '8a451655 REVIEW-FRAMEWORK-WAVE4 Track 1b item 3: deterministic decision impact
+    analysis on unified approvals feed'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  note: worker finished, no changes to commit
+execution_seconds: 611
+restart_count: 3
+token_usage:
+  input_tokens: 96
+  cache_creation_input_tokens: 70719
+  cache_read_input_tokens: 3337016
+  output_tokens: 19552
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 70719
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 499
+    cache_read_input_tokens: 93489
+    cache_creation_input_tokens: 768
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 768
+    type: message
+  speed: standard
+master_synced_at: '2026-07-17T20:00:02.567024+00:00'

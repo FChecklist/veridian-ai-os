@@ -1,0 +1,29 @@
+## OBJECTIVE
+Execute Phase 3 of the Terminology Standardization plan for real: wire the terminology guardrail into compliance-tracker's CI as a real coverage-gate job. Instruction INS-20260724-133817-0a6d, plan entry ai-os/TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml:phase_3_ci_enforcement_wiring.
+
+## SCOPE
+1. Port ai-os/TERMINOLOGY_GUARDRAIL_2026-07-24.py's scanning logic to a real Node/TS script scripts/check-terminology-guardrail.mjs in compliance-tracker, matching the toolchain of the existing coverage-gate jobs (bun/node, not python3).
+2. Add a `terminology-guardrail-check` job to compliance-tracker/.github/workflows/ci.yml, structurally identical to the existing guardrail-presence/asset-registry-coverage/metadata-index-coverage jobs (lines 57-100): checkout, run the check script, fail the build only on findings not already listed in a new exemption file ai-os/registry/terminology-guardrail-exemptions.yaml (same shape as ai-os/registry/asset-registry-coverage.yaml's exemption entries).
+3. Scope the CI run to the PR's changed files only (git diff --name-only against the base branch), not a full-repo scan -- new/modified lines must be clean; legacy findings from Phase 2's baseline stay exempted until Phase 4 migrates them.
+4. Populate the exemption file with Phase 2's real known findings so the gate does not immediately fail on pre-existing debt.
+5. Update the phase plan marking phase 3 status done with real evidence.
+
+## KNOWN_CONTEXT
+- compliance-tracker/.github/workflows/ci.yml confirmed to exist with the exact job structure this phase ports (verified this session).
+- Owner directive: 100% real live implementation, no more shallow planning-only work, keep driving every phase to completion without stopping.
+- Standing rules: crontab changes need OWNER_DECISIONS_NEEDED_2026-07-23.yaml approval (Owner's blanket approval covers it); registry writes come from scripts not hand-authored prose; verify real PR/merge state via `gh pr view`, never trust task.yaml's self-report alone.
+
+## SUCCESS_CRITERIA
+- scripts/check-terminology-guardrail.mjs exists in compliance-tracker and runs: `node scripts/check-terminology-guardrail.mjs --diff-only` exits 0 on a clean diff.
+- compliance-tracker/.github/workflows/ci.yml has the new `terminology-guardrail-check` job, structurally matching the other 3 coverage-gate jobs.
+- A real test PR (or a simulated diff) demonstrates the job fails on a genuinely new hardcoded-example violation and passes when none exist.
+- Phase 3 shows completed status with this real evidence in the phase plan file.
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on compliance-tracker for the CI/script changes, PR on claude-control for the phase-plan update), the real exemption file, and a final checkpoint stating what Phase 3 delivered.
+
+## CONSTRAINTS
+Limit this task's real work to Phase 3 (CI enforcement wiring) exclusively; Phases 4 and 5 remain future work for later dispatches.
+
+## COMPLEXITY_TIER
+integrative

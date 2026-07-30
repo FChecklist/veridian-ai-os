@@ -1,0 +1,25 @@
+## OBJECTIVE
+Fix a real, correct AUDIT: REJECT finding on claude-control PR #78 (branch for task-20260726-071221-close-worker-false-self-report-gap-in-ph, the fix for the phase_4/PR#562 false-self-report incident). The review is genuine and correct: confirm_merge() collapses "gh confirmed not merged" and "gh call itself failed" into the same False result, and the new --audit-plans path treats any False as a bypass violation, auto-reverting and auto-committing+pushing directly to origin/master on an unattended cron sweep. A transient gh auth/rate-limit/network failure would therefore cause a false revert of a genuinely-merged, already-done phase, permanently baking a factually false "no real MERGED PR" incident into master history -- worse than the bug this PR was meant to fix.
+
+## KNOWN_CONTEXT
+Read scripts/backfill_phase_self_report.py's confirm_merge() and find_first_unverified_done_block() (added by PR #78) in full before changing anything. The real reject reasoning, verbatim from the review: "confirm_merge() -- reused unchanged from the existing best-effort backfill path -- collapses 'confirmed NOT merged' and 'could not verify' (gh returncode != 0 from auth failure, rate limiting, transient network error, or a bad target_repo value) into the same False result, and find_first_unverified_done_block() treats any False as a violation... This is inconsistent with the diff's own handling of other verification failures (blame_line/parent-lookup failures correctly skip-with-warning rather than reverting), which shows the gh-failure path was simply missed rather than a deliberate tradeoff." Two further real, secondary gaps the same review flagged (fix these too, in the same pass, don't leave them for a third round): (1) find_first_unverified_done_block() silently skips (no incident, exit 0) any phase whose block has no target_repo field at all -- ai-os/AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml is a real existing file in this repo with zero target_repo fields on any phase, so today's fix provides no real coverage there despite claiming to close the general gap; (2) audit_and_correct_plan_file() silently breaks (stderr warning only, no incident recorded, exit 0, result['changed'] stays False) when blame_line()/parent-revision lookup fails -- including the case of a worker fabricating an entirely new phase block from scratch with no prior state to revert to, which is arguably the most direct reproduction of the original incident this PR is meant to catch.
+
+## SCOPE
+1. Fix confirm_merge() (or its caller) to distinguish a definitive "gh confirmed this PR/branch is NOT merged" result from an ambiguous "gh call failed / could not determine" result (non-zero returncode, JSON parse failure, network error, missing/invalid target_repo). Only the definitive case should count as a bypass violation eligible for revert; the ambiguous case must skip-with-warning (same pattern already used correctly for blame_line/parent-lookup failures in this same file) and must NOT auto-commit/push anything.
+2. Add real coverage for phases with no target_repo field: at minimum, log a real, visible warning/incident noting "cannot independently verify -- no target_repo configured" rather than silently treating absence as "nothing to check" -- don't claim general coverage the code doesn't provide.
+3. Make audit_and_correct_plan_file()'s parent-lookup-failure path (including the from-scratch-fabricated-block case) record a real, visible incident (not just a silent stderr warning) so a human/future audit knows a possible violation was found but could not be auto-corrected.
+4. Extend tests/backfill_phase_self_report_test.py to cover: (a) a simulated gh-call failure that must NOT trigger a revert, (b) a target_repo-less plan file that must at least be logged/flagged, (c) a from-scratch fabricated phase block (no parent state) that must record a real incident rather than silently no-op.
+
+## SUCCESS_CRITERIA
+- `python3 -m pytest tests/backfill_phase_self_report_test.py -v` exits 0 with the 3 new test cases present and passing.
+- `grep -n "def confirm_merge" -A 30 scripts/backfill_phase_self_report.py` shows the ambiguous-failure case is now handled distinctly from the definitive-not-merged case.
+- `git log --oneline -1` on the branch shows this is pushed to the SAME existing PR #78 branch (do not open a new PR).
+
+## EXPECTED_OUTPUT
+Push the fix directly to the existing PR #78 branch in FChecklist/claude-control (same branch the original task-20260726-071221-close-worker-false-self-report-gap-in-ph task used -- find it via `gh pr view 78 --repo FChecklist/claude-control --json headRefName`). Do not open a new PR or use a different branch name.
+
+## CONSTRAINTS
+Tier1 (docs/scripts only, no auth/schema/migration/payment paths, no .github/workflows/**) -- but given this exact script auto-commits to master unattended, treat correctness here as seriously as a tier2 change even though the risk-tier classifier will likely still call it tier1. Do not merge yourself; this needs a fresh audit pass given the prior reject.
+
+## COMPLEXITY_TIER
+judgment

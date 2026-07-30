@@ -1,0 +1,13 @@
+VERIDIAN Review Framework, REVIEW-FRAMEWORK-WAVE4 Track 1b item 3: close the two related Weight-5-Critical "Decision Support Analysis" gaps -- "Financial Impact Analysis" and "Compliance Impact" -- by adding a DETERMINISTIC (explicitly NOT LLM-based -- this codebase's own software-first-AI-second principle) impact-summary computation to the existing unified approvals feed at src/app/api/veri-chat/approvals/route.ts. A prior session validated this exact plan (registered as a claim, then never implemented) -- follow it precisely, do not redesign from scratch.
+
+Read src/app/api/veri-chat/approvals/route.ts in full first to confirm current shape before adding fields.
+
+SCOPE:
+1. Add deterministic impact-summary fields to the approvals feed response (no new parallel system -- extend the existing route/response shape).
+2. New src/lib/services/decision-impact-service.ts (or similar -- read this repo's existing service-naming conventions first and match them) containing the deterministic computation + its unit tests.
+3. Source real amounts and any existing threshold/risk-register concept by READING (not modifying) erp-payment-entries-service.ts, purchase-requisition/change-order approval services, and any existing risk/compliance-register or vendor-risk service under src/lib/services -- reuse what exists, do not invent a parallel risk concept.
+4. Migration only if read-time computation proves genuinely insufficient. If you add one, check `ls drizzle/*.sql | sort -V | tail` immediately before your final commit to confirm no migration-number collision with work merged since this plan was written.
+
+DO NOT TOUCH: src/lib/supabase/permission-service.ts or any ERP module's route-level permission logic (General Ledger, Accounts Payable, Fixed Assets, Sales Orders, etc.) -- read-only territory for this task, owned by other already-merged/concurrent tracks.
+
+Before finishing: run tsc --noEmit, eslint, and the full test suite (bun test) and report real pass/fail numbers. Maintain PROGRESS.md as instructed below.

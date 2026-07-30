@@ -1,0 +1,35 @@
+## OBJECTIVE
+Close the one remaining real gap from an independent review of PR #102 (claude-control repo, branch chore/backlog-completion-plan-script): the new scripts/execute_backlog_plan.py (added in commit 1a3b030, 438 lines -- the file that actually performs duplicate-collapse writes to real task.yaml, git pushes, PR creation, and systemd service starts once live) has zero automated test coverage of its own orchestration logic. Given this whole fix exists to close an incident caused by untested code silently mutating real task-tracking records, shipping this new file without its own tests would leave exactly that class of gap open. This task is scoped to exactly that, plus one trivial style nit -- nothing else.
+
+## KNOWN_CONTEXT
+Read scripts/execute_backlog_plan.py in full first (git show chore/backlog-completion-plan-script:scripts/execute_backlog_plan.py, or check it out directly -- it is real, committed, git-tracked). It was moved here from a previously-untracked live copy at /opt/veridian/ai-os/execute_backlog_plan.py (now a thin os.execv delegator into this file -- do not touch the delegator, it is correct and already verified). The file's core functions (per the independent review that flagged this gap) are phase1_mark_duplicates(), phase2_mark_already_done(), phase3_route_pending_merges(), phase3b_open_prs_for_substantial_work(), phase4_redispatch(), and main() -- these call into the already-well-tested classify()/apply_verified_collapses()/apply_representative_completion() functions in scripts/plan_backlog_completion.py (same repo), so you do not need to re-test that underlying logic -- only the orchestration/wiring in execute_backlog_plan.py itself (how it loads a plan, dispatches to the right phase, handles wave sequencing/CONCURRENCY_CAP, and writes its own output) is actually untested today.
+
+Separately, the file hardcodes the literal string 'FChecklist' twice (in its gh pr list/create calls) instead of importing the existing GH_OWNER constant already defined and used in scripts/plan_backlog_completion.py, which execute_backlog_plan.py already imports from directly for other purposes -- a trivial drift-risk fix, not a functional bug.
+
+Also for your awareness (no code change needed for this): an earlier commit on this same branch, e570bec, has a commit message claiming "121 tests passing (was 103)" -- the real, independently-verified number at that commit was 103. This is already known and does not need correcting; do not spend time on it.
+
+## SCOPE
+1. Check out the EXISTING branch chore/backlog-completion-plan-script (already pushed to origin, PR #102 open, contains commits b8c65ed/615c42b/deaa553/e570bec/1a3b030) as your real starting point -- fetch it fresh and build on top of it. Push your new commit(s) back to this same branch/PR; do not create a competing branch or PR for this file.
+2. Add real, meaningful test coverage for scripts/execute_backlog_plan.py's own orchestration logic -- at minimum: a test that phase1_mark_duplicates() only touches issues in the correct classification category (reusing the safety invariant already proven in plan_backlog_completion.py's own tests, not re-deriving it from scratch) and a test exercising main()'s phase dispatch/wave-sequencing wiring against a small synthetic plan fixture (do not run this against any real ai-os/tasks/ data -- synthetic fixtures only, matching the existing test file's conventions in this repo).
+3. Replace both hardcoded 'FChecklist' literals in scripts/execute_backlog_plan.py with the existing GH_OWNER constant import from scripts/plan_backlog_completion.py.
+4. Three specific unrelated tracking directories are entirely out of scope for this task -- see CONSTRAINTS below for the exact list and do not read or write inside any of them. That is a different thing entirely from SCOPE item 1's instruction to push commits onto the shared git branch, which remains required.
+5. Do not invoke execute_backlog_plan.py's real write/apply paths against any currently-existing real ai-os/tasks/*/task.yaml record, or push any real git branch/open any real GitHub PR, as part of this task's own execution -- exercise all new tests only against isolated synthetic fixtures.
+
+## SUCCESS_CRITERIA
+- `git log --oneline chore/backlog-completion-plan-script` (after your push) shows a new commit on top of the existing `1a3b030` HEAD.
+- New tests for execute_backlog_plan.py's own orchestration functions exist and pass; the full existing test suite (103 tests as of `1a3b030`) still passes after your changes, re-run fresh.
+- `grep -n "FChecklist" scripts/execute_backlog_plan.py` shows zero remaining hardcoded occurrences (GH_OWNER used instead).
+- `git log` on the three unrelated task directories named in CONSTRAINTS shows no new commits/modifications attributable to this task.
+
+## EXPECTED_OUTPUT
+One additional real commit pushed to the existing branch chore/backlog-completion-plan-script (PR #102 stays the single location for this fix) adding real test coverage for execute_backlog_plan.py and fixing the hardcoded org-name string. Post a short PR comment summarizing what was added, referencing that this closes the test-coverage gap flagged by the prior independent review.
+
+## CONSTRAINTS
+HOLD_FOR_OWNER_SIGNOFF: true
+The marker above means: do not auto-merge regardless of tier/audit verdict; hold for explicit Owner review given this work touches the integrity of real task-tracking records at scale.
+Do not touch ai-os/tasks/task-20260727-041903-fix-escalate-hardcoded-repo-and-stale-br, ai-os/tasks/task-20260727-045626-fix-dedup-routine-collapsing-rca-termina, or ai-os/tasks/task-20260727-054302-continue-dedup-routine-fix--close-3-real's own tracking directories.
+Push to the existing branch chore/backlog-completion-plan-script -- do not create a second, competing branch or PR.
+This task is scoped ONLY to test coverage for execute_backlog_plan.py and the hardcoded-constant fix -- do not modify classify()/build_groups()/apply_verified_collapses() or their existing tests, which already passed independent review.
+
+## COMPLEXITY_TIER
+mechanical

@@ -1,0 +1,25 @@
+## OBJECTIVE
+Verify and land claude-control PR #84 (branch recovered-lifecycle-fix-e6c7049), a recovered commit that was mistakenly deleted earlier this session after a review comment was misread. This commit contains the real fix for two genuine gaps: supervisor-entrypoint.sh's branch-resolution bug (root cause of ≥4 real corrective-PR incidents this session) and the prose-only HOLD_FOR_OWNER_SIGNOFF constraint that had zero real enforcement. It was never actually merged to master -- confirm it is complete, correct, and passes its own tests before this lands for real.
+
+## KNOWN_CONTEXT
+Read the full diff of PR #84 first (`gh pr diff 84 --repo FChecklist/claude-control`). It touches: ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml, scripts/supervisor-entrypoint.sh (371 new lines), scripts/task-gateway.py, scripts/tight_task_validation.py, scripts/veridian-task.py (523 new lines), tests/hold_for_signoff_test.py, tests/veridian_task_branch_resolution_test.py. This was a real, in-progress worker checkpoint commit recovered via `git cat-file`/a direct branch push after being deleted -- it has NOT been reviewed since being recovered, and it is not confirmed whether this checkpoint represents fully finished work or a mid-task snapshot. Do not assume it is correct; verify it as thoroughly as any other real corrective PR this session.
+
+## SCOPE
+1. Run the two new test files (tests/hold_for_signoff_test.py, tests/veridian_task_branch_resolution_test.py) for real and confirm they pass.
+2. Read scripts/supervisor-entrypoint.sh and scripts/veridian-task.py's real diffs in full and confirm the branch-resolution fix (veridian-task.py reads the worker's real current git branch at completion time rather than only trusting task.yaml's creation-time value) and the HOLD_FOR_OWNER_SIGNOFF enforcement (tight_task_validation.py parses the marker into task.yaml; supervisor-entrypoint.sh's auto-merge block checks it and skips merge when true) are both genuinely present and wired correctly, not just described in a docstring.
+3. If anything is incomplete, broken, or missing (this being a recovered mid-task checkpoint, verify rather than assume), fix it for real before this PR is considered done.
+4. If everything is genuinely complete and correct, no further code changes are needed -- just confirm it via the real test run and diff review.
+
+## SUCCESS_CRITERIA
+- `python3 -m pytest tests/hold_for_signoff_test.py tests/veridian_task_branch_resolution_test.py -v` exits 0.
+- `grep -n "HOLD_FOR_OWNER_SIGNOFF" scripts/tight_task_validation.py scripts/supervisor-entrypoint.sh` shows the field read in both the parser and the merge-decision point.
+- `grep -n "rev-parse --abbrev-ref HEAD\|git.*branch" scripts/veridian-task.py` shows the branch field reflects real completion-time state.
+
+## EXPECTED_OUTPUT
+Push any needed fixes directly to the existing PR #84 branch (recovered-lifecycle-fix-e6c7049). Do not open a new PR.
+
+## CONSTRAINTS
+Do not merge yourself; this needs a fresh, thorough audit pass given the unusual recovery circumstance -- explicitly flag in the PR body that this is a recovered commit being verified for the first time, not a routine corrective round.
+
+## COMPLEXITY_TIER
+judgment

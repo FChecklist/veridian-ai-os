@@ -1,0 +1,357 @@
+id: task-20260727-101157-projexa-pivot-table---chart-ui-for-repor
+title: PROJEXA pivot table + chart UI for reports
+status: completed
+repo: projexa
+branch: worker/task-20260727-101157-projexa-pivot-table---chart-ui-for-repor
+workspace: /opt/veridian/ai-os/tasks/task-20260727-101157-projexa-pivot-table---chart-ui-for-repor/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-101157-projexa-pivot-table---chart-ui-for-repor
+service: veridian-worker@task-20260727-101157-projexa-pivot-table---chart-ui-for-repor.service
+created_at: '2026-07-27T10:11:58.409122+00:00'
+last_checkpoint_at: '2026-07-27T10:38:54.866480+00:00'
+completed_steps: &id002
+- 'Tech decision doc: `ai-os/PIVOT_CHART_TECH_DECISION_2026-07-27.md` -- adopt PROJEXA''s
+  own (already-present, previously-dead) `src/components/ui/chart.tsx`; document that
+  `report_definitions` has no formal param schema'
+- '`src/components/reports/pivot-utils.ts` -- pure client-side group-by/sum/avg/count,
+  unit tested (`pivot-utils.test.ts`, 9 tests passing)'
+- '`src/components/reports/PivotTable.tsx` -- row/column/value/aggregation UI'
+- '`src/components/reports/ReportChart.tsx` -- bar/line/pie via adopted chart.tsx
+  wrapper'
+- '`src/components/reports/ReportResultView.tsx` -- Table/Pivot/Chart tab switcher'
+- '`src/components/reports/ReportFilters.tsx` -- date range + generic key/value param
+  controls, re-triggers the report API call'
+- Wired into `ReportCatalogRunner.tsx` (report_definitions catalog runner, all domains)
+- Wired into `ReportOutput.tsx` array-of-objects branch (fixed 17-report project list)
+- Chart palette validated via dataviz skill; fixed pre-existing unvalidated `--chart-1..5`
+  tokens + added missing dark-mode overrides in `globals.css`
+- '`npx tsc --noEmit` clean'
+- '`bun test src` passing (21 tests, 0 fail)'
+- Manual proof against 3 real report_definitions (Sales/demo_co_9_rise, Construction+Interior
+  Design/Meridian Construction Group E2E org) -- called executeReportDefinition()
+  directly against real production DB, fed real results into computePivot/computeChartData,
+  correct aggregates. See tech decision doc "Real-data verification" section for why
+  this substituted for a live browser run (`projexa-ai.com/login` currently serves
+  compliance-tracker's login UI, a pre-existing prod routing issue outside this repo;
+  local Supabase unmigrated; vercel CLI needs interactive login).
+- '`e2e/pivot-chart-reports.spec.ts` written (Table/Pivot/Chart tab switch on a real
+  catalog report) -- could not execute against the live site in this sandbox due to
+  the login-routing issue above'
+- Verified zero DB/aggregation logic added to PROJEXA (grep review clean)
+remaining_steps: &id003
+- Run `e2e/pivot-chart-reports.spec.ts` for real once projexa-ai.com's login routing
+  is fixed (not this repo's issue)
+- PR against PROJEXA with audit-verdict comment per AGENTS.md
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T10:12:00.126827+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  - 1d6fc9c Merge remote-tracking branch 'origin/main' into worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d
+  - '0ce522f Worker task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d:
+    automated checkpoint commit'
+  - '1dceb4e Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules (#48)'
+  - '999d049 Findings doc: correct ''Files in this PR'' to match the actually-committed
+    set'
+  - '553dd24 Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules'
+  - '45a5b2e Phase 2 Batch C: real Playwright E2E tests for Finance/Sales/HR + copilot
+    chat testing (#46)'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T10:17:01.348743+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/globals.css
+  - src/components/reports/
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  - 1d6fc9c Merge remote-tracking branch 'origin/main' into worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d
+  - '0ce522f Worker task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d:
+    automated checkpoint commit'
+  - '1dceb4e Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules (#48)'
+  - '999d049 Findings doc: correct ''Files in this PR'' to match the actually-committed
+    set'
+  - '553dd24 Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules'
+  - '45a5b2e Phase 2 Batch C: real Playwright E2E tests for Finance/Sales/HR + copilot
+    chat testing (#46)'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  note: periodic checkpoint
+- at: '2026-07-27T10:22:02.617123+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Tech decision doc: `ai-os/PIVOT_CHART_TECH_DECISION_2026-07-27.md` -- adopt PROJEXA''s
+    own (already-present, previously-dead) `src/components/ui/chart.tsx`; document
+    that `report_definitions` has no formal param schema'
+  - '`src/components/reports/pivot-utils.ts` -- pure client-side group-by/sum/avg/count,
+    unit tested (`pivot-utils.test.ts`, 9 tests passing)'
+  - '`src/components/reports/PivotTable.tsx` -- row/column/value/aggregation UI'
+  - '`src/components/reports/ReportChart.tsx` -- bar/line/pie via adopted chart.tsx
+    wrapper'
+  - '`src/components/reports/ReportResultView.tsx` -- Table/Pivot/Chart tab switcher'
+  - '`src/components/reports/ReportFilters.tsx` -- date range + generic key/value
+    param controls, re-triggers the report API call'
+  - Wired into `ReportCatalogRunner.tsx` (report_definitions catalog runner, all domains)
+  - Wired into `ReportOutput.tsx` array-of-objects branch (fixed 17-report project
+    list)
+  - Chart palette validated via dataviz skill; fixed pre-existing unvalidated `--chart-1..5`
+    tokens + added missing dark-mode overrides in `globals.css`
+  - '`npx tsc --noEmit` clean'
+  - '`bun test src` passing (21 tests, 0 fail)'
+  remaining_steps:
+  - Manual/E2E proof against 3 real report_definitions from different domains (Sales,
+    Construction, Interior Design)
+  - Playwright E2E test covering pivot + chart view switch on a real report
+  - Verify zero DB/aggregation logic added to PROJEXA (grep review)
+  - Visual verification via dev server + browser
+  - PR against PROJEXA with audit-verdict comment per AGENTS.md
+  recent_commits:
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  - 1d6fc9c Merge remote-tracking branch 'origin/main' into worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d
+  - '0ce522f Worker task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d:
+    automated checkpoint commit'
+  - '1dceb4e Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules (#48)'
+  - '999d049 Findings doc: correct ''Files in this PR'' to match the actually-committed
+    set'
+  - '553dd24 Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules'
+  - '45a5b2e Phase 2 Batch C: real Playwright E2E tests for Finance/Sales/HR + copilot
+    chat testing (#46)'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  note: periodic checkpoint
+- at: '2026-07-27T10:27:03.973881+00:00'
+  status: in_progress
+  files_modified:
+  - manual-verify-login-fail.png
+  - manual-verify.mjs
+  - playwright.local.config.ts
+  completed_steps:
+  - 'Tech decision doc: `ai-os/PIVOT_CHART_TECH_DECISION_2026-07-27.md` -- adopt PROJEXA''s
+    own (already-present, previously-dead) `src/components/ui/chart.tsx`; document
+    that `report_definitions` has no formal param schema'
+  - '`src/components/reports/pivot-utils.ts` -- pure client-side group-by/sum/avg/count,
+    unit tested (`pivot-utils.test.ts`, 9 tests passing)'
+  - '`src/components/reports/PivotTable.tsx` -- row/column/value/aggregation UI'
+  - '`src/components/reports/ReportChart.tsx` -- bar/line/pie via adopted chart.tsx
+    wrapper'
+  - '`src/components/reports/ReportResultView.tsx` -- Table/Pivot/Chart tab switcher'
+  - '`src/components/reports/ReportFilters.tsx` -- date range + generic key/value
+    param controls, re-triggers the report API call'
+  - Wired into `ReportCatalogRunner.tsx` (report_definitions catalog runner, all domains)
+  - Wired into `ReportOutput.tsx` array-of-objects branch (fixed 17-report project
+    list)
+  - Chart palette validated via dataviz skill; fixed pre-existing unvalidated `--chart-1..5`
+    tokens + added missing dark-mode overrides in `globals.css`
+  - '`npx tsc --noEmit` clean'
+  - '`bun test src` passing (21 tests, 0 fail)'
+  remaining_steps:
+  - Manual/E2E proof against 3 real report_definitions from different domains (Sales,
+    Construction, Interior Design)
+  - Playwright E2E test covering pivot + chart view switch on a real report
+  - Verify zero DB/aggregation logic added to PROJEXA (grep review)
+  - Visual verification via dev server + browser
+  - PR against PROJEXA with audit-verdict comment per AGENTS.md
+  recent_commits:
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  - 1d6fc9c Merge remote-tracking branch 'origin/main' into worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d
+  - '0ce522f Worker task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d:
+    automated checkpoint commit'
+  - '1dceb4e Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules (#48)'
+  - '999d049 Findings doc: correct ''Files in this PR'' to match the actually-committed
+    set'
+  - '553dd24 Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules'
+  - '45a5b2e Phase 2 Batch C: real Playwright E2E tests for Finance/Sales/HR + copilot
+    chat testing (#46)'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  note: periodic checkpoint
+- at: '2026-07-27T10:32:06.619754+00:00'
+  status: in_progress
+  files_modified:
+  - manual-verify-login-fail.png
+  - manual-verify.mjs
+  - playwright.local.config.ts
+  completed_steps:
+  - 'Tech decision doc: `ai-os/PIVOT_CHART_TECH_DECISION_2026-07-27.md` -- adopt PROJEXA''s
+    own (already-present, previously-dead) `src/components/ui/chart.tsx`; document
+    that `report_definitions` has no formal param schema'
+  - '`src/components/reports/pivot-utils.ts` -- pure client-side group-by/sum/avg/count,
+    unit tested (`pivot-utils.test.ts`, 9 tests passing)'
+  - '`src/components/reports/PivotTable.tsx` -- row/column/value/aggregation UI'
+  - '`src/components/reports/ReportChart.tsx` -- bar/line/pie via adopted chart.tsx
+    wrapper'
+  - '`src/components/reports/ReportResultView.tsx` -- Table/Pivot/Chart tab switcher'
+  - '`src/components/reports/ReportFilters.tsx` -- date range + generic key/value
+    param controls, re-triggers the report API call'
+  - Wired into `ReportCatalogRunner.tsx` (report_definitions catalog runner, all domains)
+  - Wired into `ReportOutput.tsx` array-of-objects branch (fixed 17-report project
+    list)
+  - Chart palette validated via dataviz skill; fixed pre-existing unvalidated `--chart-1..5`
+    tokens + added missing dark-mode overrides in `globals.css`
+  - '`npx tsc --noEmit` clean'
+  - '`bun test src` passing (21 tests, 0 fail)'
+  remaining_steps:
+  - Manual/E2E proof against 3 real report_definitions from different domains (Sales,
+    Construction, Interior Design)
+  - Playwright E2E test covering pivot + chart view switch on a real report
+  - Verify zero DB/aggregation logic added to PROJEXA (grep review)
+  - Visual verification via dev server + browser
+  - PR against PROJEXA with audit-verdict comment per AGENTS.md
+  recent_commits:
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  - 1d6fc9c Merge remote-tracking branch 'origin/main' into worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d
+  - '0ce522f Worker task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d:
+    automated checkpoint commit'
+  - '1dceb4e Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules (#48)'
+  - '999d049 Findings doc: correct ''Files in this PR'' to match the actually-committed
+    set'
+  - '553dd24 Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules'
+  - '45a5b2e Phase 2 Batch C: real Playwright E2E tests for Finance/Sales/HR + copilot
+    chat testing (#46)'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  note: periodic checkpoint
+- at: '2026-07-27T10:36:38.322989+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Tech decision doc: `ai-os/PIVOT_CHART_TECH_DECISION_2026-07-27.md` -- adopt PROJEXA''s
+    own (already-present, previously-dead) `src/components/ui/chart.tsx`; document
+    that `report_definitions` has no formal param schema'
+  - '`src/components/reports/pivot-utils.ts` -- pure client-side group-by/sum/avg/count,
+    unit tested (`pivot-utils.test.ts`, 9 tests passing)'
+  - '`src/components/reports/PivotTable.tsx` -- row/column/value/aggregation UI'
+  - '`src/components/reports/ReportChart.tsx` -- bar/line/pie via adopted chart.tsx
+    wrapper'
+  - '`src/components/reports/ReportResultView.tsx` -- Table/Pivot/Chart tab switcher'
+  - '`src/components/reports/ReportFilters.tsx` -- date range + generic key/value
+    param controls, re-triggers the report API call'
+  - Wired into `ReportCatalogRunner.tsx` (report_definitions catalog runner, all domains)
+  - Wired into `ReportOutput.tsx` array-of-objects branch (fixed 17-report project
+    list)
+  - Chart palette validated via dataviz skill; fixed pre-existing unvalidated `--chart-1..5`
+    tokens + added missing dark-mode overrides in `globals.css`
+  - '`npx tsc --noEmit` clean'
+  - '`bun test src` passing (21 tests, 0 fail)'
+  - Manual proof against 3 real report_definitions (Sales/demo_co_9_rise, Construction+Interior
+    Design/Meridian Construction Group E2E org) -- called executeReportDefinition()
+    directly against real production DB, fed real results into computePivot/computeChartData,
+    correct aggregates. See tech decision doc "Real-data verification" section for
+    why this substituted for a live browser run (`projexa-ai.com/login` currently
+    serves compliance-tracker's login UI, a pre-existing prod routing issue outside
+    this repo; local Supabase unmigrated; vercel CLI needs interactive login).
+  - '`e2e/pivot-chart-reports.spec.ts` written (Table/Pivot/Chart tab switch on a
+    real catalog report) -- could not execute against the live site in this sandbox
+    due to the login-routing issue above'
+  - Verified zero DB/aggregation logic added to PROJEXA (grep review clean)
+  remaining_steps:
+  - Run `e2e/pivot-chart-reports.spec.ts` for real once projexa-ai.com's login routing
+    is fixed (not this repo's issue)
+  - PR against PROJEXA with audit-verdict comment per AGENTS.md
+  recent_commits:
+  - 8cf5cab Add pivot/chart E2E test; document real-data verification + a discovered
+    prod login-routing issue
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  - 1d6fc9c Merge remote-tracking branch 'origin/main' into worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d
+  - '0ce522f Worker task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d:
+    automated checkpoint commit'
+  - '1dceb4e Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules (#48)'
+  - '999d049 Findings doc: correct ''Files in this PR'' to match the actually-committed
+    set'
+  - '553dd24 Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules'
+  - '45a5b2e Phase 2 Batch C: real Playwright E2E tests for Finance/Sales/HR + copilot
+    chat testing (#46)'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  note: quality gates passed, pushed branch worker/task-20260727-101157-projexa-pivot-table---chart-ui-for-repor,
+    awaiting review
+- at: '2026-07-27T10:38:54.866480+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 8cf5cab Add pivot/chart E2E test; document real-data verification + a discovered
+    prod login-routing issue
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  - 1d6fc9c Merge remote-tracking branch 'origin/main' into worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d
+  - '0ce522f Worker task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d:
+    automated checkpoint commit'
+  - '1dceb4e Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules (#48)'
+  - '999d049 Findings doc: correct ''Files in this PR'' to match the actually-committed
+    set'
+  - '553dd24 Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules'
+  - '45a5b2e Phase 2 Batch C: real Playwright E2E tests for Finance/Sales/HR + copilot
+    chat testing (#46)'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/projexa/pull/51'
+execution_seconds: 1441
+restart_count: 0
+token_usage:
+  input_tokens: 296
+  cache_creation_input_tokens: 201501
+  cache_read_input_tokens: 22536684
+  output_tokens: 87429
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 201501
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 539
+    cache_read_input_tokens: 224132
+    cache_creation_input_tokens: 1053
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1053
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:25.930305+00:00'

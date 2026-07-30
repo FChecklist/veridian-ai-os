@@ -1,0 +1,108 @@
+TASK ID: AIROUTER-01-PHASE2-SOFTWARE-TEAM
+MODULE: compliance-tracker (VERIDIAN AI OS)
+OBJECTIVE: Complete the Software Team L0-L5 execution hierarchy on top of the already-merged Mother Router (PR #433, src/lib/ai-router/mother-router.ts), plus the per-task Instruction Contract / Execution Report JSON contract system and the capability-based routing matrix, as ONE coherent system. Owner directive verbatim: "these are one single system. complete them now... implement it, test it. than ask GLM5.2 to audit. than fill the gaps and test it again. than ask GLM5.2 to audit it again. than fill the gaps and test it again. than ask GLM5.2 to audit it again. than fill the gaps and test it again. Have complete documentation. We will use this setup for Software Development. I want most work to be given to low and middle cost models."
+
+READ FIRST (do not skip, do not duplicate what already exists):
+1. ai-os/boss/ACTIVE-CLAIMS.yaml -- register your own claim before starting real work, per this repo's own protocol.
+2. ai-os/CONSTITUTION.yaml section 11 ai_orchestra_tiers -- the existing TIER-1..TIER-4 model-escalation ladder this work extends, not replaces.
+3. src/lib/ai-router/mother-router.ts (PR #433, merged 2026-07-18) -- resolveModel(scope, context), 60s-TTL hot-reload cache, invalidateMotherRouterCache(), rollbackPolicy(). This currently only DECIDES which model handles a scope -- it does NOT dispatch/orchestrate actual work. Your job extends it with real execution capability, you do not rewrite it.
+4. ai_model_registry / ai_routing_policies / ai_routing_audit_log tables (same PR) -- the registry/policy/audit-log schema already exists and is seeded with real models.
+5. src/lib/model-tier-eligibility.ts, src/lib/ai-team/roster.ts, src/lib/llm-client.ts, dispatch-repo.ts, ai-workforce-agent.mjs -- the existing AI Dev Team dispatch mechanism (mechanical/integrative/judgment tiers). Determine whether the new L0-L5 ladder below is a genuinely new mechanism or a reframing/extension of this one -- do not build a silently-duplicate second dispatch system. Document your decision either way in the PR description.
+6. PROGRESS_AIROUTER01.md (from PR #433) for the existing design rationale.
+
+WHAT TO BUILD (three parts, one integrated system):
+
+PART A -- Software Team L0-L5 execution ladder (extends Mother Router with real orchestration):
+| Level | Role | Model (default, NOT hardcoded -- must resolve via ai_model_registry/ai_routing_policies) | Primary Objective | Authority | Not Allowed |
+|---|---|---|---|---|---|
+| L0 | Software Engine | No AI | Deterministic compile/build/CI-CD/test/migration/automation | None | Reasoning |
+| L1 | Code Worker | GPT-OSS-20B | One narrow deliverable (one API/SQL/UI/test) per dispatch | Execute only | Architecture |
+| L2 | Sequential Worker | GPT-OSS-20B | Execute an approved multi-step workflow (API+SQL+tests+docs) sequentially, validate every step, rollback current step on failure | Execute only | Design decisions |
+| L3 | Feature Worker | GPT-OSS-20B / optionally 120B | Implement an approved feature across multiple files (incl. refactor/bug-fix), compile+test validation | Implementation only | Architecture changes |
+| L4 | Coding Supervisor | GLM 5.2 / Claude Code CLI | Architecture, code review, debugging, optimization; analyze->plan->review | Technical decisions | Company decisions |
+| L5 | Mother Router | GLM 5.2 / Claude Code CLI | Decompose->assign->monitor, task allocation, continuous KPI review, reallocate on issues | Full authority | Routine coding itself |
+
+Each level's dispatch must carry: Input, Preconditions, Process, Output, Validation, Success Criteria, Failure Criteria, Retry Policy (1 retry for L1-L3, as-needed for L4, continuous for L5), Escalation Rules (missing input or confidence <95% for L1-L3; business conflict for L4; none, full authority, for L5), Documentation Requirements, Evidence Required, Handover Requirements -- this is the Owner's own "Universal Tightened Instruction Template," apply it verbatim to every level's dispatch contract:
+
+"All instructions shall be narrow, tightly structured, deterministic, with clearly defined Input, Preconditions, Process, Output, Validation, Success Criteria, Failure Criteria, Retry Policy, Escalation Rules, Documentation Requirements, Evidence Required, and Handover Requirements. The AI agent shall not make assumptions, shall not skip steps, shall not invent information, shall not silently fail, and shall immediately escalate if any mandatory input is missing or confidence is below the required threshold."
+
+PART B -- Instruction Contract (Input) / Execution Report (Output) JSON schema + task register:
+Every task dispatched through this system carries a matched pair of JSON documents, reusable via a task register (schema fixed, variables change per task):
+- Instruction Contract (Input): sent by Mother Router (L5) or a Supervisor (L4) to a worker (L1-L3). Must be genuinely PRE-execution -- objective, preconditions, inputs, process/steps, constraints, expected output format, validation/acceptance criteria, retry policy, escalation rule. Do NOT reuse the Owner's 4 example payloads below as this shape -- they are POST-execution results (see next section).
+- Execution Report (Output): returned by the worker after running. The Owner supplied 4 example payloads for this shape at increasing step-count (verbatim, use these exactly as the Execution Report schema):
+
+Single Step example:
+{"task_id":"TASK-001","task_type":"Single Step","objective":"Generate User Login API","status":"PASS","overall_confidence":99,"completion":{"completed":1,"expected":1,"percentage":100},"steps":[{"step_no":1,"name":"Generate API","status":"PASS","confidence":99,"retry_count":0,"validation":"PASS"}],"missing":[],"warnings":[],"errors":[],"escalation":{"required":false,"reason":""},"execution_summary":{"duration_seconds":8,"tokens_used":812,"files_created":1}}
+
+Two Step example:
+{"task_id":"TASK-002","task_type":"Two Step","objective":"Generate API and Unit Tests","status":"PASS","overall_confidence":98,"completion":{"completed":2,"expected":2,"percentage":100},"steps":[{"step_no":1,"name":"Generate API","status":"PASS","confidence":99,"retry_count":0,"validation":"PASS"},{"step_no":2,"name":"Generate Unit Tests","status":"PASS","confidence":98,"retry_count":0,"validation":"PASS"}],"missing":[],"warnings":[],"errors":[],"escalation":{"required":false,"reason":""},"execution_summary":{"duration_seconds":16,"tokens_used":1680,"files_created":2}}
+
+Three Step example:
+{"task_id":"TASK-003","task_type":"Three Step","objective":"Generate API, Tests and Documentation","status":"PASS","overall_confidence":97,"completion":{"completed":3,"expected":3,"percentage":100},"steps":[{"step_no":1,"name":"Generate API","status":"PASS","confidence":99,"retry_count":0,"validation":"PASS"},{"step_no":2,"name":"Generate Tests","status":"PASS","confidence":98,"retry_count":0,"validation":"PASS"},{"step_no":3,"name":"Generate Documentation","status":"PASS","confidence":96,"retry_count":1,"validation":"PASS"}],"missing":[],"warnings":["Documentation regenerated after validation."],"errors":[],"escalation":{"required":false,"reason":""},"execution_summary":{"duration_seconds":31,"tokens_used":2850,"files_created":3}}
+
+Multi Step example:
+{"task_id":"TASK-004","task_type":"Multi Step","objective":"Implement Complete User Management Module","status":"PASS","overall_confidence":97,"completion":{"completed":8,"expected":8,"percentage":100},"steps":[{"step_no":1,"name":"Generate Database Schema","status":"PASS","confidence":99,"retry_count":0,"validation":"PASS"},{"step_no":2,"name":"Generate Models","status":"PASS","confidence":99,"retry_count":0,"validation":"PASS"},{"step_no":3,"name":"Generate APIs","status":"PASS","confidence":98,"retry_count":0,"validation":"PASS"},{"step_no":4,"name":"Generate Frontend","status":"PASS","confidence":97,"retry_count":1,"validation":"PASS"},{"step_no":5,"name":"Generate Unit Tests","status":"PASS","confidence":98,"retry_count":0,"validation":"PASS"},{"step_no":6,"name":"Run Validation","status":"PASS","confidence":98,"retry_count":0,"validation":"PASS"},{"step_no":7,"name":"Generate Documentation","status":"PASS","confidence":97,"retry_count":0,"validation":"PASS"},{"step_no":8,"name":"Final Quality Check","status":"PASS","confidence":97,"retry_count":0,"validation":"PASS"}],"missing":[],"warnings":["Frontend required one retry before validation passed."],"errors":[],"escalation":{"required":false,"reason":""},"execution_summary":{"duration_seconds":124,"tokens_used":11480,"files_created":18,"files_modified":9,"tests_passed":42,"tests_failed":0}}
+
+Build a task register (new DB table or JSON-schema module, your judgment on which fits this codebase better -- document the choice) holding both contract shapes so they are reused per-task with only variables changing. This is genuinely new -- do not confuse with ai_routing_audit_log (that logs routing DECISIONS, this is the actual task input/output contract).
+
+PART C -- Capability-based routing matrix (seed data, NOT hardcoded):
+Seed ai_routing_policies / ai_model_registry (or extend if the shape doesn't fit -- your judgment, document it) with this Software Development Task Routing Matrix as default policy data. This must be swappable via the existing Mother Router hot-reload, not a hardcoded switch statement in application code:
+Single-file/mechanical tasks (read one file, explain one function, modify/write one function, fix one syntax/compiler/lint issue, rename one variable/function, add comments, generate one SQL query/API endpoint/REST controller/service class/repository class/model/DTO/schema/validation class/unit test/integration test, generate mock data, convert JSON<->XML or CSV<->JSON, generate docs for one file, update README section, analyze build logs, validate JSON/YAML/config, monitor CI/CD output, compare two files, generate regex, generate simple bash/python/typescript utility) -> GPT-OSS-20B.
+Multi-file/integrative implementation tasks (multi-file bug fix, multi-file feature implementation, implement approved design, CRUD/auth/authz/API-layer/repository-layer/service-layer/business-logic/background-worker/queue-processing implementation, API/payment-gateway/email/SMS integration, notification module, refactor approved module, repo-wide search & replace, medium-complexity debugging, test failure investigation, merge approved code, code review against checklist, dependency upgrade, performance profiling of known scope) -> GPT-OSS-120B.
+Architecture/design/analysis tasks (architecture design/review, database architecture/normalization, API architecture, system design, module decomposition, repository analysis, cross-module refactoring strategy, security architecture review, threat analysis, performance optimization strategy, scalability design, caching strategy, event-driven architecture, microservice design, design pattern selection, technology evaluation, root cause analysis, technical spec writing, repo health audit, engineering risk assessment) -> DeepSeek V4 Pro.
+Planning/governance/oversight tasks (project/sprint planning, task breakdown/assignment, multi-agent coordination, repo management, branch strategy, merge approval, PR review, release planning/management, engineering governance, AI router management, agent governance, worker supervision, conflict resolution, cross-team coordination, final technical approval, production deployment approval, executive engineering decisions, Mother Router control, complete project oversight) -> GLM 5.2 / Claude Code CLI.
+
+COST BIAS (Owner's explicit priority): most real work must land on GPT-OSS-20B/120B and DeepSeek V4 Pro (low/mid cost) so the system runs fast and cheap; GLM 5.2 / Claude Code CLI is reserved for planning, supervision, final approval, and audit -- not routine execution. Verify your seeded policy data actually reflects this weighting (e.g. spot-check that L1-L3 dispatch resolves to the low/mid tiers by default, not GLM-5.2), don't just assert it.
+
+BUILD-TEST-AUDIT LOOP (mandatory sequence, do not skip or compress):
+1. Implement Parts A+B+C.
+2. Test: bunx tsc --noEmit, bun run lint, bun test, bun run build all clean.
+3. GLM-5.2 audit round 1: call GLM-5.2 directly via the OpenRouter API (OPENROUTER_API_KEY is in /opt/veridian/shared/.env) with the real diff/implementation and ask it to review for correctness, completeness against this prompt's DONE CRITERIA, and gaps -- not a self-review by the same model that wrote the code. Save its findings verbatim into ai-os/AIROUTER_SOFTWARE_TEAM_AUDIT_LOG.md (append, do not overwrite).
+4. Fix every real gap GLM-5.2 found. Re-run step 2's tests.
+5. GLM-5.2 audit round 2 (same mechanism), append findings to the same log.
+6. Fix every real gap found. Re-run tests.
+7. GLM-5.2 audit round 3 (same mechanism), append findings to the same log.
+8. Fix every real gap found. Re-run tests.
+9. If GLM-5.2 is unreachable (OpenRouter quota/outage) at any round, do not silently skip it or fake a passing result -- log the real failure in the audit log, retry once, and if still unreachable, note it plainly as an unresolved round in the PR description rather than claiming 3 rounds happened when they didn't.
+
+DOCUMENTATION (mandatory, synced, not just this task's PR description):
+- ai-os/CONSTITUTION.yaml: extend section 11 (ai_orchestra_tiers) or add a new section documenting the L0-L5 Software Team ladder, the Instruction Contract/Execution Report schema, and the routing matrix as the source of truth -- reference the router, never hardcode a model name that could drift (same discipline the constitution already states for the existing tier ladder).
+- CLAUDE.md / AGENTS.md: add pointers to the new constitution section, same pattern as existing "Read Before Starting Work" pointers.
+- A dedicated ai-os/SOFTWARE_TEAM.md or similar explaining the whole system in plain language (mirror ai-os/BRAIN.md's style), including the 3-round audit log's final findings summary and any explicitly-disclosed gaps that remain after round 3 (do not claim 100% if something genuinely couldn't be closed -- name it).
+
+OUT OF SCOPE: Tables 2-4 (End User Work Management, Sales & Marketing, Customer Success) from the same Owner spec -- Software Development (Table 1) only, this task. Do not touch orchestra-model-resolver.ts/roster.ts/model-tier-eligibility.ts/llm-client.ts's existing logic -- extend/call into them, same discipline PR #433 already established. Do not wire a live payment/production deployment action.
+
+CONSTRAINTS:
+- Runs entirely as this server-side worker task -- CLAUDE_CODE_OAUTH_TOKEN only, never ANTHROPIC_API_KEY (that key is disabled per Owner directive, do not re-enable it).
+- Register ai-os/boss/ACTIVE-CLAIMS.yaml claim before starting real work.
+- Commit and push incrementally, not just at the end. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- This touches schema/architecture (tier2 per this repo's tiered trust model) -- the supervisor will hold it for Owner sign-off regardless of audit verdict, do not attempt to self-merge.
+- No hardcoded model strings inside router/dispatch logic -- everything must resolve through the registry/policy layer.
+
+DONE CRITERIA:
+- Parts A, B, C implemented and wired to the existing Mother Router (extends, not duplicates).
+- tsc/lint/test/build all clean, evidence posted in the PR.
+- Exactly 3 real GLM-5.2 audit rounds completed (or honestly disclosed as fewer if OpenRouter was unreachable), each round's real findings and the fixes applied logged in ai-os/AIROUTER_SOFTWARE_TEAM_AUDIT_LOG.md.
+- Documentation written and cross-referenced per the Documentation section above.
+- ACTIVE-CLAIMS.yaml claim updated with completed_at + PR number.
+- PR opened against main, not self-merged.
+
+=== NEW FOLLOW-UP INSTRUCTION (appended 2026-07-19T14:32:53Z, supersedes the original task above which is DONE -- do only what follows now) ===
+
+TASK ID: REBASE-PR483-FOR-MERGE
+MODULE: compliance-tracker
+OBJECTIVE: Owner has explicitly authorized merging PR #483 (AIROUTER-01 Phase 2: Software Team L0-L5). It currently cannot merge -- GitHub reports "the merge commit cannot be cleanly created" (real conflicts against current main, which has moved significantly since this branch was created). Resolve this for real and get it merged.
+
+STEPS:
+1. In this worktree (already on branch worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5), fetch origin and merge origin/main into this branch (git merge origin/main, not rebase -- rebase would rewrite already-pushed history and complicate the existing open PR).
+2. Resolve every real conflict by understanding BOTH sides' intent -- do not blindly take "ours" or "theirs". Read each conflicting file's context before resolving. Pay particular attention to: src/lib/db/schema.ts (multiple other PRs merged concurrently may have added tables/columns near where this PR did), drizzle/ migration numbering (if another PR already used the same migration number this PR chose, renumber THIS branch's new migrations to the next real free number after the current tip, do not touch any other migration file), src/lib/ai-router/mother-router.ts, AppSidebar.tsx or any shared nav/layout file (established precedent in this repo: keep every session's own nav section when multiple PRs each add one).
+3. After resolving conflicts, run: bunx tsc --noEmit, bun run lint, bun test, bun run build. Fix anything the merge broke for real (not just whatever makes the checker pass) before proceeding.
+4. Commit the merge resolution and push to the SAME branch (worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5) -- do not create a new branch or new PR, this must update the EXISTING PR #483.
+5. Confirm via `gh pr view 483 --repo FChecklist/compliance-tracker --json mergeStateStatus` that it now reports something other than DIRTY/CONFLICTING.
+6. Once confirmed mergeable and required checks (Lint, Type Check, Build, audit-check, Guardrail Presence Check, Asset Registry Coverage Check, Unit Tests) are green, merge it yourself: `gh pr merge 483 --repo FChecklist/compliance-tracker --merge --delete-branch`. You are explicitly authorized to merge this specific PR (Owner directive, already given) -- this is the one exception to the normal tier2 hold, do not second-guess it.
+7. If audit-check fails specifically because it ran before the merge-commit push landed (a known timing gap in this repo's workflow -- audit-check only validates comments posted before its own run), re-trigger just that job: find its run id via `gh run list --repo FChecklist/compliance-tracker --branch worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5 --workflow "Governance Checks" --limit 1` (or similar) and `gh api repos/FChecklist/compliance-tracker/actions/runs/<id>/rerun-failed-jobs -X POST`, then wait ~30s and recheck.
+8. Update ai-os/boss/ACTIVE-CLAIMS.yaml if this task's own claim entry needs a final note about the merge conflict resolution.
+
+CONSTRAINTS: Do not touch files outside what's needed to resolve the actual conflicts + re-verify. Do not revert or remove any other PR's already-merged work while resolving conflicts -- the goal is to combine both, not choose one side wholesale.
+
+DONE CRITERIA: PR #483 shows state MERGED (verify with gh pr view --json state,mergedAt after your merge attempt, don't just assume the command succeeded).

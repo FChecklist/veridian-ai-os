@@ -1,0 +1,67 @@
+id: task-20260728-034833-adopted-final-re-audit-pr-607
+title: Final re-audit PR 607
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr
+workspace: /opt/veridian/ai-os/tasks/task-20260728-034833-adopted-final-re-audit-pr-607/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-034833-adopted-final-re-audit-pr-607
+service: veridian-supervisor@task-20260728-034833-adopted-final-re-audit-pr-607.service
+created_at: '2026-07-28T03:48:34.630837+00:00'
+last_checkpoint_at: '2026-07-28T03:52:53.579347+00:00'
+completed_steps: &id002
+- Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no live collision found; several
+  older
+- 'Root-caused the bug: `buildProductNodes()` in `src/lib/services/capability-tree-service.ts`'
+- Fixed `buildProductNodes()` to query `erpItems` (org-scoped, isActive) and attach
+  a new
+- Removed the now-dead `genericProjectActions()` helper (only caller was the old
+- Exported `GENERIC_ENTITY_ACTIONS`/`GENERIC_PRODUCT_ACTIONS` (were module-private)
+  so both
+- 'Added regression tests in `capability-tree-service.test.ts` (9 tests total, all
+  passing):'
+- 'Verified:'
+- 'Constraint check: did not touch any cron/systemd `.timer` state (no such files
+  touched at'
+- 'Committed, pushed, opened PR #607 against main:'
+remaining_steps: &id003
+- 'Fresh supervisor audit of PR #607, then merge (not by this session).'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T03:48:34.630837+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'worker/task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr'
+    (https://github.com/FChecklist/compliance-tracker/pull/607) -- registered for
+    real audit, not a fresh worker dispatch
+- at: '2026-07-28T03:52:53.579347+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '5614a9d1 merge: resolve conflicts with current main (keep-both, append-only)'
+  - 'f32c4006 fix: bump terminology-guardrail exemption count for capability-tree-service
+    dated comments'
+  - '64a68087 Merge pull request #608 from FChecklist/feat/boq-line-items-in-v1-list'
+  - '214d3a7d merge: resolve PROGRESS.md conflict with main'
+  - 2ecc89ab Merge remote-tracking branch 'origin/main' into feat/boq-line-items-in-v1-list
+  - '31a90755 Merge pull request #605 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - cade1f5d Enrich GET .../work-progress/activities with categories (PROJEXA WPR
+    needs category names)
+  - 1a935132 Enrich GET /api/v1/construction/boq with line items (PROJEXA WPR needs
+    rate/amount)
+  - '2d485e2c Claim scope: enrich GET /api/v1/construction/boq with lineItems for
+    PROJEXA WPR'
+  - '88e3ee3f progress: PR #607 opened, root-cause fix + tests done, awaiting supervisor
+    audit'
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/compliance-tracker/pull/607'
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/607
+master_synced_at: '2026-07-29T21:04:26.334636+00:00'

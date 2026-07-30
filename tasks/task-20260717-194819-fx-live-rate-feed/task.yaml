@@ -1,0 +1,404 @@
+id: task-20260717-194819-fx-live-rate-feed
+title: FX live rate feed
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260717-194819-fx-live-rate-feed
+workspace: /opt/veridian/ai-os/tasks/task-20260717-194819-fx-live-rate-feed/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260717-194819-fx-live-rate-feed
+service: veridian-worker@task-20260717-194819-fx-live-rate-feed.service
+created_at: '2026-07-17T19:48:20.271822+00:00'
+last_checkpoint_at: '2026-07-18T04:37:20.421711+00:00'
+completed_steps: &id002
+- Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+- 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+- 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+- 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+- '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+- '3. erp_exchange_rates.source column: schema.ts + additive migration'
+- 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+- 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+- '6. vercel.json: one once-daily cron line (30 9 * * *)'
+- 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+remaining_steps: &id003
+- None -- task complete. Not yet committed/pushed/PR'd (repo has no
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-17T19:48:20.872551+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker started (resume=0)
+- at: '2026-07-17T19:52:48.638222+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - src/lib/db/schema.ts
+  - PROGRESS.md
+  - drizzle/0224_erp_exchange_rates_source.sql
+  - src/lib/exchange-rate-feed-client.test.ts
+  - src/lib/exchange-rate-feed-client.ts
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  remaining_steps:
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated)
+  - '6. vercel.json: one once-daily cron line'
+  - 'Verify: tsc --noEmit, eslint, bun test -- report real pass/fail numbers'
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-17T19:53:18.949030+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - src/lib/db/schema.ts
+  - PROGRESS.md
+  - drizzle/0224_erp_exchange_rates_source.sql
+  - src/lib/exchange-rate-feed-client.test.ts
+  - src/lib/exchange-rate-feed-client.ts
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  remaining_steps:
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated)
+  - '6. vercel.json: one once-daily cron line'
+  - 'Verify: tsc --noEmit, eslint, bun test -- report real pass/fail numbers'
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker started (resume=1)
+- at: '2026-07-17T19:53:20.979759+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - src/lib/db/schema.ts
+  - PROGRESS.md
+  - drizzle/0224_erp_exchange_rates_source.sql
+  - src/lib/exchange-rate-feed-client.test.ts
+  - src/lib/exchange-rate-feed-client.ts
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  remaining_steps:
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated)
+  - '6. vercel.json: one once-daily cron line'
+  - 'Verify: tsc --noEmit, eslint, bun test -- report real pass/fail numbers'
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-17T19:53:51.516641+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - src/lib/db/schema.ts
+  - PROGRESS.md
+  - drizzle/0224_erp_exchange_rates_source.sql
+  - src/lib/exchange-rate-feed-client.test.ts
+  - src/lib/exchange-rate-feed-client.ts
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  remaining_steps:
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated)
+  - '6. vercel.json: one once-daily cron line'
+  - 'Verify: tsc --noEmit, eslint, bun test -- report real pass/fail numbers'
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker started (resume=1)
+- at: '2026-07-17T19:53:53.484040+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - src/lib/db/schema.ts
+  - PROGRESS.md
+  - drizzle/0224_erp_exchange_rates_source.sql
+  - src/lib/exchange-rate-feed-client.test.ts
+  - src/lib/exchange-rate-feed-client.ts
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  remaining_steps:
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated)
+  - '6. vercel.json: one once-daily cron line'
+  - 'Verify: tsc --noEmit, eslint, bun test -- report real pass/fail numbers'
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-18T04:06:20.576709+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - src/lib/db/schema.ts
+  - PROGRESS.md
+  - drizzle/0224_erp_exchange_rates_source.sql
+  - src/lib/exchange-rate-feed-client.test.ts
+  - src/lib/exchange-rate-feed-client.ts
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  remaining_steps:
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated)
+  - '6. vercel.json: one once-daily cron line'
+  - 'Verify: tsc --noEmit, eslint, bun test -- report real pass/fail numbers'
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker started (resume=1)
+- at: '2026-07-18T04:12:53.523820+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  note: quality gates passed, pushed branch worker/task-20260717-194819-fx-live-rate-feed,
+    awaiting review
+- at: '2026-07-18T04:14:01.290115+00:00'
+  status: awaiting_human_approval
+  files_modified: []
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  note: 'tier2, Superboss-approved, held for human merge: https://github.com/FChecklist/compliance-tracker/pull/411'
+- at: '2026-07-18T04:37:20.421711+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  note: 'Human sign-off given (Claude Desktop, independently verified migration safety
+    and file scope), merged PR #411, branch deleted.'
+execution_seconds: 566
+restart_count: 3
+token_usage:
+  input_tokens: 84
+  cache_creation_input_tokens: 68544
+  cache_read_input_tokens: 2986865
+  output_tokens: 17407
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 68544
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 1328
+    cache_read_input_tokens: 91417
+    cache_creation_input_tokens: 665
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 665
+    type: message
+  speed: standard
+master_synced_at: '2026-07-17T20:00:02.538216+00:00'

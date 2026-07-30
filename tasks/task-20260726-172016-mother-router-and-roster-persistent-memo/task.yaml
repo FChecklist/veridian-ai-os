@@ -1,0 +1,871 @@
+id: task-20260726-172016-mother-router-and-roster-persistent-memo
+title: mother-router-and-roster-persistent-memory
+status: superseded
+repo: compliance-tracker
+branch: feat/mother-router-roster-persistent-memory
+workspace: /opt/veridian/ai-os/tasks/task-20260726-172016-mother-router-and-roster-persistent-memo/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-172016-mother-router-and-roster-persistent-memo
+service: veridian-worker@task-20260726-172016-mother-router-and-roster-persistent-memo.service
+created_at: '2026-07-26T17:20:17.437686+00:00'
+last_checkpoint_at: '2026-07-26T19:53:06.916402+00:00'
+completed_steps: &id002
+- Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+- Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see note
+  above)
+- Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+- 'Branch created: feat/mother-router-roster-persistent-memory'
+- 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+- 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+- 'Wired writes:'
+remaining_steps: &id003
+- '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+- Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+- Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+- Commit, push, open PR
+files_modified: &id001
+- package-lock.json
+checkpoints:
+- at: '2026-07-26T17:20:19.196122+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  - 'aedcbb06 PROGRESS.md: start task-20260726-102520 (resolve PR #563 conflict, refresh
+    DB catalog)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T17:25:20.495526+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/db/schema.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T17:30:21.780868+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/api/ai/team/dispatch/route.ts
+  - src/lib/ai-router/mother-router.ts
+  - src/lib/db/schema.ts
+  - drizzle/0264_mother_router_roster_memory.sql
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T17:40:22.269561+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/api/ai/team/dispatch/route.ts
+  - src/lib/ai-router/mother-router.ts
+  - src/lib/db/schema.ts
+  - drizzle/0264_mother_router_roster_memory.sql
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T17:47:30.834970+00:00'
+  status: in_progress
+  files_modified:
+  - drizzle/0264_mother_router_roster_memory.sql
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  note: periodic checkpoint
+- at: '2026-07-26T17:59:45.966641+00:00'
+  status: in_progress
+  files_modified:
+  - drizzle/0264_mother_router_roster_memory.sql
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  note: periodic checkpoint
+- at: '2026-07-26T18:05:26.888424+00:00'
+  status: in_progress
+  files_modified:
+  - drizzle/0264_mother_router_roster_memory.sql
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  note: periodic checkpoint
+- at: '2026-07-26T18:17:56.707932+00:00'
+  status: failed
+  files_modified:
+  - drizzle/0264_mother_router_roster_memory.sql
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  note: 'PRE-FLIGHT REJECTED (memory_low, transient): 223MB available, need >=300MB
+    -- likely resource contention from concurrent workers (Group B failure pattern)
+    -- no model call made, no cost incurred'
+- at: '2026-07-26T18:23:01.867834+00:00'
+  status: in_progress
+  files_modified:
+  - drizzle/0264_mother_router_roster_memory.sql
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  note: worker started (resume=1, lifetime invocation 3/20, pre-flight passed)
+- at: '2026-07-26T18:31:51.859395+00:00'
+  status: in_progress
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 'ec4d6216 drizzle/0264: fix stale comment referencing renamed updateMotherRouterMemoryOutcome()'
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: periodic checkpoint
+- at: '2026-07-26T18:37:12.857206+00:00'
+  status: in_progress
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 'ec4d6216 drizzle/0264: fix stale comment referencing renamed updateMotherRouterMemoryOutcome()'
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: periodic checkpoint
+- at: '2026-07-26T18:51:00.173461+00:00'
+  status: in_progress
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 'ec4d6216 drizzle/0264: fix stale comment referencing renamed updateMotherRouterMemoryOutcome()'
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: periodic checkpoint
+- at: '2026-07-26T19:12:44.444427+00:00'
+  status: in_progress
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 'ec4d6216 drizzle/0264: fix stale comment referencing renamed updateMotherRouterMemoryOutcome()'
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: worker started (resume=1, lifetime invocation 4/20, pre-flight passed)
+- at: '2026-07-26T19:19:58.318426+00:00'
+  status: in_progress
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 'ec4d6216 drizzle/0264: fix stale comment referencing renamed updateMotherRouterMemoryOutcome()'
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: periodic checkpoint
+- at: '2026-07-26T19:36:12.689469+00:00'
+  status: failed
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 'ec4d6216 drizzle/0264: fix stale comment referencing renamed updateMotherRouterMemoryOutcome()'
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:36:55.247431+00:00'
+  status: failed
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 'ec4d6216 drizzle/0264: fix stale comment referencing renamed updateMotherRouterMemoryOutcome()'
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:37:29.637650+00:00'
+  status: failed
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 'ec4d6216 drizzle/0264: fix stale comment referencing renamed updateMotherRouterMemoryOutcome()'
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:48:20.539074+00:00'
+  status: failed
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 'ec4d6216 drizzle/0264: fix stale comment referencing renamed updateMotherRouterMemoryOutcome()'
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:49:06.236397+00:00'
+  status: failed
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 'ec4d6216 drizzle/0264: fix stale comment referencing renamed updateMotherRouterMemoryOutcome()'
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:49:40.249148+00:00'
+  status: failed
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 'ec4d6216 drizzle/0264: fix stale comment referencing renamed updateMotherRouterMemoryOutcome()'
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:51:49.105973+00:00'
+  status: failed
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 'ec4d6216 drizzle/0264: fix stale comment referencing renamed updateMotherRouterMemoryOutcome()'
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:52:34.346641+00:00'
+  status: failed
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md
+  - Re-verified the gap directly against schema.ts/mother-router.ts/roster.ts (see
+    note above)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed standalone
+  - 'Branch created: feat/mother-router-roster-persistent-memory'
+  - 'Drizzle schema additions (src/lib/db/schema.ts, additive only):'
+  - 'Migration: drizzle/0264_mother_router_roster_memory.sql (hand-authored SQL, same'
+  - 'Wired writes:'
+  remaining_steps:
+  - '`bun install` / typecheck verification (bun unavailable in this sandbox, using'
+  - Apply the migration to the live Supabase DB (project pcrjmlpuqsbocqfwoxod / verdian-ai)
+  - Run `bash -c 'grep -n "mother_router_memory\|ai_agent_memory" src/lib/db/schema.ts'`
+  - Commit, push, open PR
+  recent_commits:
+  - 'ec4d6216 drizzle/0264: fix stale comment referencing renamed updateMotherRouterMemoryOutcome()'
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:53:06.916402+00:00'
+  status: failed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'ec4d6216 drizzle/0264: fix stale comment referencing renamed updateMotherRouterMemoryOutcome()'
+  - 645d80be Add ground-up persistent memory for Mother Router + AI agent roster
+  - '2adc22b8 ai-os/boss/ACTIVE-CLAIMS.yaml: register mother-router-and-roster-persistent-memory
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+execution_seconds: 4686
+restart_count: 2
+token_usage:
+  input_tokens: 208
+  cache_creation_input_tokens: 201323
+  cache_read_input_tokens: 17185583
+  output_tokens: 56760
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 201323
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 132
+    cache_read_input_tokens: 224860
+    cache_creation_input_tokens: 147
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 147
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+duplicate_of: task-20260726-194920-rca-task-20260726-172016-mother-router-a
+superseded_reason: Collapsed by plan_backlog_completion.py dedup 2026-07-27 -- same
+  underlying issue as task-20260726-194920-rca-task-20260726-172016-mother-router-a
+  (2 total attempts in chain).
+superseded_at: '2026-07-27T03:38:37.412791+00:00'

@@ -1,0 +1,66 @@
+id: task-20260728-040720-adopted-re-audit-pr-609-after-mock-module-regres
+title: Re-audit PR 609 after mock.module regression fix
+status: completed
+repo: compliance-tracker
+branch: feat/projexa-full-module-chain-api
+workspace: /opt/veridian/ai-os/tasks/task-20260728-040720-adopted-re-audit-pr-609-after-mock-module-regres/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-040720-adopted-re-audit-pr-609-after-mock-module-regres
+service: veridian-supervisor@task-20260728-040720-adopted-re-audit-pr-609-after-mock-module-regres.service
+created_at: '2026-07-28T04:07:21.346652+00:00'
+last_checkpoint_at: '2026-07-28T04:11:27.281757+00:00'
+completed_steps: &id002
+- Read ai-os/boss/ACTIVE-CLAIMS.yaml, registered this session's claim, committed+pushed
+- 'Located both repos: /opt/veridian/repos/projexa, this workspace (compliance-tracker)'
+- 'Confirmed projexa main HEAD includes PR #52, #54, #56 merges + fix-forward commits'
+- 'Verified projexa PR #52 (AppShellFrame/homeThreadSlot header fix) -- COMPLETE'
+- 'Verified projexa PR #54 (PWA/SW/IndexedDB sync queue) incl. per-user scoping +'
+- 'Verified projexa PR #56 (role gating) incl. full-codebase PATCH/DELETE endpoint'
+- 'Verified compliance-tracker PR #596 (BoQ/valuation) incl. nonzero-tax and'
+- 'Verified compliance-tracker PR #597 (timesheet budget-vs-actual) -- COMPLETE'
+- Ran npx tsc --noEmit in both repos -- clean in both
+- 'Ran bun test scoped to touched files in both repos -- projexa: 10+10+9 pass/0 fail'
+- Collected real supervisor PASS/FAIL verdicts (PR comments) for all 5 PRs, quoted
+- Wrote ai-os/audits/projexa_erp_e2e_reaudit_2026-07-27.md -- all 5 PRs COMPLETE
+- Commit report + PROGRESS.md, push, open PR (report-only, no other file changes)
+- 'Fresh supervisor audit of PR #607, then merge (not by this session).'
+remaining_steps: &id003
+- This task's migration (drizzle/0265_*.sql) has NOT been applied to any live Supabase
+- Because the migration is unapplied, `get_advisors(security)` has NOT been run
+- 'Open PR -- PR #596, `worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown`'
+- This corrective push needs a fresh supervisor audit (the original audit's FAIL verdict
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T04:07:21.346652+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'feat/projexa-full-module-chain-api' (https://github.com/FChecklist/compliance-tracker/pull/609)
+    -- registered for real audit, not a fresh worker dispatch
+- at: '2026-07-28T04:11:27.281757+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - d45f5f94 Merge remote-tracking branch 'origin/main' into feat/projexa-full-module-chain-api
+  - '74632493 fix: mockTree spreads real capability-tree-service exports, preventing
+    sibling test regression from mock.module override'
+  - '41a73a7a Merge pull request #603 from FChecklist/worker/task-20260727-153107-re-audit-projexa-erp-e2e-for-100pct-comp'
+  - '37b0345e fix: remove duplicate PROGRESS.md header line from reconstruction'
+  - '0afa4d96 merge: resolve with latest main (keep-both, clean reconstruction now)'
+  - '9d3bd0f4 fix: reconstruct PROGRESS.md correctly -- restore real main history
+    + this task own section only, discard prior bad keep-both merges'
+  - '4edfc273 Merge pull request #607 from FChecklist/worker/task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr'
+  - '5614a9d1 merge: resolve conflicts with current main (keep-both, append-only)'
+  - 'fe3f7a6f merge: resolve conflicts with current main (keep-both, append-only)'
+  - 08ea5082 Merge remote-tracking branch 'origin/main' into worker/task-20260727-153107-re-audit-projexa-erp-e2e-for-100pct-comp
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/compliance-tracker/pull/609'
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/609
+master_synced_at: '2026-07-29T21:04:26.347831+00:00'

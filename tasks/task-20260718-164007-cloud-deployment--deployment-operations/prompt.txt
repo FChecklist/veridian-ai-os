@@ -1,0 +1,23 @@
+VERIDIAN Review Framework gap-closure: Cloud Deployment / Deployment Operations.
+This covers 5 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Low] Performance Monitoring
+  Gap: Monitoring installed but dashboard-usage cadence not independently verified
+  Recommended approach: See row 15
+- [Low] Deployment Security
+  Gap: Secret-scan is advisory not blocking (same finding as row 7)
+  Recommended approach: See row 7
+- [Medium] Environment Configuration Management
+  Gap: No formal dev/staging/prod environment variable separation
+  Recommended approach: See row 41
+- [Low] Edge Function Utilization
+  Gap: Edge runtime capability unused
+  Recommended approach: Selective Edge adoption for a small number of latency-sensitive, DB-free routes only
+- [Low] Deployment Audit Trail
+  Gap: Webhook exists but downstream usage/dashboard for the recorded data not independently verified
+  Recommended approach: Check for and, if absent, add a simple deployment-history view
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

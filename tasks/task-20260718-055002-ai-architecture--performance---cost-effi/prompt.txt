@@ -1,0 +1,20 @@
+VERIDIAN Review Framework gap-closure: AI Architecture / Performance & Cost Efficiency.
+This covers 4 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] AI Latency
+  Gap: No systematic latency tracking or SLA enforcement
+  Recommended approach: Instrument callLLM() start/end timestamps and log centrally
+- [Low] Cache Strategy (Browser, Server & AI Context)
+  Gap: Anthropic provider defined in code but has no live API key
+  Recommended approach: Owner decision needed on whether to fund an Anthropic key
+- [Low] AI Cost Optimization
+  Gap: Pricing table is manual, not from a live billing API
+  Recommended approach: Schedule a recurring task to audit MODEL_PRICING accuracy
+- [Low] AI Context Compression
+  Gap: Minor: help chatbot (api/help/ask) uses a separate, weaker freeform mechanism
+  Recommended approach: Route help/ask through the same structured-message/grounding pipeline as chat-service.ts
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

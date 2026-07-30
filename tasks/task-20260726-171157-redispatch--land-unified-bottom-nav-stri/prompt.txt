@@ -1,0 +1,28 @@
+## OBJECTIVE
+Land the unified bottom-nav strip for compliance-tracker (SUPERBOSS_V2_PLAN item V2-2-UNIFIED-NAV, closes CSV row #05 + the Navigation tranche). This is a REDISPATCH of task-20260720-022703-superboss-v2-plan--unified-bottom-nav-st, which did real, substantive work (BottomNavStrip.tsx, bottom-nav-items.ts/test.ts, AppShell.tsx wiring, i18n strings) and opened PR #489, but the worker's own final checkpoint ended with nothing further to commit and PR #489 was never merged. Six days later (this task was created 2026-07-20; today is 2026-07-26) master has moved on and PR #489 is now stale: `gh pr view 489 --repo FChecklist/compliance-tracker` shows mergeStateStatus=DIRTY, mergeable=CONFLICTING, and `gh pr checks 489` shows real CI failures on "E2E Tests" and "audit-check" (all other checks, including Build/Lint/TypeCheck/Unit Tests, pass). No other task or PR has since built this feature -- `grep -rl "bottom-nav\|BottomNavStrip" src/components` against current master returns nothing.
+
+## SCOPE
+1. Read PR #489 (https://github.com/FChecklist/compliance-tracker/pull/489) and its branch worker/task-20260720-022703-superboss-v2-plan--unified-bottom-nav-st in full first -- reuse its real prior work (BottomNavStrip.tsx, bottom-nav-items.ts, tests, AppShell.tsx integration, i18n keys) rather than re-inventing it from scratch, unless direct inspection shows the current design-law doc or veridian-ui-kit shell has changed enough that the old approach is actually wrong.
+2. Rebase/reconcile that work onto current master, resolving the real merge conflicts (mergeStateStatus=DIRTY) -- do not force-push over unrelated master changes.
+3. Investigate and fix the real cause of the two failing checks ("E2E Tests", "audit-check") -- check whether they are genuine regressions in the nav work itself, or simply stale relative to 6 days of master drift (e.g. renamed routes/components, updated audit-check rules). Cite the real, specific failure output you found and fixed, not a guess.
+4. Re-verify against veridian-ui-kit's CURRENT version (it may have advanced past v0.2.2 since 2026-07-20) and the design law doc, since the codebase has moved since this plan was written -- if the original approach conflicts with a newer kit shell convention, adapt it, and say so explicitly in PROGRESS.md.
+5. Register your claim in compliance-tracker's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, checking for collisions with any other active claim or open PR on the same file/module scope first, per this repo's own protocol.
+
+## KNOWN_CONTEXT
+Original task-gateway dispatch context (V2-2, SOFTWARE TEAM LEVEL: L3 Feature Worker, MODULE: compliance-tracker + veridian-ui-kit):
+"Build the unified bottom-nav strip the design law calls for, on top of veridian-ui-kit's shell. Closes CSV row #05 + the Navigation tranche. READ FIRST: veridian-ui-kit shell components; src/components/AppSidebar.tsx; the design law doc; ACTIVE-CLAIMS (uikit-migration claims, merged). WHAT TO BUILD: A unified nav surface (bottom strip + existing sidebar harmonized), responsive, tokens from the kit. Replace per-page ad-hoc nav. Real component tests. DONE CRITERIA: Unified nav live across all (app) pages; design-law conformance; tsc/lint/test clean; PR open."
+This is a Tier4 crash/no-changes triage redispatch (see ai-os/TIER4_CRASH_TRIAGE_REPORT_2026-07-26.md classification GENUINELY_UNMET_REDISPATCHED for this task) -- the prior attempt is not a failure of judgment, its PR simply went stale waiting for merge while unrelated work landed on master.
+
+## SUCCESS_CRITERIA
+- `gh pr checks <this task's PR number> --repo FChecklist/compliance-tracker` shows all required checks passing, in particular "E2E Tests" and "audit-check" (the two that were failing on PR #489).
+- `gh pr view <this task's PR number> --repo FChecklist/compliance-tracker --json mergeable --jq .mergeable` returns "MERGEABLE", not "CONFLICTING".
+- Unified bottom-nav strip is live and reachable in the running app across all `(app)` pages (manually verified, cite how).
+
+## EXPECTED_OUTPUT
+Real, committed and pushed code on a PR against compliance-tracker (either reopen/continue PR #489's branch or open a fresh PR referencing it -- your choice, whichever keeps history clearest; note which you chose and why). Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions.
+
+## CONSTRAINTS
+Reuse veridian-ui-kit components; no new token system. Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists. Commit + push incrementally. If you find the design law or done-criteria have changed since 2026-07-20 such that this feature is no longer wanted as originally specified, say so explicitly in PROGRESS.md and in the PR body rather than forcing the original spec through.
+
+## COMPLEXITY_TIER
+judgment

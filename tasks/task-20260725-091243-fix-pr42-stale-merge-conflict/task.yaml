@@ -1,0 +1,331 @@
+id: task-20260725-091243-fix-pr42-stale-merge-conflict
+title: fix-pr42-stale-merge-conflict
+status: completed
+repo: claude-control
+branch: worker/task-20260725-091243-fix-pr42-stale-merge-conflict
+workspace: /opt/veridian/ai-os/tasks/task-20260725-091243-fix-pr42-stale-merge-conflict/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260725-091243-fix-pr42-stale-merge-conflict
+service: veridian-worker@task-20260725-091243-fix-pr42-stale-merge-conflict.service
+created_at: '2026-07-25T09:12:44.341391+00:00'
+last_checkpoint_at: '2026-07-25T09:21:48.555369+00:00'
+completed_steps: &id002
+- Checked out worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg
+  fresh, merged origin/master, confirmed 4 conflicts as expected
+- Resolved ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml -- same-key conflict
+  (both tasks wrote status_detail for phase_5), kept both under task_140008/task_135834
+  sub-keys, parses clean
+- Resolved ai-os/MASTER_INDEX.yaml -- 3 conflict blocks (status/next_phase merge,
+  known-gap prose merged to describe both real fixes, registries_sync_mechanism +
+  new metadata_engine_reconciliation entry both kept), fixed a self-introduced unescaped
+  apostrophe, parses clean, 101 registries
+- Resolved ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml -- plain union of new list
+  entries from both sides, parses clean, 17 decisions, all 7 named entries present
+- Resolved scripts/knowledge_registry_multisource.py -- union of function definitions
+  (notify_owner_supabase_token_degraded + read_env_file/supabase_project_healthcheck_fallback)
+  plus semantic combine in the `if not api_ok:` branch (master's more complete print
+  message + HEAD's notify_owner call); the fallback loop further down was already
+  unconflicted (only master touched it) and calls supabase_project_healthcheck_fallback()
+  unconditionally
+- Verified all 3 YAML parse clean and py_compile passes on the merge commit
+- 'Committed merge (b7bd72a), pushed to worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg,
+  PR #42 became MERGEABLE/CLEAN, merged via `gh pr merge 42 --merge --delete-branch`,
+  confirmed state=MERGED (mergedAt 2026-07-25T09:18:20Z)'
+- 'Smoke-tested scripts/knowledge_registry_multisource.py on merged master -- ran
+  to completion, no crash; on the real live 403 Supabase failure both fixes fired:
+  real Owner email sent (Resend id 765a63f9-adb1-4cad-86f4-dfbc9965302b) AND anon-key
+  fallback healthcheck ran (compliance-tracker got a live GoTrue v2.193.1 signal,
+  projexa correctly returned None -- no credentials)'
+remaining_steps: &id003
+- None -- task complete
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-25T09:12:48.772521+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  - '35aa7f6 Merge pull request #59 from FChecklist/worker/task-20260725-041130-security-audit-evaluation-and-implementa'
+  - dce9e4b Merge master into PR 59 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries); auto_phase_continuation.py merged clean, verified
+    it still compiles and runs
+  - 'e75e9e2 Merge pull request #61 from FChecklist/worker/task-20260725-053540-chrome-browser-persistent-profile'
+  - b23ddc6 Merge master into PR 61 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries)
+  - '1122e67 Merge pull request #65 from FChecklist/worker/task-20260725-063204-module-scoped-zai-gap-audit'
+  - d3b4d25 Document module-scoped gap audit + register in MASTER_INDEX
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-25T09:17:49.905969+00:00'
+  status: in_progress
+  files_modified:
+  - CONTROLLER.yaml
+  - ai-os-scripts/audit_pipeline_ai_governance.py
+  - ai-os-scripts/audit_pipeline_api_contract.py
+  - ai-os-scripts/audit_pipeline_architecture.py
+  - ai-os-scripts/audit_pipeline_data_model.py
+  - ai-os-scripts/audit_pipeline_documentation.py
+  - ai-os-scripts/audit_pipeline_integration.py
+  - ai-os-scripts/audit_pipeline_master_orchestrator.py
+  - ai-os-scripts/audit_pipeline_metadata.py
+  - ai-os-scripts/audit_pipeline_product_quality.py
+  - ai-os-scripts/audit_pipeline_security.py
+  - ai-os-scripts/audit_pipeline_workflow_transitions.py
+  - ai-os-scripts/auditor_engine_events.py
+  - ai-os-scripts/close_phase2_testing_engine.py
+  - ai-os-scripts/close_phase4_architecture_domains.py
+  - ai-os-scripts/close_phase5_ai_review.py
+  - ai-os-scripts/close_phase7_observability_audit_trail.py
+  - ai-os-scripts/close_phase8_master_orchestration.py
+  - ai-os-scripts/extract_production_prompts_ai_governance.py
+  - ai-os-scripts/generate_auditor_engine_master_report.py
+  - ai-os-scripts/generate_engines_gateways_inventory.py
+  - ai-os-scripts/phase4_finalize_terminology_exemptions.py
+  - ai-os-scripts/phase5_generate_full_repo_exemptions.py
+  - ai-os-scripts/register_ai_governance_findings.py
+  - ai-os-scripts/register_ddd_semantic_findings.py
+  - ai-os-scripts/register_enterprise_architecture_drift_findings.py
+  - ai-os-scripts/register_ux_heuristic_findings.py
+  - ai-os-scripts/register_workflow_logic_findings.py
+  - ai-os-scripts/verify_route_trace.py
+  - ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml
+  - ai-os/AI_GOVERNANCE_REVIEW_2026-07-24.yaml
+  - ai-os/ARCHITECTURE_BOUNDED_CONTEXT_MAP_2026-07-24.yaml
+  - ai-os/AUDITOR_ENGINE_EVENT_SCHEMA_2026-07-24.schema.json
+  - ai-os/AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml
+  - ai-os/BROWSER_AUTOMATION_PROFILE_2026-07-25.yaml
+  - ai-os/CHATGPT_AUDIT_BLOCKER_2026-07-24.yaml
+  - ai-os/CHATGPT_AUDIT_MASTER_CATALOGUE_2026-07-24.yaml
+  - ai-os/CHATGPT_AUDIT_RECORD_SCHEMA_2026-07-24.yaml
+  - ai-os/CHATGPT_PROMPTLIB_BLOCKER_2026-07-24.yaml
+  - ai-os/CHATGPT_PROMPT_SCHEMA_2026-07-24.yaml
+  - ai-os/CRONTAB_APPROVED_SNAPSHOT.txt
+  - ai-os/DDD_SEMANTIC_REVIEW_2026-07-24.yaml
+  - ai-os/ENTERPRISE_ARCHITECTURE_DRIFT_REVIEW_2026-07-24.yaml
+  - ai-os/KNOWLEDGE_ENGINE_PHASE3_CANDIDATES_2026-07-24.yaml
+  - ai-os/MASTER_INDEX.yaml
+  - ai-os/METADATA_ENGINE_RECONCILIATION_2026-07-24.yaml
+  - ai-os/MODULE_GAP_AUDIT_2026-07-25.yaml
+  - ai-os/MODULE_GAP_AUDIT_MODULE_LIST_2026-07-25.yaml
+  - ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+  - ai-os/OWNER_ENGINE_MACHINE_LANGUAGE_CONTRACT_2026-07-25.yaml
+  - ai-os/OWNER_ENGINE_MANDATORY_GATE_IMPLEMENTATION_2026-07-25.yaml
+  - ai-os/PHASE6_INTENT_CONTEXT_PLANNING_LEARNING_2026-07-24.yaml
+  - ai-os/PROMPT_GATEWAY_2026-07-25.yaml
+  - ai-os/ROUTE_REGISTRY_SCHEMA_2026-07-24.yaml
+  - ai-os/SECURITY_AUDIT_EVALUATION_2026-07-25.yaml
+  - ai-os/SECURITY_AUDIT_IMPLEMENTATION_PLAN_2026-07-25.yaml
+  - ai-os/TERMINOLOGY_GUARDRAIL_2026-07-24.py
+  - ai-os/TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml
+  - ai-os/TESTING_ENGINE_PHASE_PLAN_2026-07-24.yaml
+  - ai-os/UI_COMPOSITION_ANALYTICS_ENGINE_EVALUATION_2026-07-24.yaml
+  - ai-os/UX_HEURISTIC_REVIEW_2026-07-24.yaml
+  - ai-os/VARIABLE_DICTIONARY_2026-07-24.yaml
+  - ai-os/VARIABLE_DICTIONARY_SOURCE_ROWS_2026-07-24.json
+  - ai-os/WIRING_ENGINE_PHASE_PLAN_2026-07-25.yaml
+  - ai-os/WIRING_ENGINE_REGISTRY_2026-07-25.json
+  - ai-os/WIRING_ENGINE_SCHEMA_2026-07-25.yaml
+  - ai-os/WORKFLOW_LOGIC_REVIEW_2026-07-24.yaml
+  - ai-os/dependency-cruiser/clean-architecture-dependency-rule.config.cjs
+  - ai-os/dependency-cruiser/ddd-bounded-context.config.cjs
+  - ai-os/dependency-cruiser/enterprise-architecture-layers.config.cjs
+  - ai-os/pgaudit/ENABLE_PGAUDIT_2026-07-24.sql
+  - ai-os/promptfoo/construction_detect_budget_schedule_risk/.last_result.json
+  - ai-os/promptfoo/construction_detect_budget_schedule_risk/assertions.js
+  - ai-os/promptfoo/construction_detect_budget_schedule_risk/promptfooconfig.yaml
+  - ai-os/promptfoo/construction_generate_progress_summary/.last_result.json
+  - ai-os/promptfoo/construction_generate_progress_summary/assertions.js
+  - ai-os/promptfoo/construction_generate_progress_summary/promptfooconfig.yaml
+  - ai-os/promptfoo/crm_intelligence_analyze_opportunity/.last_result.json
+  - ai-os/promptfoo/crm_intelligence_analyze_opportunity/assertions.js
+  - ai-os/promptfoo/crm_intelligence_analyze_opportunity/promptfooconfig.yaml
+  - ai-os/promptfoo/crm_intelligence_score_lead/.last_result.json
+  - ai-os/promptfoo/crm_intelligence_score_lead/assertions.js
+  - ai-os/promptfoo/crm_intelligence_score_lead/promptfooconfig.yaml
+  - ai-os/promptfoo/gst_ai_review_report/.last_result.json
+  - ai-os/promptfoo/gst_ai_review_report/assertions.js
+  - ai-os/promptfoo/gst_ai_review_report/promptfooconfig.yaml
+  - ai-os/promptfoo/lib/assertions.js
+  - ai-os/promptfoo/prompts/MANIFEST.json
+  - ai-os/promptfoo/prompts/construction_detect_budget_schedule_risk.txt
+  - ai-os/promptfoo/prompts/construction_generate_progress_summary.txt
+  - ai-os/promptfoo/prompts/crm_intelligence_analyze_opportunity.txt
+  - ai-os/promptfoo/prompts/crm_intelligence_score_lead.txt
+  - ai-os/promptfoo/prompts/gst_ai_review_report.txt
+  - ai-os/reports/AUDITOR_ENGINE_MASTER_REPORT_LATEST.json
+  - ai-os/testing_engine_evidence/phase2/RT-capability_registry_dedup-001/trace_verification.json
+  - ai-os/testing_engine_evidence/phase2/RT-commission_calculator-001/trace_verification.json
+  - ai-os/testing_engine_evidence/phase2/RT-gratuity_calculator-001/trace_verification.json
+  - ai-os/testing_engine_evidence/phase2/RT-gst_calculation_engine-001/trace_verification.json
+  - ai-os/testing_engine_evidence/phase2/RT-trend_analysis_engine-001/trace_verification.json
+  - ai-os/wiring_engine_evidence/phase1/after_route_gratuity.json
+  - ai-os/wiring_engine_evidence/phase1/before_route_gratuity.json
+  - ai-os/workflow-transitions/TRANSITION_RULES_2026-07-24.yaml
+  - scripts/auto_phase_continuation.py
+  - scripts/browser/persistent-profile.js
+  - scripts/browser/smoketest.js
+  - scripts/chatgpt_audit_guard.py
+  - scripts/chatgpt_audit_versioning.py
+  - scripts/chatgpt_promptlib_guard.py
+  - scripts/context_engine.py
+  - scripts/detect_prompt_duplicates.py
+  - scripts/generate_chatgpt_audit_index.py
+  - scripts/generate_chatgpt_audit_request.py
+  - scripts/generate_chatgpt_promptbatch_request.py
+  - scripts/generate_module_gap_audit_module_list.py
+  - scripts/generate_prompt_coverage_report.py
+  - scripts/generate_wiring_registry.py
+  - scripts/ingest_chatgpt_audit_response.py
+  - scripts/ingest_chatgpt_promptbatch_response.py
+  - scripts/intent_engine.py
+  - scripts/knowledge_registry_multisource.py
+  - scripts/learning_engine.py
+  - scripts/metadata_reconciliation.py
+  - scripts/module_gap_audit_lib.py
+  - scripts/plan_generator.py
+  - scripts/prompt_gateway/__init__.py
+  - scripts/prompt_gateway/config.py
+  - scripts/prompt_gateway/engine/__init__.py
+  - scripts/prompt_gateway/engine/classifier.py
+  - scripts/prompt_gateway/engine/context_engine.py
+  - scripts/prompt_gateway/engine/id_generator.py
+  - scripts/prompt_gateway/engine/prompt_engine.py
+  - scripts/prompt_gateway/engine/snip_engine.py
+  - scripts/prompt_gateway/gateway.py
+  - scripts/prompt_gateway/query.py
+  - scripts/task-gateway.py
+  - scripts/test_tight_task_validation.py
+  - scripts/tight_task_validation.py
+  completed_steps:
+  - Resolved ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml -- same-key conflict
+    (both tasks wrote status_detail for phase_5), kept both under task_140008/task_135834
+    sub-keys, parses clean
+  - Resolved ai-os/MASTER_INDEX.yaml -- 3 conflict blocks (status/next_phase merge,
+    known-gap prose merged to describe both real fixes, registries_sync_mechanism
+    + new metadata_engine_reconciliation entry both kept), fixed a self-introduced
+    unescaped apostrophe, parses clean, 101 registries
+  - Resolved ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml -- plain union of new list
+    entries from both sides, parses clean, 17 decisions, all 7 named entries present
+  remaining_steps:
+  - Resolve scripts/knowledge_registry_multisource.py (union of functions + semantic
+    combine in if not api_ok branch)
+  - Verify YAML parses + entries present, py_compile passes
+  - Commit, push, merge PR, verify MERGED
+  - Smoke-test knowledge_registry_multisource.py
+  recent_commits:
+  - '64471f2 Phase 5: reconcile MASTER_INDEX.yaml registries with knowledge_engine,
+    alert on Supabase token gap'
+  - 'e018dc1 Merge pull request #39 from FChecklist/worker/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener'
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  - '65bacb1 Merge pull request #37 from FChecklist/worker/task-20260724-122143-phase3-data-model-static-quality-linting'
+  - a388bea Close Phase 3 (data-model + product-quality + documentation linting)
+  - 'dd59d41 Phase 3 documentation pipeline: markdownlint-cli default ruleset'
+  - '78c5134 Phase 3 product-quality pipeline: ESLint ruleset mapped to ISO 25010'
+  - 9bb335a Auto-sync 3 server task(s) to master controller
+  - '410f0fb Merge pull request #36 from FChecklist/worker/task-20260724-122137-phase3-formalize-task-gateway-py-task-ex'
+  - 'a773d73 Worker task-20260724-122137-phase3-formalize-task-gateway-py-task-ex:
+    checkpoint commit (invocation failed, exit 1)'
+  note: periodic checkpoint
+- at: '2026-07-25T09:19:55.115166+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Checked out worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg
+    fresh, merged origin/master, confirmed 4 conflicts as expected
+  - Resolved ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml -- same-key conflict
+    (both tasks wrote status_detail for phase_5), kept both under task_140008/task_135834
+    sub-keys, parses clean
+  - Resolved ai-os/MASTER_INDEX.yaml -- 3 conflict blocks (status/next_phase merge,
+    known-gap prose merged to describe both real fixes, registries_sync_mechanism
+    + new metadata_engine_reconciliation entry both kept), fixed a self-introduced
+    unescaped apostrophe, parses clean, 101 registries
+  - Resolved ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml -- plain union of new list
+    entries from both sides, parses clean, 17 decisions, all 7 named entries present
+  - Resolved scripts/knowledge_registry_multisource.py -- union of function definitions
+    (notify_owner_supabase_token_degraded + read_env_file/supabase_project_healthcheck_fallback)
+    plus semantic combine in the `if not api_ok:` branch (master's more complete print
+    message + HEAD's notify_owner call); the fallback loop further down was already
+    unconflicted (only master touched it) and calls supabase_project_healthcheck_fallback()
+    unconditionally
+  - Verified all 3 YAML parse clean and py_compile passes on the merge commit
+  - 'Committed merge (b7bd72a), pushed to worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg,
+    PR #42 became MERGEABLE/CLEAN, merged via `gh pr merge 42 --merge --delete-branch`,
+    confirmed state=MERGED (mergedAt 2026-07-25T09:18:20Z)'
+  - 'Smoke-tested scripts/knowledge_registry_multisource.py on merged master -- ran
+    to completion, no crash; on the real live 403 Supabase failure both fixes fired:
+    real Owner email sent (Resend id 765a63f9-adb1-4cad-86f4-dfbc9965302b) AND anon-key
+    fallback healthcheck ran (compliance-tracker got a live GoTrue v2.193.1 signal,
+    projexa correctly returned None -- no credentials)'
+  remaining_steps:
+  - None -- task complete
+  recent_commits:
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  - '35aa7f6 Merge pull request #59 from FChecklist/worker/task-20260725-041130-security-audit-evaluation-and-implementa'
+  - dce9e4b Merge master into PR 59 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries); auto_phase_continuation.py merged clean, verified
+    it still compiles and runs
+  - 'e75e9e2 Merge pull request #61 from FChecklist/worker/task-20260725-053540-chrome-browser-persistent-profile'
+  - b23ddc6 Merge master into PR 61 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries)
+  note: worker finished, no changes to commit and zero commits ahead of master --
+    genuine no-op, routing through pending_review (not completed directly) so the
+    state-machine invariant holds and the supervisor gets the final say
+- at: '2026-07-25T09:21:48.555369+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  - '35aa7f6 Merge pull request #59 from FChecklist/worker/task-20260725-041130-security-audit-evaluation-and-implementa'
+  - dce9e4b Merge master into PR 59 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries); auto_phase_continuation.py merged clean, verified
+    it still compiles and runs
+  - 'e75e9e2 Merge pull request #61 from FChecklist/worker/task-20260725-053540-chrome-browser-persistent-profile'
+  - b23ddc6 Merge master into PR 61 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries)
+  note: 'tier1, Superboss-approved, merged autonomously: '
+execution_seconds: 426
+restart_count: 0
+token_usage:
+  input_tokens: 128
+  cache_creation_input_tokens: 108415
+  cache_read_input_tokens: 5713229
+  output_tokens: 30541
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 108415
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 1097
+    cache_read_input_tokens: 131185
+    cache_creation_input_tokens: 914
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 914
+    type: message
+  speed: standard
+master_synced_at: '2026-07-25T13:30:09.493619+00:00'

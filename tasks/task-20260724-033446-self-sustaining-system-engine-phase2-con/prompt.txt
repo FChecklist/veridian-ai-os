@@ -1,0 +1,36 @@
+## OBJECTIVE
+Complete "SELF-SUSTAINING SYSTEM SOFTWARE ENGINE": one named, software-only (non-AI-authored) subsystem covering full-system file/entity metadata, a software catalog, and auto-update cron coverage. Extend the existing Knowledge Engine (ai-os/memory/superboss-register.sqlite table knowledge_engine + FTS5, superboss-register.py register-knowledge/query-knowledge, task-gateway.py submit already auto-calls query-knowledge) and the existing cron fleet (13 jobs via run-logged.sh: sync-repos, sync-vercel-env, sync-verdian-ai-data, file-inventory, system-sync, veridian-self-check, health-check-15min, cost-usage-60min, security-check, credit-ledger-prune, queue-dispatcher, sync-controller-back). Do not rebuild any of these; extend them.
+
+## SCOPE
+1. Cross-source file/entity metadata registry: extend knowledge_engine (or add a documented sibling table) to cover SERVER (existing ai-os/scripts scope, keep), VERCEL (project/env/deployment config per linked project: compliance-tracker/projexa/veda-advisors), SUPABASE (remote schema: tables/functions/RLS policies per project, via Supabase MCP or the stored DB catalogs), GITHUB (remote repo state: branches/PRs/protection rules, via gh), LOCAL (Owner's Windows laptop: control/CONTROLLER.yaml + memory/*.md files, confirm which are reachable/mirrored from the server; mark anything unreachable as an explicit gap, do not skip silently). Each row: address/path, source tag, technical spec (type/size/hash/schema as applicable), verification_status.
+2. Entity-relationship layer: populate real entity_relationships (or a new relationship table) for edges between artifacts already in knowledge_engine (e.g. CONSTITUTION.yaml supplements SYSTEM_MAP.yaml, MASTER_INDEX.yaml indexes every registry) and extend to every new row added in item 1.
+3. Software catalog: new artifact (e.g. ai-os/SOFTWARE_CATALOG.yaml) listing every script/service/cron job on the server (scripts/*.py, ai-os/scripts/*.py, systemd units, cron entries) with purpose + when-to-use + invocation syntax. Machine-generate it from real `crontab -l` + directory listing + `systemctl --user list-units` output, not hand-authored prose. Register it into knowledge_engine.
+4. Close the 3 real, already-scoped candidates from ai-os/KNOWLEDGE_ENGINE_PHASE2_CANDIDATES_2026-07-23.yaml: auto_update_on_task_completion (wire a re-verify of touched knowledge_engine rows into task-gateway.py's close subcommand), fill_the_3_real_drift_gaps (resolve the 3 PATH_MISSING rows -- EXECUTION_RULES_AUDIT_2026-07-23.yaml / GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml / MASTER_GAP_AUDIT_2026-07-23.yaml -- either author the real files or correct the citing text in MASTER_INDEX.yaml/STANDING_DIRECTIVE.yaml, log which choice was made and why), fts5_relevance_tuning (index artifact_path itself in knowledge_engine_fts). The 4th candidate (projexa_the_firm_brand_knowledge) stays blocked on Owner-supplied content -- leave it out of scope here.
+5. Cron completeness pass: give every new registry/catalog from items 1-3 a real cron entry keeping it current (reuse the existing run-logged.sh pattern), and confirm the item-4 auto-verify actually fires on a real task-gateway.py close call, not just a one-off manual run.
+6. Update ai-os/MASTER_INDEX.yaml and ai-os/STANDING_DIRECTIVE.yaml to register one consolidated self_sustaining_system_engine entry pointing at everything above, following MASTER_INDEX.yaml's existing single-entrypoint convention.
+
+## KNOWN_CONTEXT
+- knowledge_engine table (9 rows currently, governance-docs only) + FTS5 + register-knowledge/query-knowledge CLI + task-gateway.py submit auto-calling query-knowledge were built in task-20260723-181151-knowledge-engine-phase1-build-populate-w. Do not redo this.
+- ai-os/scripts/file_inventory.py is explicitly scoped (per its own docstring) to ai-os/+scripts/ only -- it does not cover repos/, Vercel, Supabase, GitHub remote, or the Owner's local laptop. This is the real gap SCOPE item 1 closes.
+- 13 cron jobs already run via the run-logged.sh wrapper pattern (see current `crontab -l`). Reuse this pattern; do not invent a new scheduling mechanism.
+- 4 Phase-2 candidates are already scoped in ai-os/KNOWLEDGE_ENGINE_PHASE2_CANDIDATES_2026-07-23.yaml. SCOPE item 4 above maps to 3 of those 4.
+- ai-os/logs/ATTENTION.md is the existing pre-action log surface satisfying "AI reads a log before acting" -- verify and keep using it, do not replace it. If health-check-15min entries are firing far more often than the crontab's configured 15-minute interval, or veridian-self-check is reporting directive FAILs, log this as a found issue with a recommendation; fix only if trivially in scope of this task.
+- FUNCTION_CATALOG.json / DATABASE_CATALOG.json / AI_ROSTER_CATALOG.json already cover app-code / DB-schema / AI-role inventories for compliance-tracker+projexa+veda-advisors. Reference these from the new software catalog rather than duplicating their content.
+
+## SUCCESS_CRITERIA
+- knowledge_engine (or its documented successor) has rows tagged by source for all 5 of SERVER/VERCEL/SUPABASE/GITHUB/LOCAL, each with a real verification_status, queryable via the existing query-knowledge CLI.
+- entity_relationships is populated (non-empty) for every row added in this task plus the pre-existing 9.
+- ai-os/SOFTWARE_CATALOG.yaml (or equivalent) exists, has a real regeneration script (not hand-typed), and is registered in both knowledge_engine and MASTER_INDEX.yaml.
+- The 3 PATH_MISSING knowledge_engine rows show VERIFIED_MATCH, or are explicitly documented as intentionally-corrected citations -- not left silently PATH_MISSING.
+- task-gateway.py close triggers a real re-verify of knowledge_engine rows touched by that task, demonstrated via one live close call showing a hash re-check in its output.
+- `crontab -l` shows a new or extended entry keeping the new registry/catalog current, confirmed by one real run's logged output.
+- MASTER_INDEX.yaml and STANDING_DIRECTIVE.yaml both reference a single self_sustaining_system_engine entry pointing at everything built in this task.
+
+## EXPECTED_OUTPUT
+Real committed and pushed changes (a PR on claude-control), real sqlite rows shown as query evidence, a Phase-3-candidates yaml (same pattern as KNOWLEDGE_ENGINE_PHASE2_CANDIDATES_2026-07-23.yaml) for any genuine remaining follow-on work, and a final checkpoint summary listing exactly which of the 6 SCOPE items were completed vs. deferred, with a reason for any deferral.
+
+## CONSTRAINTS
+Extend the existing knowledge_engine table, register-knowledge/query-knowledge CLI, and run-logged.sh cron pattern rather than building parallel infrastructure. All registry rows and catalog contents must be produced by running a script or cron job against real, live system state. An AI session's role here is limited to reading via query-knowledge and authoring the generating scripts/cron jobs themselves. Keep the LOCAL-source item scoped to files already reachable from this server (the Owner's laptop control/CONTROLLER.yaml and memory/*.md sync targets already mirrored into claude-control) and record anything unreachable from the server as an explicit, visible gap. Budget for the systemd StartLimitBurst=3/1800s restart cap -- get the schema/scope decisions right before iterating rather than restarting repeatedly.
+
+## COMPLEXITY_TIER
+judgment

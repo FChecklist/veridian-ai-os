@@ -1,0 +1,27 @@
+## OBJECTIVE
+Audit and reconcile a real, confirmed database-migration-tracking gap found 2026-07-26 while applying phase_1/phase_3's pending migrations to compliance-tracker's live Supabase project (pcrjmlpuqsbocqfwoxod): `drizzle.__drizzle_migrations` has zero real rows despite the live database having hundreds of real applied tables/columns, and applying the two intended migrations (0262, 0263) surfaced two further real missing tables (compliance.module_registry chain from migration 0017, compliance.worker_agent_domain_index referenced in migration 0018) that had to be found and applied out of band before the intended work could land. This means the live database's real schema and the repo's real migration file history have drifted apart in an unknown number of places -- find out how many, and reconcile them for real.
+
+## KNOWN_CONTEXT
+Real, confirmed evidence: `SELECT COUNT(*) FROM drizzle.__drizzle_migrations` returned 0 on the real live project as of 2026-07-26, meaning drizzle-kit migrate's own bookkeeping has never once recorded a real applied migration on this project, even though the schema clearly reflects a huge amount of real applied work (hundreds of tables). The real schema was very likely built via a different path (direct apply_migration MCP calls, or drizzle-kit push) that never wrote to this tracking table. Real, confirmed evidence: migration 0017 (module_registry/product_branches/product_branch_modules) and part of migration 0018 (module_rule_configs table itself) were both missing from the live database and had to be manually applied today before 0262/0263 could succeed -- this was found reactively, by hitting real FK errors, not by a systematic check. The worker_agent_domain_index-referencing tail of migration 0018 was deliberately NOT applied today (skipped as out of scope for the immediate need) -- this task should determine whether that table is real and missing, and whether skipping its backfill left anything real inconsistent. Running `bun run db:migrate` blind against this project is NOT safe until this is understood -- with an empty tracking table, it will attempt to replay the ENTIRE migration history from migration 0001 forward, which is guaranteed to hit real conflicts against a database that already has most of that schema built via a different path (confirmed today: it silently died partway through with no clear error message after printing two benign NOTICEs). This finding is NOT specific to phase_1/phase_3 -- it is systemic to this Supabase project and could affect any future real migration in compliance-tracker.
+
+## SCOPE
+1. Enumerate the real, full list of migration files in drizzle/ (compliance-tracker repo) in order.
+2. For each one (or a real, efficient batch approach -- e.g. querying information_schema for every real table/column/constraint each migration would create, rather than literally re-running each file), determine whether its real DDL effect already exists in the live pcrjmlpuqsbocqfwoxod database or not. Produce a real, complete list of which migrations are genuinely already reflected live and which are genuinely missing.
+3. For every genuinely missing migration, apply its real DDL to the live database (via the Supabase MCP apply_migration tool or an equivalent real, direct path) -- do not blind-run drizzle-kit migrate. Verify each one's real effect afterward (the tables/columns it should create actually exist).
+4. Once every real migration's effect is confirmed present in the live database, populate drizzle.__drizzle_migrations for real so future drizzle-kit migrate runs behave correctly and don't attempt a full blind replay again -- research the real, correct row format drizzle-kit expects for this table (hash + timestamp per migration) rather than guessing.
+5. Do the same real check for the verdian-ai Supabase project (pcrjmlpuqsbocqfwoxod is compliance-tracker; check if projexa's own project has the same gap) if projexa has its own drizzle migration history -- confirm real scope before assuming this applies there too.
+6. Document the real findings and fix in ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml: how many migrations were genuinely missing, which ones, real evidence for each, and confirmation the tracking table now correctly reflects reality.
+
+## SUCCESS_CRITERIA
+- `grep -c '^' drizzle/*.sql | wc -l` gives the real total migration file count to cross-reference against the audit's own coverage list (every file must appear with a verdict).
+- A real, complete list of every migration file cross-referenced against real live database state, with a real verdict (present/was-missing-now-applied) for each.
+- `bun run db:migrate` exits 0 cleanly against the real project after the fix (no attempted replay of already-applied migrations).
+
+## EXPECTED_OUTPUT
+Real committed and pushed documentation (PR on compliance-tracker or claude-control, whichever repo ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml belongs in per existing convention) with the real full audit, real evidence for every migration checked, and a final checkpoint stating the real total number of migrations that were found missing and fixed, plus confirmation db:migrate is now safe to run normally going forward.
+
+## CONSTRAINTS
+Do not run drizzle-kit migrate blind against the live project before understanding and fixing the tracking-table gap -- it has already been confirmed unsafe once today.
+
+## COMPLEXITY_TIER
+judgment

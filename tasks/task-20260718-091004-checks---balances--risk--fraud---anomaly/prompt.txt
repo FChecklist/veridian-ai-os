@@ -1,0 +1,32 @@
+VERIDIAN Review Framework gap-closure: Checks & Balances / Risk, Fraud & Anomaly Detection.
+This covers 8 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [High] Anomaly Detection
+  Gap: Anomaly Detection is real for exactly 1 of ~30 named monitor event types; Tier 2/3 model-backed monitors are designed (PLATFORM_STRATEGY.md #29) but not built
+  Recommended approach: Prioritize the next 2-3 highest-risk event types (bulk data export, after-hours high-impact actions, repeated failed auth) for Tier-1 rule-engine monitors before investing in Tier 2/3 AI monitors.
+- [High] Fraud & Abuse Detection
+  Gap: Fraud & Abuse Detection is a logbook for human-reported cases, not an active/automated detection system
+  Recommended approach: Pair fraud_cases with rule-based signals (e.g. duplicate-payment detection, round-number/threshold-avoidance patterns) that auto-populate detectionSource='system_alert'.
+- [Medium] Policy Compliance Verification
+  Gap: Framework coverage percentages are self-reported (status field set manually), not independently verified against real evidence -- no automated policy-compliance-check engine cross-verifies claimed control status
+  Recommended approach: Wire automated evidence checks (e.g. get_advisors output, CI gate status) into specific controls where a real signal exists, rather than 100% manual attestation.
+- [Medium] Risk-Based Escalation
+  Gap: Escalation ladders exist for AI-operational failures and model-confidence, not for business RISK events (e.g. a flagged fraud case or a failed control automatically escalating to a named human owner)
+  Recommended approach: Build a risk-specific escalation ladder once detection (rows 35-36) exists to feed it.
+- [High] Anomaly Detection
+  Gap: Anomaly Detection is real for exactly 1 of ~30 named monitor event types; Tier 2/3 model-backed monitors are designed (PLATFORM_STRATEGY.md #29) but not built
+  Recommended approach: Prioritize the next 2-3 highest-risk event types (bulk data export, after-hours high-impact actions, repeated failed auth) for Tier-1 rule-engine monitors before investing in Tier 2/3 AI monitors.
+- [High] Fraud & Abuse Detection
+  Gap: Fraud & Abuse Detection is a logbook for human-reported cases, not an active/automated detection system
+  Recommended approach: Pair fraud_cases with rule-based signals (e.g. duplicate-payment detection, round-number/threshold-avoidance patterns) that auto-populate detectionSource='system_alert'.
+- [Medium] Policy Compliance Verification
+  Gap: Framework coverage percentages are self-reported (status field set manually), not independently verified against real evidence -- no automated policy-compliance-check engine cross-verifies claimed control status
+  Recommended approach: Wire automated evidence checks (e.g. get_advisors output, CI gate status) into specific controls where a real signal exists, rather than 100% manual attestation.
+- [Medium] Risk-Based Escalation
+  Gap: Escalation ladders exist for AI-operational failures and model-confidence, not for business RISK events (e.g. a flagged fraud case or a failed control automatically escalating to a named human owner)
+  Recommended approach: Build a risk-specific escalation ladder once detection (rows 35-36) exists to feed it.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

@@ -1,0 +1,17 @@
+VERIDIAN Review Framework gap-closure: AI Architecture / Software-First AI-Second Philosophy.
+This covers 3 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Low] Software-first, AI-second philosophy
+  Gap: Not applied to every AI call site consistently
+  Recommended approach: Add a lint rule or code-review checklist item requiring classifyExecution() before new LLM calls
+- [Low] AI used only where software cannot solve
+  Gap: Engine coverage is 25 of the 247 planned VCEL engines
+  Recommended approach: Prioritize next engines by AI-call-volume-per-domain from tokenUsageLedger
+- [Low] Maintains "Software First, AI Second" Philosophy
+  Gap: Same as parameter 9 - not applied to every AI call site consistently
+  Recommended approach: Same as parameter 9
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

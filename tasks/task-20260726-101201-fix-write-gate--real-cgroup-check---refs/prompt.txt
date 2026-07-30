@@ -1,0 +1,27 @@
+## OBJECTIVE
+Fix real, live-reproduced AUDIT: REJECT findings on the current claude-control PR #80 branch (interactive-session write-gate, round 3). Round 2's "kernel-verified cgroup" claim was proven false by direct live reproduction, plus two real git-push refspec parsing gaps were found.
+
+## KNOWN_CONTEXT
+Read the current write-gate implementation (ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet and its live-deployed copy) in full first. Real findings, each empirically reproduced by the reviewer: (1) `_interactive_guard_cgroup_path()` reads a file path stored in a plain, user-writable config file (`$guard_dir/_cgroup_path` inside `~/.claude-interactive-session-guard.d/`) instead of the real, kernel-tracked `/proc/self/cgroup` directly -- any interactive session can overwrite that config file to point at a fake cgroup path and bypass the guard entirely, reproduced live with a 3-line shell sequence (no root needed). This must be fixed by reading `/proc/self/cgroup` (or `/proc/$$/cgroup`) directly and hardcoded, never through a redirectable config file -- if a test seam is genuinely needed, gate it behind an environment variable that is never set outside the test harness itself, not a runtime-readable file inside the guard's own install directory. (2) `_interactive_guard_git_push_verdict()` strips `refs/heads/` from the destination ref but never strips a leading `+` force-push marker, so `git push origin +master` (standard force-push refspec shorthand) evaluates dest as the literal string `+master`, which doesn't match the `master|main` pattern and goes through unblocked -- reproduced live. (3) The same function only inspects the first positional refspec argument; `git push origin feature-branch master` (a real, valid multi-refspec single push) pushes both branches in one invocation but only the first (`feature-branch`) is checked, so `master` in the same command is never evaluated and the whole push goes through unblocked -- reproduced live.
+
+## SCOPE
+1. Rewrite the cgroup check to read `/proc/self/cgroup` (or the equivalent `/proc/$$/cgroup` from the calling shell's own PID) directly, hardcoded, with no file-based indirection reachable from a normal interactive session. If a test needs to simulate a systemd context, use an environment variable that only a controlled test script ever sets (document clearly that setting it manually outside the test harness defeats the guard, same honesty standard already used for other known limitations) -- do not reintroduce any runtime-writable-by-the-restricted-account seam.
+2. Fix the refspec parsing: strip a leading `+` (force-push marker) before comparing the destination ref against the protected-branch pattern, so `git push origin +master` is correctly recognized as targeting `master`.
+3. Fix the multi-refspec gap: iterate over ALL positional refspec arguments passed to `git push`, not just the first, and block if ANY of them resolves to a protected branch.
+4. Update PROTOCOL_OWNER_AI.yaml's known_limitations section and the snippet's own KNOWN LIMITATIONS comment block to honestly reflect the current, real coverage after this fix -- do not leave the previously-undisclosed gaps undocumented if any residual limitation remains.
+5. Extend the regression tests to cover: the cgroup config-file bypass now blocked, `git push origin +master` now blocked, and `git push origin feature-branch master` now blocked (master specifically flagged even as the second refspec).
+
+## SUCCESS_CRITERIA
+- A live reproduction test of the exact `echo ... > _cgroup_path` bypass sequence from the round-2 review no longer succeeds in bypassing the guard.
+- `git push origin +master` (simulated against the wrapper, not a real remote) is blocked.
+- `git push origin feature-branch master` (simulated) is blocked because of the `master` ref specifically.
+- `python3 -m pytest tests/ -k write_gate -v` (or whichever real test file this round extends) exits 0 with all new cases passing.
+
+## EXPECTED_OUTPUT
+Push directly to the existing PR #80 branch in FChecklist/claude-control (find it via `gh pr view 80 --repo FChecklist/claude-control --json headRefName`). Do not open a new PR.
+
+## CONSTRAINTS
+Do not remove the existing read-only command pass-through. Do not merge yourself; this needs a fresh, thorough audit pass -- explicitly encourage the reviewer to attempt live reproduction of all three fixed bypasses (not just review the diff) given the pattern of prior rounds' claims not holding up under direct testing.
+
+## COMPLEXITY_TIER
+judgment

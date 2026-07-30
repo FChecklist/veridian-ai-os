@@ -1,0 +1,20 @@
+TASK: V2-13 -- Chat context + terminology + mode-pill analytics
+
+### V2-13 — Chat context + terminology + mode-pill analytics [C4]
+- READY: yes
+- SOFTWARE TEAM LEVEL: L3 Feature Worker
+- TASK ID: V2-13-CHAT-CONTEXT-ANALYTICS
+- MODULE: compliance-tracker
+- OBJECTIVE: Verify and wire `contextEntityId` data fetch into the AI reply prompt; add an org-glossary hook into the system prompt; add usage analytics on mode-pills vs free-text. Closes CSV rows #16/#17/#20.
+- READ FIRST: chat reply prompt construction; `contextEntityId` plumbing; existing analytics infra.
+- WHAT TO BUILD: context fetch wiring + glossary hook + mode-pill analytics event; tests.
+- CONSTRAINTS: No new analytics vendor; reuse existing. Register claim.
+- DONE CRITERIA: Three rows' fixes shipped + tested; rows re-scored; PR open.
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

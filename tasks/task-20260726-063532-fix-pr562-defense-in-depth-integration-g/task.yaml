@@ -1,0 +1,245 @@
+id: task-20260726-063532-fix-pr562-defense-in-depth-integration-g
+title: Fix PR562 defense-in-depth integration gaps (real AUDIT FAIL findings)
+status: superseded
+repo: compliance-tracker
+branch: worker/task-20260726-063532-fix-pr562-defense-in-depth-integration-g
+workspace: /opt/veridian/ai-os/tasks/task-20260726-063532-fix-pr562-defense-in-depth-integration-g/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-063532-fix-pr562-defense-in-depth-integration-g
+service: veridian-worker@task-20260726-063532-fix-pr562-defense-in-depth-integration-g.service
+created_at: '2026-07-26T06:35:33.828993+00:00'
+last_checkpoint_at: '2026-07-26T06:58:17.366110+00:00'
+completed_steps: &id002
+- Read enforcePolicy()/redactPii()/ai-reply-gate.ts prior art in full
+- Reconcile Layer 1 with checkPromptInjection() (cross-check, no drift)
+- Reconcile Layer 4 with pii-redaction.ts's findPii()/redactPii() (+ GSTIN/PAN/IFSC/Aadhaar
+  coverage, no regression)
+- Fix Layer 3 silent fail-open -> fail-closed + explicit logging (input-side and output-side)
+- Wire runDefenseInDepth() into api/help/ask/route.ts (the real call site)
+- Update/add tests for the integration + corrected fail-closed behavior
+- Full test suite green, tsc clean
+remaining_steps: &id003
+- None -- awaiting fresh audit pass per this task's CONSTRAINTS (not self-merging)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T06:35:38.447485+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  - 'b94e238c VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines +
+    lifecycle approval gates'
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  - 'b08e4096 Merge pull request #560 from FChecklist/worker/task-20260725-231836-phase2-prompt-compiler-pipeline-core-non'
+  - '605462b2 VERIDIAN_Architecture_v2.0 phase_2: compiler pipeline core (Layer 2-5)
+    + Intelligence/Matching engines'
+  - f9e99b7b Plan phase_2 implementation in PROGRESS.md
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T06:40:39.841000+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/pii-redaction.ts
+  - src/lib/prompt-security/layer4-output-filtering.ts
+  - src/lib/prompt-security/types.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5dc8bf4a Merge main into PR 562 branch: resolve PROGRESS.md (take main) and ACTIVE-CLAIMS.yaml
+    conflicts (union: keep phase_4 claim + all main entries). Also fixed pre-existing
+    YAML indentation corruption in ACTIVE-CLAIMS.yaml (misindented item markers +
+    scope_note keys) that was broken on both branches independently before this merge
+    -- now yaml.safe_load-verified clean.'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - 'cec230a1 VERIDIAN_Architecture_v2.0 phase_4: defense-in-depth security architecture'
+  - '61dc68de ai-os: register ACTIVE-CLAIMS entry for phase_4 defense-in-depth work'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  - 'b94e238c VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines +
+    lifecycle approval gates'
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  note: periodic checkpoint
+- at: '2026-07-26T06:45:41.182134+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/pii-redaction.ts
+  - src/lib/prompt-security/defense-in-depth.test.ts
+  - src/lib/prompt-security/defense-in-depth.ts
+  - src/lib/prompt-security/layer1-input-sanitization.ts
+  - src/lib/prompt-security/layer4-output-filtering.test.ts
+  - src/lib/prompt-security/layer4-output-filtering.ts
+  - src/lib/prompt-security/types.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5dc8bf4a Merge main into PR 562 branch: resolve PROGRESS.md (take main) and ACTIVE-CLAIMS.yaml
+    conflicts (union: keep phase_4 claim + all main entries). Also fixed pre-existing
+    YAML indentation corruption in ACTIVE-CLAIMS.yaml (misindented item markers +
+    scope_note keys) that was broken on both branches independently before this merge
+    -- now yaml.safe_load-verified clean.'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - 'cec230a1 VERIDIAN_Architecture_v2.0 phase_4: defense-in-depth security architecture'
+  - '61dc68de ai-os: register ACTIVE-CLAIMS entry for phase_4 defense-in-depth work'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  - 'b94e238c VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines +
+    lifecycle approval gates'
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  note: periodic checkpoint
+- at: '2026-07-26T06:50:42.592860+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read enforcePolicy()/redactPii()/ai-reply-gate.ts prior art in full
+  - Reconcile Layer 1 with checkPromptInjection() (cross-check, no drift)
+  - Reconcile Layer 4 with pii-redaction.ts's findPii()/redactPii() (+ GSTIN/PAN/IFSC/Aadhaar
+    coverage, no regression)
+  - Fix Layer 3 silent fail-open -> fail-closed + explicit logging (input-side and
+    output-side)
+  - Wire runDefenseInDepth() into api/help/ask/route.ts (the real call site)
+  - Update/add tests for the integration + corrected fail-closed behavior
+  - Full test suite green, tsc clean
+  remaining_steps:
+  - None -- awaiting fresh audit pass per this task's CONSTRAINTS (not self-merging)
+  recent_commits:
+  - 'd55f7e5a Fix PR #562 defense-in-depth audit findings: reconcile with existing
+    engines, wire in, fail closed'
+  - '5dc8bf4a Merge main into PR 562 branch: resolve PROGRESS.md (take main) and ACTIVE-CLAIMS.yaml
+    conflicts (union: keep phase_4 claim + all main entries). Also fixed pre-existing
+    YAML indentation corruption in ACTIVE-CLAIMS.yaml (misindented item markers +
+    scope_note keys) that was broken on both branches independently before this merge
+    -- now yaml.safe_load-verified clean.'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - 'cec230a1 VERIDIAN_Architecture_v2.0 phase_4: defense-in-depth security architecture'
+  - '61dc68de ai-os: register ACTIVE-CLAIMS entry for phase_4 defense-in-depth work'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  - 'b94e238c VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines +
+    lifecycle approval gates'
+  note: periodic checkpoint
+- at: '2026-07-26T06:53:12.452569+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read enforcePolicy()/redactPii()/ai-reply-gate.ts prior art in full
+  - Reconcile Layer 1 with checkPromptInjection() (cross-check, no drift)
+  - Reconcile Layer 4 with pii-redaction.ts's findPii()/redactPii() (+ GSTIN/PAN/IFSC/Aadhaar
+    coverage, no regression)
+  - Fix Layer 3 silent fail-open -> fail-closed + explicit logging (input-side and
+    output-side)
+  - Wire runDefenseInDepth() into api/help/ask/route.ts (the real call site)
+  - Update/add tests for the integration + corrected fail-closed behavior
+  - Full test suite green, tsc clean
+  remaining_steps:
+  - None -- awaiting fresh audit pass per this task's CONSTRAINTS (not self-merging)
+  recent_commits:
+  - 'b4aca16f ai-os: addendum to phase_4 ACTIVE-CLAIMS entry for PR #562 corrective
+    fix'
+  - 'd55f7e5a Fix PR #562 defense-in-depth audit findings: reconcile with existing
+    engines, wire in, fail closed'
+  - '5dc8bf4a Merge main into PR 562 branch: resolve PROGRESS.md (take main) and ACTIVE-CLAIMS.yaml
+    conflicts (union: keep phase_4 claim + all main entries). Also fixed pre-existing
+    YAML indentation corruption in ACTIVE-CLAIMS.yaml (misindented item markers +
+    scope_note keys) that was broken on both branches independently before this merge
+    -- now yaml.safe_load-verified clean.'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - 'cec230a1 VERIDIAN_Architecture_v2.0 phase_4: defense-in-depth security architecture'
+  - '61dc68de ai-os: register ACTIVE-CLAIMS entry for phase_4 defense-in-depth work'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  note: quality gates passed, pushed branch worker/task-20260726-063532-fix-pr562-defense-in-depth-integration-g,
+    awaiting review
+- at: '2026-07-26T06:58:17.366110+00:00'
+  status: awaiting_human_approval
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'b4aca16f ai-os: addendum to phase_4 ACTIVE-CLAIMS entry for PR #562 corrective
+    fix'
+  - 'd55f7e5a Fix PR #562 defense-in-depth audit findings: reconcile with existing
+    engines, wire in, fail closed'
+  - '5dc8bf4a Merge main into PR 562 branch: resolve PROGRESS.md (take main) and ACTIVE-CLAIMS.yaml
+    conflicts (union: keep phase_4 claim + all main entries). Also fixed pre-existing
+    YAML indentation corruption in ACTIVE-CLAIMS.yaml (misindented item markers +
+    scope_note keys) that was broken on both branches independently before this merge
+    -- now yaml.safe_load-verified clean.'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - 'cec230a1 VERIDIAN_Architecture_v2.0 phase_4: defense-in-depth security architecture'
+  - '61dc68de ai-os: register ACTIVE-CLAIMS entry for phase_4 defense-in-depth work'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  note: 'tier2, Superboss-approved, held for human merge: '
+execution_seconds: 940
+restart_count: 0
+token_usage:
+  input_tokens: 172
+  cache_creation_input_tokens: 177302
+  cache_read_input_tokens: 12286233
+  output_tokens: 69026
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 177302
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 648
+    cache_read_input_tokens: 200613
+    cache_creation_input_tokens: 373
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 373
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T07:30:09.448865+00:00'
+duplicate_of: task-20260726-043023-phase4-defense-in-depth-prompt-security
+superseded_reason: 'Real work landed on the same branch/PR #562 as phase4-defense-in-depth-prompt-security
+  (round-1 dedup missed this cross-issue link -- neither task''s own checkpoint text
+  named the other''s PR number). Confirmed via `gh pr view 562`: PR contains both
+  the original phase-4 commit and the audit-fix commit from this task.'
+superseded_at: '2026-07-27T03:52:29.137000+00:00'

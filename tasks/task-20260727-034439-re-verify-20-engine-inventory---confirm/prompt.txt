@@ -1,0 +1,26 @@
+## OBJECTIVE
+Re-verify the real, existing 20-engine inventory (ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml, engine_inventory field) against current, live repo state -- it is 2 days stale as of 2026-07-26 and this session added several new real files that are not yet reflected in it. Confirm zero duplication was introduced by this session's new work, and report the real current status of the separately-tracked Audit Engine (ai-os/AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml). This is explicitly a verification/update task against EXISTING software -- do not create a new inventory, a new engine, or any new parallel tracking file.
+
+## KNOWN_CONTEXT
+The engine_inventory has 20 real entries (engine_no 1-20), each with engine_name/purpose/exists_as/verified_on_disk/coverage/gap_description fields. All 20 currently show verified_on_disk: true; 19 of 20 show coverage: partial, only "Knowledge Engine" shows coverage: full. Real new files added to claude-control during this session (2026-07-26) that are not yet reflected anywhere in this inventory: scripts/ddl_authorization_check.py (a new dispatch-time pre-flight gate, went through 3 real audit rounds), an interactive-session write-gate (a bashrc-snippet-based guard against manual gh pr merge/git push, also went through real audit rounds), fixes to scripts/task-gateway.py/scripts/veridian-task.py/scripts/supervisor-entrypoint.sh (real branch-resolution fix + a new HOLD_FOR_OWNER_SIGNOFF mechanism), and a fix to scripts/credit-accountant.py's integration with task-gateway.py's dispatch flow (a real gap found live this session: task-gateway.py never called credit-accountant.py propose, causing worker checkpoint reports to be rejected). Some of these PRs may still be open/in-review as of when this task runs -- check real current state via gh rather than assuming any are merged.
+
+## SCOPE
+1. For each of the 20 existing engine_inventory entries, re-verify exists_as's real files still exist at the stated paths and re-assess coverage/gap_description against current repo state (not the 2026-07-24 snapshot) -- update only what has genuinely changed, do not rewrite entries that are still accurate.
+2. Specifically determine which of the 20 existing engines (most likely "Workflow Engine" -> task-gateway.py, and/or "Decision Engine" -> risk-tier.py, and/or "Policy Engine"/"Rule Engine") the new files listed in KNOWN_CONTEXT genuinely belong under, and add them to that engine's exists_as list with updated coverage -- do NOT create a 21st engine entry for them; if none of the 20 existing roles genuinely fits, say so explicitly and explain why rather than forcing a fit.
+3. Grep the full codebase for any other file whose purpose meaningfully overlaps with an existing engine_inventory entry's exists_as list (a real duplication check, not a superficial one) -- report any genuine duplication found, and if found, note it as a real risk in gap_description rather than silently fixing it (fixing would be its own real task, out of scope here).
+4. Read ai-os/AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml in full and report its real current phase-completion status (which phases are genuinely done, verified how) -- cross-reference against real merged PRs the same way this session's other phase-plan verifications have (gh pr view --json state,mergedAt on any cited PR, not trusting a self-report field).
+5. Update the engine_inventory's built_ts/meta fields to reflect this real re-verification pass, following whatever versioning/changelog convention the file already uses (check for one before inventing a new convention).
+
+## SUCCESS_CRITERIA
+- `python3 -c "import yaml; d=yaml.safe_load(open('ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml')); print(len(d['engine_inventory']))"` still returns 20 (no new engine entries added).
+- `grep -c "ddl_authorization_check\|credit-accountant" ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml` returns a nonzero count (the new files are genuinely reflected somewhere in the updated inventory).
+- `gh pr view <cited-PR-number> --repo FChecklist/compliance-tracker --json state,mergedAt` (for whichever real PR AUDITOR_ENGINE's status report cites) returns real, verifiable state matching what this task reports, not an unverified claim.
+
+## EXPECTED_OUTPUT
+A real PR against claude-control updating the engine_inventory file in place (no new file), plus a clear report (in the PR body, and appended to the same file's own changelog/meta convention if one exists) of: what changed, what genuine duplication (if any) was found, and AUDITOR_ENGINE's real current status with real evidence.
+
+## CONSTRAINTS
+Do not create a new inventory file, a new engine, or a new tracking mechanism -- this is strictly an update-in-place task against the existing file. Do not attempt to fix any duplication found; only report it. Do not merge yourself.
+
+## COMPLEXITY_TIER
+judgment

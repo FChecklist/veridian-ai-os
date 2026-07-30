@@ -1,0 +1,30 @@
+## OBJECTIVE
+Fix a real, live-reproduced bug in the VERI ERP chain-selector (VeriComposer/ChainSelector, the "Discuss" tab's task-chain builder on `/chat`): selecting entity type "Product" surfaces Project records instead of Product records, and offers project-management actions instead of product-management actions.
+
+## KNOWN_CONTEXT
+Live-reproduced on the current production deployment (veridian-aios.com, org `demo_org`, logged in as the demo CEO persona) on 2026-07-27, not a self-report — exact repro steps:
+1. Go to `/chat`, click "VERI ERP" then "Product" in the chain-selector.
+2. Only one option appears: "Demo Company Platform" (internal id, per the chain breadcrumb: `demo_product`).
+3. Selecting "Demo Company Platform" shows TWO sub-options: "Website Revamp" and "ERP Rollout - Phase 2" (internal id, confirmed via the chain breadcrumb: `demo_project_website` for the first one) -- these are real Project entity names/ids, not Product sub-items.
+4. Selecting "Website Revamp" offers these actions: "Status update", "Log a task", "Flag a risk" -- these are project-management actions. A correctly-scoped Product entity should offer product-management actions instead (e.g. update price/stock, create a quotation referencing the product -- check this codebase's own existing patterns for what a Product action set should actually contain).
+By contrast, the sibling entities in the exact same chain-selector are correctly scoped and must NOT be modified: selecting "Customer" -> a real customer (e.g. "Orion Retail Chain Pvt. Ltd.", id `demo_cust_orion`) -> correctly offers "Invoice preparation", "Send reminder", "GST filing". Selecting "Vendor" also lists correctly-scoped real vendor names. This proves the bug is isolated to the "Product" entity branch of the chain-selector's data-resolution logic, not a systemic chain-selector defect -- use the working Customer/Vendor code path as the reference for what correct looks like.
+
+## SCOPE
+Find the real root cause: search the codebase for wherever the chain-selector resolves a selected entity's children/available-actions (likely a service or API route keyed by entity type -- "product"/"customer"/"vendor" -- check `src/components/veri-chat/ChainSelector.tsx`, `src/components/veri-chat/VeriComposer.tsx`, `src/lib/services/chat-service.ts`, and any API route under `src/app/api` that resolves chain options, plus `src/lib/db/schema.ts` for the real table names involved -- note a schema grep for a table literally named "product" found nothing, so confirm the actual table/entity name the "Product" chain option is supposed to query before assuming one). Determine exactly why selecting a Product record pulls Project rows as children instead of product-appropriate data/actions -- likely a wrong table join, a copy-pasted entity-type string, or a fallback path that silently defaults to Projects when no real product-scoped children exist. Fix the root cause so selecting a Product shows real product-appropriate next-step actions (or an appropriate empty state if this codebase genuinely has no product-level sub-actions yet -- do not fabricate fake actions just to fill the slot; if product-level actions genuinely don't exist yet, the fix is to stop cross-wiring Project data in, not to invent new product actions from scratch, unless a real existing action already exists elsewhere in the codebase for this).
+
+## SUCCESS_CRITERIA
+- A real test proving: selecting the Product entity type and a specific product record no longer returns Project rows/actions.
+- A real test proving the Customer and Vendor chain paths are unaffected by the fix (regression guard on the parts of this bug report that are correct today).
+- Verify by actually running:
+`npx tsc --noEmit`
+`bun test` (scoped to whichever service/component files the fix touches)
+`grep -rn "demo_project_website" src/` (after the fix, confirm this project id is no longer reachable via a Product-typed chain query in the fixed code path)
+
+## EXPECTED_OUTPUT
+A real PR on a new branch in the compliance-tracker repo containing the root-cause fix and tests. Requires a fresh supervisor audit before merge; do not merge it yourself even after a PASS verdict.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not touch the Customer or Vendor chain-selector code paths beyond adding the regression test specified above -- they are already correct.
+
+## COMPLEXITY_TIER
+judgment

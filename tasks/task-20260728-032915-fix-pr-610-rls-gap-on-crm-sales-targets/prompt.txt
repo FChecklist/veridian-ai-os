@@ -1,0 +1,26 @@
+## OBJECTIVE
+Fix one real, audit-confirmed gap on PR #610 ("Sales Pipeline interactive dashboard", branch `worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co`, compliance-tracker) before it can merge: the new migration creates an org-scoped table with zero Row Level Security.
+
+## KNOWN_CONTEXT
+Real, audit-confirmed finding, do not re-derive: `drizzle/0268_sales_pipeline_dashboard_targets.sql` creates `compliance.crm_sales_targets` with no `ENABLE ROW LEVEL SECURITY`, no `app_runtime_tenant_isolation` policy, no `service_role_bypass` policy, and no index on `org_id` -- every other org-scoped table in this repo (e.g. `drizzle/0101_wave115_construction_boq_progress_diary.sql`'s `construction_boq_*` tables) has all three. The app connects via the `app_runtime` role, which `src/lib/db/tenant-scoped.ts`'s own header comment states has no RLS bypass -- this table currently has zero DB-level tenant isolation, relying entirely on `crm-service.ts`'s application-level `eq(crmSalesTargets.orgId, ctx.orgId)` filter never being forgotten in any future code path. This implicates AGENTS.md Rule 9's multi-tenant RLS guardrail.
+
+## SCOPE
+1. Add a new migration (do not edit 0268 in place if it's already been referenced elsewhere -- check first; if safe to amend directly since not yet merged, amending 0268 is fine) that enables RLS on `compliance.crm_sales_targets` and adds the same `app_runtime_tenant_isolation` + `service_role_bypass` policy pair used by `drizzle/0101_wave115_construction_boq_progress_diary.sql`'s tables -- match that exact pattern, don't invent a new one.
+2. Add an index on `org_id` (and `org_id, month` composite, matching the query patterns in `sales-pipeline-dashboard-service.ts`).
+3. Run a real `bun run build` (full production build) to completion -- the original PR's own PROGRESS.md disclosed this was never actually completed (timeout, then suspected OOM) and tsc/eslint/tests were used as unverified proxies instead. If it times out or OOMs again, increase `NODE_OPTIONS=--max-old-space-size` and retry once; if it still fails, report the real error, don't silently give up and re-use the same disclosed gap.
+
+## SUCCESS_CRITERIA
+- A real test or direct SQL check proving RLS is enabled and both policies exist on `compliance.crm_sales_targets`, matching the pattern of an existing passing test for another org-scoped table (find and mirror one, e.g. against `construction_boq_line_items`).
+- Verify by actually running:
+`npx tsc --noEmit`
+`bun test src/lib/services/sales-pipeline-dashboard-service.test.ts`
+`NODE_OPTIONS=--max-old-space-size=8192 bun run build` (must complete, not time out -- report the real exit code)
+
+## EXPECTED_OUTPUT
+Push the fix to the SAME branch (`worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co`, PR #610 already open) -- do not open a new PR. Requires a fresh supervisor audit before merge; do not merge it yourself even after a PASS verdict.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not touch the dashboard/chart UI or aggregation logic -- the audit confirmed those are correct; this pass is scoped to the RLS/index gap and the real build verification only.
+
+## COMPLEXITY_TIER
+judgment

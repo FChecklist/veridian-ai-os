@@ -1,0 +1,171 @@
+TASK ID: AIROUTER-01 (see master CONTROLLER.yaml at C:\Users\Dell\Downloads\Claude Code\control\CONTROLLER.yaml on the Owner's laptop / https://github.com/FChecklist/claude-control)
+MODULE: Backend (new core AI-routing module + schema)
+
+OBJECTIVE
+Build a real, unifying "Mother Router" service in this repo (VERIDIAN AI OS)
+that becomes the single source of truth for AI model/provider selection
+across the whole platform, replacing today's hardcoded-until-redeploy
+assignments with a hot-reloadable registry + policy engine. This is
+Phase 1 only. Owner's explicit scope decision: build the full router now
+INCLUDING organization/end-user subscription packages based on number of
+users, but leave BYOB (Bring Your Own AI key) as an explicit pending stub,
+not implemented.
+
+READ FIRST (do not skip, do not restate their content, just follow them)
+- ai-os/boss/ACTIVE-CLAIMS.yaml -- register your claim on this scope before
+  starting, per that file's own protocol, to avoid colliding with any other
+  parallel session.
+- ai-os/CONSTITUTION.yaml section 11 "ai_orchestra_tiers" -- the existing
+  4-rung model-escalation ladder (TIER-1..4) and the Orchestra LAYER vs TIER
+  distinction. This section already says "Models change over time via the
+  AI router -- this file references the router, never hardcodes a value."
+  You are building that router for real. Do not change the ladder's
+  semantics, only its implementation mechanism.
+- src/lib/orchestra-model-resolver.ts, src/lib/model-tier-eligibility.ts,
+  src/lib/llm-client.ts, src/lib/ai-team/roster.ts -- the 4 existing
+  mechanisms this Mother Router unifies. Read all 4 fully before writing
+  any code. Every existing external call site of these 4 files must keep
+  working exactly as before (regression-safe) -- you are changing their
+  INTERNAL source of truth to delegate to the new registry, not their
+  public API/signatures, unless a call site genuinely has no other way to
+  pass new required context (say so explicitly in PROGRESS.md if so).
+
+WHAT TO BUILD
+
+1. Schema (Drizzle migration, additive only, check for numbering collisions
+   first):
+   - `ai_model_registry` -- one row per (provider, model) pair currently
+     hardcoded across roster.ts/orchestra-model-resolver.ts/llm-client.ts's
+     MODEL_PRICING. Columns at minimum: id, provider, model, tier
+     (mechanical/integrative/judgment -- matches model-tier-eligibility.ts's
+     existing tiers), status (active/disabled/deprecated), cost_per_1k_input,
+     cost_per_1k_output, health_status (healthy/degraded/down, defaulted
+     healthy), notes. Seed this table from the CURRENT hardcoded values in
+     those 3 files -- do not invent new models, this is a migration of
+     existing truth into a table, not a redesign of what's allowed.
+   - `ai_routing_policies` -- versioned routing rules. Columns: id, scope
+     (enum: software_team | end_user_org | sales_marketing), version (int),
+     is_active (bool), rule (jsonb -- e.g. which registry row applies for
+     which role/tier/org/feature), created_at, created_by. Only one version
+     per scope may have is_active=true at a time. Rolling back = flipping
+     is_active to a prior version's row -- must take effect on the NEXT
+     resolve() call, no restart needed.
+   - `ai_routing_audit_log` -- append-only. Columns: id, timestamp, scope,
+     context (jsonb: role/org_id/feature/etc, whatever was passed in),
+     resolved_provider, resolved_model, policy_version_used, reason (text).
+     Every single resolve() call writes one row here. This is the audit
+     trail Owner asked for -- must be genuinely populated, not a stub.
+   - `organizations` table (find its real current name/location in
+     schema.ts if "organizations" isn't literal) gets a new
+     `subscription_package` enum column: basic | standard | professional |
+     enterprise (Phase 1 -- these 4 only, tied to user-count bands you
+     define and document, e.g. basic<=10 users, standard<=50, etc -- pick
+     sensible bands and state your reasoning in PROGRESS.md, this is a
+     judgment call to make and document, not leave ambiguous) plus two
+     PENDING placeholder columns: `byob_enabled boolean default false` and
+     `byob_config jsonb` (nullable) -- add a code comment
+     "PENDING Phase 2 -- BYOB explicitly deferred per Owner directive
+     2026-07-18, do not implement logic against these columns yet."
+     Do NOT build any BYOB resolution logic, key storage, or UI. The
+     columns exist so Phase 2 doesn't need another schema migration, that
+     is their only purpose right now.
+
+2. Mother Router core module (new file, e.g. src/lib/ai-router/mother-router.ts):
+   - Single exported function, e.g. `resolveModel(scope, context)` where
+     scope is "software_team" | "end_user_org" | "sales_marketing" and
+     context carries whatever the 4 existing files currently need (role,
+     org id, feature/tier, etc -- derive the real shape from reading them,
+     don't guess).
+   - Looks up the active policy version for that scope, applies its rule
+     against the registry, and returns a resolved
+     `{ provider, model, apiKeyEnvVar, fallback }` (matching llm-client.ts's
+     existing LLMFallback shape so downstream code doesn't need to change).
+   - Health-based failover: if the resolved registry row's health_status is
+     not "healthy", automatically resolve to that row's designated fallback
+     (reuse llm-client.ts's existing same-model-failover logic/shape, don't
+     reinvent it).
+   - Cost-aware routing: expose the resolved row's cost fields so existing
+     cost-tracking call sites can keep using them unchanged.
+   - Read path must be cacheable with a short TTL (e.g. 60s) OR support an
+     explicit cache-invalidate call -- state clearly in PROGRESS.md which
+     you chose and why; either is acceptable as long as "change a registry
+     row -> next resolve() reflects it without an app restart" is true and
+     testable.
+   - Writes exactly one ai_routing_audit_log row per resolve() call.
+
+3. Wire the 3 domain-router scopes onto Mother Router (do not build 3
+   separate services -- these are routing-policy scopes/namespaces within
+   the one Mother Router, exactly as scoped in the Owner's original spec):
+   - software_team: the 3 real dispatch surfaces already enforcing
+     model-tier-eligibility.ts (`/api/ai/team/dispatch`, `dispatch-repo.ts`,
+     `ai-workforce-agent.mjs`) call `resolveModel("software_team", ...)`
+     instead of/wrapping their current logic. The mechanical/integrative/
+     judgment enforcement in model-tier-eligibility.ts must keep working
+     identically -- this is a real merge-gate (AGENTS.md Rule 10), do not
+     weaken it.
+   - end_user_org: orchestra-model-resolver.ts's existing per-org/
+     per-feature resolution calls `resolveModel("end_user_org", ...)`
+     instead of its current internal table, AND additionally consults the
+     org's new `subscription_package` to pick a default tier/model when no
+     more specific policy rule exists for that org.
+   - sales_marketing: NEW scope. Check roster.ts for any existing roles
+     matching Owner's listed capabilities (Sales Assistant, Proposal
+     Generator, Email Writer, Campaign Generator, LinkedIn Content, Blog
+     Writer, Social Media, Customer Research, Competitor Analysis, CRM
+     Assistant, Meeting Preparation, Follow-up Generator, Sales
+     Forecasting, Market Intelligence). Wire whichever of these already
+     exist as real features to call `resolveModel("sales_marketing", ...)`.
+     For any of Owner's listed capabilities that have NO existing feature
+     to route yet, do NOT build the feature -- just note honestly in
+     PROGRESS.md which ones have nothing to wire yet. Do not invent new
+     AI features under this task's scope.
+
+4. Emergency rollback -- write one small script or documented procedure
+   (e.g. a CLI/SQL snippet) that flips `ai_routing_policies.is_active` back
+   to a previous version for a given scope, and confirm via a test that
+   `resolveModel()` reflects the rollback on its very next call.
+
+EXPLICITLY OUT OF SCOPE FOR THIS TASK (do not build, do not stub beyond the
+2 placeholder columns above)
+- BYOB end-to-end functionality (key storage, validation, per-org custom
+  provider config) -- Phase 2, Owner said PENDING.
+- A/B testing framework, feature-flag system -- not requested for Phase 1.
+- Any new Sales & Marketing AI feature that doesn't already exist.
+- Any change to `.github/workflows/**` (hard rule, GitHub token lacks
+  `workflow` scope -- if something here genuinely needs a workflow change,
+  implement everything else and flag it in PROGRESS.md instead of pushing
+  a workflow-file change that will silently fail).
+
+CONSTRAINTS
+- Additive migration only, no destructive schema changes.
+- Every existing test must still pass; add new tests for: hot-reload
+  (registry row change reflected without restart), rollback (policy
+  version flip reflected on next call), and audit-log population (one row
+  per resolve() call, real fields, not empty/null placeholders).
+- tsc/lint clean.
+- This touches schema/migrations -> tier2 by this repo's own risk-tier.py
+  classification -> your PR will be held for human (Owner) sign-off, not
+  auto-merged. That's expected, not a failure state.
+
+OUTPUT
+- One real PR against compliance-tracker, isolated worktree/branch per this
+  repo's existing worker convention.
+- PROGRESS.md in the PR describing: user-count band choices for the 4
+  packages and why, which sales_marketing roles were wired vs. have nothing
+  to wire yet, cache/invalidation choice for hot-reload, and confirmation
+  that all 4 existing files' external callers were verified unchanged.
+- Structured `AUDIT:` comment per mandatory-audit-check.yml once
+  supervisor review runs (automatic, not your job to write).
+
+DONE CRITERIA
+- Migration applied cleanly, tsc/lint/full test suite green (or equivalent
+  local proof if CI is flaky -- note which).
+- Mother Router module has its own passing tests proving hot-reload and
+  rollback as described above.
+- orchestra-model-resolver.ts / model-tier-eligibility.ts / llm-client.ts /
+  roster.ts's existing external callers behave identically to before (no
+  regression) -- explicitly verified, not assumed.
+- organizations.subscription_package wired to real user-count bands.
+- byob_enabled/byob_config columns exist, unused, clearly commented PENDING.
+- ai_routing_audit_log genuinely populated on every resolve() call.
+- PR opened, PROGRESS.md complete per above.

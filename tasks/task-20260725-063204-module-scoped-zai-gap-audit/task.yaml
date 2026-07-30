@@ -1,0 +1,242 @@
+id: task-20260725-063204-module-scoped-zai-gap-audit
+title: module-scoped-zai-gap-audit
+status: completed
+repo: claude-control
+branch: worker/task-20260725-063204-module-scoped-zai-gap-audit
+workspace: /opt/veridian/ai-os/tasks/task-20260725-063204-module-scoped-zai-gap-audit/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260725-063204-module-scoped-zai-gap-audit
+service: veridian-worker@task-20260725-063204-module-scoped-zai-gap-audit.service
+created_at: '2026-07-25T06:32:05.880241+00:00'
+last_checkpoint_at: '2026-07-25T06:53:25.405614+00:00'
+completed_steps: &id002
+- Explored existing domain-scoped audit system (generate/ingest scripts, guard, versioning,
+  schema) -- confirmed working (AUDIT-000008/9/10, Security domain, ChatGPT + Z.AI).
+- 'Checked for existing module registries per KNOWN_CONTEXT:'
+- '`scripts/module_gap_audit_lib.py` -- new shared module-boundary resolver: module
+  discovery for both repos, real file discovery per module (filename substring + `git
+  grep -lI` content match on snake/kebab/camelCase identifier variants, SQL narrowed
+  to schema-defining migrations, monolithic shared files excluded above an auto-discovery
+  size ceiling), and chunk-packing to the ~400-line/~20KB reference ceiling (whole
+  files only, never truncated).'
+- '`scripts/generate_chatgpt_audit_request.py` extended with `--module <name> --repo
+  <repo>` mode alongside existing `--domain` mode (verified domain mode unchanged/still
+  works).'
+- '`scripts/ingest_chatgpt_audit_response.py` extended with `--module <name> --repo
+  <repo>` mode alongside `--domain` -- routes to the schema''s existing `Modules`
+  subfolder, sanity-checks linkage via existing `modules_analysed`/`files_analysed`
+  fields. No schema changes. Verified round-trip with fixture data, cleaned up test
+  artifacts, re-ran `generate_chatgpt_audit_index.py`.'
+- '`scripts/generate_module_gap_audit_module_list.py` + `ai-os/MODULE_GAP_AUDIT_MODULE_LIST_2026-07-25.yaml`
+  -- real module list for both repos: compliance-tracker 110 modules/653 request-files-for-full-coverage;
+  projexa 79 modules/542; grand total **1195**.'
+- 'Generated real first batch: 5 request files under `/opt/veridian/chatgpt-audit/_pending_requests/`
+  covering 5 real modules (erp_cash_management, knowledge_base_pages, report_schedules
+  from compliance-tracker; cost-centers, kpi-entries from projexa).'
+- '`ai-os/MODULE_GAP_AUDIT_2026-07-25.yaml` -- Owner procedure, module-boundary sources,
+  batching rule, honest remaining-scope statement (1190 request files still needed).'
+- Registered `registries.module_gap_audit` in `ai-os/MASTER_INDEX.yaml`, cross-linked
+  to `registries.chatgpt_audit_workspace`.
+- '`scripts/superboss-register.py register-knowledge` for MODULE_GAP_AUDIT_2026-07-25.yaml,
+  MODULE_GAP_AUDIT_MODULE_LIST_2026-07-25.yaml, module_gap_audit_lib.py.'
+- All 4 SUCCESS_CRITERIA commands verified passing (exit 0 each).
+- Committed + pushed (2 commits) to worker/task-20260725-063204-module-scoped-zai-gap-audit.
+remaining_steps: &id003
+- Nothing outstanding for this task's scope. Full coverage (184 more modules / 1190
+  more request files) is explicitly out of scope per CONSTRAINTS -- left for the Owner
+  to generate on demand or a future task to batch.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-25T06:32:09.768391+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '41fca83 Merge pull request #64 from FChecklist/worker/task-20260725-055316-auditor-engine-phase8-master-orchestrati'
+  - '12e5b03 Merge pull request #63 from FChecklist/worker/task-20260725-055456-fix-contradiction-detector-false-positiv'
+  - 'df03560 Phase 8: master orchestration entrypoint + master report software (auditor
+    engine)'
+  - 4fe214a Surface tight_task_validation.py rejections in auto_phase_continuation.py
+  - 'd1ef069 Merge pull request #62 from FChecklist/worker/task-20260725-055333-wiring-engine-phase1-e2e-gateway-verific'
+  - 05cb166 Require matched contradiction words to cluster locally, not just co-occur
+    anywhere
+  - '824b35f Close phase_1_end_to_end_gateway_verification: mark done + real evidence'
+  - 'f84cf40 Wiring Engine Phase 1: real gateway hop for RT-gratuity_calculator-001'
+  - 214251b Fix contradiction detector's negative-negative and qualifier false positives
+  - '8505a54 Backfill phase_5 self-report (status/produced_by_task/evidence) -- PR
+    #56 merged 2026-07-24 but the phase-plan entry was never updated, so auto_phase_continuation.py
+    could not detect it as done and kept re-offering it as the next phase'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-25T06:37:10.956710+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '41fca83 Merge pull request #64 from FChecklist/worker/task-20260725-055316-auditor-engine-phase8-master-orchestrati'
+  - '12e5b03 Merge pull request #63 from FChecklist/worker/task-20260725-055456-fix-contradiction-detector-false-positiv'
+  - 'df03560 Phase 8: master orchestration entrypoint + master report software (auditor
+    engine)'
+  - 4fe214a Surface tight_task_validation.py rejections in auto_phase_continuation.py
+  - 'd1ef069 Merge pull request #62 from FChecklist/worker/task-20260725-055333-wiring-engine-phase1-e2e-gateway-verific'
+  - 05cb166 Require matched contradiction words to cluster locally, not just co-occur
+    anywhere
+  - '824b35f Close phase_1_end_to_end_gateway_verification: mark done + real evidence'
+  - 'f84cf40 Wiring Engine Phase 1: real gateway hop for RT-gratuity_calculator-001'
+  - 214251b Fix contradiction detector's negative-negative and qualifier false positives
+  - '8505a54 Backfill phase_5 self-report (status/produced_by_task/evidence) -- PR
+    #56 merged 2026-07-24 but the phase-plan entry was never updated, so auto_phase_continuation.py
+    could not detect it as done and kept re-offering it as the next phase'
+  note: periodic checkpoint
+- at: '2026-07-25T06:42:12.153984+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/module_gap_audit_lib.py
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '41fca83 Merge pull request #64 from FChecklist/worker/task-20260725-055316-auditor-engine-phase8-master-orchestrati'
+  - '12e5b03 Merge pull request #63 from FChecklist/worker/task-20260725-055456-fix-contradiction-detector-false-positiv'
+  - 'df03560 Phase 8: master orchestration entrypoint + master report software (auditor
+    engine)'
+  - 4fe214a Surface tight_task_validation.py rejections in auto_phase_continuation.py
+  - 'd1ef069 Merge pull request #62 from FChecklist/worker/task-20260725-055333-wiring-engine-phase1-e2e-gateway-verific'
+  - 05cb166 Require matched contradiction words to cluster locally, not just co-occur
+    anywhere
+  - '824b35f Close phase_1_end_to_end_gateway_verification: mark done + real evidence'
+  - 'f84cf40 Wiring Engine Phase 1: real gateway hop for RT-gratuity_calculator-001'
+  - 214251b Fix contradiction detector's negative-negative and qualifier false positives
+  - '8505a54 Backfill phase_5 self-report (status/produced_by_task/evidence) -- PR
+    #56 merged 2026-07-24 but the phase-plan entry was never updated, so auto_phase_continuation.py
+    could not detect it as done and kept re-offering it as the next phase'
+  note: periodic checkpoint
+- at: '2026-07-25T06:47:13.399668+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/CHATGPT_AUDIT_MASTER_CATALOGUE_2026-07-24.yaml
+  - scripts/generate_chatgpt_audit_request.py
+  - scripts/ingest_chatgpt_audit_response.py
+  - scripts/module_gap_audit_lib.py
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '41fca83 Merge pull request #64 from FChecklist/worker/task-20260725-055316-auditor-engine-phase8-master-orchestrati'
+  - '12e5b03 Merge pull request #63 from FChecklist/worker/task-20260725-055456-fix-contradiction-detector-false-positiv'
+  - 'df03560 Phase 8: master orchestration entrypoint + master report software (auditor
+    engine)'
+  - 4fe214a Surface tight_task_validation.py rejections in auto_phase_continuation.py
+  - 'd1ef069 Merge pull request #62 from FChecklist/worker/task-20260725-055333-wiring-engine-phase1-e2e-gateway-verific'
+  - 05cb166 Require matched contradiction words to cluster locally, not just co-occur
+    anywhere
+  - '824b35f Close phase_1_end_to_end_gateway_verification: mark done + real evidence'
+  - 'f84cf40 Wiring Engine Phase 1: real gateway hop for RT-gratuity_calculator-001'
+  - 214251b Fix contradiction detector's negative-negative and qualifier false positives
+  - '8505a54 Backfill phase_5 self-report (status/produced_by_task/evidence) -- PR
+    #56 merged 2026-07-24 but the phase-plan entry was never updated, so auto_phase_continuation.py
+    could not detect it as done and kept re-offering it as the next phase'
+  note: periodic checkpoint
+- at: '2026-07-25T06:51:37.541928+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Explored existing domain-scoped audit system (generate/ingest scripts, guard,
+    versioning, schema) -- confirmed working (AUDIT-000008/9/10, Security domain,
+    ChatGPT + Z.AI).
+  - 'Checked for existing module registries per KNOWN_CONTEXT:'
+  - '`scripts/module_gap_audit_lib.py` -- new shared module-boundary resolver: module
+    discovery for both repos, real file discovery per module (filename substring +
+    `git grep -lI` content match on snake/kebab/camelCase identifier variants, SQL
+    narrowed to schema-defining migrations, monolithic shared files excluded above
+    an auto-discovery size ceiling), and chunk-packing to the ~400-line/~20KB reference
+    ceiling (whole files only, never truncated).'
+  - '`scripts/generate_chatgpt_audit_request.py` extended with `--module <name> --repo
+    <repo>` mode alongside existing `--domain` mode (verified domain mode unchanged/still
+    works).'
+  - '`scripts/ingest_chatgpt_audit_response.py` extended with `--module <name> --repo
+    <repo>` mode alongside `--domain` -- routes to the schema''s existing `Modules`
+    subfolder, sanity-checks linkage via existing `modules_analysed`/`files_analysed`
+    fields. No schema changes. Verified round-trip with fixture data, cleaned up test
+    artifacts, re-ran `generate_chatgpt_audit_index.py`.'
+  - '`scripts/generate_module_gap_audit_module_list.py` + `ai-os/MODULE_GAP_AUDIT_MODULE_LIST_2026-07-25.yaml`
+    -- real module list for both repos: compliance-tracker 110 modules/653 request-files-for-full-coverage;
+    projexa 79 modules/542; grand total **1195**.'
+  - 'Generated real first batch: 5 request files under `/opt/veridian/chatgpt-audit/_pending_requests/`
+    covering 5 real modules (erp_cash_management, knowledge_base_pages, report_schedules
+    from compliance-tracker; cost-centers, kpi-entries from projexa).'
+  - '`ai-os/MODULE_GAP_AUDIT_2026-07-25.yaml` -- Owner procedure, module-boundary
+    sources, batching rule, honest remaining-scope statement (1190 request files still
+    needed).'
+  - Registered `registries.module_gap_audit` in `ai-os/MASTER_INDEX.yaml`, cross-linked
+    to `registries.chatgpt_audit_workspace`.
+  - '`scripts/superboss-register.py register-knowledge` for MODULE_GAP_AUDIT_2026-07-25.yaml,
+    MODULE_GAP_AUDIT_MODULE_LIST_2026-07-25.yaml, module_gap_audit_lib.py.'
+  - All 4 SUCCESS_CRITERIA commands verified passing (exit 0 each).
+  - Committed + pushed (2 commits) to worker/task-20260725-063204-module-scoped-zai-gap-audit.
+  remaining_steps:
+  - Nothing outstanding for this task's scope. Full coverage (184 more modules / 1190
+    more request files) is explicitly out of scope per CONSTRAINTS -- left for the
+    Owner to generate on demand or a future task to batch.
+  recent_commits:
+  - d3b4d25 Document module-scoped gap audit + register in MASTER_INDEX
+  - 4f39cce Add module-scoped ChatGPT/Z.AI gap audit infrastructure
+  - '41fca83 Merge pull request #64 from FChecklist/worker/task-20260725-055316-auditor-engine-phase8-master-orchestrati'
+  - '12e5b03 Merge pull request #63 from FChecklist/worker/task-20260725-055456-fix-contradiction-detector-false-positiv'
+  - 'df03560 Phase 8: master orchestration entrypoint + master report software (auditor
+    engine)'
+  - 4fe214a Surface tight_task_validation.py rejections in auto_phase_continuation.py
+  - 'd1ef069 Merge pull request #62 from FChecklist/worker/task-20260725-055333-wiring-engine-phase1-e2e-gateway-verific'
+  - 05cb166 Require matched contradiction words to cluster locally, not just co-occur
+    anywhere
+  - '824b35f Close phase_1_end_to_end_gateway_verification: mark done + real evidence'
+  - 'f84cf40 Wiring Engine Phase 1: real gateway hop for RT-gratuity_calculator-001'
+  note: quality gates passed, pushed branch worker/task-20260725-063204-module-scoped-zai-gap-audit,
+    awaiting review
+- at: '2026-07-25T06:53:25.405614+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - d3b4d25 Document module-scoped gap audit + register in MASTER_INDEX
+  - 4f39cce Add module-scoped ChatGPT/Z.AI gap audit infrastructure
+  - '41fca83 Merge pull request #64 from FChecklist/worker/task-20260725-055316-auditor-engine-phase8-master-orchestrati'
+  - '12e5b03 Merge pull request #63 from FChecklist/worker/task-20260725-055456-fix-contradiction-detector-false-positiv'
+  - 'df03560 Phase 8: master orchestration entrypoint + master report software (auditor
+    engine)'
+  - 4fe214a Surface tight_task_validation.py rejections in auto_phase_continuation.py
+  - 'd1ef069 Merge pull request #62 from FChecklist/worker/task-20260725-055333-wiring-engine-phase1-e2e-gateway-verific'
+  - 05cb166 Require matched contradiction words to cluster locally, not just co-occur
+    anywhere
+  - '824b35f Close phase_1_end_to_end_gateway_verification: mark done + real evidence'
+  - 'f84cf40 Wiring Engine Phase 1: real gateway hop for RT-gratuity_calculator-001'
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/65'
+execution_seconds: 1167
+restart_count: 0
+token_usage:
+  input_tokens: 198
+  cache_creation_input_tokens: 181611
+  cache_read_input_tokens: 14207633
+  output_tokens: 84525
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 181611
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 819
+    cache_read_input_tokens: 203656
+    cache_creation_input_tokens: 1639
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1639
+    type: message
+  speed: standard
+master_synced_at: '2026-07-25T09:00:08.706509+00:00'

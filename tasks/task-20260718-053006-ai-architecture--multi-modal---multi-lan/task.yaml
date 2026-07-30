@@ -1,0 +1,246 @@
+id: task-20260718-053006-ai-architecture--multi-modal---multi-lan
+title: 'AI Architecture: Multi-Modal & Multi-Language Support'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-053006-ai-architecture--multi-modal---multi-lan
+workspace: /opt/veridian/ai-os/tasks/task-20260718-053006-ai-architecture--multi-modal---multi-lan/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-053006-ai-architecture--multi-modal---multi-lan
+service: veridian-worker@task-20260718-053006-ai-architecture--multi-modal---multi-lan.service
+created_at: '2026-07-18T05:30:07.257971+00:00'
+last_checkpoint_at: '2026-07-18T05:48:18.212160+00:00'
+completed_steps: &id002
+- Read governance docs, registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, checked
+  4 sibling AI-Architecture branches for file-level overlap (none on the files this
+  task touches)
+- 'Confirmed both findings were still real gaps by reading the current code (not the
+  review framework''s original snapshot): llm-client.ts/prompt-os-resolver.ts had
+  zero locale/language wiring anywhere; document-extraction-service.ts''s SUPPORTED_MIME_TYPES
+  was still image-only (jpeg/png/webp)'
+- 'Multi-Language AI Responses: new `src/lib/ai-response-locale.ts` (20-language directive
+  table + `getPreferredAiResponseLocale()` cookie reader, deliberately decoupled from
+  `src/i18n/locales.ts`''s UI-catalog-constrained en/hi list -- an LLM needs no message
+  catalog to reply in another language, so this doesn''t require translating the UI
+  itself)'
+- Added optional `locale` param to `prompt-os-resolver.ts`'s `resolvePromptTemplate()`
+  (additive, every pre-existing 1-arg call site unaffected) that appends a language
+  directive the same way the existing VERI_PERSONA_DIRECTIVE does
+- 'Wired locale through the real conversational "AI response" surfaces: `chat-service.ts`''s
+  `generateAiReply()` + `generateVeriGroupReply()` (covers VERI Chat 1:1 and group
+  replies, and `regenerateAiReply()` which calls the former), and `help/ask/route.ts`
+  (Help AI)'
+- 'Supports Multiple Input Types: extended `document-extraction-service.ts` with a
+  text-extraction path (PDF via `pdf-parse`, Word `.docx` + new PowerPoint `.pptx`
+  via `officecli-client.ts`, best-effort `.eml` email header+body) alongside the existing
+  image-vision path -- `isVisionExtractable()` kept image-only (other services depend
+  on that exact meaning), new `isTextExtractable()` / `isDocumentExtractable()` added'
+- Added `extractPptxRawText()` to `officecli-client.ts` (refactored the shared tmp-file/query/close
+  logic out of `extractDocxRawText()`) -- verified live against the vendored `bin/officecli-linux-x64`
+  binary (real create/add-slide/add-shape/close/query round-trip) before writing any
+  code depending on it
+- Updated `src/app/api/documents/route.ts`'s upload-extraction trigger from `isVisionExtractable`
+  to `isDocumentExtractable`, renamed the `imageBase64` ctx field to `fileBase64`
+  (and the one other caller, `scripts/veridian-full-load-test.ts`) since it now carries
+  non-image file bytes too
+- Video explicitly NOT added -- no rasterization/frame-extraction library exists in
+  this codebase or its dependencies, and no provider wired into llm-client.ts accepts
+  raw video over its existing simple-HTTP-JSON vision endpoints; documented in document-extraction-service.ts's
+  header rather than faked
+- 'Tests: `src/lib/ai-response-locale.test.ts` (new), `src/lib/officecli-client.test.ts`
+  (new real .pptx round-trip test using `pptxgenjs`), `src/lib/services/document-extraction-service.test.ts`
+  (new -- mime-type gates, `.eml` parsing, real PDF round-trip via `jspdf` + `pdf-parse`)'
+- '`bunx tsc --noEmit` clean, `bunx eslint` clean on all changed files, `bun test`
+  full suite 1436 pass / 0 fail (2854 expect calls), `bun run build` compiles successfully'
+remaining_steps: &id003
+- Open PR against main -- https://github.com/FChecklist/compliance-tracker/pull/418
+  (not self-merged, per Rule 6)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T05:30:07.818798+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  - 97dd8773 Re-trigger CI after corrected audit comment
+  note: worker started (resume=0)
+- at: '2026-07-18T05:35:08.120883+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  - 97dd8773 Re-trigger CI after corrected audit comment
+  note: periodic checkpoint
+- at: '2026-07-18T05:40:08.440919+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/api/help/ask/route.ts
+  - src/lib/officecli-client.ts
+  - src/lib/prompt-os-resolver.ts
+  - src/lib/services/chat-service.ts
+  - src/lib/ai-response-locale.test.ts
+  - src/lib/ai-response-locale.ts
+  completed_steps:
+  - Read governance docs, registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, checked
+    4 sibling AI-Architecture branches for file-level overlap (none on the files this
+    task touches)
+  - Read current llm-client.ts / prompt-os-resolver.ts / chat-service.ts / document-extraction-service.ts
+    / officecli-client.ts to confirm both findings are still real gaps (not already
+    closed)
+  remaining_steps:
+  - 'Multi-Language AI Responses: new src/lib/ai-response-locale.ts (language table
+    + directive + cookie-read helper), locale param on prompt-os-resolver.ts''s resolvePromptTemplate,
+    wire into chat-service.ts (generateAiReply, generateVeriGroupReply) + help/ask/route.ts'
+  - 'Multi-Modal input types: extend document-extraction-service.ts to support PDF
+    (pdf-parse text), Word .docx (officecli-client.ts), PowerPoint .pptx (new officecli-client.ts
+    extractPptxRawText, verified live against vendored binary), email .eml (best-effort
+    raw MIME text) -- video explicitly out of scope, documented why'
+  - Update src/app/api/documents/route.ts's extraction trigger + officecli-client.ts
+    refactor
+  - Add/update tests (ai-response-locale, prompt-os-resolver locale param, officecli-client
+    pptx, document-extraction-service)
+  - bun install, tsc --noEmit, eslint, bun test, bun run build
+  - Open PR
+  recent_commits:
+  - '9ef0d513 chore: register active claim for AI Architecture multi-modal/multi-language
+    gap closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:45:08.587409+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - scripts/veridian-full-load-test.ts
+  - src/app/api/documents/route.ts
+  - src/app/api/help/ask/route.ts
+  - src/lib/officecli-client.test.ts
+  - src/lib/officecli-client.ts
+  - src/lib/prompt-os-resolver.ts
+  - src/lib/services/chat-service.ts
+  - src/lib/services/document-extraction-service.ts
+  - src/lib/ai-response-locale.test.ts
+  - src/lib/ai-response-locale.ts
+  - src/lib/services/document-extraction-service.test.ts
+  completed_steps:
+  - Read governance docs, registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, checked
+    4 sibling AI-Architecture branches for file-level overlap (none on the files this
+    task touches)
+  - Read current llm-client.ts / prompt-os-resolver.ts / chat-service.ts / document-extraction-service.ts
+    / officecli-client.ts to confirm both findings are still real gaps (not already
+    closed)
+  remaining_steps:
+  - 'Multi-Language AI Responses: new src/lib/ai-response-locale.ts (language table
+    + directive + cookie-read helper), locale param on prompt-os-resolver.ts''s resolvePromptTemplate,
+    wire into chat-service.ts (generateAiReply, generateVeriGroupReply) + help/ask/route.ts'
+  - 'Multi-Modal input types: extend document-extraction-service.ts to support PDF
+    (pdf-parse text), Word .docx (officecli-client.ts), PowerPoint .pptx (new officecli-client.ts
+    extractPptxRawText, verified live against vendored binary), email .eml (best-effort
+    raw MIME text) -- video explicitly out of scope, documented why'
+  - Update src/app/api/documents/route.ts's extraction trigger + officecli-client.ts
+    refactor
+  - Add/update tests (ai-response-locale, prompt-os-resolver locale param, officecli-client
+    pptx, document-extraction-service)
+  - bun install, tsc --noEmit, eslint, bun test, bun run build
+  - Open PR
+  recent_commits:
+  - '9ef0d513 chore: register active claim for AI Architecture multi-modal/multi-language
+    gap closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:48:18.212160+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '89a1b9e0 docs: record PR #418 link in progress tracking and active-claims entry'
+  - '8a4f5670 feat: locale-aware AI responses + PDF/Word/PowerPoint/email document
+    extraction'
+  - '9ef0d513 chore: register active claim for AI Architecture multi-modal/multi-language
+    gap closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  note: worker finished, no changes to commit
+execution_seconds: 1090
+restart_count: 0
+token_usage:
+  input_tokens: 188
+  cache_creation_input_tokens: 190436
+  cache_read_input_tokens: 14193252
+  output_tokens: 77141
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 190436
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 428
+    cache_read_input_tokens: 213612
+    cache_creation_input_tokens: 362
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 362
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T06:30:03.279589+00:00'

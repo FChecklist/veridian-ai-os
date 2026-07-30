@@ -1,0 +1,14 @@
+VERIDIAN Review Framework gap-closure: AI Engineering Quality / Error Handling & Logging.
+This covers 2 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Low] Error Handling Quality
+  Gap: ~9% of API routes lack a visible try/catch
+  Recommended approach: Add an ESLint rule or CI check requiring try/catch + ServiceError handling in every route.ts.
+- [Medium] Logging Quality
+  Gap: No confirmed centralized structured logging utility
+  Recommended approach: Add a lightweight structured operational logger (correlation-ID aware) distinct from the compliance audit_logs tables.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

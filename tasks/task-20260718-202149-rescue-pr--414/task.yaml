@@ -1,0 +1,391 @@
+id: task-20260718-202149-rescue-pr--414
+title: 'Rescue PR #414'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-202149-rescue-pr--414
+workspace: /opt/veridian/ai-os/tasks/task-20260718-202149-rescue-pr--414/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-202149-rescue-pr--414
+service: veridian-worker@task-20260718-202149-rescue-pr--414.service
+created_at: '2026-07-18T20:21:50.814721+00:00'
+last_checkpoint_at: '2026-07-18T20:59:33.206020+00:00'
+completed_steps: &id002
+- 'Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+  11), via its own small PR #448.'
+- '`gh pr checkout 414` hit a local worktree conflict (branch already checked out
+  elsewhere) -- worked around via `git fetch origin <branch>:rescue-414-local`.'
+- 'Merged `origin/main` into the PR branch -- twice, since main moved mid-rescue (PR
+  #413 merged, then the #418/#420/#422/#424 chain already in `git log`). Both times:
+  `PROGRESS.md` conflict resolved `--ours`; `ai-os/boss/ACTIVE-CLAIMS.yaml` conflict
+  resolved additively (kept both sides'' new entries -- no real content conflict,
+  just concurrent appends).'
+- Confirmed migration `drizzle/0225_ai_interaction_efficiency_gap_closure.sql` is
+  still the next free number after both re-merges (`git ls-tree origin/main -- drizzle/`
+  highest stayed 0224) -- no renumbering needed.
+- '`bun install --frozen-lockfile && bunx tsc --noEmit && bun run lint && bun test`
+  -- 0 type errors, 0 lint errors (3 pre-existing warnings, none new), 1532 pass /
+  0 fail.'
+- Read the PR's full diff personally (schema.ts, drizzle/0225, floor-tier-escalation.ts,
+  chat-service.ts + test, workflow-thread route, ChainSelector.tsx, veri-chat-context.tsx,
+  VeriComposer.tsx, ThreadView.tsx, RealAssistantColumn.tsx) and verified every claim
+  in the PR description against the actual code (no fabricated confidence score; new
+  required Chain-Selector-choice throw has exactly one caller path and it's fully
+  wired; migration is additive/backward-compatible).
+- 'Posted structured `AUDIT: PASS` PR comment (all 8 fields) on PR #414.'
+- '**Diagnosed a real platform quirk**: GitHub Actions created zero check suites for
+  this PR''s pushed commits while its `mergeStateStatus` was `DIRTY`/`CONFLICTING`
+  (third-party apps like Vercel still reacted normally to the same pushes). Re-merging
+  `origin/main` to reach `MERGEABLE` is what let Actions resume creating check suites
+  -- documented in the ACTIVE-CLAIMS.yaml claim update in case another rescue session
+  hits the same silent symptom.'
+- 'Full CI green on the final pushed commit: Lint, Type Check, Unit Tests, Build,
+  E2E Tests, CodeQL, Sentinel Governance Checks (Secret Scanning/Security Pattern/Documentation),
+  Guardrail Presence Check, Asset Registry/Metadata Index/Doc Cross-Reference/Doc
+  Quarantine checks, `audit-check`. Only `Vercel` preview failed (build-rate-limited,
+  non-required context, same as prior rescue sessions'' precedent).'
+- 'Classified TIER: diff touches `drizzle/0225_ai_interaction_efficiency_gap_closure.sql`
+  and `src/lib/db/schema.ts` -> **TIER2**. Per instructions, did NOT merge.'
+- 'Claim-registration PR #448 also needed its own `AUDIT: PASS` comment (mandatory-audit-check.yml
+  applies to every PR into main, not just AI-team dispatch branches) -- posted, re-ran
+  the job, merged #448.'
+remaining_steps: &id003
+- 'None for this rescue task''s own scope -- PR #414 is CI-green and audited; awaiting
+  Owner sign-off to merge (TIER2, will not self-merge per instructions).'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T20:21:51.741444+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  - 097ae295 Add proactive AI cost-ceiling alerts and default free-tier spend cap
+    (#422)
+  - 'dce4fb23 AI Architecture: locale-aware AI responses + PDF/Word/PowerPoint/email
+    extraction (#418)'
+  - 0debed60 AI Architecture / Performance & Cost Efficiency gap-closure (4 findings)
+    (#420)
+  - '8af41f19 chore: register active claim for PR #418 rescue (#443)'
+  - 0f85c896 Correct stale CAPABILITY_COVERAGE.md wiring numbers, wire 2 overlooked
+    banking engine aliases (#426)
+  - '16ff3d0f chore: register + close active claim for PR #430 rescue (#442)'
+  - 8902b86c Close Checks & Balances / Exception Handling & Recovery gaps (#430)
+  - '853fd9f8 chore: register active claim for PR #428 rescue (#441)'
+  note: worker started (resume=0)
+- at: '2026-07-18T20:26:52.246227+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs (CONSTITUTION.yaml, ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed separately
+  - Read current implementation of all touched files before writing code
+  - 'Migration `drizzle/0225_ai_interaction_efficiency_gap_closure.sql` + schema.ts:'
+  - 'floor-tier-escalation.ts: `deriveConfidenceLabel()` (honest hedging-based proxy,'
+  - 'chat-service.ts: `detectClarificationRequest()` pure predicate; confidence'
+  - 'chat-service.test.ts: 5 new tests for `detectClarificationRequest()`'
+  - 'API route: `workflow-thread/route.ts` passes `skippedChainSelector` through'
+  - 'Frontend: `ChainSelector.tsx` (`ChainSelectorResult.skippedChainSelector`,'
+  - '`ThreadView.tsx`: confidence badge (labeled as a heuristic proxy via'
+  - '`RealAssistantColumn.tsx`: compact 2-level category/sub-category'
+  - 'Verify: `bun install`, `bunx tsc --noEmit` -- 0 errors. `bun run lint`'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd.
+  recent_commits:
+  - b8242054 Merge remote-tracking branch 'origin/main' into rescue-414-local
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  - 097ae295 Add proactive AI cost-ceiling alerts and default free-tier spend cap
+    (#422)
+  - 'dce4fb23 AI Architecture: locale-aware AI responses + PDF/Word/PowerPoint/email
+    extraction (#418)'
+  - 0debed60 AI Architecture / Performance & Cost Efficiency gap-closure (4 findings)
+    (#420)
+  - '8af41f19 chore: register active claim for PR #418 rescue (#443)'
+  - 0f85c896 Correct stale CAPABILITY_COVERAGE.md wiring numbers, wire 2 overlooked
+    banking engine aliases (#426)
+  - '16ff3d0f chore: register + close active claim for PR #430 rescue (#442)'
+  - 8902b86c Close Checks & Balances / Exception Handling & Recovery gaps (#430)
+  note: periodic checkpoint
+- at: '2026-07-18T20:31:52.580981+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs (CONSTITUTION.yaml, ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed separately
+  - Read current implementation of all touched files before writing code
+  - 'Migration `drizzle/0225_ai_interaction_efficiency_gap_closure.sql` + schema.ts:'
+  - 'floor-tier-escalation.ts: `deriveConfidenceLabel()` (honest hedging-based proxy,'
+  - 'chat-service.ts: `detectClarificationRequest()` pure predicate; confidence'
+  - 'chat-service.test.ts: 5 new tests for `detectClarificationRequest()`'
+  - 'API route: `workflow-thread/route.ts` passes `skippedChainSelector` through'
+  - 'Frontend: `ChainSelector.tsx` (`ChainSelectorResult.skippedChainSelector`,'
+  - '`ThreadView.tsx`: confidence badge (labeled as a heuristic proxy via'
+  - '`RealAssistantColumn.tsx`: compact 2-level category/sub-category'
+  - 'Verify: `bun install`, `bunx tsc --noEmit` -- 0 errors. `bun run lint`'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd.
+  recent_commits:
+  - b8242054 Merge remote-tracking branch 'origin/main' into rescue-414-local
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  - 097ae295 Add proactive AI cost-ceiling alerts and default free-tier spend cap
+    (#422)
+  - 'dce4fb23 AI Architecture: locale-aware AI responses + PDF/Word/PowerPoint/email
+    extraction (#418)'
+  - 0debed60 AI Architecture / Performance & Cost Efficiency gap-closure (4 findings)
+    (#420)
+  - '8af41f19 chore: register active claim for PR #418 rescue (#443)'
+  - 0f85c896 Correct stale CAPABILITY_COVERAGE.md wiring numbers, wire 2 overlooked
+    banking engine aliases (#426)
+  - '16ff3d0f chore: register + close active claim for PR #430 rescue (#442)'
+  - 8902b86c Close Checks & Balances / Exception Handling & Recovery gaps (#430)
+  note: periodic checkpoint
+- at: '2026-07-18T20:36:52.920344+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs (CONSTITUTION.yaml, ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed separately
+  - Read current implementation of all touched files before writing code
+  - 'Migration `drizzle/0225_ai_interaction_efficiency_gap_closure.sql` + schema.ts:'
+  - 'floor-tier-escalation.ts: `deriveConfidenceLabel()` (honest hedging-based proxy,'
+  - 'chat-service.ts: `detectClarificationRequest()` pure predicate; confidence'
+  - 'chat-service.test.ts: 5 new tests for `detectClarificationRequest()`'
+  - 'API route: `workflow-thread/route.ts` passes `skippedChainSelector` through'
+  - 'Frontend: `ChainSelector.tsx` (`ChainSelectorResult.skippedChainSelector`,'
+  - '`ThreadView.tsx`: confidence badge (labeled as a heuristic proxy via'
+  - '`RealAssistantColumn.tsx`: compact 2-level category/sub-category'
+  - 'Verify: `bun install`, `bunx tsc --noEmit` -- 0 errors. `bun run lint`'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd.
+  recent_commits:
+  - '9c3a5514 chore: retrigger CI'
+  - b8242054 Merge remote-tracking branch 'origin/main' into rescue-414-local
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  - 097ae295 Add proactive AI cost-ceiling alerts and default free-tier spend cap
+    (#422)
+  - 'dce4fb23 AI Architecture: locale-aware AI responses + PDF/Word/PowerPoint/email
+    extraction (#418)'
+  - 0debed60 AI Architecture / Performance & Cost Efficiency gap-closure (4 findings)
+    (#420)
+  - '8af41f19 chore: register active claim for PR #418 rescue (#443)'
+  - 0f85c896 Correct stale CAPABILITY_COVERAGE.md wiring numbers, wire 2 overlooked
+    banking engine aliases (#426)
+  - '16ff3d0f chore: register + close active claim for PR #430 rescue (#442)'
+  note: periodic checkpoint
+- at: '2026-07-18T20:41:53.266947+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs (CONSTITUTION.yaml, ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed separately
+  - Read current implementation of all touched files before writing code
+  - 'Migration `drizzle/0225_ai_interaction_efficiency_gap_closure.sql` + schema.ts:'
+  - 'floor-tier-escalation.ts: `deriveConfidenceLabel()` (honest hedging-based proxy,'
+  - 'chat-service.ts: `detectClarificationRequest()` pure predicate; confidence'
+  - 'chat-service.test.ts: 5 new tests for `detectClarificationRequest()`'
+  - 'API route: `workflow-thread/route.ts` passes `skippedChainSelector` through'
+  - 'Frontend: `ChainSelector.tsx` (`ChainSelectorResult.skippedChainSelector`,'
+  - '`ThreadView.tsx`: confidence badge (labeled as a heuristic proxy via'
+  - '`RealAssistantColumn.tsx`: compact 2-level category/sub-category'
+  - 'Verify: `bun install`, `bunx tsc --noEmit` -- 0 errors. `bun run lint`'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd.
+  recent_commits:
+  - 098a10d9 Merge remote-tracking branch 'origin/main' into rescue-414-local
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - '9c3a5514 chore: retrigger CI'
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - b8242054 Merge remote-tracking branch 'origin/main' into rescue-414-local
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  - 097ae295 Add proactive AI cost-ceiling alerts and default free-tier spend cap
+    (#422)
+  - 'dce4fb23 AI Architecture: locale-aware AI responses + PDF/Word/PowerPoint/email
+    extraction (#418)'
+  note: periodic checkpoint
+- at: '2026-07-18T20:46:53.604934+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs (CONSTITUTION.yaml, ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed separately
+  - Read current implementation of all touched files before writing code
+  - 'Migration `drizzle/0225_ai_interaction_efficiency_gap_closure.sql` + schema.ts:'
+  - 'floor-tier-escalation.ts: `deriveConfidenceLabel()` (honest hedging-based proxy,'
+  - 'chat-service.ts: `detectClarificationRequest()` pure predicate; confidence'
+  - 'chat-service.test.ts: 5 new tests for `detectClarificationRequest()`'
+  - 'API route: `workflow-thread/route.ts` passes `skippedChainSelector` through'
+  - 'Frontend: `ChainSelector.tsx` (`ChainSelectorResult.skippedChainSelector`,'
+  - '`ThreadView.tsx`: confidence badge (labeled as a heuristic proxy via'
+  - '`RealAssistantColumn.tsx`: compact 2-level category/sub-category'
+  - 'Verify: `bun install`, `bunx tsc --noEmit` -- 0 errors. `bun run lint`'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd.
+  recent_commits:
+  - 098a10d9 Merge remote-tracking branch 'origin/main' into rescue-414-local
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - '9c3a5514 chore: retrigger CI'
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - b8242054 Merge remote-tracking branch 'origin/main' into rescue-414-local
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  - 097ae295 Add proactive AI cost-ceiling alerts and default free-tier spend cap
+    (#422)
+  - 'dce4fb23 AI Architecture: locale-aware AI responses + PDF/Word/PowerPoint/email
+    extraction (#418)'
+  note: periodic checkpoint
+- at: '2026-07-18T20:51:53.939113+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11), via its own small PR #448.'
+  - '`gh pr checkout 414` hit a local worktree conflict (branch already checked out
+    elsewhere) -- worked around via `git fetch origin <branch>:rescue-414-local`.'
+  - 'Merged `origin/main` into the PR branch -- twice, since main moved mid-rescue
+    (PR #413 merged, then the #418/#420/#422/#424 chain already in `git log`). Both
+    times: `PROGRESS.md` conflict resolved `--ours`; `ai-os/boss/ACTIVE-CLAIMS.yaml`
+    conflict resolved additively (kept both sides'' new entries -- no real content
+    conflict, just concurrent appends).'
+  - Confirmed migration `drizzle/0225_ai_interaction_efficiency_gap_closure.sql` is
+    still the next free number after both re-merges (`git ls-tree origin/main -- drizzle/`
+    highest stayed 0224) -- no renumbering needed.
+  - '`bun install --frozen-lockfile && bunx tsc --noEmit && bun run lint && bun test`
+    -- 0 type errors, 0 lint errors (3 pre-existing warnings, none new), 1532 pass
+    / 0 fail.'
+  - Read the PR's full diff personally (schema.ts, drizzle/0225, floor-tier-escalation.ts,
+    chat-service.ts + test, workflow-thread route, ChainSelector.tsx, veri-chat-context.tsx,
+    VeriComposer.tsx, ThreadView.tsx, RealAssistantColumn.tsx) and verified every
+    claim in the PR description against the actual code (no fabricated confidence
+    score; new required Chain-Selector-choice throw has exactly one caller path and
+    it's fully wired; migration is additive/backward-compatible).
+  - 'Posted structured `AUDIT: PASS` PR comment (all 8 fields) on PR #414.'
+  - '**Diagnosed a real platform quirk**: GitHub Actions created zero check suites
+    for this PR''s pushed commits while its `mergeStateStatus` was `DIRTY`/`CONFLICTING`
+    (third-party apps like Vercel still reacted normally to the same pushes). Re-merging
+    `origin/main` to reach `MERGEABLE` is what let Actions resume creating check suites
+    -- documented in the ACTIVE-CLAIMS.yaml claim update in case another rescue session
+    hits the same silent symptom.'
+  - 'Full CI green on the final pushed commit: Lint, Type Check, Unit Tests, Build,
+    E2E Tests, CodeQL, Sentinel Governance Checks (Secret Scanning/Security Pattern/Documentation),
+    Guardrail Presence Check, Asset Registry/Metadata Index/Doc Cross-Reference/Doc
+    Quarantine checks, `audit-check`. Only `Vercel` preview failed (build-rate-limited,
+    non-required context, same as prior rescue sessions'' precedent).'
+  - 'Classified TIER: diff touches `drizzle/0225_ai_interaction_efficiency_gap_closure.sql`
+    and `src/lib/db/schema.ts` -> **TIER2**. Per instructions, did NOT merge.'
+  - 'Claim-registration PR #448 also needed its own `AUDIT: PASS` comment (mandatory-audit-check.yml
+    applies to every PR into main, not just AI-team dispatch branches) -- posted,
+    re-ran the job, merged #448.'
+  remaining_steps:
+  - 'None for this rescue task''s own scope -- PR #414 is CI-green and audited; awaiting
+    Owner sign-off to merge (TIER2, will not self-merge per instructions).'
+  recent_commits:
+  - 'cabc69b4 chore: record PR #414 rescue outcome (merge conflicts) + update claim'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - '33c8eba2 chore: mark claim registration complete'
+  - '6a0707d7 chore: register active claim for PR #414 rescue'
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  - 097ae295 Add proactive AI cost-ceiling alerts and default free-tier spend cap
+    (#422)
+  - 'dce4fb23 AI Architecture: locale-aware AI responses + PDF/Word/PowerPoint/email
+    extraction (#418)'
+  note: periodic checkpoint
+- at: '2026-07-18T20:56:54.308614+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs (CONSTITUTION.yaml, ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed separately
+  - Read current implementation of all touched files before writing code
+  - 'Migration `drizzle/0225_ai_interaction_efficiency_gap_closure.sql` + schema.ts:'
+  - 'floor-tier-escalation.ts: `deriveConfidenceLabel()` (honest hedging-based proxy,'
+  - 'chat-service.ts: `detectClarificationRequest()` pure predicate; confidence'
+  - 'chat-service.test.ts: 5 new tests for `detectClarificationRequest()`'
+  - 'API route: `workflow-thread/route.ts` passes `skippedChainSelector` through'
+  - 'Frontend: `ChainSelector.tsx` (`ChainSelectorResult.skippedChainSelector`,'
+  - '`ThreadView.tsx`: confidence badge (labeled as a heuristic proxy via'
+  - '`RealAssistantColumn.tsx`: compact 2-level category/sub-category'
+  - 'Verify: `bun install`, `bunx tsc --noEmit` -- 0 errors. `bun run lint`'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd.
+  recent_commits:
+  - 7aa5b454 Merge remote-tracking branch 'origin/main' into rescue-414-local
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - 098a10d9 Merge remote-tracking branch 'origin/main' into rescue-414-local
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - '9c3a5514 chore: retrigger CI'
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - b8242054 Merge remote-tracking branch 'origin/main' into rescue-414-local
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  note: periodic checkpoint
+- at: '2026-07-18T20:59:33.206020+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '5bf5e2de PROGRESS.md: finalize PR #414 rescue report'
+  - 'cabc69b4 chore: record PR #414 rescue outcome (merge conflicts) + update claim'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - '33c8eba2 chore: mark claim registration complete'
+  - '6a0707d7 chore: register active claim for PR #414 rescue'
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  - 097ae295 Add proactive AI cost-ceiling alerts and default free-tier spend cap
+    (#422)
+  note: worker finished, no changes to commit
+execution_seconds: 2261
+restart_count: 0
+token_usage:
+  input_tokens: 2705
+  cache_creation_input_tokens: 153551
+  cache_read_input_tokens: 18048676
+  output_tokens: 47488
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 153551
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 853
+    cache_read_input_tokens: 176793
+    cache_creation_input_tokens: 296
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 296
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T21:00:04.348709+00:00'

@@ -1,0 +1,30 @@
+## OBJECTIVE
+Replace the API-key-dependent execution model for both ChatGPT Audit Workspace and ChatGPT Prompt Library Workspace with a real manual-bridge workflow: the Owner copies a prepared prompt into ChatGPT's free web session, then pastes the response back in. Instruction INS-20260724-214122-f0ed.
+
+## SCOPE
+1. Build scripts/generate_chatgpt_audit_request.py: given a domain (Architecture/Business/Capabilities/etc, one of the 22 real subfolders already built), produces ONE real, complete, ready-to-copy prompt (real repo scope description, the exact CHATGPT_AUDIT_RECORD_SCHEMA_2026-07-24.yaml fields ChatGPT must fill in, and an explicit instruction to output valid YAML matching that schema) written to a clearly-named file e.g. /opt/veridian/chatgpt-audit/_pending_requests/<domain>-request-<ts>.txt.
+2. Build scripts/ingest_chatgpt_audit_response.py: takes a file path (the Owner saves ChatGPT's pasted response there) or stdin, parses it as YAML, validates every required field from CHATGPT_AUDIT_RECORD_SCHEMA_2026-07-24.yaml is present, then writes it into the workspace through the existing scripts/chatgpt_audit_guard.py + scripts/chatgpt_audit_versioning.py (real version-safe write, never overwrite), and updates the master catalogue/index.
+3. Build the equivalent pair for the Prompt Library: scripts/generate_chatgpt_promptbatch_request.py (produces one ready-to-copy request for N prompts covering real, currently-uncovered capabilities from the live capability registry, per CHATGPT_PROMPT_SCHEMA_2026-07-24.yaml) and scripts/ingest_chatgpt_promptbatch_response.py (parses ChatGPT's pasted-back CSV/YAML response, validates the schema and the <Entity.Attribute> placeholder rule -- reject any row using a literal company/person name instead of a placeholder -- writes through scripts/chatgpt_promptlib_guard.py into CSV/, updates coverage/duplicate stats for real).
+4. Test both generate+ingest pairs end-to-end with a real synthetic round-trip: generate a real request, hand-craft a valid synthetic "ChatGPT response" fixture matching the schema, ingest it, confirm it lands correctly versioned in the workspace and the catalogue/coverage stats update for real.
+5. Update ai-os/CHATGPT_AUDIT_BLOCKER_2026-07-24.yaml and ai-os/CHATGPT_PROMPTLIB_BLOCKER_2026-07-24.yaml: replace the API-key blocker description with the real manual-bridge workflow now available, including the exact commands the Owner (or this assistant, dispatched by the Owner) runs to generate a request and ingest a response.
+6. Update ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml entries chatgpt-audit-openai-api-key and chatgpt-promptlib-openai-api-key: change status to resolved_via_manual_bridge, recording the Owner's real decision (no API key, ChatGPT free web session used manually instead) and the date.
+
+## KNOWN_CONTEXT
+- Both workspaces' infrastructure (sandbox directories, guard scripts, schemas, versioning, master catalogue/coverage scripts) already exist and are merged -- reuse them, do not rebuild.
+- The Owner explicitly chose this manual-bridge approach over providing a real OPENAI_API_KEY -- this is a real, final decision for this workflow, not a placeholder pending further input.
+- Standing rules: registry/catalog writes come from scripts not hand-authored prose; any crontab need follows the Owner-approval-citation pattern.
+
+## SUCCESS_CRITERIA
+- `python3 scripts/generate_chatgpt_audit_request.py --domain Security` runs and produces a real, complete request file.
+- `python3 scripts/ingest_chatgpt_audit_response.py --file <synthetic-fixture>` runs and exits 0, with the real record now present under /opt/veridian/chatgpt-audit/Security/.
+- `python3 scripts/generate_chatgpt_promptbatch_request.py --count 10` runs and produces a real request naming 10 real, currently-uncovered capabilities.
+- `python3 scripts/ingest_chatgpt_promptbatch_response.py --file <synthetic-fixture>` runs and exits 0, rejecting any row with a hardcoded name and accepting valid placeholder rows.
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on claude-control) for all 4 new scripts, the real round-trip test evidence for both pairs, the updated blocker files, and the updated OWNER_DECISIONS_NEEDED entries.
+
+## CONSTRAINTS
+Keep this task's real work limited to the manual-bridge scripts and documentation updates -- do not attempt to actually generate the full 10,000-prompt library or a full audit pass in this task; that is real follow-on work using the new scripts, one batch at a time, going forward.
+
+## COMPLEXITY_TIER
+integrative

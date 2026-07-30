@@ -1,0 +1,70 @@
+id: task-20260728-041754-adopted-round-4--pr-602-rebuilt-on-restored-main
+title: 'Round 4: PR 602 rebuilt on restored main history'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260727-153025-re-audit-owner-engine--phases-4-5-8-9--f
+workspace: /opt/veridian/ai-os/tasks/task-20260728-041754-adopted-round-4--pr-602-rebuilt-on-restored-main/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-041754-adopted-round-4--pr-602-rebuilt-on-restored-main
+service: veridian-supervisor@task-20260728-041754-adopted-round-4--pr-602-rebuilt-on-restored-main.service
+created_at: '2026-07-28T04:17:56.219477+00:00'
+last_checkpoint_at: '2026-07-28T04:25:17.582457+00:00'
+completed_steps: &id002
+- Read ai-os/boss/ACTIVE-CLAIMS.yaml, registered claim (commit c32c6db6)
+- 'Pulled real PR data (files/comments/merge state) for PR #562 (phase 4), #586+#590
+  (phase 5), #589 (phase 8), #588 (phase 9) via `gh`'
+- 'Confirmed all 5 PRs merged on main; extracted full audit-comment history (found
+  PR #562 had FAIL -> PASS -> FAIL -> PASS cycle before merge)'
+- Verified file presence + real (non-stub) implementation for all 4 phases' claimed
+  deliverables on current main
+- Ran `bun install`, `bun test src/lib/prompt-security src/lib/services`, `bun test
+  src/lib/browser-execution`, `bun test src/lib/ai-router`, full `bun test`, `tsc
+  --noEmit`
+- Cross-referenced the actual authoritative phase-plan source (`/opt/veridian/repos/claude-control`
+  -- `ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml`, `ai-os/OWNER_ENGINE_TASK2_PHASE_PLAN_2026-07-27.yaml`,
+  `ai-os/OWNER_ENGINE_TASK2_GAP_ANALYSIS_2026-07-27.yaml`, `ai-os/MASTER_INDEX.yaml`)
+  read-only, since it is absent from compliance-tracker -- this resolved the open
+  question on phase 5's real total scope
+- Wrote findings report to `ai-os/audits/owner_engine_reaudit_2026-07-27.md`
+- Committed + pushed report, opened PR
+remaining_steps: &id003
+- None -- task complete
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T04:17:56.219477+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'worker/task-20260727-153025-re-audit-owner-engine--phases-4-5-8-9--f'
+    (https://github.com/FChecklist/compliance-tracker/pull/602) -- registered for
+    real audit, not a fresh worker dispatch
+- at: '2026-07-28T04:25:17.582457+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'aac6e04f fix: rebuild PROGRESS.md cleanly from restored main history plus this
+    task own section only'
+  - '87f7331d fix: remove duplicate PROGRESS.md header line from reconstruction'
+  - 'c167d692 merge: resolve with latest main (keep-both, clean reconstruction now)'
+  - 'b9a5097f fix: reconstruct PROGRESS.md correctly -- restore real main history
+    + this task own section only, discard prior bad keep-both merges'
+  - '4edfc273 Merge pull request #607 from FChecklist/worker/task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr'
+  - '5614a9d1 merge: resolve conflicts with current main (keep-both, append-only)'
+  - '95365c7b merge: resolve conflicts with current main (keep-both, append-only)'
+  - 'f32c4006 fix: bump terminology-guardrail exemption count for capability-tree-service
+    dated comments'
+  - '4efed7e2 merge: resolve PROGRESS.md conflict with main, keep both'
+  - '64a68087 Merge pull request #608 from FChecklist/feat/boq-line-items-in-v1-list'
+  note: "tier1, Superboss-approved, but the merge itself FAILED (gh pr view confirms\
+    \ state=OPEN, mergedAt=; see supervisor.log) \u2014 needs manual attention, NOT\
+    \ actually merged: https://github.com/FChecklist/compliance-tracker/pull/602"
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/602
+master_synced_at: '2026-07-29T21:04:26.411737+00:00'

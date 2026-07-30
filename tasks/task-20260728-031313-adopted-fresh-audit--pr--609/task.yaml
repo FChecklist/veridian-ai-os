@@ -1,0 +1,65 @@
+id: task-20260728-031313-adopted-fresh-audit--pr--609
+title: 'Fresh audit: PR #609'
+status: blocked
+repo: compliance-tracker
+branch: feat/projexa-full-module-chain-api
+workspace: /opt/veridian/ai-os/tasks/task-20260728-031313-adopted-fresh-audit--pr--609/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-031313-adopted-fresh-audit--pr--609
+service: veridian-supervisor@task-20260728-031313-adopted-fresh-audit--pr--609.service
+created_at: '2026-07-28T03:13:14.632572+00:00'
+last_checkpoint_at: '2026-07-28T03:16:42.866857+00:00'
+completed_steps: &id002
+- Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim
+- 'Explored existing code: constructionBoqLineItems schema, construction-boq-service.ts,'
+- bun was missing from this sandbox (only bunx existed) -- installed via bun.sh/install,
+- 'Schema: added parentLineItemId + breakdownPercentage to constructionBoqLineItems;'
+- Migration drizzle/0265_construction_boq_hierarchy_interim_billing.sql -- HAND-WRITTEN,
+- 'construction-boq-service.ts: computeHierarchicalAmount() (root-Main-based formula,'
+- 'construction-boq-service.test.ts: 11 tests, all passing -- exact Owner formula'
+- 'construction-valuation-service.ts: interim/RA billing + retention % + invoice emission'
+- Verified existing /api/construction/boq and /api/v1/construction/boq routes need
+  no
+- 'New API routes: GET/POST /api/construction/interim-bills, GET'
+- 'Excel BoQ importer: construction-boq-import-service.ts + API route. 5 tests including'
+- npx tsc --noEmit clean (had to raise Node heap via NODE_OPTIONS=--max-old-space-size,
+remaining_steps: &id003
+- This task's migration (drizzle/0265_*.sql) has NOT been applied to any live Supabase
+- Because the migration is unapplied, `get_advisors(security)` has NOT been run
+- 'Open PR -- PR #596, `worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown`'
+- This corrective push needs a fresh supervisor audit (the original audit's FAIL verdict
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T03:13:14.632572+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'feat/projexa-full-module-chain-api' (https://github.com/FChecklist/compliance-tracker/pull/609)
+    -- registered for real audit, not a fresh worker dispatch
+- at: '2026-07-28T03:16:42.866857+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 2ce29227 Expose full VERIDIAN module chain to PROJEXA via /api/v1/projexa/module-chain
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: "Superboss rejected: https://github.com/FChecklist/compliance-tracker/pull/609\
+    \ \u2014 see review.json for issues"
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/609
+master_synced_at: '2026-07-29T21:04:26.276507+00:00'

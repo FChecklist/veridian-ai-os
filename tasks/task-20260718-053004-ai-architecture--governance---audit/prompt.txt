@@ -1,0 +1,23 @@
+VERIDIAN Review Framework gap-closure: AI Architecture / Governance & Audit.
+This covers 5 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [High] Maintainability
+  Gap: No consolidated maintainability score/dashboard
+  Recommended approach: Wire audit role outputs into a scored dashboard surfaced in ai-os/
+- [Medium] Audit Trail
+  Gap: Full prompt/response text not stored for ALLOWED requests
+  Recommended approach: Extend orchestra-execution-logger.ts to persist full payloads with TTL-based purge
+- [Critical] Attribute-Based Access Control (ABAC) / Fine-Grained Policies
+  Gap: No attribute-based access control exists; RBAC only
+  Recommended approach: Extend approval-workflow-service.ts's conditionField/conditionOperator pattern into a general ABAC layer
+- [Medium] Audit Trail & Change History
+  Gap: No unified cross-table audit query/search interface
+  Recommended approach: Create a compliance.audit_search view unioning key fields from all log tables
+- [High] AI Governance & Auditability
+  Gap: Multiple governance principles remain POLICY_ONLY (not code-enforced)
+  Recommended approach: Build enforcement code for GP-06/GP-09/GP-26 per their documented gap fields
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

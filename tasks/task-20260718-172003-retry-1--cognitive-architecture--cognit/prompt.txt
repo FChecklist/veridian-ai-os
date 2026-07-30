@@ -1,0 +1,20 @@
+VERIDIAN Review Framework gap-closure: Cognitive Architecture / Cognitive Consistency & Maturity.
+This covers 4 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Low] Cognitive AI Operating System Consistency
+  Gap: Two narrow, arguably justified exceptions to the central AI layer
+  Recommended approach: Add retry/cost-tracking parity to embeddings.ts and whisper-client.ts directly
+- [Medium] Human-in-Control Architecture
+  Gap: Deliberately partial sophistication; a fuller Intent Engine is deferred (Phase 3)
+  Recommended approach: Track false-negative rate (missed high-impact actions) to decide if Phase 3 is warranted
+- [High] Continuous Software Evolution
+  Gap: Self-improvement loops observe and log but never actually improve anything
+  Recommended approach: Add a review queue UI surfacing loopImprovements rows pending human decision
+- [Medium] Cognitive Maturity Score
+  Gap: The scoring mechanism is real, but the underlying score itself shows significant immaturity
+  Recommended approach: Schedule a recurring quarterly re-certification pass
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

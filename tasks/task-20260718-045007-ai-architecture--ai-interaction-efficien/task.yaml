@@ -1,0 +1,228 @@
+id: task-20260718-045007-ai-architecture--ai-interaction-efficien
+title: 'AI Architecture: AI Interaction Efficiency'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-045007-ai-architecture--ai-interaction-efficien
+workspace: /opt/veridian/ai-os/tasks/task-20260718-045007-ai-architecture--ai-interaction-efficien/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-045007-ai-architecture--ai-interaction-efficien
+service: veridian-worker@task-20260718-045007-ai-architecture--ai-interaction-efficien.service
+created_at: '2026-07-18T04:50:08.359767+00:00'
+last_checkpoint_at: '2026-07-18T05:08:26.292873+00:00'
+completed_steps: &id002
+- Read governance docs (CONSTITUTION.yaml, ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md)
+- Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed separately
+- Read current implementation of all touched files before writing code
+- 'Migration `drizzle/0225_ai_interaction_efficiency_gap_closure.sql` + schema.ts:'
+- 'floor-tier-escalation.ts: `deriveConfidenceLabel()` (honest hedging-based proxy,'
+- 'chat-service.ts: `detectClarificationRequest()` pure predicate; confidence'
+- 'chat-service.test.ts: 5 new tests for `detectClarificationRequest()`'
+- 'API route: `workflow-thread/route.ts` passes `skippedChainSelector` through'
+- 'Frontend: `ChainSelector.tsx` (`ChainSelectorResult.skippedChainSelector`,'
+- '`ThreadView.tsx`: confidence badge (labeled as a heuristic proxy via'
+- '`RealAssistantColumn.tsx`: compact 2-level category/sub-category'
+- 'Verify: `bun install`, `bunx tsc --noEmit` -- 0 errors. `bun run lint`'
+remaining_steps: &id003
+- None -- task complete. Not yet committed/pushed/PR'd.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T04:50:08.962429+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  note: worker started (resume=0)
+- at: '2026-07-18T04:55:09.274608+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:00:09.407518+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/db/schema.ts
+  - src/lib/floor-tier-escalation.test.ts
+  - src/lib/floor-tier-escalation.ts
+  - src/lib/services/chat-service.ts
+  - drizzle/0225_ai_interaction_efficiency_gap_closure.sql
+  completed_steps:
+  - Read governance docs (CONSTITUTION.yaml, ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed separately
+  - Read current implementation of all touched files before writing code
+  remaining_steps:
+  - 'Migration + schema: conversations.chainSelectorSkipped, conversations.clarificationRoundTrips,
+    messages.confidenceLabel'
+  - 'floor-tier-escalation.ts: deriveConfidenceLabel() + tests'
+  - 'chat-service.ts: detectClarificationRequest(), confidence labeling on AI messages,
+    clarification counter, context-compression in buildConversationHistory(), createWorkflowThread()
+    explicit chain-selector-skip requirement'
+  - 'chat-service.test.ts: new predicate tests'
+  - 'API route: workflow-thread/route.ts passes skippedChainSelector through'
+  - 'Frontend: ChainSelector.tsx (skippedChainSelector on result), veri-chat-context.tsx,
+    VeriComposer.tsx wiring'
+  - 'ThreadView.tsx: confidence badge + low-confidence honest disclosure'
+  - 'RealAssistantColumn.tsx: structured category/sub-category selector ahead of free
+    text'
+  - tsc/lint/test verification
+  recent_commits:
+  - '5c9469ad Register claim: AI Architecture / AI Interaction Efficiency gap closure'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:05:09.551054+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/api/conversations/workflow-thread/route.ts
+  - src/components/chat/ThreadView.tsx
+  - src/components/orchestra/RealAssistantColumn.tsx
+  - src/components/veri-chat/ChainSelector.tsx
+  - src/components/veri-chat/VeriComposer.tsx
+  - src/components/veri-chat/veri-chat-context.tsx
+  - src/lib/db/schema.ts
+  - src/lib/floor-tier-escalation.test.ts
+  - src/lib/floor-tier-escalation.ts
+  - src/lib/services/chat-service.test.ts
+  - src/lib/services/chat-service.ts
+  - drizzle/0225_ai_interaction_efficiency_gap_closure.sql
+  completed_steps:
+  - Read governance docs (CONSTITUTION.yaml, ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md)
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed separately
+  - Read current implementation of all touched files before writing code
+  remaining_steps:
+  - 'Migration + schema: conversations.chainSelectorSkipped, conversations.clarificationRoundTrips,
+    messages.confidenceLabel'
+  - 'floor-tier-escalation.ts: deriveConfidenceLabel() + tests'
+  - 'chat-service.ts: detectClarificationRequest(), confidence labeling on AI messages,
+    clarification counter, context-compression in buildConversationHistory(), createWorkflowThread()
+    explicit chain-selector-skip requirement'
+  - 'chat-service.test.ts: new predicate tests'
+  - 'API route: workflow-thread/route.ts passes skippedChainSelector through'
+  - 'Frontend: ChainSelector.tsx (skippedChainSelector on result), veri-chat-context.tsx,
+    VeriComposer.tsx wiring'
+  - 'ThreadView.tsx: confidence badge + low-confidence honest disclosure'
+  - 'RealAssistantColumn.tsx: structured category/sub-category selector ahead of free
+    text'
+  - tsc/lint/test verification
+  recent_commits:
+  - '5c9469ad Register claim: AI Architecture / AI Interaction Efficiency gap closure'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:08:26.292873+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '05049563 Update claim: PR #414 opened for AI Interaction Efficiency gap closure'
+  - afbf05ea AI Architecture / AI Interaction Efficiency gap closure (11 findings)
+  - '5c9469ad Register claim: AI Architecture / AI Interaction Efficiency gap closure'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  note: worker finished, no changes to commit
+execution_seconds: 1098
+restart_count: 0
+token_usage:
+  input_tokens: 240
+  cache_creation_input_tokens: 242817
+  cache_read_input_tokens: 21556637
+  output_tokens: 85041
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 242817
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 551
+    cache_read_input_tokens: 265704
+    cache_creation_input_tokens: 651
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 651
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T05:30:03.023469+00:00'

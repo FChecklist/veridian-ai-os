@@ -1,0 +1,44 @@
+## OBJECTIVE
+TASK REQUIRING AI JUDGMENT: instruction_id INS-20260723-171756-2ef5 (task-gateway.py submit). Phase 0 of Knowledge Engine build: produce a real, evidence-based inventory of every existing knowledge/rules/constitution artifact on this server, and a connection design showing how they map into one queryable structure -- WITHOUT duplicating or rebuilding any of them. Deciding which existing artifacts are canonical vs stale/superseded, and designing the entity-relationship graph connecting them, is the judgment call -- not something a directory listing alone can answer.
+
+## SCOPE
+STEP_1 INVENTORY (exact, exhaustive): for each of these, record real path, real last-modified date, real line/row count, and a one-line real purpose (read the file, do not guess from filename):
+- ai-os/CONSTITUTION.yaml
+- ai-os/RULES_ARTICLES_198.json
+- ai-os/VERIDIAN_EXECUTION_RULES_2026-07-23.md (41-part source)
+- ai-os/EXECUTION_RULES_AUDIT_2026-07-23.yaml
+- ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml
+- ai-os/MASTER_GAP_AUDIT_2026-07-23.yaml
+- ai-os/MASTER_INDEX.yaml
+- ai-os/SYSTEM_MAP.yaml
+- ai-os/STANDING_DIRECTIVE.yaml
+- superboss-register.sqlite tables: instructions, work_items, actions, system_index, log_index, known_fixes, execution_log (row counts, real query)
+- any repo-level CONSTITUTION/rules files in compliance-tracker, projexa, veda-advisors, claude-control (real `find -iname "*constitution*" -o -iname "*rules*"` across /opt/veridian/repos/, cite real results, do not assume none exist)
+PLUS a real, run `find /opt/veridian/repos -iname "*constitution*" -o -iname "*rules*" -o -iname "*brand*"` -- for PROJEXA and "THE FIRM" brand knowledge specifically, confirm what actually exists vs what the Owner may be referring to that does not yet exist (if "THE FIRM" has zero real files anywhere, state that explicitly, do not invent placeholder content)
+
+STEP_2 ENTITY-RELATIONSHIP DESIGN: for the artifacts found in step_1, design (do not yet build) a real schema showing: which artifacts are CANONICAL SOURCE (human/Owner-authored, e.g. CONSTITUTION.yaml, RULES_ARTICLES_198.json) vs DERIVED (software-generated audits/indexes, e.g. GOVERNANCE_AUDIT_RESULT), and the real reference edges between them (e.g. does GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml cite RULES_ARTICLES_198.json items anywhere? real grep, cite line numbers).
+
+STEP_3 CONNECTION MECHANISM (not full build, design only this phase): propose the exact table/index structure for a `knowledge_engine` layer in superboss-register.sqlite that POINTS TO (via path + real content hash, not copies) each canonical/derived artifact found in step_1, with columns for: artifact_path, artifact_type (canonical|derived), tags, entity_relationships (JSON list of related artifact_paths + relationship_type), last_verified_ts. This is metadata-and-pointers, explicitly NOT a copy of the underlying content (per Owner's "don't duplicate, don't recreate, connect them").
+
+## KNOWN_CONTEXT
+zero_duplication_check_performed: true, instruction_id INS-20260723-171756-2ef5, task-gateway.py submit's duplicate_found=true was a keyword false-positive (matched only on the literal string "task-gateway.py" appearing in both texts, not a genuine prior Knowledge Engine artifact) -- no real Knowledge Engine exists yet, confirmed by the actual search_results returned (zero system_index hits for "knowledge engine" as a concept)
+existing_precedent_for_pointer_not_copy_pattern: system_index table already does this (path + metadata, not file content copies) -- extend this pattern, do not invent a new one
+db_concurrency_constraint: sequential writes only to superboss-register.sqlite
+
+## SUCCESS_CRITERIA
+step_1's inventory table has zero placeholder/guessed rows -- every purpose line is sourced from real file content, cite the specific line read
+step_2's canonical-vs-derived classification cites real evidence (authorship metadata, git blame, or explicit self-declaration inside the file) for at least the top 5 largest/most important artifacts
+step_3's proposed schema is written but NOT YET created as a live table -- this phase is inventory + design, not the build (build is phase 1, dispatched by this phase)
+
+## EXPECTED_OUTPUT
+NEW_FILE: ai-os/KNOWLEDGE_ENGINE_INVENTORY_2026-07-23.yaml (step_1 + step_2 output)
+NEW_FILE: ai-os/KNOWLEDGE_ENGINE_SCHEMA_DESIGN_2026-07-23.yaml (step_3 output, the proposed table structure, not yet built)
+COMMIT+PUSH both
+CHECKPOINT: task-gateway.py close --task-id <own-id> --audit-cmd "test -f ai-os/KNOWLEDGE_ENGINE_INVENTORY_2026-07-23.yaml && test -f ai-os/KNOWLEDGE_ENGINE_SCHEMA_DESIGN_2026-07-23.yaml" --evidence <real>
+NEXT_PHASE: create AND start Knowledge Engine Phase 1 (build the actual `knowledge_engine` table per phase_0's schema design, populate it with pointers to every artifact found in step_1, add a `search` mode to task-gateway.py or a new subcommand that queries it) -- this phase's own OBJECTIVE must cite phase_0's real inventory file, not restate from scratch
+
+## CONSTRAINTS
+This phase produces inventory and design documents only, not the live knowledge_engine table -- build happens next phase, after this design is reviewed. If a named brand/system (e.g. THE FIRM) has zero real corresponding files anywhere, state that plainly as a real finding.
+
+## COMPLEXITY_TIER
+judgment

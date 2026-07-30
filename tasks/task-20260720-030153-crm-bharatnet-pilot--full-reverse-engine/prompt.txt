@@ -1,0 +1,43 @@
+You are reverse-engineering a live production web application from the front end only (you have no source code access — this is black-box exploration via the UI, using your Playwright MCP browser tools). This is an authorized exercise: the credentials below were provided directly by the system's owner for exactly this purpose.
+
+## Target system
+
+- System: CRM
+- URL: https://bharatnet.infisuite.in
+- Username: crm_admin@bharatnet.infisuite.in
+- Password: 1234
+
+## Your job
+
+Produce complete, accurate, page-by-page and function-by-function documentation of this CRM system, good enough that someone could reconstruct its functional and data-structure design from your notes alone without ever seeing the real product again. This is not a shallow tour — it is a full reverse-engineering exercise. Depth and accuracy matter far more than speed.
+
+For EVERY page, module, form, table view, and function you find, document:
+
+1. **Purpose** — what this page/feature is for, in plain language.
+2. **Navigation path** — how you got there (menu > submenu > page), so someone could retrace your steps.
+3. **UI/page design** — layout structure (list view vs detail view vs form vs dashboard/widget), what's visible, what's conditional (e.g. a button that only appears for certain record states).
+4. **Data fields** — for every field on every form/table: field name (as labeled in the UI), apparent data type (text/number/date/dropdown/etc.), whether it looks required, any visible validation (format hints, error messages if you can trigger them), and default values if visible.
+5. **Underlying data structure (inferred)** — what entity/table this screen is clearly operating on (e.g. "Leads", "Contacts", "Deals"), and how entities relate to each other (e.g. a Contact belongs to an Account; a Deal has one Contact and many Line Items) — infer this from the UI, dropdowns that reference other entities, breadcrumbs, related-records sections, etc.
+6. **Functionality / logic** — what actions are available (create/edit/delete/approve/convert/export/etc.), what each action does, any visible business rules or conditions (e.g. "Convert Lead button only appears when status = Qualified", "cannot delete a record with active dependents"), any calculated/derived fields you can identify.
+7. **Inputs and outputs** — for actions/functions: what input is required to trigger them, what the observable output/result is (a new record, a status change, a downloaded file, a sent notification, etc.).
+8. **Data conditions** — any conditional logic you can observe: status-dependent UI, role-dependent visibility (note if you don't have permission to see something, and what error/restriction you got), filters, search behavior.
+
+## Methodology (follow this order)
+
+1. Log in. Take a screenshot of the dashboard/home immediately after login.
+2. Map the full navigation structure first — every top-level menu, every submenu item — before diving deep into any one of them. Write this map to `docs/crm-bharatnet/00-navigation-map.md` before doing anything else. This is your checklist for the rest of the task.
+3. Go through the navigation map systematically, one module at a time. For each module: visit the list/index view, open at least one real record's detail view, open the create/new form, open the edit form if different from create, and try any bulk actions, filters, exports, or settings visible for that module.
+4. Within each module, look for and document every distinct function separately — do not lump "Leads" into one paragraph if it actually has Import, Export, Bulk Assign, Merge Duplicates, Convert, etc. as separate functions.
+5. Check Settings/Admin/Configuration areas too if visible to this admin account — these often reveal the underlying data model directly (custom fields, pipeline stages, automation rules, permission definitions).
+6. Take a screenshot of every genuinely distinct page/state (not every click — but every list view, every detail view, every form, every modal, every distinct dashboard widget arrangement). Save screenshots via the Playwright browser tools' screenshot capability into the `screenshots/` output directory that's already wired up — they land in this workspace automatically.
+7. Write one markdown file per module under `docs/crm-bharatnet/<module-slug>.md` (e.g. `docs/crm-bharatnet/leads.md`, `docs/crm-bharatnet/accounts.md`) following the 8-point structure above. Reference the relevant screenshot filenames inline in each doc (e.g. `![Leads list view](../../screenshots/crm-bharatnet/leads-list.png)`).
+8. When you believe you have covered every module in your navigation map, write a final `docs/crm-bharatnet/SUMMARY.md`: the complete inferred data model (entities + relationships, as a list or simple diagram-in-text), a list of all distinct functions found across the whole system, and an honest "Known Gaps" section listing anything you could not access, could not fully understand, or ran out of time to explore.
+
+## Hard rules
+
+- Do NOT write the literal password into any committed file (README, docs, PROGRESS.md, commit messages) — this repo gets pushed to GitHub. It's fine that it appears in screenshots incidentally (e.g. a filled login field) but don't go out of your way to screenshot the password field with it visible if you can avoid it.
+- Do NOT fabricate or guess at functionality you didn't actually observe. If you're inferring something (e.g. "this dropdown probably also filters by Region because Region is a field elsewhere") rather than directly observing it, say so explicitly ("inferred, not directly confirmed") rather than stating it as fact.
+- If you hit an error, a broken page, permission denial, or something that looks like a bug, document it as-is (that's valuable data) rather than skipping past it silently.
+- Commit and push your progress every time you finish a module (not just at the very end) — this task may be interrupted and resumed by a fresh instance of you, and PROGRESS.md plus your git history is how that resumption works. Use `git add -A && git commit -m "..."` yourself in addition to the automated end-of-run commit.
+- Work only within this CRM system (bharatnet.infisuite.in). Other systems (Billstack, Contracts, Ticketing, citylinenetworks.infisuite.in) are separate tasks, not in scope here.
+- This is a real login to a real system with real customer/business data behind it. Do not create, edit, or delete any real records — read-only exploration only. If a "Create" or "New" form is the only way to see what fields exist, you may open it and inspect the empty form, but do not submit/save it with data. Do not send any emails, SMS, or notifications the system might trigger (e.g. don't click "Send" on any communication feature).

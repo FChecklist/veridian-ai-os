@@ -1,0 +1,25 @@
+## OBJECTIVE
+Fix the real, reviewer-confirmed remaining gap in worker-entrypoint.sh: the no-op completion path (a worker finds no changes to commit) still checkpoints directly to completed, skipping pending_review, so the supervisor never gets triggered for no-op tasks. Instruction INS-20260724-074214-1ed2.
+
+## SCOPE
+1. Locate worker-entrypoint.sh's no-op completion branch (around the `checkpoint "$TASK_ID" --status completed` call that fires when there are no changes to commit).
+2. Change it to checkpoint pending_review first (consistent with the already-merged fix for the general completion path), then let the normal pending_review -> supervisor-trigger flow proceed. If a no-op task has literally nothing for the supervisor to review (no diff, no PR possible), decide and document explicitly whether pending_review should still fire (and the supervisor short-circuits cleanly on an empty diff) or whether a distinct terminal status (e.g. completed_no_changes) is more correct -- pick one, implement it consistently, and record the reasoning in the commit message.
+3. Add a real test or manual reproduction: create a scenario where a worker's task produces zero file changes, confirm the new code path is exercised and does not silently skip review.
+
+## KNOWN_CONTEXT
+- This is the exact issue a real AI code review (task-20260724-041754, review.json) rejected: "worker-entrypoint.sh's genuine no-op completion path... checkpoint --status completed... Fix needs to either (a) have the no-op branch checkpoint to pending_review before completed... or (b) [an alternative, also acceptable if more correct]."
+- The general-case fix (non-no-op path) is already merged and confirmed working this session -- do not re-touch that code path, only the no-op branch.
+- PR #11 (the original, rejected attempt) is still open on claude-control -- read it for context on what was already tried, then either update it or open a fresh PR, whichever is cleaner given its current state.
+
+## SUCCESS_CRITERIA
+- The no-op completion path no longer checkpoints directly to completed without first passing through pending_review (or an equally justified, explicitly-documented alternative terminal status).
+- A real reproduction demonstrates the fix works.
+
+## EXPECTED_OUTPUT
+Real committed and pushed fix (PR on claude-control, reusing or superseding #11), the reproduction evidence, and a final checkpoint confirming the fix was exercised, not just read for correctness.
+
+## CONSTRAINTS
+Limit all changes to the no-op completion branch only, leaving the already-fixed general completion path and the supervisor's tier1/tier2 merge logic exactly as they are today.
+
+## COMPLEXITY_TIER
+mechanical

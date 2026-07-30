@@ -1,0 +1,27 @@
+## OBJECTIVE
+Build a real Company -> Department -> Project drill-down dashboard in PROJEXA, plus a lightweight multi-project status-bar overview, matching Owner-supplied sketches.
+
+## KNOWN_CONTEXT
+Real spec from Owner's diagram: top-level Company selector (e.g. UAE / India entities), then Department (e.g. Projects / Studio), then Project, then a Details view showing Revenue / Budget / Expense / Progress with a date-range filter. Clicking any active project drills into its own graphical detail reports. A specific required chart: per-project category distribution (e.g. Gypsum / Civil / Joinery / Paint / Misc split) shown BOTH as a pie chart (share of total) and as a bar chart comparing completed-vs-total amount per category. PROJEXA's dashboard already shows real revenue/expense figures sourced from VERIDIAN ERP sales invoices (confirmed live) -- this task extends that existing integration with the Company/Dept drill-down hierarchy and the category-distribution charts, it does not rebuild the revenue/expense sourcing. Separately, a simpler sketch shows a lightweight multi-project overview: one horizontal status bar per project showing % complete -- build this as a distinct, simpler overview screen/widget, not folded into the detailed drill-down.
+
+## SCOPE
+1. Determine whether "Company" (UAE/India) and "Department" (Projects/Studio) already exist as real entities/fields somewhere in PROJEXA's or compliance-tracker's org/tenant model, or need to be added -- check before assuming either way.
+2. Build the real drill-down navigation: Company -> Department -> Project -> Details, each level filtering the next, with the Details view's date-range filter applied to Revenue/Budget/Expense/Progress figures.
+3. Build the category-distribution pie chart + bar chart, sourced from real BoQ line-item categories (`constructionBoqLineItems`'s category field) and their completed-vs-total amounts (reuse whatever real progress-completion data exists from the Work Progress Report feature if it's landed by the time this task runs -- check for it first; if not yet landed, use the BoQ's own recorded amounts as the "total" side and flag the "completed" side as a disclosed dependency on WPR, don't fabricate progress data).
+4. Build the simple multi-project status-bar overview as a separate, lighter screen/widget.
+
+## SUCCESS_CRITERIA
+- A real test proving the drill-down correctly scopes data at each level (selecting a Company shows only its Departments/Projects, etc).
+- A real test proving the category-distribution chart's percentages sum to 100% and match the real underlying BoQ category amounts for a realistic seeded project.
+- Verify by actually running:
+`npx tsc --noEmit`
+`bun test` (scoped to new dashboard files)
+
+## EXPECTED_OUTPUT
+A real PR on a new branch in the projexa repo. Requires a fresh supervisor audit before merge; do not merge yourself.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not modify the existing VERIDIAN revenue/expense integration -- extend it, don't replace it.
+
+## COMPLEXITY_TIER
+judgment

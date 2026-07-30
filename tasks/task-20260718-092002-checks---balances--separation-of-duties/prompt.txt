@@ -1,0 +1,32 @@
+VERIDIAN Review Framework gap-closure: Checks & Balances / Separation of Duties & Approval Controls.
+This covers 8 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] Separation of Duties (SoD)
+  Gap: No explicit check prevents the SAME user from being both the requester and the sole approver of their own request in every module (only the shared Approval Workflow Engine enforces role-based gating; older single-purpose approvalRequests flows may not)
+  Recommended approach: Audit every approval call site for a hard requesterId != approverId check, not just role-rank.
+- [Medium] Four-Eyes Principle for Critical Actions
+  Gap: Four-eyes is opt-in per workflow definition, not enforced as a platform-wide default for named 'critical action' categories (delete/payment/compliance_submission)
+  Recommended approach: Cross-wire high-impact-action-detector.ts's 9 categories to require requiredApprovals>=2 by default.
+- [Medium] Role-Based Approval Matrix
+  Gap: The matrix is per-workflow-definition, not a single org-wide visual matrix an admin can review holistically across all entity types at once
+  Recommended approach: Build an aggregate approval-matrix view over approvalWorkflowDefinitions + steps.
+- [Low] Conflict of Interest Detection
+  Gap: Conflict of Interest Detection (e.g. approver related to requester, or approver has a vendor relationship) does not exist
+  Recommended approach: Scope a COI-flagging feature once entity_relationships (already shipped as a substrate per ARCH/DMP-06) has real relationship data to query.
+- [Medium] Separation of Duties (SoD)
+  Gap: No explicit check prevents the SAME user from being both the requester and the sole approver of their own request in every module (only the shared Approval Workflow Engine enforces role-based gating; older single-purpose approvalRequests flows may not)
+  Recommended approach: Audit every approval call site for a hard requesterId != approverId check, not just role-rank.
+- [Medium] Four-Eyes Principle for Critical Actions
+  Gap: Four-eyes is opt-in per workflow definition, not enforced as a platform-wide default for named 'critical action' categories (delete/payment/compliance_submission)
+  Recommended approach: Cross-wire high-impact-action-detector.ts's 9 categories to require requiredApprovals>=2 by default.
+- [Medium] Role-Based Approval Matrix
+  Gap: The matrix is per-workflow-definition, not a single org-wide visual matrix an admin can review holistically across all entity types at once
+  Recommended approach: Build an aggregate approval-matrix view over approvalWorkflowDefinitions + steps.
+- [Low] Conflict of Interest Detection
+  Gap: Conflict of Interest Detection (e.g. approver related to requester, or approver has a vendor relationship) does not exist
+  Recommended approach: Scope a COI-flagging feature once entity_relationships (already shipped as a substrate per ARCH/DMP-06) has real relationship data to query.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

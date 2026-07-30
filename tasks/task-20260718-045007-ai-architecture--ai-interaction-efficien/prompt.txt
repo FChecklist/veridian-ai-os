@@ -1,0 +1,41 @@
+VERIDIAN Review Framework gap-closure: AI Architecture / AI Interaction Efficiency.
+This covers 11 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] Detects repetitive AI tasks
+  Gap: Duplicate detection not extended to dynamic_chains
+  Recommended approach: Add dynamic_chains to the similarity-scan scope in capability-registry-service.ts
+- [Low] AI Clarification Minimization
+  Gap: No metric proves clarification requests actually decreased
+  Recommended approach: Add a metric to chat-service.ts counting clarification round-trips per session
+- [High] Personalized AI Responses
+  Gap: Confidence field is defined in schema but is completely dead code
+  Recommended approach: Populate confidence from floor-tier-escalation.ts's hedging-detection signal as an honest proxy, clearly labeled as such
+- [Low] Detects Repetitive AI Requests
+  Gap: Minor: no explicit context-window truncation/compression strategy
+  Recommended approach: Add a history-length check in chat-service.ts triggering summarization above N tokens
+- [Medium] Measures AI Reduction Over Time
+  Gap: Chain Selector exists but is not mandatory in any flow
+  Recommended approach: Change chat-service.ts's conversation-creation default to require Chain Selector first
+- [Low] AI Chat-Based Help
+  Gap: Minor gaps only (see param 31/32 - help chatbot rigor, confidence display)
+  Recommended approach: N/A
+- [High] AI Confidence Score
+  Gap: No AI confidence score is ever shown to or computed for end users
+  Recommended approach: Same as parameter 32
+- [Medium] Communicates AI Limitations Honestly
+  Gap: Honesty is a governance/documentation practice, not a verified end-user chat behavior
+  Recommended approach: Define when/how VERI Chat should proactively disclose limitations to users, and implement it
+- [Low] Maintains Context Across Conversation
+  Gap: Minor: no compression strategy for very long conversations (see param 33)
+  Recommended approach: Same as parameter 33
+- [Medium] Uses Option Selectors Before AI Processing
+  Gap: Chain Selector exists but is optional, not enforced
+  Recommended approach: Same as parameter 34
+- [Low] Reduces AI Questions Through Structured Inputs
+  Gap: Structured-input coverage limited to import flows and dialogue scripts
+  Recommended approach: Apply the ChainSelector/dialogue_script pattern to task and approval creation UIs
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

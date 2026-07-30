@@ -1,0 +1,66 @@
+module: backend
+queue:
+- id: BACKEND-001
+  module: backend
+  objective: Correct the openai/gpt-oss-120b (Groq) entry in llm-client.ts's MODEL_PRICING
+    constant from promptPer1k 0.000036/completionPer1k 0.00018 to the verified Groq
+    published rate of $0.15/$0.60 per 1M tokens (promptPer1k 0.00015/completionPer1k
+    0.0006).
+  files_allowed:
+  - src/lib/llm-client.ts
+  files_forbidden:
+  - src/lib/llm-client.test.ts
+  - src/lib/cost-guard.ts
+  - src/lib/orchestra-model-resolver.ts
+  - src/lib/ai-team/roster.ts
+  - src/lib/db/schema.ts
+  - drizzle/**
+  - ai-os/**
+  dependencies: []
+  input: 'Current src/lib/llm-client.ts with the "openai/gpt-oss-120b" row in MODEL_PRICING
+    (around line 150) set to { promptPer1k: 0.000036, completionPer1k: 0.00018 },
+    sourced by an inline comment (lines 146-149) citing an openrouter.ai/api/v1/models
+    cross-check from 2026-07-10.'
+  output: 'src/lib/llm-client.ts with the same row updated to { promptPer1k: 0.00015,
+    completionPer1k: 0.0006 }, and its preceding comment block updated to state the
+    corrected source (groq.com/pricing, $0.15/$0.60 per 1M prompt/completion tokens,
+    verified 2026-07-18) and note that the prior 2026-07-10 openrouter.ai cross-check
+    figure was understated ~3.3-4x versus Groq''s own published rate.'
+  steps:
+  - Open src/lib/llm-client.ts and locate the MODEL_PRICING constant (starts ~line
+    143) and the "openai/gpt-oss-120b" entry (~line 150) along with its preceding
+    comment block (~lines 146-149).
+  - 'Change the entry''s values from { promptPer1k: 0.000036, completionPer1k: 0.00018
+    } to { promptPer1k: 0.00015, completionPer1k: 0.0006 }.'
+  - Rewrite the preceding comment to cite the corrected source and date (groq.com/pricing,
+    verified 2026-07-18, $0.15/$0.60 per 1M prompt/completion tokens) and briefly
+    note this replaces the prior 2026-07-10 openrouter.ai-derived figure, which undercounted
+    real Groq spend by roughly 3.3-4x.
+  - Do not change the sibling "gpt-oss-120b" (Cerebras, no "openai/" prefix) row on
+    the following line -- it is a distinct provider entry for the same underlying
+    model and is out of scope for this fix.
+  - Do not change any other row in MODEL_PRICING.
+  - Run `bun run build` (or the repo's type-check script) to confirm no type errors
+    were introduced.
+  constraints:
+  - Touch only the "openai/gpt-oss-120b" row and its directly preceding comment block
+    -- no other MODEL_PRICING row, no other function in this file.
+  - Do not rename the model key, change the shape of the pricing record, or alter
+    estimateCostUsd()'s logic.
+  - Do not touch the sibling Cerebras "gpt-oss-120b" row (no "openai/" prefix) --
+    different provider, different verified price, not part of this bug.
+  - All API routes / Drizzle / auth rules in CLAUDE.md are not implicated by this
+    change, but the general repo rule against touching files outside files_allowed
+    still applies.
+  - Do not edit src/lib/llm-client.test.ts in this task -- that is BACKEND-002's job,
+    which depends on this task merging first so it asserts against the corrected constant.
+  - No live network calls to groq.com in code or tests -- the price is a hardcoded
+    constant as today; this task only changes its documented source/value.
+  validation: '`bun run build` (or project type-check) passes with no new errors;
+    a manual read of the diff confirms only the openai/gpt-oss-120b row''s two numeric
+    fields and its comment changed, and the sibling Cerebras row is untouched.'
+  done_criteria: The openai/gpt-oss-120b row in src/lib/llm-client.ts's MODEL_PRICING
+    reads promptPer1k 0.00015 / completionPer1k 0.0006 with an updated, accurately-sourced
+    comment, and nothing else in the file changed.
+  status: REWORK
+  task_id: task-20260729-210307-backend--backend-001--correct-the-opena

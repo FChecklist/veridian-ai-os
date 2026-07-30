@@ -1,0 +1,264 @@
+id: task-20260726-083833-build-interactive-session-write-gate--re
+title: Build interactive-session write-gate (real enforcement of software-only rule)
+status: completed
+repo: claude-control
+branch: worker/task-20260726-083833-build-interactive-session-write-gate--re
+workspace: /opt/veridian/ai-os/tasks/task-20260726-083833-build-interactive-session-write-gate--re/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-083833-build-interactive-session-write-gate--re
+service: veridian-worker@task-20260726-083833-build-interactive-session-write-gate--re.service
+created_at: '2026-07-26T08:38:35.079991+00:00'
+last_checkpoint_at: '2026-07-26T08:50:00.759528+00:00'
+completed_steps: &id002
+- Confirmed single canonical protocol file via scripts/check_single_protocol_file.py
+- 'Confirmed real INVOCATION_ID signal: set for systemd veridian-worker@*/veridian-supervisor@*
+  units, absent in a plain interactive shell'
+- 'Checked real branch-protection config: compliance-tracker `main` confirmed protected
+  via `gh api`; claude-control/projexa protection API 403s (private repo, GitHub Pro
+  required) -- default branch for all 3 repos confirmed to be `master` or `main`,
+  matching the protected-branch pattern'
+- 'Wrote guard snippet: ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet
+  (gh pr merge block, git push master/main block, pass-through for everything else,
+  honest documented limitation re: Owner)'
+- 'Wrote real test: tests/interactive_session_guard_test.sh (18 scenarios, sources
+  the real committed snippet against faked gh/git binaries, all passing)'
+- 'Deployed to VERIDIAN-DEV: ~/.claude-interactive-session-guard.bashrc-snippet (canonical
+  local copy, byte-identical to committed copy), sourced from both ~/.bashrc and ~/.profile'
+- 'Found and fixed a real gap during verification: `bash -lc ''...''` (login, non-interactive)
+  does NOT trigger ~/.bashrc''s own top-of-file interactive-only guard, so the guard
+  silently never fired for that invocation style (matches the literal SUCCESS_CRITERIA
+  test commands). Fixed by also sourcing the snippet unconditionally from ~/.profile.'
+- Verified all 3 literal SUCCESS_CRITERIA commands from the spec pass against the
+  real deployed profile
+- Verified git push guard end-to-end (blocked to master/main, passes through to feature
+  branches and read-only git commands)
+- Added article A15_interactive_session_write_gate to ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml,
+  referencing the 2026-07-26 incident; validated YAML parses and check_single_protocol_file.py
+  still passes
+remaining_steps: &id003
+- 'Committed, pushed, opened PR #80 (FChecklist/claude-control), checkpointed pending_review
+  -- leaving merge to the real supervisor pipeline, not doing it by hand (the exact
+  discipline this task enforces)'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T08:38:38.899184+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T08:43:40.320082+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet
+  - tests/interactive_session_guard_test.sh
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  note: periodic checkpoint
+- at: '2026-07-26T08:47:27.136459+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Confirmed single canonical protocol file via scripts/check_single_protocol_file.py
+  - 'Confirmed real INVOCATION_ID signal: set for systemd veridian-worker@*/veridian-supervisor@*
+    units, absent in a plain interactive shell'
+  - 'Checked real branch-protection config: compliance-tracker `main` confirmed protected
+    via `gh api`; claude-control/projexa protection API 403s (private repo, GitHub
+    Pro required) -- default branch for all 3 repos confirmed to be `master` or `main`,
+    matching the protected-branch pattern'
+  - 'Wrote guard snippet: ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet
+    (gh pr merge block, git push master/main block, pass-through for everything else,
+    honest documented limitation re: Owner)'
+  - 'Wrote real test: tests/interactive_session_guard_test.sh (18 scenarios, sources
+    the real committed snippet against faked gh/git binaries, all passing)'
+  - 'Deployed to VERIDIAN-DEV: ~/.claude-interactive-session-guard.bashrc-snippet
+    (canonical local copy, byte-identical to committed copy), sourced from both ~/.bashrc
+    and ~/.profile'
+  - 'Found and fixed a real gap during verification: `bash -lc ''...''` (login, non-interactive)
+    does NOT trigger ~/.bashrc''s own top-of-file interactive-only guard, so the guard
+    silently never fired for that invocation style (matches the literal SUCCESS_CRITERIA
+    test commands). Fixed by also sourcing the snippet unconditionally from ~/.profile.'
+  - Verified all 3 literal SUCCESS_CRITERIA commands from the spec pass against the
+    real deployed profile
+  - Verified git push guard end-to-end (blocked to master/main, passes through to
+    feature branches and read-only git commands)
+  - Added article A15_interactive_session_write_gate to ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml,
+    referencing the 2026-07-26 incident; validated YAML parses and check_single_protocol_file.py
+    still passes
+  remaining_steps:
+  - Commit + push this work to a task branch, open PR
+  recent_commits:
+  - abceec5 Add real technical guard blocking interactive gh pr merge / git push to
+    master-main
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  note: 'PR #80 opened: FChecklist/claude-control - real interactive-session gh/git
+    write gate deployed, tested, documented in PROTOCOL_OWNER_AI.yaml article A15'
+- at: '2026-07-26T08:47:59.443204+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Confirmed single canonical protocol file via scripts/check_single_protocol_file.py
+  - 'Confirmed real INVOCATION_ID signal: set for systemd veridian-worker@*/veridian-supervisor@*
+    units, absent in a plain interactive shell'
+  - 'Checked real branch-protection config: compliance-tracker `main` confirmed protected
+    via `gh api`; claude-control/projexa protection API 403s (private repo, GitHub
+    Pro required) -- default branch for all 3 repos confirmed to be `master` or `main`,
+    matching the protected-branch pattern'
+  - 'Wrote guard snippet: ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet
+    (gh pr merge block, git push master/main block, pass-through for everything else,
+    honest documented limitation re: Owner)'
+  - 'Wrote real test: tests/interactive_session_guard_test.sh (18 scenarios, sources
+    the real committed snippet against faked gh/git binaries, all passing)'
+  - 'Deployed to VERIDIAN-DEV: ~/.claude-interactive-session-guard.bashrc-snippet
+    (canonical local copy, byte-identical to committed copy), sourced from both ~/.bashrc
+    and ~/.profile'
+  - 'Found and fixed a real gap during verification: `bash -lc ''...''` (login, non-interactive)
+    does NOT trigger ~/.bashrc''s own top-of-file interactive-only guard, so the guard
+    silently never fired for that invocation style (matches the literal SUCCESS_CRITERIA
+    test commands). Fixed by also sourcing the snippet unconditionally from ~/.profile.'
+  - Verified all 3 literal SUCCESS_CRITERIA commands from the spec pass against the
+    real deployed profile
+  - Verified git push guard end-to-end (blocked to master/main, passes through to
+    feature branches and read-only git commands)
+  - Added article A15_interactive_session_write_gate to ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml,
+    referencing the 2026-07-26 incident; validated YAML parses and check_single_protocol_file.py
+    still passes
+  remaining_steps:
+  - 'Committed, pushed, opened PR #80 (FChecklist/claude-control), checkpointed pending_review
+    -- leaving merge to the real supervisor pipeline, not doing it by hand (the exact
+    discipline this task enforces)'
+  recent_commits:
+  - abceec5 Add real technical guard blocking interactive gh pr merge / git push to
+    master-main
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  note: quality gates passed, pushed branch worker/task-20260726-083833-build-interactive-session-write-gate--re,
+    awaiting review
+- at: '2026-07-26T08:50:00.759528+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - abceec5 Add real technical guard blocking interactive gh pr merge / git push to
+    master-main
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  note: "Superboss rejected: https://github.com/FChecklist/claude-control/pull/80\
+    \ \u2014 see review.json for issues"
+execution_seconds: 560
+restart_count: 0
+token_usage:
+  input_tokens: 110
+  cache_creation_input_tokens: 108216
+  cache_read_input_tokens: 5319088
+  output_tokens: 48313
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 108216
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 562
+    cache_read_input_tokens: 129212
+    cache_creation_input_tokens: 2688
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 2688
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T10:00:09.675306+00:00'
+status_corrected_at: '2026-07-27T03:38:37.931262+00:00'
+status_correction_reason: 'Real PR #80 already merged -- patch task.yaml status to
+  completed, no redispatch.'
+real_pr_evidence:
+  mergeable: UNKNOWN
+  mergedAt: '2026-07-26T17:18:34Z'
+  reviewDecision: ''
+  state: MERGED
+  title: Add real technical guard blocking interactive gh pr merge / git push to master/main
+  url: https://github.com/FChecklist/claude-control/pull/80

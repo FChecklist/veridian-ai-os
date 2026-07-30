@@ -1,0 +1,255 @@
+id: task-20260719-004409-gap-closure--umr-03
+title: 'Gap closure: UMR-03'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260719-004409-gap-closure--umr-03
+workspace: /opt/veridian/ai-os/tasks/task-20260719-004409-gap-closure--umr-03/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260719-004409-gap-closure--umr-03
+service: veridian-worker@task-20260719-004409-gap-closure--umr-03.service
+created_at: '2026-07-19T00:44:10.861245+00:00'
+last_checkpoint_at: '2026-07-19T01:06:33.925216+00:00'
+completed_steps: &id002
+- Read CONSTITUTION.yaml section 14 (learning_and_umr) in full
+- Read embeddings.ts, capability-registry-service.ts, fde-service.ts, chat-service.ts,
+  task-execution-engine.ts
+- Checked ai-os/boss/ACTIVE-CLAIMS.yaml + `gh pr list` for a duplicate claim -- none
+  found
+- Registered claim in ACTIVE-CLAIMS.yaml
+- Added `instructionExecutionCache` table to src/lib/db/schema.ts
+- 'Added drizzle/0242_umr03_instruction_execution_cache.sql (re-checked highest migration
+  on origin/main immediately before writing: 0241)'
+- Added src/lib/services/instruction-execution-cache-service.ts (findPriorExecutionPath/recordExecutionPath)
+- Wired into src/lib/services/fde-service.ts::submitFdeRequest (checked before findSimilarCapabilities;
+  recorded after embedding match, LLM-assisted match, and new proposal)
+- Added ai-os/registry/asset-registry-coverage.yaml exemption entry for the new table
+- 'Added tests: instruction-execution-cache-service.test.ts, fde-service.test.ts (10
+  new tests)'
+- bunx tsc --noEmit -- 0 errors
+- bun run lint -- 0 errors
+- bun test -- 1698 pass / 0 fail
+- All 6 local CI guardrail scripts pass (asset-registry-coverage, migration-collision,
+  guardrail-presence, doc-cross-references, doc-quarantine-banner, metadata-index-coverage)
+- Committed claim registration as its own first commit
+- Committed implementation
+- 'Pushed branch, opened PR #460 against main'
+- 'Posted structured `AUDIT: PASS` PR comment (8 fields, plain `Label: value` lines
+  per validate-audit-verdict.ts''s parser)'
+- 'Watched CI to green: Lint, Type Check, Build, Unit Tests, E2E Tests, Asset Registry
+  Coverage Check, Guardrail Presence Check, audit-check all pass (Vercel fails --
+  known rate-limited, non-required, ignored per task instructions)'
+- 'Classified tier: TIER2 (touches drizzle/0242_umr03_instruction_execution_cache.sql
+  + src/lib/db/schema.ts) -- NOT self-merged'
+- Reported final status to Owner for sign-off
+remaining_steps: &id003
+- Owner sign-off + merge (TIER2 -- this session does not merge)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-19T00:44:11.881474+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  note: worker started (resume=0)
+- at: '2026-07-19T00:49:12.394158+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  note: periodic checkpoint
+- at: '2026-07-19T00:54:12.729321+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/db/schema.ts
+  - src/lib/services/fde-service.ts
+  - drizzle/0242_umr03_instruction_execution_cache.sql
+  - src/lib/services/fde-service.test.ts
+  - src/lib/services/instruction-execution-cache-service.test.ts
+  - src/lib/services/instruction-execution-cache-service.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  note: periodic checkpoint
+- at: '2026-07-19T00:59:13.059817+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read CONSTITUTION.yaml section 14 (learning_and_umr) in full
+  - Read embeddings.ts, capability-registry-service.ts, fde-service.ts, chat-service.ts,
+    task-execution-engine.ts
+  - Checked ai-os/boss/ACTIVE-CLAIMS.yaml + `gh pr list` for a duplicate claim --
+    none found
+  - Registered claim in ACTIVE-CLAIMS.yaml
+  - Added `instructionExecutionCache` table to src/lib/db/schema.ts
+  - 'Added drizzle/0242_umr03_instruction_execution_cache.sql (re-checked highest
+    migration on origin/main immediately before writing: 0241)'
+  - Added src/lib/services/instruction-execution-cache-service.ts (findPriorExecutionPath/recordExecutionPath)
+  - Wired into src/lib/services/fde-service.ts::submitFdeRequest (checked before findSimilarCapabilities;
+    recorded after embedding match, LLM-assisted match, and new proposal)
+  - Added ai-os/registry/asset-registry-coverage.yaml exemption entry for the new
+    table
+  - 'Added tests: instruction-execution-cache-service.test.ts, fde-service.test.ts
+    (10 new tests)'
+  - bunx tsc --noEmit -- 0 errors
+  - bun run lint -- 0 errors
+  - bun test -- 1698 pass / 0 fail
+  - All 6 local CI guardrail scripts pass (asset-registry-coverage, migration-collision,
+    guardrail-presence, doc-cross-references, doc-quarantine-banner, metadata-index-coverage)
+  - Committed claim registration as its own first commit
+  remaining_steps:
+  - Commit implementation
+  - Push branch, open PR against main
+  - 'Post structured `AUDIT: PASS` PR comment (8 fields)'
+  - Watch CI to green
+  - Classify tier (touches drizzle/*.sql + schema.ts -> TIER2, do NOT self-merge)
+  - Report final status to Owner for sign-off
+  recent_commits:
+  - '9aad6bc8 Retrigger CI after posting AUDIT: PASS comment'
+  - '872757a2 Close UMR-03: instruction-execution-cache for chat/DMP dispatch'
+  - 68e188da Register UMR-03 gap-closure claim in ACTIVE-CLAIMS.yaml
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  note: periodic checkpoint
+- at: '2026-07-19T01:04:13.417674+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read CONSTITUTION.yaml section 14 (learning_and_umr) in full
+  - Read embeddings.ts, capability-registry-service.ts, fde-service.ts, chat-service.ts,
+    task-execution-engine.ts
+  - Checked ai-os/boss/ACTIVE-CLAIMS.yaml + `gh pr list` for a duplicate claim --
+    none found
+  - Registered claim in ACTIVE-CLAIMS.yaml
+  - Added `instructionExecutionCache` table to src/lib/db/schema.ts
+  - 'Added drizzle/0242_umr03_instruction_execution_cache.sql (re-checked highest
+    migration on origin/main immediately before writing: 0241)'
+  - Added src/lib/services/instruction-execution-cache-service.ts (findPriorExecutionPath/recordExecutionPath)
+  - Wired into src/lib/services/fde-service.ts::submitFdeRequest (checked before findSimilarCapabilities;
+    recorded after embedding match, LLM-assisted match, and new proposal)
+  - Added ai-os/registry/asset-registry-coverage.yaml exemption entry for the new
+    table
+  - 'Added tests: instruction-execution-cache-service.test.ts, fde-service.test.ts
+    (10 new tests)'
+  - bunx tsc --noEmit -- 0 errors
+  - bun run lint -- 0 errors
+  - bun test -- 1698 pass / 0 fail
+  - All 6 local CI guardrail scripts pass (asset-registry-coverage, migration-collision,
+    guardrail-presence, doc-cross-references, doc-quarantine-banner, metadata-index-coverage)
+  - Committed claim registration as its own first commit
+  remaining_steps:
+  - Commit implementation
+  - Push branch, open PR against main
+  - 'Post structured `AUDIT: PASS` PR comment (8 fields)'
+  - Watch CI to green
+  - Classify tier (touches drizzle/*.sql + schema.ts -> TIER2, do NOT self-merge)
+  - Report final status to Owner for sign-off
+  recent_commits:
+  - 'db94f74f Retrigger CI: audit comment reformatted to plain Label: value lines'
+  - '9aad6bc8 Retrigger CI after posting AUDIT: PASS comment'
+  - '872757a2 Close UMR-03: instruction-execution-cache for chat/DMP dispatch'
+  - 68e188da Register UMR-03 gap-closure claim in ACTIVE-CLAIMS.yaml
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  note: periodic checkpoint
+- at: '2026-07-19T01:06:33.925216+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'b18199c0 PROGRESS.md: mark UMR-03 gap-closure complete, TIER2 awaiting Owner
+    sign-off'
+  - 'db94f74f Retrigger CI: audit comment reformatted to plain Label: value lines'
+  - '9aad6bc8 Retrigger CI after posting AUDIT: PASS comment'
+  - '872757a2 Close UMR-03: instruction-execution-cache for chat/DMP dispatch'
+  - 68e188da Register UMR-03 gap-closure claim in ACTIVE-CLAIMS.yaml
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  note: worker finished, no changes to commit
+execution_seconds: 1342
+restart_count: 0
+token_usage:
+  input_tokens: 236
+  cache_creation_input_tokens: 195881
+  cache_read_input_tokens: 17547912
+  output_tokens: 70481
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 195881
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 746
+    cache_read_input_tokens: 219082
+    cache_creation_input_tokens: 337
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 337
+    type: message
+  speed: standard
+master_synced_at: '2026-07-19T01:30:04.665734+00:00'

@@ -1,0 +1,30 @@
+## OBJECTIVE
+Phase 0 of VERIDIAN TESTING ENGINE / IRVF (instruction INS-20260724-063539-9dc8): real schema design + phased build plan for route registration, route coverage, gateway/service matrices, trace verification, and route replay. Do not implement full route testing in this task -- this task's output is what later phases execute against, mirroring the proven pattern from the 3 prior phase-0 tasks this session (self-sustaining-system-engine, Auditor Engine, 20-Engines/10-Gateways).
+
+## SCOPE
+1. Read ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml and ai-os/CAPABILITY_REGISTRY_SCHEMA_2026-07-24.yaml (both real, already exist) to get the real, current list of gateways/engines/capabilities this framework must test routes across. Read ai-os/AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml's observability section for the existing OpenTelemetry/trace plan -- this task extends it for route verification, does not rebuild it.
+2. Design and write ai-os/ROUTE_REGISTRY_SCHEMA_2026-07-24.yaml: real schema for route_id, source, destination, expected_path (ordered gateway/engine hops), test_status, trace_verification_status, replay_status. Populate it with real routes derived from the actual capabilities found in step 1 (not invented examples) -- at minimum one real route per existing capability in CAPABILITY_REGISTRY_SCHEMA_2026-07-24.yaml.
+3. Design and write ai-os/ROUTE_COVERAGE_METHODOLOGY_2026-07-24.yaml: the real formulas for Route Coverage / Gateway Matrix / Service Matrix / Route Completeness Score (the 9 coverage percentages from the Owner's directive: capability/route/integration/dependency/workflow/business-rule/metadata/API/UI), and exactly which existing script/table each percentage is computed from (do not invent a metric with no real data source -- if a coverage type has no real data source yet, mark it NOT_YET_MEASURABLE with the concrete gap that blocks it).
+4. Write ai-os/TESTING_ENGINE_PHASE_PLAN_2026-07-24.yaml: phase-by-phase build plan (route test auto-generation on capability creation, distributed trace verification wiring, route replay storage+diff, dependency graph validation) with a real dependency table -- explicitly note this framework cannot reach 100% route coverage until the 20-Engines/10-Gateways architecture itself is live (currently Phase0-planned), so early phases here should target the routes/capabilities that already exist as real software today, not placeholder future ones.
+5. Register all 3 new files in knowledge_engine and MASTER_INDEX.yaml (registries.testing_engine_irvf, live file) with entity_relationships back to the 20-Engines/Auditor Engine/Capability Registry files they depend on.
+
+## KNOWN_CONTEXT
+- 4th major initiative dispatched this session, after self-sustaining-system-engine (merged), VERIDIAN Auditor Engine (Phase 0 in progress), and 20-Engines/10-Gateways (Phase 0 done, PR merged).
+- Standing rule: any crontab need follows the Owner-approval-citation pattern in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml (Owner's blanket approval this session covers it -- record it, update ai-os/CRONTAB_APPROVED_SNAPSHOT.txt, do not stop to ask).
+- Standing rule: all registry/catalog data comes from scripts, not hand-authored AI prose.
+- A recurring, now-fixed-in-parallel bug existed in supervisor-entrypoint.sh (gh pr merge --delete-branch false-negative) -- if this task's own PR shows blocked with a "merge FAILED" note, verify the real PR state via gh pr view before treating it as a real failure.
+
+## SUCCESS_CRITERIA
+- ROUTE_REGISTRY_SCHEMA_2026-07-24.yaml exists with real routes (not fewer than the real capability count found in step 1), each route's expected_path referencing real gateway/engine names from the 20-Engines plan.
+- ROUTE_COVERAGE_METHODOLOGY_2026-07-24.yaml has all 9 coverage types with either a real computation source or an explicit NOT_YET_MEASURABLE gap.
+- TESTING_ENGINE_PHASE_PLAN_2026-07-24.yaml has a real phase breakdown and dependency table, explicitly sequenced after the 20-Engines architecture's own build phases where genuinely dependent.
+- All 3 files registered in knowledge_engine and MASTER_INDEX.yaml's live copy.
+
+## EXPECTED_OUTPUT
+Real committed and pushed changes (PR on claude-control), the 3 new YAML files, real knowledge_engine rows, and a final checkpoint summary stating exactly what's done vs deferred with a one-line reason each.
+
+## CONSTRAINTS
+Limit this task to schema design, methodology definition, and phase planning -- leave live route-test auto-generation, trace wiring, and replay storage to the phases this task's own plan defines. Any crontab need follows the existing Owner-approval-citation pattern rather than a fresh confirmation.
+
+## COMPLEXITY_TIER
+judgment

@@ -1,0 +1,36 @@
+## OBJECTIVE
+TASK REQUIRING AI JUDGMENT: instruction_id INS-20260723-165621-2180 (task-gateway.py submit, zero duplicates/collisions found -- cite this as the zero-duplication evidence). Close items 3/4/6/15 from ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml: item 3=server_monitoring, item 4=cli_monitoring, item 6=one_minute_status_checks, item 15=ai_response_logging. Determining whether existing mechanisms (health-check-15min.py, watchdog) already satisfy these vs need new work, and what "CLI monitoring" concretely means beyond task-status monitoring, is the judgment call.
+
+## SCOPE
+ITEM_6 (highest confidence, verify don't rebuild): scripts/veridian-task-watchdog.py already runs every 60s via veridian-task-watchdog.timer (built 2026-07-23, confirmed live). Verify with `systemctl --user status veridian-task-watchdog.timer`, cite real output as evidence, mark DONE if genuinely satisfies "check server every 1 minute" -- if the watchdog only checks TASK status not SERVER health (disk/mem/cpu), note that gap explicitly and decide whether item 6 needs a second 60s timer for server vitals (health-check-15min.py currently runs at 15min for server vitals, NOT 60s) -- do not silently conflate task-checking with server-health-checking.
+
+ITEM_3 (server_monitoring) vs ITEM_6: if item_6 investigation finds server vitals (disk/mem/cpu/network) are NOT checked at 1-minute granularity, item_3 and item_6 both require a real fix: EITHER add server-vitals checks to the existing watchdog run, OR build a second lightweight timer. Choose the option that reuses more existing code (health-check-15min.py's check functions), cite exactly what was reused.
+
+ITEM_4 (cli_monitoring): "CLI" = the Claude Code CLI subscription session(s) actually running on this server (the interactive tmux 'claude' session, plus headless worker/supervisor invocations). Build: a check (can be part of the watchdog's 60s run) verifying (a) tmux session 'claude' still exists and its pane is not showing an error/crash state, (b) the most recent worker-entrypoint.sh invocation's claude -p call did not exit non-zero for reasons other than expected preflight rejections. Output: one line in watchdog.jsonl per run, key "cli_health".
+
+ITEM_15 (ai_response_logging): scripts/anthropic_openrouter_proxy_v2.py already logs full response bodies to glm-response-cache.sqlite but ONLY for GLM-proxied traffic (dead path since the 2026-07-23 GLM decommission). Real subscription-based claude -p calls (worker-entrypoint.sh, supervisor-entrypoint.sh, task-gateway.py) do NOT currently log their response text anywhere. Add: capture claude -p's --output-format json stdout's "result" field, log via task-gateway.py log (or superboss-register.py log-action directly) with utm_source=ai_response, content=truncated-to-2000-chars, in worker-entrypoint.sh right after the main claude -p invocation (~line 130).
+
+## KNOWN_CONTEXT
+zero_duplication_check_performed: true, instruction_id INS-20260723-165621-2180, task-gateway.py submit output: duplicate_found=false, active_collision_task_ids=[]
+watchdog_exact_location: scripts/veridian-task-watchdog.py, timer: veridian-task-watchdog.timer (OnUnitActiveSec=60)
+health_check_exact_location: scripts/health-check-15min.py (server vitals: disk, mem, load -- currently 15min cadence)
+db_concurrency_constraint: sequential writes only to superboss-register.sqlite
+
+## SUCCESS_CRITERIA
+TEST_ITEM6: real systemctl status output proving 60s cadence, explicit statement of whether it covers server-vitals or only task-status
+TEST_ITEM3: if new server-vitals-at-60s code added, one real watchdog.jsonl line showing real disk/mem/cpu numbers
+TEST_ITEM4: one real watchdog.jsonl line with a real cli_health value, captured from the actual live tmux session and a real recent worker invocation
+TEST_ITEM15: one real ai_response log row (action_id) from an actual claude -p call's real output, not fabricated
+
+## EXPECTED_OUTPUT
+COMMIT+PUSH: scripts/veridian-task-watchdog.py diff (items 4, possibly 3/6), scripts/worker-entrypoint.sh diff (item 15)
+UPDATE_FILE: ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml items [3,4,6,15] -> DONE with real evidence, or PARTIAL with explicit stated reason if full closure isn't achievable this phase
+CHECKPOINT: use task-gateway.py close --task-id <own-id> --audit-cmd <exact SUCCESS_CRITERIA test> --evidence <real citation>
+NEXT_PHASE: create AND start Phase 14, real named target from remaining [1,21,24,25,36,45,51,54,60] -- re-verify 21/24 status first per single_source_of_truth_rule, they showed PARTIAL/MISSING on this branch despite earlier work, confirm which is actually current before re-doing anything
+
+## CONSTRAINTS
+Reuse health-check-15min.py's existing check functions where possible rather than reimplementing disk/mem/cpu checks
+EVIDENCE_REQUIRED: every DONE status cites real command output or commit hash
+
+## COMPLEXITY_TIER
+judgment

@@ -1,0 +1,270 @@
+id: task-20260727-041903-fix-escalate-hardcoded-repo-and-stale-br
+title: Fix escalate hardcoded repo and stale branch in rca tasks
+status: pending_review
+repo: claude-control
+branch: worker/task-20260727-041903-fix-escalate-hardcoded-repo-and-stale-br
+workspace: /opt/veridian/ai-os/tasks/task-20260727-041903-fix-escalate-hardcoded-repo-and-stale-br/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-041903-fix-escalate-hardcoded-repo-and-stale-br
+service: veridian-worker@task-20260727-041903-fix-escalate-hardcoded-repo-and-stale-br.service
+created_at: '2026-07-27T04:19:04.620204+00:00'
+last_checkpoint_at: '2026-07-27T04:42:28.835526+00:00'
+completed_steps: &id002
+- 'Confirmed live: `escalate()` in scripts/veridian-task-watchdog.py hardcoded `--repo
+  claude-control` for every auto-escalated rca- task, ignoring the stalled task''s
+  real repo (2 historical instances, both really compliance-tracker).'
+- Fixed `escalate()` to read the stalled task's own already-loaded task.yaml `repo`
+  field and pass that to `veridian-task.py create`, falling back to `claude-control`
+  only if it's genuinely unknown.
+- 'Root-caused the real, reproducible mechanism behind the observed `branch: master`
+  values (NOT a guess -- verified with a live git repro): `cmd_create`''s `git worktree
+  add -b <branch> workspace origin/<default>` checks the new branch out from a remote-tracking
+  ref, and git''s own `branch.autoSetupMerge` default means that branch''s `@{upstream}`
+  points at `origin/<default>` (e.g. `origin/master`) from the instant it''s created,
+  before any commit or push. `cmd_checkpoint`''s real-branch-resolution code (added
+  2026-07-26 for the PR561/562/78 fix) trusted `@{upstream}` unconditionally, so any
+  checkpoint before the first real `git push -u origin <branch>` (the very first in_progress
+  checkpoint, or any checkpoint on a task that never gets past pre-flight -- exactly
+  what happened to both stuck rca- instances, permanently pre-flight-rejected on crontab_unauthorized_change)
+  overwrote task.yaml''s `branch` field with the repo''s own default branch name.
+  Confirmed with a standalone git repro (checkout -b from origin/master, no push:
+  `@{upstream}` resolves to `origin/master` immediately) and with a test that fails
+  on the pre-fix code and passes after the fix.'
+- 'Fixed `cmd_checkpoint` in scripts/veridian-task.py: it now also computes the workspace''s
+  real default branch and refuses to trust an `@{upstream}`-derived branch name that
+  equals it (never a legitimate real target branch for a worker''s own PR in this
+  workflow) -- falls back to the local HEAD branch name instead, which is always a
+  real, meaningful value (satisfies option (a) in the task SPEC; no change to supervisor-entrypoint.sh''s
+  null-handling was needed since the branch field is never actually unset/wrong now).'
+- 'Extended tests/veridian_task_branch_resolution_test.py (not a new parallel file)
+  with:'
+- '`python3 -m pytest tests/veridian_task_branch_resolution_test.py -v` -- all 6 pass
+  (3 pre-existing + 3 new).'
+- Full existing test suite (`tests/`, all .py + .sh) re-run -- no regressions (90
+  pytest tests + 5 shell scripts, all pass).
+remaining_steps: &id003
+- Commit + push branch, open PR against origin/master on claude-control.
+- Confirm PR merged via `gh pr view --json state,mergedAt` (not a self-report).
+- 'Confirm the merged fix is actually deployed: `diff` scripts/veridian-task-watchdog.py
+  and scripts/veridian-task.py against the live /opt/veridian/scripts/ copies.'
+- 'Final checkpoint: status=pending_review, with the root-cause note above.'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T04:19:08.837504+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T04:24:10.105308+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  note: periodic checkpoint
+- at: '2026-07-27T04:35:18.318584+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Confirmed live: `escalate()` in scripts/veridian-task-watchdog.py hardcoded `--repo
+    claude-control` for every auto-escalated rca- task, ignoring the stalled task''s
+    real repo (2 historical instances, both really compliance-tracker).'
+  - Fixed `escalate()` to read the stalled task's own already-loaded task.yaml `repo`
+    field and pass that to `veridian-task.py create`, falling back to `claude-control`
+    only if it's genuinely unknown.
+  - 'Root-caused the real, reproducible mechanism behind the observed `branch: master`
+    values (NOT a guess -- verified with a live git repro): `cmd_create`''s `git worktree
+    add -b <branch> workspace origin/<default>` checks the new branch out from a remote-tracking
+    ref, and git''s own `branch.autoSetupMerge` default means that branch''s `@{upstream}`
+    points at `origin/<default>` (e.g. `origin/master`) from the instant it''s created,
+    before any commit or push. `cmd_checkpoint`''s real-branch-resolution code (added
+    2026-07-26 for the PR561/562/78 fix) trusted `@{upstream}` unconditionally, so
+    any checkpoint before the first real `git push -u origin <branch>` (the very first
+    in_progress checkpoint, or any checkpoint on a task that never gets past pre-flight
+    -- exactly what happened to both stuck rca- instances, permanently pre-flight-rejected
+    on crontab_unauthorized_change) overwrote task.yaml''s `branch` field with the
+    repo''s own default branch name. Confirmed with a standalone git repro (checkout
+    -b from origin/master, no push: `@{upstream}` resolves to `origin/master` immediately)
+    and with a test that fails on the pre-fix code and passes after the fix.'
+  - 'Fixed `cmd_checkpoint` in scripts/veridian-task.py: it now also computes the
+    workspace''s real default branch and refuses to trust an `@{upstream}`-derived
+    branch name that equals it (never a legitimate real target branch for a worker''s
+    own PR in this workflow) -- falls back to the local HEAD branch name instead,
+    which is always a real, meaningful value (satisfies option (a) in the task SPEC;
+    no change to supervisor-entrypoint.sh''s null-handling was needed since the branch
+    field is never actually unset/wrong now).'
+  - 'Extended tests/veridian_task_branch_resolution_test.py (not a new parallel file)
+    with:'
+  - '`python3 -m pytest tests/veridian_task_branch_resolution_test.py -v` -- all 6
+    pass (3 pre-existing + 3 new).'
+  - Full existing test suite (`tests/`, all .py + .sh) re-run -- no regressions (90
+    pytest tests + 5 shell scripts, all pass).
+  remaining_steps:
+  - Commit + push branch, open PR against origin/master on claude-control.
+  - Confirm PR merged via `gh pr view --json state,mergedAt` (not a self-report).
+  - 'Confirm the merged fix is actually deployed: `diff` scripts/veridian-task-watchdog.py
+    and scripts/veridian-task.py against the live /opt/veridian/scripts/ copies.'
+  - 'Final checkpoint: status=pending_review, with the root-cause note above.'
+  recent_commits:
+  - 665fe04 Fix escalate() hardcoded repo and root-cause the stale rca- branch bug
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  note: 'Fixed escalate() hardcoded --repo claude-control (now passes stalled task''s
+    own real repo). Root-caused branch:master via live git repro: git''s branch.autoSetupMerge
+    makes a freshly-created worker branch''s @{upstream} default to origin/<default-branch>
+    before any push, and cmd_checkpoint''s real-branch-resolution trusted that unconditionally
+    -- any checkpoint before the first real push overwrote task.yaml''s branch with
+    the repo''s default branch name. Fixed cmd_checkpoint to exclude the default branch
+    as a false-positive upstream match. Extended tests/veridian_task_branch_resolution_test.py
+    (6/6 pass); confirmed new test fails pre-fix, passes post-fix. Full suite re-run,
+    no regressions. PR: https://github.com/FChecklist/claude-control/pull/105'
+- at: '2026-07-27T04:39:33.038921+00:00'
+  status: completed
+  files_modified: []
+  completed_steps:
+  - 'Confirmed live: `escalate()` in scripts/veridian-task-watchdog.py hardcoded `--repo
+    claude-control` for every auto-escalated rca- task, ignoring the stalled task''s
+    real repo (2 historical instances, both really compliance-tracker).'
+  - Fixed `escalate()` to read the stalled task's own already-loaded task.yaml `repo`
+    field and pass that to `veridian-task.py create`, falling back to `claude-control`
+    only if it's genuinely unknown.
+  - 'Root-caused the real, reproducible mechanism behind the observed `branch: master`
+    values (NOT a guess -- verified with a live git repro): `cmd_create`''s `git worktree
+    add -b <branch> workspace origin/<default>` checks the new branch out from a remote-tracking
+    ref, and git''s own `branch.autoSetupMerge` default means that branch''s `@{upstream}`
+    points at `origin/<default>` (e.g. `origin/master`) from the instant it''s created,
+    before any commit or push. `cmd_checkpoint`''s real-branch-resolution code (added
+    2026-07-26 for the PR561/562/78 fix) trusted `@{upstream}` unconditionally, so
+    any checkpoint before the first real `git push -u origin <branch>` (the very first
+    in_progress checkpoint, or any checkpoint on a task that never gets past pre-flight
+    -- exactly what happened to both stuck rca- instances, permanently pre-flight-rejected
+    on crontab_unauthorized_change) overwrote task.yaml''s `branch` field with the
+    repo''s own default branch name. Confirmed with a standalone git repro (checkout
+    -b from origin/master, no push: `@{upstream}` resolves to `origin/master` immediately)
+    and with a test that fails on the pre-fix code and passes after the fix.'
+  - 'Fixed `cmd_checkpoint` in scripts/veridian-task.py: it now also computes the
+    workspace''s real default branch and refuses to trust an `@{upstream}`-derived
+    branch name that equals it (never a legitimate real target branch for a worker''s
+    own PR in this workflow) -- falls back to the local HEAD branch name instead,
+    which is always a real, meaningful value (satisfies option (a) in the task SPEC;
+    no change to supervisor-entrypoint.sh''s null-handling was needed since the branch
+    field is never actually unset/wrong now).'
+  - 'Extended tests/veridian_task_branch_resolution_test.py (not a new parallel file)
+    with:'
+  - '`python3 -m pytest tests/veridian_task_branch_resolution_test.py -v` -- all 6
+    pass (3 pre-existing + 3 new).'
+  - Full existing test suite (`tests/`, all .py + .sh) re-run -- no regressions (90
+    pytest tests + 5 shell scripts, all pass).
+  remaining_steps:
+  - Commit + push branch, open PR against origin/master on claude-control.
+  - Confirm PR merged via `gh pr view --json state,mergedAt` (not a self-report).
+  - 'Confirm the merged fix is actually deployed: `diff` scripts/veridian-task-watchdog.py
+    and scripts/veridian-task.py against the live /opt/veridian/scripts/ copies.'
+  - 'Final checkpoint: status=pending_review, with the root-cause note above.'
+  recent_commits:
+  - 665fe04 Fix escalate() hardcoded repo and root-cause the stale rca- branch bug
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/105'
+- at: '2026-07-27T04:42:28.835526+00:00'
+  status: pending_review
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 665fe04 Fix escalate() hardcoded repo and root-cause the stale rca- branch bug
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  note: worker finished, no changes to commit and zero commits ahead of master --
+    genuine no-op, routing through pending_review (not completed directly) so the
+    state-machine invariant holds and the supervisor gets the final say
+execution_seconds: 1120
+restart_count: 0
+token_usage:
+  input_tokens: 102
+  cache_creation_input_tokens: 213512
+  cache_read_input_tokens: 9301266
+  output_tokens: 64090
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 213512
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 652
+    cache_read_input_tokens: 236686
+    cache_creation_input_tokens: 510
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 510
+    type: message
+  speed: standard
+hold_for_owner_signoff: false

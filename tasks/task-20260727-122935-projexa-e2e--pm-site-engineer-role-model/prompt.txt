@@ -1,0 +1,29 @@
+## OBJECTIVE
+Build PROJEXA's real PM/Site-Engineer role model + server-side enforcement, and extend the Design Studio timesheet report with real Category/Designer/Project-wise Budget-vs-Actual cost analysis, per Owner directive PROJEXA_ERP_END_TO_END_REQUIREMENT_ANALYSIS_GAP_FILL_AND_IMPLEMENTATION. Both confirmed real, narrow gaps by a Phase 0 investigation on 2026-07-27.
+
+## KNOWN_CONTEXT
+Verified real state as of 2026-07-27, do not re-derive:
+- compliance-tracker (VERIDIAN) has a real, mature 11-value `userRoleEnum` (`schema.ts:12-16`: admin, manager, member, viewer, veridian_admin, branch_manager, senior_professional, team_member, client_viewer, external_auditor, stage_0) with real rank-based enforcement (`ROLE_RANK`/`hasRole`/`requireRole`/`requireRoleOrScope` in `auth-guard.ts:31-56, 443-456`).
+- PROJEXA has its OWN, separate, much thinner role model -- confirmed via `projexa/src/hooks/use-org-role.ts:19` and its own `auth-guard.ts:52-58`: only `'owner' | 'admin' | 'member'`, backed by PROJEXA's own `memberships` table (PROJEXA authenticates against its own Supabase project, NOT VERIDIAN's -- this is explicitly documented in that hook's own comment). Server-side enforcement of even this thin model is nearly absent: only ONE PROJEXA API route (`app/api/org/provision/route.ts`) checks role strings at all. `useOrgRole()`'s own comment states: "this hook is a UX affordance only... not itself the security boundary."
+- The Owner's real requirement (5-role matrix: Super Admin, Org Admin, PM, Site Engineer, Client Viewer) maps as: Client Viewer has a real VERIDIAN-side equivalent (`client_viewer`) but PROJEXA has nothing like it; Super Admin/Org Admin loosely map to PROJEXA's existing `owner`/`admin`; PM and Site Engineer are CONFIRMED ABSENT from both role systems (a grep for "PM"/"SE" role strings found only decorative avatar-initial text on the marketing landing page, `projexa/src/components/marketing/Hero.tsx:124` -- not a real role).
+- Design Studio timesheet cost analysis: `construction-reports-service.ts` already has a real `designerTimesheetReport()` function (lines 206-221) matching almost every item in the Owner's own handwritten requirement checklist. But today it only does a flat `SUM(hours) GROUP BY user` -- it does NOT yet do the Category-wise/Designer-wise/Project-wise/Designer-status-wise Budget-vs-Actual breakdown the Owner's own timesheet requirement image explicitly marked "IMPORTANT". This is a real, narrow extension of an existing function, not new infrastructure.
+- 2 separate, parallel tasks under this same directive touch PROJEXA's `layout.tsx`/shell (header-bug fix) and PROJEXA's PWA/service-worker infra -- this task's RBAC work should avoid unrelated changes to those files; check `ai-os/boss/ACTIVE-CLAIMS.yaml` for real collisions before starting.
+
+## SCOPE
+1. **PROJEXA role model**: extend PROJEXA's own role enum (its `memberships` table) to add `pm` (Project Manager) and `site_engineer` roles alongside the existing `owner`/`admin`/`member`. Decide and justify (in your PR description) whether `client_viewer` should be a real 6th PROJEXA-native role or should route through VERIDIAN's existing `client_viewer` concept via the API boundary instead -- a real, evidenced decision, not silently picking one.
+2. **Real server-side enforcement**: audit PROJEXA's real API routes (`src/app/api/**`) and add real `requireRole`-equivalent checks (following PROJEXA's own existing `org/provision/route.ts` pattern, the one place this already works) to the routes that actually need PM/Site-Engineer-level gating -- e.g. schedule/budget-mutating routes should require PM-or-above, site-diary/progress-entry routes should allow Site Engineer. Cite each route you gate and why, in your PR description -- do not blanket-gate every route without justification.
+3. **Timesheet cost analysis extension**: extend `construction-reports-service.ts`'s real `designerTimesheetReport()` to add the Budget-vs-Actual breakdown by Category, Designer, Project, and Designer-status, per the Owner's own timesheet image. Reuse this codebase's existing budget-vs-actual computation pattern if one already exists in a sibling report function (check `budgetSummary`/`budgetVsActual` in the same service file) rather than inventing new aggregation logic.
+
+## SUCCESS_CRITERIA
+- A real test proving: a `site_engineer`-role user can hit a progress-entry route but is rejected from a budget-mutating route; a `pm`-role user can hit both.
+- A real test proving the extended `designerTimesheetReport()` produces correct Budget-vs-Actual figures broken down by all 4 dimensions (Category/Designer/Project/Status) against a realistic fixture.
+- `npx tsc --noEmit` clean, `bun test` passing, `get_advisors(security)` zero new findings.
+
+## EXPECTED_OUTPUT
+Real PRs against PROJEXA (role model + route gating) and compliance-tracker (timesheet report extension), each through their repo's normal dispatch/review pipeline (structured audit-verdict comment required before merge, no direct push to main).
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do NOT touch PROJEXA's `layout.tsx`/AppShell/service-worker files -- those belong to 2 separate, parallel tasks under this same directive. Do NOT invent a new budget-vs-actual aggregation approach if `construction-reports-service.ts` already has one -- reuse it.
+
+## COMPLEXITY_TIER
+judgment

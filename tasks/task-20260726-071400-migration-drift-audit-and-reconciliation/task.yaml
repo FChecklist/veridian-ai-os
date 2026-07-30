@@ -1,0 +1,315 @@
+id: task-20260726-071400-migration-drift-audit-and-reconciliation
+title: Migration drift audit and reconciliation (redispatch, crontab was stale)
+status: superseded
+repo: compliance-tracker
+branch: worker/task-20260726-071400-migration-drift-audit-and-reconciliation
+workspace: /opt/veridian/ai-os/tasks/task-20260726-071400-migration-drift-audit-and-reconciliation/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-071400-migration-drift-audit-and-reconciliation
+service: veridian-worker@task-20260726-071400-migration-drift-audit-and-reconciliation.service
+created_at: '2026-07-26T07:14:01.912250+00:00'
+last_checkpoint_at: '2026-07-26T07:46:13.034304+00:00'
+completed_steps: &id002
+- Registered ACTIVE-CLAIMS.yaml entry for this task
+- 'Root-cause confirmed via drizzle-kit@0.31.0 / drizzle-orm@0.45.2 source inspection:'
+- Enumerated 261 real migration files (0000-0263, gaps at 166/167/168 explained
+- Full DDL cross-reference of all 261 migrations against live compliance+platform
+- '12 genuinely-missing migrations found and applied live: 0005, 0037, 0140, 0165,'
+- Rebuilt drizzle/meta/_journal.json with all 261 real migrations (dense idx,
+- Populated drizzle.__drizzle_migrations with 261 correct hash+created_at rows
+- 'Checked projexa''s own Supabase project (evpckeuxgvahguwsaeul): `drizzle` schema'
+- Wrote ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml with full findings.
+remaining_steps: &id003
+- Open PR
+- 'Note in PR: bun/npm unavailable in this sandbox, so `bun run db:migrate` was'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T07:14:03.797946+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  - 'b94e238c VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines +
+    lifecycle approval gates'
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  - 'b08e4096 Merge pull request #560 from FChecklist/worker/task-20260725-231836-phase2-prompt-compiler-pipeline-core-non'
+  - '605462b2 VERIDIAN_Architecture_v2.0 phase_2: compiler pipeline core (Layer 2-5)
+    + Intelligence/Matching engines'
+  - f9e99b7b Plan phase_2 implementation in PROGRESS.md
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T07:19:05.132492+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Registered ACTIVE-CLAIMS.yaml entry for this task
+  - 'Root-cause confirmed via drizzle-kit@0.31.0 / drizzle-orm@0.45.2 source inspection:'
+  - 'Enumerated real migration files: 261 real `.sql` files in `drizzle/`, numbered'
+  remaining_steps:
+  - Cross-reference all 261 migration files' real DDL effects against live DB
+  - Apply any genuinely-missing migrations' DDL live, verify each
+  - Rebuild `drizzle/meta/_journal.json` with entries for all 261 real migrations
+  - Populate `drizzle.__drizzle_migrations` with correct hash+timestamp rows for
+  - Verify `bun run db:migrate` exits 0 cleanly against the live project
+  - Check verdian-ai/projexa's own Supabase project for the same gap (confirm
+  - Write ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml with full findings
+  - Open PR, push
+  recent_commits:
+  - '6b133286 ai-os: register ACTIVE-CLAIMS entry for migration drift audit task'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  - 'b94e238c VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines +
+    lifecycle approval gates'
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  - 'b08e4096 Merge pull request #560 from FChecklist/worker/task-20260725-231836-phase2-prompt-compiler-pipeline-core-non'
+  - '605462b2 VERIDIAN_Architecture_v2.0 phase_2: compiler pipeline core (Layer 2-5)
+    + Intelligence/Matching engines'
+  note: periodic checkpoint
+- at: '2026-07-26T07:24:06.310397+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered ACTIVE-CLAIMS.yaml entry for this task
+  - 'Root-cause confirmed via drizzle-kit@0.31.0 / drizzle-orm@0.45.2 source inspection:'
+  - 'Enumerated real migration files: 261 real `.sql` files in `drizzle/`, numbered'
+  remaining_steps:
+  - Cross-reference all 261 migration files' real DDL effects against live DB
+  - Apply any genuinely-missing migrations' DDL live, verify each
+  - Rebuild `drizzle/meta/_journal.json` with entries for all 261 real migrations
+  - Populate `drizzle.__drizzle_migrations` with correct hash+timestamp rows for
+  - Verify `bun run db:migrate` exits 0 cleanly against the live project
+  - Check verdian-ai/projexa's own Supabase project for the same gap (confirm
+  - Write ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml with full findings
+  - Open PR, push
+  recent_commits:
+  - '350078b0 ai-os: register ACTIVE-CLAIMS entry + progress log for migration drift
+    audit'
+  - '6b133286 ai-os: register ACTIVE-CLAIMS entry for migration drift audit task'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  - 'b94e238c VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines +
+    lifecycle approval gates'
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  - 'b08e4096 Merge pull request #560 from FChecklist/worker/task-20260725-231836-phase2-prompt-compiler-pipeline-core-non'
+  note: periodic checkpoint
+- at: '2026-07-26T07:29:07.602229+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered ACTIVE-CLAIMS.yaml entry for this task
+  - 'Root-cause confirmed via drizzle-kit@0.31.0 / drizzle-orm@0.45.2 source inspection:'
+  - 'Enumerated real migration files: 261 real `.sql` files in `drizzle/`, numbered'
+  remaining_steps:
+  - Cross-reference all 261 migration files' real DDL effects against live DB
+  - Apply any genuinely-missing migrations' DDL live, verify each
+  - Rebuild `drizzle/meta/_journal.json` with entries for all 261 real migrations
+  - Populate `drizzle.__drizzle_migrations` with correct hash+timestamp rows for
+  - Verify `bun run db:migrate` exits 0 cleanly against the live project
+  - Check verdian-ai/projexa's own Supabase project for the same gap (confirm
+  - Write ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml with full findings
+  - Open PR, push
+  recent_commits:
+  - '350078b0 ai-os: register ACTIVE-CLAIMS entry + progress log for migration drift
+    audit'
+  - '6b133286 ai-os: register ACTIVE-CLAIMS entry for migration drift audit task'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  - 'b94e238c VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines +
+    lifecycle approval gates'
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  - 'b08e4096 Merge pull request #560 from FChecklist/worker/task-20260725-231836-phase2-prompt-compiler-pipeline-core-non'
+  note: periodic checkpoint
+- at: '2026-07-26T07:34:09.459593+00:00'
+  status: in_progress
+  files_modified:
+  - drizzle/meta/_journal.json
+  completed_steps:
+  - Registered ACTIVE-CLAIMS.yaml entry for this task
+  - 'Root-cause confirmed via drizzle-kit@0.31.0 / drizzle-orm@0.45.2 source inspection:'
+  - 'Enumerated real migration files: 261 real `.sql` files in `drizzle/`, numbered'
+  - Full DDL cross-reference of all 261 migrations against live compliance+platform
+  remaining_steps:
+  - Rebuild `drizzle/meta/_journal.json` with entries for all 261 real migrations
+  - Populate `drizzle.__drizzle_migrations` with correct hash+timestamp rows for
+  - Verify `bun run db:migrate` exits 0 cleanly against the live project
+  - Check projexa's own Supabase project (evpckeuxgvahguwsaeul) for the same gap
+  - Write ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml with full findings
+  - Open PR, push
+  recent_commits:
+  - '6b9b2a03 Migration drift audit: 12 genuinely-missing migrations found and applied
+    live'
+  - '350078b0 ai-os: register ACTIVE-CLAIMS entry + progress log for migration drift
+    audit'
+  - '6b133286 ai-os: register ACTIVE-CLAIMS entry for migration drift audit task'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  - 'b94e238c VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines +
+    lifecycle approval gates'
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  note: periodic checkpoint
+- at: '2026-07-26T07:39:10.683306+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered ACTIVE-CLAIMS.yaml entry for this task
+  - 'Root-cause confirmed via drizzle-kit@0.31.0 / drizzle-orm@0.45.2 source inspection:'
+  - Enumerated 261 real migration files (0000-0263, gaps at 166/167/168 explained
+  - Full DDL cross-reference of all 261 migrations against live compliance+platform
+  - '12 genuinely-missing migrations found and applied live: 0005, 0037, 0140, 0165,'
+  - Rebuilt drizzle/meta/_journal.json with all 261 real migrations (dense idx,
+  - Populated drizzle.__drizzle_migrations with 261 correct hash+created_at rows
+  - 'Checked projexa''s own Supabase project (evpckeuxgvahguwsaeul): `drizzle` schema'
+  - Wrote ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml with full findings.
+  remaining_steps:
+  - Open PR
+  - 'Note in PR: bun/npm unavailable in this sandbox, so `bun run db:migrate` was'
+  recent_commits:
+  - 'd3c89aeb Migration drift audit: full findings doc, 12 migrations fixed, tracking
+    table repaired'
+  - 'a13a357a Repair drizzle/meta/_journal.json: register all 261 real migrations
+    (was frozen at migration 0000 since first commit)'
+  - '6b9b2a03 Migration drift audit: 12 genuinely-missing migrations found and applied
+    live'
+  - '350078b0 ai-os: register ACTIVE-CLAIMS entry + progress log for migration drift
+    audit'
+  - '6b133286 ai-os: register ACTIVE-CLAIMS entry for migration drift audit task'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  note: periodic checkpoint
+- at: '2026-07-26T07:42:14.557626+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Registered ACTIVE-CLAIMS.yaml entry for this task
+  - 'Root-cause confirmed via drizzle-kit@0.31.0 / drizzle-orm@0.45.2 source inspection:'
+  - Enumerated 261 real migration files (0000-0263, gaps at 166/167/168 explained
+  - Full DDL cross-reference of all 261 migrations against live compliance+platform
+  - '12 genuinely-missing migrations found and applied live: 0005, 0037, 0140, 0165,'
+  - Rebuilt drizzle/meta/_journal.json with all 261 real migrations (dense idx,
+  - Populated drizzle.__drizzle_migrations with 261 correct hash+created_at rows
+  - 'Checked projexa''s own Supabase project (evpckeuxgvahguwsaeul): `drizzle` schema'
+  - Wrote ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml with full findings.
+  remaining_steps:
+  - Open PR
+  - 'Note in PR: bun/npm unavailable in this sandbox, so `bun run db:migrate` was'
+  recent_commits:
+  - 'b3f0298a ai-os: move migration-drift-audit claim to recently_completed (PR #563
+    open)'
+  - 'd3c89aeb Migration drift audit: full findings doc, 12 migrations fixed, tracking
+    table repaired'
+  - 'a13a357a Repair drizzle/meta/_journal.json: register all 261 real migrations
+    (was frozen at migration 0000 since first commit)'
+  - '6b9b2a03 Migration drift audit: 12 genuinely-missing migrations found and applied
+    live'
+  - '350078b0 ai-os: register ACTIVE-CLAIMS entry + progress log for migration drift
+    audit'
+  - '6b133286 ai-os: register ACTIVE-CLAIMS entry for migration drift audit task'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  note: quality gates passed, pushed branch worker/task-20260726-071400-migration-drift-audit-and-reconciliation,
+    awaiting review
+- at: '2026-07-26T07:46:13.034304+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'b3f0298a ai-os: move migration-drift-audit claim to recently_completed (PR #563
+    open)'
+  - 'd3c89aeb Migration drift audit: full findings doc, 12 migrations fixed, tracking
+    table repaired'
+  - 'a13a357a Repair drizzle/meta/_journal.json: register all 261 real migrations
+    (was frozen at migration 0000 since first commit)'
+  - '6b9b2a03 Migration drift audit: 12 genuinely-missing migrations found and applied
+    live'
+  - '350078b0 ai-os: register ACTIVE-CLAIMS entry + progress log for migration drift
+    audit'
+  - '6b133286 ai-os: register ACTIVE-CLAIMS entry for migration drift audit task'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  note: "Superboss rejected: https://github.com/FChecklist/compliance-tracker/pull/563\
+    \ \u2014 see review.json for issues"
+execution_seconds: 1569
+restart_count: 0
+token_usage:
+  input_tokens: 250
+  cache_creation_input_tokens: 281841
+  cache_read_input_tokens: 21158365
+  output_tokens: 119246
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 281841
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 922
+    cache_read_input_tokens: 304632
+    cache_creation_input_tokens: 893
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 893
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T10:00:09.627183+00:00'
+duplicate_of: task-20260726-154338-resolve-pr563-conflict-properly--v2--exp
+superseded_reason: 'Real work landed on the same branch/PR #563 as resolve-pr563-conflict-properly--v2--exp
+  (round-1 dedup missed this cross-issue link). PR #563 is already routed to supervisor
+  under that representative -- do not route this one separately.'
+superseded_at: '2026-07-27T03:52:29.155700+00:00'

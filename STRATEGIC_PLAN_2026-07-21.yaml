@@ -1,0 +1,407 @@
+# ============================================================================
+# VERIDIAN STRATEGIC IMPLEMENTATION PLAN -- 2026-07-21 mega-directive
+# PLANNING ARTIFACT ONLY. NOT EXECUTED. See meta.status.
+# ============================================================================
+
+meta:
+  id: VERIDIAN-STRATEGIC-PLAN-2026-07-21
+  version: 1.0
+  source: "Owner directive 2026-07-21 (chat, '14 Files.txt' attachment)"
+  status: PLANNING_ONLY_NOT_EXECUTED
+  reason: >-
+    Owner flagged ~96% of weekly Claude Code token budget consumed at time
+    of receipt (weekly reset Thu 2026-07-22 07:30 IST). Given the raw task
+    list, taken literally, is many weeks of net-new engineering (a full
+    visualization engine, a presentation engine, a full browser SDK, a full
+    AI-context-optimizer architecture, a new pricing/token-ledger engine,
+    Odoo/Zoho-grade completeness across every module/brand, plus 3 full
+    audit-and-fix cycles), attempting real implementation against ~4%
+    remaining budget risked a rushed, unverifiable, possibly-broken result
+    -- directly against the Owner's own "zero failure / extremely high
+    standard" requirement. Owner was asked and chose: plan only now,
+    execute after reset.
+  numbering_note: >-
+    Owner's own numbering skips "Task 9" (jumps 8 to 10) and has two items
+    each labeled "Task 12" and "Task 14". Renumbered below as PLAN-01..
+    PLAN-16 in literal document order, each cross-referenced to the Owner's
+    original label so nothing is silently dropped or merged without saying
+    so.
+  guardrails_applied:
+    - ai-os/STANDING_DIRECTIVE.yaml (precheck/logging/verification)
+    - ai-os/AI_ENGINEERING_POLICY.yaml#automation_scope_boundary
+    - ai-os/RULES_ARTICLES_198.json (mandatory guardrail, not yet re-run
+      against this plan's future output -- verification.self_certification
+      is forbidden per STANDING_DIRECTIVE.yaml, so PLAN-07's own 198-audit
+      run is the actual verification step, not a claim made here)
+  next_step: >-
+    After 2026-07-22 07:30 IST reset: register one ai-os/boss/
+    ACTIVE-CLAIMS.yaml claim per task (not one giant claim), execute in
+    sequence order below, verify each before moving to the next, log each
+    in ai-os/boss/COMPLETED.yaml with a fresh WAVE-N number checked at
+    commit time (many concurrent waves landed 2026-07-21, don't assume a
+    stale highest-N).
+
+tasks:
+  - id: PLAN-01
+    owner_label: "Task 1"
+    title: UI/UX unification across brands
+    objective: >-
+      One shared UI/UX layer across all modules/brands (PROJEXA, THE FIRM).
+      Audit + gap-fill. Tag every element for usability.
+    known_state: >-
+      RESOLVED 2026-07-21 (Owner supplied a GitHub dashboard screenshot):
+      the repo is FChecklist/veridian-ui-kit -- an 8th repo not in this
+      session's earlier 7-repo inventory (compliance-tracker /
+      claude-control / projexa / veda-advisors / global-revenue-engine /
+      veridian-brain / sumeet-spec). Checked via gh repo view: created
+      2026-07-18, TypeScript, 58KB disk usage, no description -- this is a
+      near-empty placeholder/skeleton, not a built-out component library.
+      "Merge the UI/UX repository with compliance-tracker" therefore means:
+      first BUILD OUT veridian-ui-kit as the real shared design-system
+      package (tokens, primitives, the dynamic-pill/option-chain components
+      etc.), then consume it from compliance-tracker (as an npm workspace
+      package or published package, not a manual copy-paste) -- not "merge
+      an already-mature separate UI codebase." Waves 1-7 (2026-07-21)
+      already ported PROJEXA's pages into compliance-tracker directly
+      (pre-dating/bypassing this kit), so PLAN-01 also needs to reconcile
+      those already-ported components against whatever veridian-ui-kit
+      ends up defining as canonical -- check for drift, don't just layer
+      a new design system on top unreconciled.
+    key_gaps:
+      - Design-token (color/type/spacing) consistency audit, not yet run
+      - Per-element data-testid/aria-label tagging, not yet done anywhere
+      - PROJEXA's still-live local composer (Wave 8, deferred) blocks a
+        fully clean single-UI claim until it's retired post-Wave-10
+    sequence: 1
+    depends_on: ["Wave 8", "Wave 10"]
+    depends_on_note: >-
+      Both from the prior CRM+PROJEXA merge (2026-07-21) -- check
+      ai-os/boss/COMPLETED.yaml for their real status before starting, do
+      not assume still-pending.
+    effort: large
+
+  - id: PLAN-02
+    owner_label: "Task 2"
+    title: Full module completion (Odoo/Zoho-grade) + universal dynamic-pill/chain pattern
+    objective: >-
+      Every module/screen/function, every brand, fully workable without AI
+      (real forms/reports/layouts, Odoo/Zoho-grade). Additionally, every
+      screen's dynamic mode-pill + option-chain + minimal-chat-input must
+      be able to fully complete the task via software and/or AI (e.g.
+      "generate all invoices" from chat + pill/chain selection alone).
+    known_state: >-
+      CRM (Waves 1-4) is the one module verified this session to already
+      follow this exact pattern end-to-end (capability-tree-service.ts +
+      task-execution-engine.ts dispatchTool(), typed inputFields, real
+      Drizzle writes -- create_lead/create_opportunity etc. proven, not
+      just designed). Other modules' coverage of this same pattern is
+      UNVERIFIED -- this is the single largest unknown in the whole plan
+      and needs its own audit-first sub-task before any building starts,
+      module by module.
+    key_gaps:
+      - No per-module inventory yet of whether each screen's pill+chain
+        already reaches 100pct AI/software completion, or only partial
+      - The workable-without-AI requirement has not been checked anywhere
+        outside CRM
+    sequence: 2
+    depends_on: [PLAN-01]
+    effort: very large -- realistically the single biggest item in this
+      whole plan; recommend its own dedicated multi-session execution
+      track, not a single pass
+
+  - id: PLAN-03
+    owner_label: "Task 3"
+    title: OSS + custom professional templates (reports/HTML/dashboards)
+    objective: >-
+      Interactive templates for every scenario, sourced from GitHub OSS
+      where suitable, custom-built otherwise, matching the unified UI/UX
+      (PLAN-01).
+    known_state: Not started. No template inventory exists yet.
+    key_gaps: [Full inventory of "which screens need a template" doesn't
+      exist yet -- this should be a byproduct of PLAN-02's per-module audit,
+      not a separate blind pass]
+    sequence: 3
+    depends_on: [PLAN-01, PLAN-02]
+    effort: large
+
+  - id: PLAN-04
+    owner_label: "Task 4"
+    title: VERI Assistant conversation list (software-vs-AI escalation)
+    objective: >-
+      A precise list VERI (the assistant) uses to know which
+      human-communication scenarios are software-handled (canned/templated)
+      vs. must escalate to AI generation.
+    known_state: >-
+      VeriChatPanel.tsx / VeriComposer.tsx / capability-tree-service.ts
+      exist and are real (Waves 4-7). No existing "escalation decision
+      list" artifact is known -- this is net-new design work, not a gap-fill
+      of something partially built.
+    key_gaps: [Entire escalation-rule taxonomy doesn't exist yet]
+    sequence: 4
+    depends_on: [PLAN-02]
+    effort: medium
+
+  - id: PLAN-05
+    owner_label: "Task 5"
+    title: Demo-data fill + 3x end-to-end run, Odoo-grade behavior
+    objective: >-
+      Fill every module/function with demo data, run it end-to-end 3
+      times, fix every breakage found each pass.
+    known_state: >-
+      A real demo company + 10 test-persona logins already exist
+      (2026-07-06, DemoVeridian2026! password) -- but that predates Waves
+      1-7's CRM/PROJEXA work, so its coverage of the NEW modules is
+      unverified and likely incomplete.
+    key_gaps: [Demo data almost certainly doesn't cover CRM Leads/
+      Opportunities/Kanban or any of the 11 newly-ported PROJEXA
+      construction modules yet]
+    sequence: 5
+    depends_on: [PLAN-02]
+    effort: large -- literally requires PLAN-02 to be substantially done
+      first, since you cannot E2E-test modules that aren't complete yet
+
+  - id: PLAN-06
+    owner_label: "Task 6"
+    title: 3-round audit of PLAN-01..05, then audit of PLAN-06 itself
+    objective: >-
+      Audit round 1 -> fix, round 2 -> fix, round 3 -> fix (of tasks 1-5),
+      then a 4th audit of this audit process itself.
+    known_state: This session's own established 3-round-audit convention
+      (used successfully for the credit-governance work, 2026-07-18) is the
+      direct precedent to reuse -- not a new process to invent.
+    key_gaps: []
+    sequence: 6
+    depends_on: [PLAN-01, PLAN-02, PLAN-03, PLAN-04, PLAN-05]
+    effort: medium (process is proven, just needs re-running against new scope)
+
+  - id: PLAN-07
+    owner_label: "Task 7"
+    title: 198-rule audit, full system, automated scripts only
+    objective: Re-run the existing ai-os/scripts/audit198/run-audit.mjs
+      framework end-to-end, fix every gap found, 100% automated.
+    known_state: >-
+      The framework is real and complete (built + merged 2026-07-21,
+      PR #522 + 7 gap-closure waves). Baseline run showed 22 ENFORCED / 152
+      PARTIALLY_ENFORCED / 15 NOT_YET_BUILT / 9 NEEDS_HUMAN_JUDGMENT before
+      the gap-closure waves; a fresh consolidated re-run against the
+      now-fully-merged main (post PR #526/#540/#541) has NOT yet happened
+      this session -- this is genuinely the very next unfinished item from
+      before this plan even arrived, not new work.
+    key_gaps: [The fresh post-merge re-run itself is the outstanding item]
+    sequence: 7
+    depends_on: []
+    effort: small -- script already exists and runs automatically; this is
+      mostly compute time, not design time
+
+  - id: PLAN-08
+    owner_label: "Task 8"
+    title: FChecklist feature-completion audit, all modules/brands, automated
+    objective: Fully automated feature-completion audit, every value/logic
+      documented, no manual work.
+    known_state: >-
+      3 prior comparison-CSV benchmarks exist (Odoo/ERPNET/Zoho/SAP/etc.,
+      manufacturing/GRC, AI-platform) -- but none of them re-baseline
+      against the 2026-07-21 CRM/PROJEXA merge. This task is best understood
+      as "re-run and extend those existing benchmark scripts against the
+      current codebase," not a from-scratch build.
+    key_gaps: [Re-baseline against current main needed]
+    sequence: 8
+    depends_on: [PLAN-07]
+    effort: medium
+
+  - id: PLAN-09
+    owner_label: "Task 10 (owner skipped 9)"
+    title: "PTTU (Per-Task Token Used) calculation + ledger engine"
+    objective: >-
+      PTTU = (tentative AI-only token cost if software hadn't done it) +
+      (actual AI tokens used * 1.2). Tracked per end-user task/interaction.
+      Used for (a) customer pricing and (b) a customer-visible PTTU number
+      only -- the breakdown/formula itself is Owner-only, never customer-
+      visible.
+    known_state: >-
+      compliance.token_usage_ledger already exists (has a cacheSavingsUsd
+      column, Finance-owned, live but unpopulated per earlier session
+      finding) -- this is the natural home for a new PTTU column/table, not
+      a new subsystem from zero. The "tentative AI-only cost if software
+      had NOT done it" half of the formula is the genuinely hard new part
+      -- it requires a per-task-type cost model that doesn't exist yet.
+    key_gaps:
+      - No existing model for what this would have cost in pure-AI tokens
+      - Customer-facing PTTU display doesn't exist
+      - Access control ensuring the formula/breakdown is truly Owner-only
+        needs explicit design (RLS or app-layer gate), not assumed
+    sequence: 9
+    depends_on: [PLAN-02 (need real task-execution instrumentation points
+      across modules first)]
+    effort: large -- also the highest business-sensitivity item in this
+      plan (pricing-facing); recommend Owner sign-off on the cost-model
+      formula specifically before building, not just before shipping
+
+  - id: PLAN-10
+    owner_label: "Task 11"
+    title: VERIDIAN Visualization Engine
+    objective: >-
+      17 named interactive visualization types (dashboards, reports,
+      analytics, workflow viewer, decision tree, timeline, knowledge graph,
+      compliance heatmap, risk matrix, org map, KPI/financial/audit/sales/
+      project/todo dashboards, document/process explorers), backed by a
+      specific 11-library OSS stack (Superset, Evidence, ECharts,
+      Perspective, React Flow, Mermaid, Frappe Gantt, @hello-pangea/dnd,
+      AG Grid Community, MapLibre, React PDF + React PDF Viewer), plus 5
+      worked drill-down UX examples (branch->employee->invoice->AI
+      explanation->audit->ask-AI, and 4 more).
+    known_state: None of the 11 named libraries are in this session's known
+      dependency inventory. Fully net-new.
+    key_gaps: [Everything -- no existing visualization layer to extend]
+    sequence: 10
+    depends_on: [PLAN-01, PLAN-03]
+    effort: very large -- 11 separate library integrations, each with its
+      own learning curve/bundle-size cost; recommend piloting ONE
+      (ECharts, most broadly useful) before committing to all 11
+
+  - id: PLAN-11
+    owner_label: "Task 12 (first instance)"
+    title: VERIDIAN Presentation Engine
+    objective: >-
+      Same 11-library OSS stack as PLAN-10, plus a "VERIDIAN AI OS +
+      Software Layer" of 8 interaction modes (Explain/Analyze/Predict/
+      Recommend/Audit/Summarize/Decision-support/Reports) layered on top.
+    known_state: Substantially overlaps PLAN-10 (same library stack). Owner
+      explicitly said "you can merge the tasks" -- recommend merging
+      PLAN-10 and PLAN-11 into one build, since the library stack is
+      identical and the "8 interaction modes" are really just PLAN-10's
+      visualizations wired to the AI router.
+    key_gaps: [Same as PLAN-10, plus the 8-mode AI wiring itself]
+    sequence: 11
+    depends_on: [PLAN-10]
+    effort: large (mostly additive to PLAN-10 if merged as suggested)
+
+  - id: PLAN-12
+    owner_label: "Task 12 (second instance) + Task 14 (first instance)"
+    title: Web performance optimization + browser-side architecture
+    objective: >-
+      10-priority performance plan (measure first; frontend bundle/image/
+      font/CSS; JS reduction; smart SSR; VERIDIAN Browser SDK caching; DB
+      query optimization; API batching; multi-layer cache stack; async-AI
+      loading; real-time partial updates) plus a Browser -> Vercel Edge ->
+      API Gateway -> Mother Router -> Supabase architecture diagram.
+    known_state: >-
+      No performance baseline has been measured yet this session (no
+      Lighthouse/Vercel Speed Insights numbers on file). PLAN-13's Browser
+      SDK is the same "VERIDIAN Browser SDK" referenced here -- these two
+      should execute together, not separately.
+    key_gaps: [No real measurement exists yet -- Priority 1 ("measure
+      first") is itself the actual first gap, everything else is
+      unverified until that's done]
+    sequence: 12
+    depends_on: []
+    effort: large -- but Priority 1 (measurement) is small/fast and should
+      run FIRST, independently, before committing effort to any specific
+      optimization
+
+  - id: PLAN-13
+    owner_label: "Task 13"
+    title: VERIDIAN Browser SDK (specific library selection)
+    objective: >-
+      13-library stack (Vercel AI SDK, Dexie.js, fflate, tiktoken, msgpack-
+      javascript, Zustand, Supabase Auth, TanStack Query, Uppy, tRPC) plus
+      one custom-built "VERIDIAN Context Optimizer" component (explicitly
+      the one piece not to source from GitHub).
+    known_state: None of these 13 libraries are in this session's known
+      dependency inventory (compliance-tracker's actual package.json has
+      not been checked against this list yet).
+    key_gaps: [Full net-new; also directly overlaps PLAN-12 -- same "VERIDIAN
+      Browser SDK" name, should share one implementation, not two]
+    sequence: 13
+    depends_on: [PLAN-12]
+    effort: very large
+
+  - id: PLAN-14
+    owner_label: "Task 14 (second instance)"
+    title: Mother Router AI-context-optimization pipeline
+    objective: >-
+      Auth -> Workspace Resolver -> Permission Resolver -> Metadata
+      Resolver -> Context Optimizer -> Semantic Cache (GPTCache) ->
+      Knowledge Retrieval (LlamaIndex) -> Prompt Builder -> LiteLLM Gateway
+      -> model. Same pipeline reused by every child router (Legal/Finance/
+      Software/Compliance/etc.), differing only in knowledge source. A
+      10-responsibility custom "VERIDIAN Context Optimizer" is explicitly
+      called out as the one piece to build rather than source.
+    known_state: >-
+      src/lib/ai-router/mother-router.ts is real and already dispatches via
+      /api/ai/team/dispatch, calling providers through
+      anthropic_openrouter_proxy.py-style scripts -- but NONE of LiteLLM/
+      Langfuse/GPTCache/LlamaIndex/LangGraph/OpenTelemetry are wired in
+      today. This is a substantial rearchitecture of the existing,
+      working, live Mother Router, not an additive feature -- treat as
+      higher-risk than the other plan items since it touches something
+      already in production use by other subsystems (Waves 1-7's CRM chat
+      wiring, the AI Dev Team dispatch API, etc.).
+    key_gaps: [Entire pipeline is net-new; the real Mother Router's current
+      call sites all need to be re-verified against the new pipeline
+      before cutover, not just added alongside it]
+    sequence: 14
+    depends_on: ["PLAN-13"]
+    depends_on_note: >-
+      Shares the "Context Optimizer" concept with PLAN-13 -- build once,
+      use in both browser and router contexts if the responsibilities
+      genuinely overlap; verify this assumption at execution time rather
+      than assuming it.
+    effort: "very large + genuinely higher-risk (touches live production dispatch path)"
+
+  - id: PLAN-15
+    owner_label: "Task 15"
+    title: PROJEXA demo credentials (CEO + team member)
+    objective: Deliverable, not build work -- provide URL + login + password
+      for 2 demo users once PLAN-06 (Owner's "Task 6") completes.
+    known_state: >-
+      Real PROJEXA orgs/users exist post Wave-9 migration (2026-07-21) --
+      but their password_hash was deliberately set to a
+      'MIGRATED_NO_LOGIN_...' placeholder that cannot be logged into.
+      Providing working demo credentials requires an explicit password
+      reset for 2 chosen accounts first -- this is a real, small, concrete
+      action item, not just "look up an existing login."
+    key_gaps: [Password reset for exactly 2 accounts, chosen deliberately
+      (one CEO-role, one team-member-role)]
+    sequence: 15
+    depends_on: [PLAN-06]
+    effort: small
+
+  - id: PLAN-16
+    owner_label: "Task 16"
+    title: All-module demo credentials/URLs (CEO + team member)
+    objective: Deliverable, not build work -- same as PLAN-15 but covering
+      every module, once PLAN-07 (Owner's "Task 7") completes. Where no
+      login exists for a given module/view, provide a direct URL instead.
+    known_state: >-
+      The 2026-07-06 demo company (10 personas, DemoVeridian2026!) is the
+      closest existing artifact, but per PLAN-05's finding, its coverage of
+      post-Wave-1-7 modules is unverified/likely stale.
+    key_gaps: [Full URL/login inventory across every module, refreshed
+      against current main]
+    sequence: 16
+    depends_on: [PLAN-07]
+    effort: small once PLAN-02/05 are actually done; blocked until then
+
+open_questions_for_owner:
+  - "PLAN-09 (PTTU): what should the 'tentative AI-only token cost' model
+    actually be based on? (e.g. a fixed multiplier per task-type, a live
+    shadow-estimate, historical AI-task medians?) This is a pricing-facing
+    formula and should be signed off explicitly, not inferred."
+  - "PLAN-11/PLAN-13/PLAN-14 all reference a 'Context Optimizer' or
+    'VERIDIAN Browser SDK' -- confirm whether these should genuinely be
+    ONE shared component (browser-side + router-side reusing the same core
+    logic) or two separate implementations that happen to share a name."
+
+recommended_execution_order: [PLAN-07, PLAN-15-precondition-check,
+  PLAN-01, PLAN-02, PLAN-03, PLAN-04, PLAN-05, PLAN-06, PLAN-08, PLAN-15,
+  PLAN-16, PLAN-12(measure-first-only), PLAN-09, PLAN-10+PLAN-11(merged),
+  PLAN-12(remaining), PLAN-13, PLAN-14]
+recommended_execution_order_rationale: >-
+  PLAN-07 first because it's nearly-free (script already exists, just needs
+  a run) and its output (fresh gap list) should inform priority everywhere
+  else. PLAN-01..06 next because they're the direct continuation of
+  2026-07-21's own in-flight CRM/PROJEXA work. PLAN-14 (Mother Router
+  rearchitecture) deliberately LAST because it's the highest-risk item
+  (touches live production dispatch) and benefits most from everything
+  else being stable first.

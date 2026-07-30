@@ -1,0 +1,357 @@
+id: task-20260719-031532-schema-ts--reflect-live-platform-schema
+title: 'schema.ts: reflect live platform-schema table moves'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260719-031532-schema-ts--reflect-live-platform-schema
+workspace: /opt/veridian/ai-os/tasks/task-20260719-031532-schema-ts--reflect-live-platform-schema/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260719-031532-schema-ts--reflect-live-platform-schema
+service: veridian-worker@task-20260719-031532-schema-ts--reflect-live-platform-schema.service
+created_at: '2026-07-19T03:15:33.544924+00:00'
+last_checkpoint_at: '2026-07-19T03:45:26.154434+00:00'
+completed_steps: &id002
+- Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim, pushed
+  as its own commit
+- Read src/lib/db/schema.ts in full (10658 lines)
+- Added `platformSchemaDB = pgSchema('platform')` export next to complianceSchemaDB
+- Migrated 22 tables' `.table(...)` calls from complianceSchemaDB to platformSchemaDB
+  (table name strings, columns, exported TS identifiers all unchanged)
+- Migrated 3 enum types' `.enum(...)` calls (ai_router_scope, ai_model_status, ai_model_health)
+  from complianceSchemaDB to platformSchemaDB
+- Checked all `relations(...)` blocks touching these 22 tables -- all reference table
+  objects directly, not schema-qualified, no same-schema assumption found
+- 'Ran `bunx tsc --noEmit` -- 0 errors (confirmed twice: before and after the raw-SQL
+  grep-fix pass)'
+- Ran `bun run lint` -- 0 errors (3 pre-existing unrelated warnings)
+- Ran `bun test` -- 1754 pass / 0 fail
+- Grepped src/ for hardcoded raw-SQL `compliance.<table>` references to all 22 tables
+  -- found and fixed 4 real hits (instruction-execution-cache-service.ts raw SQL x5,
+  mcp/route.ts comment, capability-learning-service.ts comment, capability-audit-service.ts
+  live LLM-context string); left one dated historical test comment alone (predates
+  the move)
+- Confirmed no new drizzle/*.sql migration file was created by this task
+- 'Pushed, opened PR #469, posted structured 8-field AUDIT: PASS comment'
+- Waited for CI -- all required checks green (Lint/Type Check/Build/Unit Tests/E2E/Asset
+  Registry Coverage/Guardrail Presence/audit-check); Vercel non-required (known rate-limited)
+- 'Merged main into the branch to pick up PR #468 (Owner''s own session''s hand-authored
+  drizzle/0245 migration for the live move) -- verified its 22-table/3-enum list matches
+  this PR''s schema.ts changes exactly, no conflicts'
+- Re-ran CI after the merge commit -- all required checks green again
+- 'Squash-merged PR #469 to main (commit bb8bfbe5)'
+- 'Opened PR #470 to move the ACTIVE-CLAIMS.yaml entry to recently_completed per that
+  file''s own protocol, posted AUDIT: PASS, CI green, squash-merged (commit 235e7ce1)'
+remaining_steps: &id003 []
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-19T03:15:34.546937+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  note: worker started (resume=0)
+- at: '2026-07-19T03:20:35.046645+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/api/mcp/route.ts
+  - src/lib/db/schema.ts
+  - src/lib/services/capability-audit-service.ts
+  - src/lib/services/capability-learning-service.ts
+  - src/lib/services/instruction-execution-cache-service.ts
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim,
+    pushed as its own commit
+  remaining_steps:
+  - Read src/lib/db/schema.ts in full
+  - Add `platformSchemaDB = pgSchema('platform')` export
+  - Migrate 22 tables' `.table(...)` calls from complianceSchemaDB to platformSchemaDB
+  - Migrate 3 enum types' `.enum(...)` calls from complianceSchemaDB to platformSchemaDB
+  - Check all `relations(...)` blocks touching these 22 tables
+  - Run `bunx tsc --noEmit`, fix errors
+  - Run `bun run lint` and `bun test`, must be clean
+  - Grep src/ for hardcoded raw-SQL `compliance.<table>` references to these 22 tables,
+    fix to `platform.<table>`
+  - Confirm no new drizzle/*.sql migration file was created
+  - 'Push, open PR, post AUDIT: PASS comment'
+  - Wait for CI, self-merge as TIER1 once green
+  - Report PR number, CI result, merged status, tsc confirmation
+  recent_commits:
+  - '880ffb36 ACTIVE-CLAIMS.yaml: register schema.ts platform-schema migration claim'
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  note: periodic checkpoint
+- at: '2026-07-19T03:25:35.355348+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim,
+    pushed as its own commit
+  - Read src/lib/db/schema.ts in full (10658 lines)
+  - Added `platformSchemaDB = pgSchema('platform')` export next to complianceSchemaDB
+  - Migrated 22 tables' `.table(...)` calls from complianceSchemaDB to platformSchemaDB
+    (table name strings, columns, exported TS identifiers all unchanged)
+  - Migrated 3 enum types' `.enum(...)` calls (ai_router_scope, ai_model_status, ai_model_health)
+    from complianceSchemaDB to platformSchemaDB
+  - Checked all `relations(...)` blocks touching these 22 tables (workerAgents*, moduleRegistry,
+    productBranches*, moduleRuleConfigs, automationRules*, orgProductBranchEnablements->productBranches)
+    -- all reference table objects directly, not schema-qualified, no same-schema
+    assumption found
+  - Ran `bunx tsc --noEmit` -- 0 errors
+  - Ran `bun run lint` -- 0 errors (3 pre-existing unrelated warnings)
+  - Ran `bun test` -- 1754 pass / 0 fail
+  - 'Grepped src/ for hardcoded raw-SQL `compliance.<table>` references to all 22
+    tables -- found and fixed:'
+  - Confirmed no new drizzle/*.sql migration file was created (git status clean besides
+    the 6 intended files)
+  - Re-ran tsc/lint/test after the grep-fix edits -- still 0 errors / 0 fail
+  remaining_steps:
+  - 'Push, open PR, post AUDIT: PASS comment'
+  - Wait for CI, self-merge as TIER1 once green
+  - Report PR number, CI result, merged status, tsc confirmation
+  recent_commits:
+  - '30f4c426 schema.ts: reflect live platform schema move for 22 tables + 3 enums'
+  - '880ffb36 ACTIVE-CLAIMS.yaml: register schema.ts platform-schema migration claim'
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  note: periodic checkpoint
+- at: '2026-07-19T03:30:35.987624+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim,
+    pushed as its own commit
+  - Read src/lib/db/schema.ts in full (10658 lines)
+  - Added `platformSchemaDB = pgSchema('platform')` export next to complianceSchemaDB
+  - Migrated 22 tables' `.table(...)` calls from complianceSchemaDB to platformSchemaDB
+    (table name strings, columns, exported TS identifiers all unchanged)
+  - Migrated 3 enum types' `.enum(...)` calls (ai_router_scope, ai_model_status, ai_model_health)
+    from complianceSchemaDB to platformSchemaDB
+  - Checked all `relations(...)` blocks touching these 22 tables (workerAgents*, moduleRegistry,
+    productBranches*, moduleRuleConfigs, automationRules*, orgProductBranchEnablements->productBranches)
+    -- all reference table objects directly, not schema-qualified, no same-schema
+    assumption found
+  - Ran `bunx tsc --noEmit` -- 0 errors
+  - Ran `bun run lint` -- 0 errors (3 pre-existing unrelated warnings)
+  - Ran `bun test` -- 1754 pass / 0 fail
+  - 'Grepped src/ for hardcoded raw-SQL `compliance.<table>` references to all 22
+    tables -- found and fixed:'
+  - Confirmed no new drizzle/*.sql migration file was created (git status clean besides
+    the 6 intended files)
+  - Re-ran tsc/lint/test after the grep-fix edits -- still 0 errors / 0 fail
+  remaining_steps:
+  - 'Push, open PR, post AUDIT: PASS comment'
+  - Wait for CI, self-merge as TIER1 once green
+  - Report PR number, CI result, merged status, tsc confirmation
+  recent_commits:
+  - '4a592352 Merge origin/main (pulls in PR #468''s platform schema compartment migration)'
+  - '30f4c426 schema.ts: reflect live platform schema move for 22 tables + 3 enums'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - '880ffb36 ACTIVE-CLAIMS.yaml: register schema.ts platform-schema migration claim'
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  note: periodic checkpoint
+- at: '2026-07-19T03:35:36.377926+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim,
+    pushed as its own commit
+  - Read src/lib/db/schema.ts in full (10658 lines)
+  - Added `platformSchemaDB = pgSchema('platform')` export next to complianceSchemaDB
+  - Migrated 22 tables' `.table(...)` calls from complianceSchemaDB to platformSchemaDB
+    (table name strings, columns, exported TS identifiers all unchanged)
+  - Migrated 3 enum types' `.enum(...)` calls (ai_router_scope, ai_model_status, ai_model_health)
+    from complianceSchemaDB to platformSchemaDB
+  - Checked all `relations(...)` blocks touching these 22 tables (workerAgents*, moduleRegistry,
+    productBranches*, moduleRuleConfigs, automationRules*, orgProductBranchEnablements->productBranches)
+    -- all reference table objects directly, not schema-qualified, no same-schema
+    assumption found
+  - Ran `bunx tsc --noEmit` -- 0 errors
+  - Ran `bun run lint` -- 0 errors (3 pre-existing unrelated warnings)
+  - Ran `bun test` -- 1754 pass / 0 fail
+  - 'Grepped src/ for hardcoded raw-SQL `compliance.<table>` references to all 22
+    tables -- found and fixed:'
+  - Confirmed no new drizzle/*.sql migration file was created (git status clean besides
+    the 6 intended files)
+  - Re-ran tsc/lint/test after the grep-fix edits -- still 0 errors / 0 fail
+  remaining_steps:
+  - 'Push, open PR, post AUDIT: PASS comment'
+  - Wait for CI, self-merge as TIER1 once green
+  - Report PR number, CI result, merged status, tsc confirmation
+  recent_commits:
+  - '9e7b2c39 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged)'
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  note: periodic checkpoint
+- at: '2026-07-19T03:39:15.949674+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim,
+    pushed as its own commit
+  - Read src/lib/db/schema.ts in full (10658 lines)
+  - Added `platformSchemaDB = pgSchema('platform')` export next to complianceSchemaDB
+  - Migrated 22 tables' `.table(...)` calls from complianceSchemaDB to platformSchemaDB
+    (table name strings, columns, exported TS identifiers all unchanged)
+  - Migrated 3 enum types' `.enum(...)` calls (ai_router_scope, ai_model_status, ai_model_health)
+    from complianceSchemaDB to platformSchemaDB
+  - Checked all `relations(...)` blocks touching these 22 tables -- all reference
+    table objects directly, not schema-qualified, no same-schema assumption found
+  - 'Ran `bunx tsc --noEmit` -- 0 errors (confirmed twice: before and after the raw-SQL
+    grep-fix pass)'
+  - Ran `bun run lint` -- 0 errors (3 pre-existing unrelated warnings)
+  - Ran `bun test` -- 1754 pass / 0 fail
+  - Grepped src/ for hardcoded raw-SQL `compliance.<table>` references to all 22 tables
+    -- found and fixed 4 real hits (instruction-execution-cache-service.ts raw SQL
+    x5, mcp/route.ts comment, capability-learning-service.ts comment, capability-audit-service.ts
+    live LLM-context string); left one dated historical test comment alone (predates
+    the move)
+  - Confirmed no new drizzle/*.sql migration file was created by this task
+  - 'Pushed, opened PR #469, posted structured 8-field AUDIT: PASS comment'
+  - Waited for CI -- all required checks green (Lint/Type Check/Build/Unit Tests/E2E/Asset
+    Registry Coverage/Guardrail Presence/audit-check); Vercel non-required (known
+    rate-limited)
+  - 'Merged main into the branch to pick up PR #468 (Owner''s own session''s hand-authored
+    drizzle/0245 migration for the live move) -- verified its 22-table/3-enum list
+    matches this PR''s schema.ts changes exactly, no conflicts'
+  - Re-ran CI after the merge commit -- all required checks green again
+  - 'Squash-merged PR #469 to main (commit bb8bfbe5)'
+  - 'Opened PR #470 to move the ACTIVE-CLAIMS.yaml entry to recently_completed per
+    that file''s own protocol, posted AUDIT: PASS, CI green, squash-merged (commit
+    235e7ce1)'
+  remaining_steps: []
+  recent_commits:
+  - '1b80da53 Worker task-20260719-031532-schema-ts--reflect-live-platform-schema:
+    automated checkpoint commit'
+  - fb3ce930 Merge branch 'main' of https://github.com/FChecklist/compliance-tracker
+    into worker/task-20260719-031532-schema-ts--reflect-live-platform-schema
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  - '4a592352 Merge origin/main (pulls in PR #468''s platform schema compartment migration)'
+  - '30f4c426 schema.ts: reflect live platform schema move for 22 tables + 3 enums'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - '880ffb36 ACTIVE-CLAIMS.yaml: register schema.ts platform-schema migration claim'
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  note: quality gates passed, pushed branch worker/task-20260719-031532-schema-ts--reflect-live-platform-schema,
+    awaiting review
+- at: '2026-07-19T03:45:26.154434+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '1b80da53 Worker task-20260719-031532-schema-ts--reflect-live-platform-schema:
+    automated checkpoint commit'
+  - fb3ce930 Merge branch 'main' of https://github.com/FChecklist/compliance-tracker
+    into worker/task-20260719-031532-schema-ts--reflect-live-platform-schema
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  - '4a592352 Merge origin/main (pulls in PR #468''s platform schema compartment migration)'
+  - '30f4c426 schema.ts: reflect live platform schema move for 22 tables + 3 enums'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - '880ffb36 ACTIVE-CLAIMS.yaml: register schema.ts platform-schema migration claim'
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  note: "tier1, Superboss-approved, but the merge itself FAILED (see supervisor.log)\
+    \ \u2014 needs manual attention, NOT actually merged: https://github.com/FChecklist/compliance-tracker/pull/472"
+execution_seconds: 1316
+restart_count: 0
+token_usage:
+  input_tokens: 214
+  cache_creation_input_tokens: 114586
+  cache_read_input_tokens: 9853610
+  output_tokens: 32970
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 114586
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 385
+    cache_read_input_tokens: 136284
+    cache_creation_input_tokens: 1840
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1840
+    type: message
+  speed: standard
+master_synced_at: '2026-07-19T04:00:05.297147+00:00'

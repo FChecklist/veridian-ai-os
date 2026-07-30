@@ -1,0 +1,135 @@
+id: task-20260726-115417-resolve-pr85-merge-conflict--vercel-gith
+title: Resolve PR85 merge conflict (Vercel+GitHub census vs new master)
+status: completed
+repo: claude-control
+branch: pr85-local
+workspace: /opt/veridian/ai-os/tasks/task-20260726-115417-resolve-pr85-merge-conflict--vercel-gith/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-115417-resolve-pr85-merge-conflict--vercel-gith
+service: veridian-worker@task-20260726-115417-resolve-pr85-merge-conflict--vercel-gith.service
+created_at: '2026-07-26T11:54:17.918972+00:00'
+last_checkpoint_at: '2026-07-26T11:57:49.856392+00:00'
+completed_steps: &id002
+- 'Checked out PR #85''s branch (worker/task-20260726-102523-analyze-update--vercel-github-current-st)'
+- 'Reproduced the conflict: `git merge origin/master` conflicted only in ai-os/MASTER_INDEX.yaml'
+- 'Resolved by union-merge: kept this branch''s `vercel_github_state_census_2026_07_26`
+  entry AND'
+- 'Validated: `python3 -c "import yaml; ..."` parses cleanly, merged registries[]
+  count = 111,'
+- 'Committed the merge and pushed to the existing PR #85 branch on origin.'
+- Confirmed `gh pr view 85` mergeable == MERGEABLE after push.
+remaining_steps: &id003
+- None
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T11:54:20.196293+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'e34f9b4 Merge pull request #88 from FChecklist/worker/task-20260726-112102-fix-branch-resolution-edge-case--local-a'
+  - 0bd63d1 Prefer upstream tracking branch over local alias in branch resolution
+  - '9d69805 Merge pull request #82 from FChecklist/worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'
+  - 3b9173c Auto-sync 10 server task(s) to master controller
+  - 6496736 Auto-sync 14 server task(s) to master controller
+  - '8458277 Merge pull request #87 from FChecklist/worker/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis'
+  - '7e6cc4b Merge pull request #86 from FChecklist/worker/task-20260726-102517-analyze-update--server-engines-registrie'
+  - 'cdbf6d7 Fix tier1 merge-not-executed bug: empty PR_URL silently fell back to
+    gh''s current-branch resolution, which for-real merged claude-control PR #84 (2026-07-26)
+    via a completely unrelated task''s own approve+tier1 review.'
+  - ab21597 Re-verify 20-engine/10-gateway phase state, register 4 new registries
+    entries
+  - '581e734 Close 4 real AUDIT: REJECT gaps in OWNER_ENGINE-to-TASK_GATEWAY dispatch
+    (PR #82 round 2)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T11:56:53.676707+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Checked out PR #85''s branch (worker/task-20260726-102523-analyze-update--vercel-github-current-st)'
+  - 'Reproduced the conflict: `git merge origin/master` conflicted only in ai-os/MASTER_INDEX.yaml'
+  - 'Resolved by union-merge: kept this branch''s `vercel_github_state_census_2026_07_26`
+    entry AND'
+  - 'Validated: `python3 -c "import yaml; ..."` parses cleanly, merged registries[]
+    count = 111,'
+  - 'Committed the merge and pushed to the existing PR #85 branch on origin.'
+  - Confirmed `gh pr view 85` mergeable == MERGEABLE after push.
+  remaining_steps:
+  - None
+  recent_commits:
+  - 485281c Merge remote-tracking branch 'origin/master' into pr85-local
+  - 'e34f9b4 Merge pull request #88 from FChecklist/worker/task-20260726-112102-fix-branch-resolution-edge-case--local-a'
+  - 0bd63d1 Prefer upstream tracking branch over local alias in branch resolution
+  - '9d69805 Merge pull request #82 from FChecklist/worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'
+  - 3b9173c Auto-sync 10 server task(s) to master controller
+  - 6496736 Auto-sync 14 server task(s) to master controller
+  - '8458277 Merge pull request #87 from FChecklist/worker/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis'
+  - '7e6cc4b Merge pull request #86 from FChecklist/worker/task-20260726-102517-analyze-update--server-engines-registrie'
+  - 'cdbf6d7 Fix tier1 merge-not-executed bug: empty PR_URL silently fell back to
+    gh''s current-branch resolution, which for-real merged claude-control PR #84 (2026-07-26)
+    via a completely unrelated task''s own approve+tier1 review.'
+  - ab21597 Re-verify 20-engine/10-gateway phase state, register 4 new registries
+    entries
+  note: quality gates passed, pushed branch worker/task-20260726-115417-resolve-pr85-merge-conflict--vercel-gith,
+    awaiting review
+- at: '2026-07-26T11:57:49.856392+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 485281c Merge remote-tracking branch 'origin/master' into pr85-local
+  - 'e34f9b4 Merge pull request #88 from FChecklist/worker/task-20260726-112102-fix-branch-resolution-edge-case--local-a'
+  - 0bd63d1 Prefer upstream tracking branch over local alias in branch resolution
+  - '9d69805 Merge pull request #82 from FChecklist/worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'
+  - 3b9173c Auto-sync 10 server task(s) to master controller
+  - 6496736 Auto-sync 14 server task(s) to master controller
+  - '8458277 Merge pull request #87 from FChecklist/worker/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis'
+  - '7e6cc4b Merge pull request #86 from FChecklist/worker/task-20260726-102517-analyze-update--server-engines-registrie'
+  - 'cdbf6d7 Fix tier1 merge-not-executed bug: empty PR_URL silently fell back to
+    gh''s current-branch resolution, which for-real merged claude-control PR #84 (2026-07-26)
+    via a completely unrelated task''s own approve+tier1 review.'
+  - ab21597 Re-verify 20-engine/10-gateway phase state, register 4 new registries
+    entries
+  note: "supervisor could not resolve a real PR for branch 'pr85-local' (gh pr create\
+    \ failed, no existing open PR found for it) \u2014 refusing to proceed rather\
+    \ than risk operating on an unrelated PR via gh's empty-argument fallback. See\
+    \ supervisor.log."
+execution_seconds: 152
+restart_count: 0
+token_usage:
+  input_tokens: 64
+  cache_creation_input_tokens: 39509
+  cache_read_input_tokens: 1634946
+  output_tokens: 8997
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 39509
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 622
+    cache_read_input_tokens: 62791
+    cache_creation_input_tokens: 402
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 402
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-26T12:00:09.840966+00:00'
+status_corrected_at: '2026-07-27T03:38:38.092734+00:00'
+status_correction_reason: 'Real PR #85 already merged -- patch task.yaml status to
+  completed, no redispatch.'
+real_pr_evidence:
+  mergeable: UNKNOWN
+  mergedAt: '2026-07-26T12:00:54Z'
+  reviewDecision: ''
+  state: MERGED
+  title: Add real Vercel+GitHub state census to MASTER_INDEX.yaml
+  url: https://github.com/FChecklist/claude-control/pull/85

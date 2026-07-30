@@ -1,0 +1,133 @@
+id: task-20260727-034520-fix-owner-engine-integration--clarificat
+title: 'Fix OWNER_ENGINE integration: clarification gate + dup-check + credit-accountant
+  contract (round 2)'
+status: blocked
+repo: claude-control
+branch: worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into
+workspace: /opt/veridian/ai-os/tasks/task-20260727-034520-fix-owner-engine-integration--clarificat/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-034520-fix-owner-engine-integration--clarificat
+service: veridian-worker@task-20260727-034520-fix-owner-engine-integration--clarificat.service
+created_at: '2026-07-27T03:45:21.355354+00:00'
+last_checkpoint_at: '2026-07-27T03:51:17.123757+00:00'
+completed_steps: &id002
+- 'Investigated PR #82 (FChecklist/claude-control) current state'
+- 'Confirmed PR #82 is already MERGED (merged 2026-07-26T11:02:44Z, commit 9d69805)'
+- 'Confirmed commit 581e734 ("Close 4 real AUDIT: REJECT gaps in OWNER_ENGINE-to-TASK_GATEWAY'
+- 'Confirmed the PR''s own round-2 audit comment on GitHub already returned **AUDIT:
+  PASS**'
+- Re-ran `python3 -m pytest tests/ -k "gateway_task_integration or owner_engine_task"
+  -v`
+remaining_steps: &id003
+- None -- this task's objective was already satisfied by a prior round before this
+  task
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T03:45:23.176073+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  - c8a746d Add phase-continuation-tick.py (refactor of auto_phase_continuation.py)
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T03:48:39.957121+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Investigated PR #82 (FChecklist/claude-control) current state'
+  - 'Confirmed PR #82 is already MERGED (merged 2026-07-26T11:02:44Z, commit 9d69805)'
+  - 'Confirmed commit 581e734 ("Close 4 real AUDIT: REJECT gaps in OWNER_ENGINE-to-TASK_GATEWAY'
+  - 'Confirmed the PR''s own round-2 audit comment on GitHub already returned **AUDIT:
+    PASS**'
+  - Re-ran `python3 -m pytest tests/ -k "gateway_task_integration or owner_engine_task"
+    -v`
+  remaining_steps:
+  - None -- this task's objective was already satisfied by a prior round before this
+    task
+  recent_commits:
+  - '581e734 Close 4 real AUDIT: REJECT gaps in OWNER_ENGINE-to-TASK_GATEWAY dispatch
+    (PR #82 round 2)'
+  - 615ee53 Wire OWNER_ENGINE into the TASK lifecycle pipeline as one integrated flow
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  note: worker finished, no changes to commit and zero commits ahead of master --
+    genuine no-op, routing through pending_review (not completed directly) so the
+    state-machine invariant holds and the supervisor gets the final say
+- at: '2026-07-27T03:51:17.123757+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '581e734 Close 4 real AUDIT: REJECT gaps in OWNER_ENGINE-to-TASK_GATEWAY dispatch
+    (PR #82 round 2)'
+  - 615ee53 Wire OWNER_ENGINE into the TASK lifecycle pipeline as one integrated flow
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  note: "supervisor could not resolve a real PR for branch 'worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'\
+    \ (gh pr create failed, no existing open PR found for it) \u2014 refusing to proceed\
+    \ rather than risk operating on an unrelated PR via gh's empty-argument fallback.\
+    \ See supervisor.log."
+execution_seconds: 197
+restart_count: 0
+token_usage:
+  input_tokens: 68
+  cache_creation_input_tokens: 44190
+  cache_read_input_tokens: 1722019
+  output_tokens: 12853
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 44190
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 570
+    cache_read_input_tokens: 66609
+    cache_creation_input_tokens: 1265
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1265
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:25.522389+00:00'

@@ -1,0 +1,276 @@
+id: task-20260726-092047-fix-write-gate-bypass-vectors--round-2
+title: Fix write-gate bypass vectors (round 2, real AUDIT REJECT)
+status: completed
+repo: claude-control
+branch: worker/task-20260726-092047-fix-write-gate-bypass-vectors--round-2
+workspace: /opt/veridian/ai-os/tasks/task-20260726-092047-fix-write-gate-bypass-vectors--round-2/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-092047-fix-write-gate-bypass-vectors--round-2
+service: veridian-worker@task-20260726-092047-fix-write-gate-bypass-vectors--round-2.service
+created_at: '2026-07-26T09:20:47.953259+00:00'
+last_checkpoint_at: '2026-07-26T09:34:24.412897+00:00'
+completed_steps: &id002
+- Read the full round-1 implementation (bashrc snippet, committed copy, test, PROTOCOL_OWNER_AI.yaml
+  A15) end to end.
+- 'Vector 1 (spoofed INVOCATION_ID): added a second, kernel-tracked signal -- real
+  cgroup membership from `/proc/self/cgroup` must actually name a `veridian-worker@*`/`veridian-supervisor@*`
+  unit. Both signals required.'
+- 'Vector 2 (`command git`/`command gh` bypass): replaced the shell-function guard
+  with real wrapper SCRIPTS installed in a directory prepended to PATH, since `command`
+  skips functions/aliases but not PATH search. Verified directly with `command git
+  push` / `command gh pr merge` against the real wrapper, not just theorized.'
+- 'Vector 3 (`gh api` merge path): extended gh-merge detection to `gh api -X PUT|PATCH
+  .../pulls/<n>/merge` (`-X`, `--method`, and attached `-XPUT` forms), in addition
+  to `gh pr merge`.'
+- 'Vector 4 (`git push --all`/`--mirror`): extended git-push detection to block these
+  unconditionally regardless of the currently checked-out branch.'
+- 'Regression test rewritten: 32 scenarios, including a dedicated "BYPASS VECTOR 1-4"
+  block proving each fix, plus all pre-existing pass-through/block scenarios re-verified
+  against the new mechanism. All 32 pass.'
+- Updated `PROTOCOL_OWNER_AI.yaml` article A15 with the new mechanism, a `round_2_hardening`
+  section naming the four closed vectors, and an honest `known_limitations` section
+  disclosing the real residual gap (absolute-path invocation and `command -p` both
+  still bypass PATH-order resolution).
+- Manually exercised all 10 core scenarios as real subprocesses (not just via the
+  test harness) before trusting the automated test.
+- Deployed the updated snippet to the real `~/.claude-interactive-session-guard.bashrc-snippet`
+  on VERIDIAN-DEV (this box), kept byte-identical to the committed copy per existing
+  contract.
+- 'Committed and pushed to the existing PR #80 branch (`worker/task-20260726-083833-build-interactive-session-write-gate--re`)
+  in FChecklist/claude-control.'
+remaining_steps: &id003
+- None known. Reviewer should test the bypass vectors directly (spoofed env var, `command`
+  prefix, `gh api` merge path, `git push --all`) rather than reviewing the diff alone
+  -- see PR description / A15 known_limitations for the one disclosed residual gap
+  (absolute-path / `command -p` invocation).
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T09:20:49.787447+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T09:25:50.967820+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - abceec5 Add real technical guard blocking interactive gh pr merge / git push to
+    master-main
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  note: periodic checkpoint
+- at: '2026-07-26T09:30:52.302616+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml
+  - ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet
+  - tests/interactive_session_guard_test.sh
+  completed_steps:
+  - Read the full round-1 implementation (bashrc snippet, committed copy, test, PROTOCOL_OWNER_AI.yaml
+    A15) end to end.
+  - 'Vector 1 (spoofed INVOCATION_ID): added a second, kernel-tracked signal -- real
+    cgroup membership from `/proc/self/cgroup` must actually name a `veridian-worker@*`/`veridian-supervisor@*`
+    unit. Both signals required.'
+  - 'Vector 2 (`command git`/`command gh` bypass): replaced the shell-function guard
+    with real wrapper SCRIPTS installed in a directory prepended to PATH, since `command`
+    skips functions/aliases but not PATH search. Verified directly with `command git
+    push` / `command gh pr merge` against the real wrapper, not just theorized.'
+  - 'Vector 3 (`gh api` merge path): extended gh-merge detection to `gh api -X PUT|PATCH
+    .../pulls/<n>/merge` (`-X`, `--method`, and attached `-XPUT` forms), in addition
+    to `gh pr merge`.'
+  - 'Vector 4 (`git push --all`/`--mirror`): extended git-push detection to block
+    these unconditionally regardless of the currently checked-out branch.'
+  - 'Regression test rewritten: 32 scenarios, including a dedicated "BYPASS VECTOR
+    1-4" block proving each fix, plus all pre-existing pass-through/block scenarios
+    re-verified against the new mechanism. All 32 pass.'
+  - Updated `PROTOCOL_OWNER_AI.yaml` article A15 with the new mechanism, a `round_2_hardening`
+    section naming the four closed vectors, and an honest `known_limitations` section
+    disclosing the real residual gap (absolute-path invocation and `command -p` both
+    still bypass PATH-order resolution).
+  - Manually exercised all 10 core scenarios as real subprocesses (not just via the
+    test harness) before trusting the automated test.
+  - Deployed the updated snippet to the real `~/.claude-interactive-session-guard.bashrc-snippet`
+    on VERIDIAN-DEV (this box), kept byte-identical to the committed copy per existing
+    contract.
+  - 'Committed and pushed to the existing PR #80 branch (`worker/task-20260726-083833-build-interactive-session-write-gate--re`)
+    in FChecklist/claude-control.'
+  remaining_steps:
+  - None known. Reviewer should test the bypass vectors directly (spoofed env var,
+    `command` prefix, `gh api` merge path, `git push --all`) rather than reviewing
+    the diff alone -- see PR description / A15 known_limitations for the one disclosed
+    residual gap (absolute-path / `command -p` invocation).
+  recent_commits:
+  - abceec5 Add real technical guard blocking interactive gh pr merge / git push to
+    master-main
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  note: periodic checkpoint
+- at: '2026-07-26T09:32:14.366961+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read the full round-1 implementation (bashrc snippet, committed copy, test, PROTOCOL_OWNER_AI.yaml
+    A15) end to end.
+  - 'Vector 1 (spoofed INVOCATION_ID): added a second, kernel-tracked signal -- real
+    cgroup membership from `/proc/self/cgroup` must actually name a `veridian-worker@*`/`veridian-supervisor@*`
+    unit. Both signals required.'
+  - 'Vector 2 (`command git`/`command gh` bypass): replaced the shell-function guard
+    with real wrapper SCRIPTS installed in a directory prepended to PATH, since `command`
+    skips functions/aliases but not PATH search. Verified directly with `command git
+    push` / `command gh pr merge` against the real wrapper, not just theorized.'
+  - 'Vector 3 (`gh api` merge path): extended gh-merge detection to `gh api -X PUT|PATCH
+    .../pulls/<n>/merge` (`-X`, `--method`, and attached `-XPUT` forms), in addition
+    to `gh pr merge`.'
+  - 'Vector 4 (`git push --all`/`--mirror`): extended git-push detection to block
+    these unconditionally regardless of the currently checked-out branch.'
+  - 'Regression test rewritten: 32 scenarios, including a dedicated "BYPASS VECTOR
+    1-4" block proving each fix, plus all pre-existing pass-through/block scenarios
+    re-verified against the new mechanism. All 32 pass.'
+  - Updated `PROTOCOL_OWNER_AI.yaml` article A15 with the new mechanism, a `round_2_hardening`
+    section naming the four closed vectors, and an honest `known_limitations` section
+    disclosing the real residual gap (absolute-path invocation and `command -p` both
+    still bypass PATH-order resolution).
+  - Manually exercised all 10 core scenarios as real subprocesses (not just via the
+    test harness) before trusting the automated test.
+  - Deployed the updated snippet to the real `~/.claude-interactive-session-guard.bashrc-snippet`
+    on VERIDIAN-DEV (this box), kept byte-identical to the committed copy per existing
+    contract.
+  - 'Committed and pushed to the existing PR #80 branch (`worker/task-20260726-083833-build-interactive-session-write-gate--re`)
+    in FChecklist/claude-control.'
+  remaining_steps:
+  - None known. Reviewer should test the bypass vectors directly (spoofed env var,
+    `command` prefix, `gh api` merge path, `git push --all`) rather than reviewing
+    the diff alone -- see PR description / A15 known_limitations for the one disclosed
+    residual gap (absolute-path / `command -p` invocation).
+  recent_commits:
+  - '0118b1e Round 2: close 4 real bypass vectors in the interactive-session write
+    gate'
+  - abceec5 Add real technical guard blocking interactive gh pr merge / git push to
+    master-main
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  note: quality gates passed, pushed branch worker/task-20260726-092047-fix-write-gate-bypass-vectors--round-2,
+    awaiting review
+- at: '2026-07-26T09:34:24.412897+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '0118b1e Round 2: close 4 real bypass vectors in the interactive-session write
+    gate'
+  - abceec5 Add real technical guard blocking interactive gh pr merge / git push to
+    master-main
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  note: "Superboss rejected:  \u2014 see review.json for issues"
+execution_seconds: 683
+restart_count: 0
+token_usage:
+  input_tokens: 92
+  cache_creation_input_tokens: 113039
+  cache_read_input_tokens: 4358411
+  output_tokens: 61385
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 113039
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 518
+    cache_read_input_tokens: 136260
+    cache_creation_input_tokens: 463
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 463
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T10:00:09.724872+00:00'
+status_corrected_at: '2026-07-27T03:38:37.987596+00:00'
+status_correction_reason: 'Real PR #80 already merged -- patch task.yaml status to
+  completed, no redispatch.'
+real_pr_evidence:
+  mergeable: UNKNOWN
+  mergedAt: '2026-07-26T17:18:34Z'
+  reviewDecision: ''
+  state: MERGED
+  title: Add real technical guard blocking interactive gh pr merge / git push to master/main
+  url: https://github.com/FChecklist/claude-control/pull/80

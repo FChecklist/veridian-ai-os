@@ -1,0 +1,273 @@
+id: task-20260727-061625-build-server-resource-governor--queued-d
+title: 'Build SERVER RESOURCE GOVERNOR: queued dispatch, per-metric 99pct cap, dedup'
+status: blocked
+repo: claude-control
+branch: worker/task-20260727-061625-build-server-resource-governor--queued-d
+workspace: /opt/veridian/ai-os/tasks/task-20260727-061625-build-server-resource-governor--queued-d/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-061625-build-server-resource-governor--queued-d
+service: veridian-worker@task-20260727-061625-build-server-resource-governor--queued-d.service
+created_at: '2026-07-27T06:16:26.633325+00:00'
+last_checkpoint_at: '2026-07-27T06:39:17.332983+00:00'
+completed_steps: &id002
+- Explored dispatch_core.py, superboss-register.py (migration pattern), veridian-task-watchdog.py/.service/.timer,
+  test conventions
+- 'Design doc: ai-os/SERVER_RESOURCE_GOVERNOR_2026-07-27.md (tier mapping, incident
+  closure, architecture)'
+- 'superboss-register.py: UMR table (umr_tasks) + idempotent migration (_ensure_umr_table
+  hooked into _migrate_schema) + upsert/query helpers'
+- 'scripts/resource_governor.py: submit()/dedup/dispatcher loop/4-metric 99% gate/dynamic
+  realignment/stuck-task kill/emergency cascade/--query-umr CLI'
+- 'veridian-task-watchdog.py: routed its 3 real spawn call sites (_fix_restart_unit,
+  _fix_reset_failed_and_start, escalate) through resource_governor.submit()'
+- 'systemd/veridian-task-watchdog.service: documented governor wiring (timer stays
+  untouched/disabled)'
+- 'tests/test_resource_governor.py (15 tests): dedup, per-metric 99% freeze (all 4
+  metrics), stuck-task SIGTERM/SIGKILL timing, UMR migration-against-pre-existing-schema,
+  dynamic realignment, emergency cascade, real dispatch_core integration'
+- Updated 2 pre-existing tests in veridian_task_branch_resolution_test.py that asserted
+  the OLD direct-subprocess escalate() behavior
+- '`python3 -m pytest tests/ -k resource_governor -v` -- 15 passed; full suite `python3
+  -m pytest tests/` -- 111 passed'
+- '`python3 scripts/resource_governor.py --query-umr --limit 5` verified end-to-end
+  (submit/query/dedup-reject) against a throwaway live-style DB'
+remaining_steps: &id003
+- Commit + push, open PR
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T06:16:30.296674+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'c44003f Merge pull request #97 from FChecklist/worker/task-20260726-170157-tier3--relevance-triage-45-stale-credit'
+  - '6a43819 Merge pull request #107 from FChecklist/worker/task-20260727-043407-rca-task-20260727-034439-re-verify-20-en'
+  - '105cccd RCA fix: quality-gate.sh run_gate() had no timeout, letting a hung build
+    stall a worker forever under the "periodic checkpoint" watchdog signature'
+  - 'd073696 Merge pull request #105 from FChecklist/worker/task-20260727-041903-fix-escalate-hardcoded-repo-and-stale-br'
+  - 665fe04 Fix escalate() hardcoded repo and root-cause the stale rca- branch bug
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T06:21:31.820813+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Explored dispatch_core.py, superboss-register.py (migration pattern), veridian-task-watchdog.py/.service/.timer,
+    test conventions
+  remaining_steps:
+  - 'Design doc: ai-os/SERVER_RESOURCE_GOVERNOR_2026-07-27.md (tier mapping, incident
+    closure, architecture)'
+  - 'superboss-register.py: UMR table (umr_tasks) + idempotent migration + upsert/query
+    helpers'
+  - 'scripts/resource_governor.py: submit()/dedup/dispatcher loop/4-metric 99% gate/dynamic
+    realignment/stuck-task kill/emergency cascade/--query-umr CLI'
+  - 'veridian-task-watchdog.py: route its 3 real spawn call sites through resource_governor.submit()'
+  - 'systemd/veridian-task-watchdog.service: ExecStart proof-of-wiring (timer stays
+    untouched/disabled)'
+  - 'tests/test_resource_governor.py: dedup, per-metric 99% freeze, stuck-task SIGTERM/SIGKILL
+    timing, UMR migration-against-pre-existing-schema'
+  - Run `python3 -m pytest tests/ -k resource_governor -v`, iterate to green
+  - Run `python3 scripts/resource_governor.py --query-umr --limit 5` against live
+    DB
+  - Commit + push, open PR
+  recent_commits:
+  - 'c44003f Merge pull request #97 from FChecklist/worker/task-20260726-170157-tier3--relevance-triage-45-stale-credit'
+  - '6a43819 Merge pull request #107 from FChecklist/worker/task-20260727-043407-rca-task-20260727-034439-re-verify-20-en'
+  - '105cccd RCA fix: quality-gate.sh run_gate() had no timeout, letting a hung build
+    stall a worker forever under the "periodic checkpoint" watchdog signature'
+  - 'd073696 Merge pull request #105 from FChecklist/worker/task-20260727-041903-fix-escalate-hardcoded-repo-and-stale-br'
+  - 665fe04 Fix escalate() hardcoded repo and root-cause the stale rca- branch bug
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  note: periodic checkpoint
+- at: '2026-07-27T06:26:33.284621+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/superboss-register.py
+  - scripts/veridian-task-watchdog.py
+  - ai-os/SERVER_RESOURCE_GOVERNOR_2026-07-27.md
+  - scripts/resource_governor.py
+  completed_steps:
+  - Explored dispatch_core.py, superboss-register.py (migration pattern), veridian-task-watchdog.py/.service/.timer,
+    test conventions
+  remaining_steps:
+  - 'Design doc: ai-os/SERVER_RESOURCE_GOVERNOR_2026-07-27.md (tier mapping, incident
+    closure, architecture)'
+  - 'superboss-register.py: UMR table (umr_tasks) + idempotent migration + upsert/query
+    helpers'
+  - 'scripts/resource_governor.py: submit()/dedup/dispatcher loop/4-metric 99% gate/dynamic
+    realignment/stuck-task kill/emergency cascade/--query-umr CLI'
+  - 'veridian-task-watchdog.py: route its 3 real spawn call sites through resource_governor.submit()'
+  - 'systemd/veridian-task-watchdog.service: ExecStart proof-of-wiring (timer stays
+    untouched/disabled)'
+  - 'tests/test_resource_governor.py: dedup, per-metric 99% freeze, stuck-task SIGTERM/SIGKILL
+    timing, UMR migration-against-pre-existing-schema'
+  - Run `python3 -m pytest tests/ -k resource_governor -v`, iterate to green
+  - Run `python3 scripts/resource_governor.py --query-umr --limit 5` against live
+    DB
+  - Commit + push, open PR
+  recent_commits:
+  - 'c44003f Merge pull request #97 from FChecklist/worker/task-20260726-170157-tier3--relevance-triage-45-stale-credit'
+  - '6a43819 Merge pull request #107 from FChecklist/worker/task-20260727-043407-rca-task-20260727-034439-re-verify-20-en'
+  - '105cccd RCA fix: quality-gate.sh run_gate() had no timeout, letting a hung build
+    stall a worker forever under the "periodic checkpoint" watchdog signature'
+  - 'd073696 Merge pull request #105 from FChecklist/worker/task-20260727-041903-fix-escalate-hardcoded-repo-and-stale-br'
+  - 665fe04 Fix escalate() hardcoded repo and root-cause the stale rca- branch bug
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  note: periodic checkpoint
+- at: '2026-07-27T06:31:34.620930+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/superboss-register.py
+  - scripts/veridian-task-watchdog.py
+  - systemd/veridian-task-watchdog.service
+  - ai-os/SERVER_RESOURCE_GOVERNOR_2026-07-27.md
+  - scripts/resource_governor.py
+  - tests/_resource_governor_fixtures.py
+  - tests/test_resource_governor.py
+  completed_steps:
+  - Explored dispatch_core.py, superboss-register.py (migration pattern), veridian-task-watchdog.py/.service/.timer,
+    test conventions
+  remaining_steps:
+  - 'Design doc: ai-os/SERVER_RESOURCE_GOVERNOR_2026-07-27.md (tier mapping, incident
+    closure, architecture)'
+  - 'superboss-register.py: UMR table (umr_tasks) + idempotent migration + upsert/query
+    helpers'
+  - 'scripts/resource_governor.py: submit()/dedup/dispatcher loop/4-metric 99% gate/dynamic
+    realignment/stuck-task kill/emergency cascade/--query-umr CLI'
+  - 'veridian-task-watchdog.py: route its 3 real spawn call sites through resource_governor.submit()'
+  - 'systemd/veridian-task-watchdog.service: ExecStart proof-of-wiring (timer stays
+    untouched/disabled)'
+  - 'tests/test_resource_governor.py: dedup, per-metric 99% freeze, stuck-task SIGTERM/SIGKILL
+    timing, UMR migration-against-pre-existing-schema'
+  - Run `python3 -m pytest tests/ -k resource_governor -v`, iterate to green
+  - Run `python3 scripts/resource_governor.py --query-umr --limit 5` against live
+    DB
+  - Commit + push, open PR
+  recent_commits:
+  - 'c44003f Merge pull request #97 from FChecklist/worker/task-20260726-170157-tier3--relevance-triage-45-stale-credit'
+  - '6a43819 Merge pull request #107 from FChecklist/worker/task-20260727-043407-rca-task-20260727-034439-re-verify-20-en'
+  - '105cccd RCA fix: quality-gate.sh run_gate() had no timeout, letting a hung build
+    stall a worker forever under the "periodic checkpoint" watchdog signature'
+  - 'd073696 Merge pull request #105 from FChecklist/worker/task-20260727-041903-fix-escalate-hardcoded-repo-and-stale-br'
+  - 665fe04 Fix escalate() hardcoded repo and root-cause the stale rca- branch bug
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  note: periodic checkpoint
+- at: '2026-07-27T06:35:15.941120+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Explored dispatch_core.py, superboss-register.py (migration pattern), veridian-task-watchdog.py/.service/.timer,
+    test conventions
+  - 'Design doc: ai-os/SERVER_RESOURCE_GOVERNOR_2026-07-27.md (tier mapping, incident
+    closure, architecture)'
+  - 'superboss-register.py: UMR table (umr_tasks) + idempotent migration (_ensure_umr_table
+    hooked into _migrate_schema) + upsert/query helpers'
+  - 'scripts/resource_governor.py: submit()/dedup/dispatcher loop/4-metric 99% gate/dynamic
+    realignment/stuck-task kill/emergency cascade/--query-umr CLI'
+  - 'veridian-task-watchdog.py: routed its 3 real spawn call sites (_fix_restart_unit,
+    _fix_reset_failed_and_start, escalate) through resource_governor.submit()'
+  - 'systemd/veridian-task-watchdog.service: documented governor wiring (timer stays
+    untouched/disabled)'
+  - 'tests/test_resource_governor.py (15 tests): dedup, per-metric 99% freeze (all
+    4 metrics), stuck-task SIGTERM/SIGKILL timing, UMR migration-against-pre-existing-schema,
+    dynamic realignment, emergency cascade, real dispatch_core integration'
+  - Updated 2 pre-existing tests in veridian_task_branch_resolution_test.py that asserted
+    the OLD direct-subprocess escalate() behavior
+  - '`python3 -m pytest tests/ -k resource_governor -v` -- 15 passed; full suite `python3
+    -m pytest tests/` -- 111 passed'
+  - '`python3 scripts/resource_governor.py --query-umr --limit 5` verified end-to-end
+    (submit/query/dedup-reject) against a throwaway live-style DB'
+  remaining_steps:
+  - Commit + push, open PR
+  recent_commits:
+  - '4b151ce Add SERVER RESOURCE GOVERNOR: queue + per-metric 99% cap + dedup for
+    the watchdog-timer incident'
+  - 'c44003f Merge pull request #97 from FChecklist/worker/task-20260726-170157-tier3--relevance-triage-45-stale-credit'
+  - '6a43819 Merge pull request #107 from FChecklist/worker/task-20260727-043407-rca-task-20260727-034439-re-verify-20-en'
+  - '105cccd RCA fix: quality-gate.sh run_gate() had no timeout, letting a hung build
+    stall a worker forever under the "periodic checkpoint" watchdog signature'
+  - 'd073696 Merge pull request #105 from FChecklist/worker/task-20260727-041903-fix-escalate-hardcoded-repo-and-stale-br'
+  - 665fe04 Fix escalate() hardcoded repo and root-cause the stale rca- branch bug
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  note: quality gates passed, pushed branch worker/task-20260727-061625-build-server-resource-governor--queued-d,
+    awaiting review
+- at: '2026-07-27T06:39:17.332983+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '4b151ce Add SERVER RESOURCE GOVERNOR: queue + per-metric 99% cap + dedup for
+    the watchdog-timer incident'
+  - 'c44003f Merge pull request #97 from FChecklist/worker/task-20260726-170157-tier3--relevance-triage-45-stale-credit'
+  - '6a43819 Merge pull request #107 from FChecklist/worker/task-20260727-043407-rca-task-20260727-034439-re-verify-20-en'
+  - '105cccd RCA fix: quality-gate.sh run_gate() had no timeout, letting a hung build
+    stall a worker forever under the "periodic checkpoint" watchdog signature'
+  - 'd073696 Merge pull request #105 from FChecklist/worker/task-20260727-041903-fix-escalate-hardcoded-repo-and-stale-br'
+  - 665fe04 Fix escalate() hardcoded repo and root-cause the stale rca- branch bug
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  note: "Superboss rejected: https://github.com/FChecklist/claude-control/pull/110\
+    \ \u2014 see review.json for issues"
+execution_seconds: 1125
+restart_count: 0
+token_usage:
+  input_tokens: 114
+  cache_creation_input_tokens: 194736
+  cache_read_input_tokens: 8550088
+  output_tokens: 106788
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 194736
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 506
+    cache_read_input_tokens: 217375
+    cache_creation_input_tokens: 1045
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1045
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+rca_target_id: null
+master_synced_at: '2026-07-29T21:04:25.693061+00:00'

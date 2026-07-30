@@ -1,0 +1,24 @@
+## OBJECTIVE
+Independently re-verify, from real current `main`-branch code and real test output, whether the reporting_module_end_user scope (task-20260727-093931) is genuinely 100% complete: PROJEXA pivot/chart reporting UI, and the external-AI-consumable reporting API gateway including its CSV-export security fix. Verification-only — report gaps, do not fix them.
+
+## KNOWN_CONTEXT
+Real, previously-merged PRs claimed to cover this scope: projexa PR #51 (pivot table + chart view modes for Reports), compliance-tracker PR #601 (reporting API gateway with external-AI scoped access, containing the `csvEscape()`/`rowsToCSV()` CSV-formula-injection fix in `src/lib/report-export-shared.ts`).
+
+## SCOPE
+(1) Confirm the pivot/chart UI code is real and present in the projexa repo's current `main` (component files, not just a route stub); check for the E2E test PR #51 claims to have added and confirm it actually exercises pivot/chart rendering against real data. (2) Confirm `src/lib/report-export-shared.ts`'s `csvEscape()` function is present on compliance-tracker `main`, correctly prefixes cells starting with `=`, `+`, `-`, `@`, and is actually called by every CSV-export code path in the reporting gateway (grep for any export path that might bypass it). (3) Confirm the reporting API gateway's external-AI access scoping (auth/tenant isolation) is real, not just present in one route. (4) Run real test suites for both repos' relevant files, report pass/fail counts. (5) Run `npx tsc --noEmit` in both repos. (6) Confirm real supervisor PASS verdicts exist for PR #51 and PR #601, quote them.
+
+## SUCCESS_CRITERIA
+A structured findings report covering both repos: for each of the 2 PRs, claimed items verified present (file:line references), any GAP found, test pass/fail counts, tsc clean yes/no, audit verdict quotes. Final verdict per PR: COMPLETE or INCOMPLETE-WITH-GAPS. Explicitly state whether any CSV-export code path was found that bypasses `csvEscape()`. Verify by actually running:
+`grep -rn "rowsToCSV\|csvEscape" src/` (in compliance-tracker, to find every call site)
+`npx tsc --noEmit`
+`bun test src/lib/report-export-shared.test.ts`
+`git log --oneline -1 -- ai-os/audits/reporting_module_reaudit_2026-07-27.md`
+
+## EXPECTED_OUTPUT
+A findings report written to `ai-os/audits/reporting_module_reaudit_2026-07-27.md` in the compliance-tracker repo (cover both repos' findings in this single file, noting which repo each finding is from), on a new branch off current `main`, committed, pushed, PR opened containing only this report.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not modify any file outside `ai-os/audits/` in either repo — this is a report-only task, not a fix task.
+
+## COMPLEXITY_TIER
+judgment

@@ -1,0 +1,24 @@
+You are reverse-engineering a live web application from the front end only (no source code access — black-box exploration via Playwright MCP browser tools). Authorized exercise, credentials provided directly by the system's owner.
+
+## Target
+- URL: http://citylinenetworks.infisuite.in/contracts
+- Username: contract_admin@citylinenetworks.infisuite.in
+- Password: 1234 (try infi123 if 1234 fails — note clearly in SUMMARY.md which worked)
+
+For reference on expected depth: a similar Contract module was already documented for a different tenant (indyanet) in this Owner's other infisuite-reverse-engineering repo — this is a genuinely separate system/tenant, document it fully and independently rather than assuming it's identical.
+
+## Job
+Full page-by-page, function-by-function documentation: 1. Purpose. 2. Navigation path. 3. UI/page design. 4. Data fields (name/type/required/validation). 5. Underlying data structure (inferred entities + relationships). 6. Functionality/logic (actions, business rules, conditions, workflow/approval states). 7. Inputs and outputs. 8. Data conditions (status-dependent UI, role-dependent visibility, filters).
+
+## Methodology
+1. Log in, screenshot dashboard.
+2. Map full navigation to `docs/cityline-contracts/00-navigation-map.md`, commit+push before diving deeper.
+3. Work through each module: list view, detail view, create form, edit form, workflow/approval states, bulk actions/filters/exports.
+4. One markdown file per module under `docs/cityline-contracts/<module-slug>.md`. Screenshots under `screenshots/cityline-contracts/`.
+5. Final `docs/cityline-contracts/SUMMARY.md`: data model, function list, Known Gaps.
+
+## Hard rules
+- No password in committed files. No fabricating unobserved functionality — mark inferences as inferred. Document errors/bugs as-is.
+- Commit+push after each module, not just at the end.
+- Read-only: no creating/editing/deleting real records, no submitting forms with data, no triggering notifications.
+- Maintain PROGRESS.md, update after each step, commit+push incrementally — this task may be interrupted and resumed.

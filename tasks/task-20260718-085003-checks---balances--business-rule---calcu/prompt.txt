@@ -1,0 +1,26 @@
+VERIDIAN Review Framework gap-closure: Checks & Balances / Business Rule & Calculation Verification.
+This covers 6 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] Business Rule Validation Before Execution
+  Gap: Validation covers structural/numeric sanity, not a full 'does this violate any business rule' pre-execution check, since no generic Business Rules Engine exists (see row 4)
+  Recommended approach: Once a rule engine exists, wire it as a pre-execution gate alongside dispatch-output-validator.ts.
+- [Medium] Calculation Cross-Verification
+  Gap: Calculation Cross-Verification (two different methods/engines agreeing before a result is trusted) is not built as a systematic practice
+  Recommended approach: For financially material calculations (GST, payroll, EMI), add a second independent computation path or a sanity-bound check.
+- [Medium] AI Output Validation by Business Rules
+  Gap: This validates request eligibility, not the CONTENT of AI-generated output against business rules after generation (e.g. checking an AI-drafted number against a business rule)
+  Recommended approach: Add a post-generation validation pass for AI outputs feeding into business-critical fields, reusing the row-4 rule engine once built.
+- [Medium] Business Rule Validation Before Execution
+  Gap: Validation covers structural/numeric sanity, not a full 'does this violate any business rule' pre-execution check, since no generic Business Rules Engine exists (see row 4)
+  Recommended approach: Once a rule engine exists, wire it as a pre-execution gate alongside dispatch-output-validator.ts.
+- [Medium] Calculation Cross-Verification
+  Gap: Calculation Cross-Verification (two different methods/engines agreeing before a result is trusted) is not built as a systematic practice
+  Recommended approach: For financially material calculations (GST, payroll, EMI), add a second independent computation path or a sanity-bound check.
+- [Medium] AI Output Validation by Business Rules
+  Gap: This validates request eligibility, not the CONTENT of AI-generated output against business rules after generation (e.g. checking an AI-drafted number against a business rule)
+  Recommended approach: Add a post-generation validation pass for AI outputs feeding into business-critical fields, reusing the row-4 rule engine once built.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

@@ -1,0 +1,30 @@
+## OBJECTIVE
+Fix a real, confirmed cross-tenant privilege-escalation defect Superboss found in compliance-tracker PR #561 (phase_3 of VERIDIAN_ARCHITECTURE_V2: governance/policy/cost gates on the prompt lifecycle state machine), then get the phase merged for real. This is a genuine security/correctness bug, not a false-positive review.
+
+## KNOWN_CONTEXT
+- Read the full AUDIT: FAIL comment on compliance-tracker PR #561 in full first (`gh api repos/FChecklist/compliance-tracker/issues/561/comments --jq '.[].body'`) -- it is long and precise, do not work from this summary alone.
+- Root cause, confirmed by the review reading real code: prompt_templates/prompt_versions/prompt_eval_runs are platform-wide tables with no orgId column (real, in src/lib/db/schema.ts), but getPromptLifecycleRule() resolves governance thresholds (min_eval_pass_rate, min_canary_duration_hours, eval_daily_budget_usd) through module-rules-resolver.ts's per-org override chain. Any plain 'admin' (rank 5) in ANY org can call setModuleRule() to zero out canary/eval-pass-rate gates for their own org, after which a same-org veridian_admin (rank 6) can promote ANY platform-wide prompt template to Production, bypassing safety gates every other tenant relies on. checkPromptEvalBudget() has the same root cause for the shared eval-spend budget pool. checkPromptPolicyDeny() has a related architectural mismatch (org-scoped ABAC policies evaluated against a platform-wide resource, incoherent depending on which org acted, though limited to over-restriction not escalation).
+- The review offered two real remediation directions, your job is to pick the more coherent one after reading the real code -- make prompt_lifecycle governance rules platform-only (not resolvable through any org override at all), OR make the underlying prompt_templates/prompt_versions/prompt_eval_runs resources genuinely org-scoped (add real orgId columns/filtering). Given these are explicitly platform-wide/shared-content tables by design (per the review's own reading of schema.ts), the platform-only-rules direction is very likely the correct one -- but verify this against the real intended design (check ai-os/PROMPT_METADATA_SCHEMA_2026-07-25.schema.json and any other real design doc from phase_1 for why these tables are platform-wide) before committing to it.
+- Secondary real findings from the same review to also fix: the PII-scan credit-card regex (`\b(?:\d[ -]?){13,16}\b`) is too broad and will false-positive on ordinary long digit runs, blocking legitimate Production promotions -- tighten it (e.g. a real Luhn check). No test coverage exists for the actual gate-orchestration function (runLifecycleTransitionGates) or the budget-check function -- the riskiest new logic in this whole PR is untested; add real tests for both, including a real test that would have caught the cross-tenant escalation bug.
+
+## SCOPE
+1. Fix the core cross-tenant privilege-escalation bug per the chosen real remediation direction above -- prompt_lifecycle governance thresholds must not be weakenable by any org-scoped override once fixed.
+2. Fix checkPromptEvalBudget()'s shared-budget-pool distortion for the same root cause.
+3. Fix or clearly document checkPromptPolicyDeny()'s org-scoped-policy-vs-platform-wide-resource mismatch -- resolve it for real if a clean fix exists, or make the current deny-only limitation an explicit, intentional, documented constraint if a full fix is out of scope here.
+4. Tighten the PII credit-card regex.
+5. Add real tests for runLifecycleTransitionGates and the budget-check function, including a real regression test proving the cross-tenant escalation is now blocked.
+6. Push the fix to the SAME PR #561 branch (worker/task-20260726-035742-phase3-business-rule-permission-policy-c), do not open a new PR.
+
+## SUCCESS_CRITERIA
+- A real test proves a same-org rank-5 'admin' can no longer weaken prompt_lifecycle gates in a way that lets a same-org veridian_admin bypass canary/eval-pass-rate checks on a platform-wide prompt template.
+- `bun test` (or whatever this repo's real test runner is) passes for the new/modified test files -- run it for real, paste the real output.
+- The PII regex fix has a real test showing it no longer flags a representative false-positive case (e.g. a long non-card ID/hash) while still catching a real card-number-shaped string.
+
+## EXPECTED_OUTPUT
+Real pushed commits to the existing PR #561 branch with the real fix, real test evidence, and a final checkpoint stating explicitly which remediation direction was chosen (platform-only rules vs org-scoped resources) and why, plus confirmation the PR is ready for re-audit.
+
+## CONSTRAINTS
+Do not open a new PR -- push corrective commits to the existing PR #561 branch so the same review thread and CI history stay attached to this fix.
+
+## COMPLEXITY_TIER
+judgment

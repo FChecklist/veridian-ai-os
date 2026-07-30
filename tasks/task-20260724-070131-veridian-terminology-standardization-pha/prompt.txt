@@ -1,0 +1,29 @@
+## OBJECTIVE
+Phase 0 of VERIDIAN Terminology Standardization (instruction INS-20260724-070047-3a2d): real Variable Dictionary derived from actual schema, plus a guardrail script design, plus a phased plan. Do not rewrite every existing file/prompt in this task -- this task's output is what later phases enforce against.
+
+## SCOPE
+1. Generate ai-os/VARIABLE_DICTIONARY_2026-07-24.yaml (or .json) via a real script that reads ai-os/DATABASE_CATALOG.json's real 444 tables/columns and derives one <Entity.Attribute> placeholder per real column across the highest-traffic/most-referenced tables first (do not hand-type entries -- write generate_variable_dictionary.py, run it, commit both the script and its real output). Each entry: placeholder, entity, attribute, data_type, required, one real example value sourced from an actual row if available or a clearly-marked synthetic example otherwise.
+2. Design (do not fully roll out yet) ai-os/TERMINOLOGY_GUARDRAIL_2026-07-24.py: a lint/check script that scans a given file or prompt string for hardcoded literal values matching common human-example patterns (e.g. "ABC Pvt Ltd", "John Doe", "XYZ", ISO dates that aren't placeholders) and flags any that are not registered <Entity.Attribute> placeholders from step 1's dictionary. Smoke-test it against 3 real files in compliance-tracker's prompt/template code and report real findings.
+3. Write ai-os/TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml: phase-by-phase plan for rolling the guardrail out repo-wide (which directories/file-types first, how CI enforcement gets wired, how existing hardcoded examples already in the codebase get migrated) with a real dependency table.
+4. Register all 3 artifacts in knowledge_engine and MASTER_INDEX.yaml (registries.terminology_standardization, live file) with entity_relationships back to DATABASE_CATALOG.json and CAPABILITY_REGISTRY_SCHEMA_2026-07-24.yaml.
+
+## KNOWN_CONTEXT
+- 5th major initiative dispatched this session. Prior 4 (self-sustaining-system-engine, Auditor Engine, 20-Engines/10-Gateways, Testing Engine IRVF) are real and independently verified -- read their phase-plan files if genuinely relevant to cross-link, but this task's own scope is the 3 items above only.
+- ai-os/DATABASE_CATALOG.json (444 tables, real, already exists) is the authoritative source for entities/attributes -- do not invent entity names not present there.
+- Standing rule: registry/catalog data must come from a script's real output, not hand-authored prose. Standing rule: any crontab need follows the Owner-approval-citation pattern in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml (Owner's blanket approval this session covers it).
+- If this task's own PR shows blocked with a "merge FAILED" note, verify real PR state via `gh pr view` before treating it as a real failure -- the underlying script bug causing that false report was being fixed by a parallel task this same session.
+
+## SUCCESS_CRITERIA
+- VARIABLE_DICTIONARY_2026-07-24 has real entries for every column of at least the top 20 most-referenced real tables in DATABASE_CATALOG.json, each traceable to a real table.column.
+- TERMINOLOGY_GUARDRAIL_2026-07-24.py runs against 3 real files and produces real, inspectable findings (not zero-by-construction).
+- TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml has a real phase breakdown and dependency table.
+- All 3 registered in knowledge_engine and MASTER_INDEX.yaml's live copy.
+
+## EXPECTED_OUTPUT
+Real committed and pushed changes (PR on claude-control), the generator script + its real dictionary output, the guardrail script + its real smoke-test findings, the phase plan, real knowledge_engine rows, and a final checkpoint summary.
+
+## CONSTRAINTS
+Limit this task to dictionary generation, guardrail design+smoke-test, and phase planning -- leave repo-wide rollout and CI enforcement wiring to the phases this task's own plan defines. Any crontab need follows the existing Owner-approval-citation pattern rather than a fresh confirmation.
+
+## COMPLEXITY_TIER
+integrative

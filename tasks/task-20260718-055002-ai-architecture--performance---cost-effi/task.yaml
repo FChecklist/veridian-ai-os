@@ -1,0 +1,189 @@
+id: task-20260718-055002-ai-architecture--performance---cost-effi
+title: 'AI Architecture: Performance & Cost Efficiency'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-055002-ai-architecture--performance---cost-effi
+workspace: /opt/veridian/ai-os/tasks/task-20260718-055002-ai-architecture--performance---cost-effi/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-055002-ai-architecture--performance---cost-effi
+service: veridian-worker@task-20260718-055002-ai-architecture--performance---cost-effi.service
+created_at: '2026-07-18T05:50:03.388950+00:00'
+last_checkpoint_at: '2026-07-18T06:01:47.328019+00:00'
+completed_steps: &id002
+- Read `ai-os/boss/ACTIVE-CLAIMS.yaml` (no conflicting claim on this area) and registered
+  this session's own claim before starting real work, per Rule 11.
+- Read the actual current implementation of `src/lib/llm-client.ts`, `src/lib/orchestra-execution-logger.ts`,
+  `src/lib/loops/*`, `src/app/api/internal/loops/run/route.ts`, `src/app/api/help/ask/route.ts`,
+  `src/lib/services/chat-service.ts`, `src/lib/structured-message.ts`, and `src/lib/orchestra-model-resolver.ts`
+  before making any change (gap descriptions were 2026-07 era; codebase has moved
+  since).
+- '**[Medium] AI Latency** -- confirmed real gap: ~30 call sites of `callLLM`/`callLLMJson`/`callLLMVision`,
+  each manually tracking (or, e.g. the pre-fix `api/help/ask/route.ts`, simply not
+  tracking) its own `Date.now()` before/after. Fixed by instrumenting `callLLM`/`callLLMJson`/`callLLMVision`
+  themselves in `src/lib/llm-client.ts`: every call now measures wall-clock time centrally
+  (through any retries/fallback) and returns it as `LLMResult.durationMs`, with a
+  new `LLM_LATENCY_SLA_MS` (8000ms) constant logged via `console.warn` on breach --
+  systematic and automatic for every caller, no per-site opt-in required. A breach
+  only warns; it never truncates/fails an already-paid-for call. Updated the internal
+  per-provider dispatch functions'' return types accordingly, and `src/lib/llm-response-cache.ts`''s
+  cache-hit branch to report `durationMs: 0` (no real call made).'
+- '**[Low] Cache Strategy** -- verified: Anthropic provider is fully wired (`llm-client.ts`''s
+  `callAnthropic`, `orchestra-model-resolver.ts`''s `platformApiKeyFor("anthropic")`)
+  but `ANTHROPIC_API_KEY` is unset, and every real call site (e.g. `prompt-eval-service.ts`)
+  already degrades gracefully (`ServiceError`, no crash) when it''s absent -- this
+  is a genuine, already-handled honest limitation, not a bug. Per the finding''s own
+  recommended approach, this is an **owner-funding decision**, not a code gap -- **no
+  code change made**; documented here instead of taking a unilateral action. Decision
+  needed: fund a live `ANTHROPIC_API_KEY` (unlocks Claude models for org BYO config
+  + the platform''s own prompt-caching path, which today only exercises `callAnthropic`''s
+  cache_control logic when an org supplies its own Anthropic key) or leave as-is.'
+- '**[Low] AI Cost Optimization** -- confirmed `MODEL_PRICING` (`llm-client.ts`) is
+  still a manual, honest-limitation constant with no live billing API behind it. Added
+  a new recurring audit, `src/lib/loops/model-pricing-audit.ts` (`runModelPricingAudit()`),
+  piggybacked onto the existing daily `/api/internal/loops/run` cron (same non-canonical-loop
+  pattern as `capability-index-freshness-audit.ts` -- not one of the 15 canonical
+  `loop_definitions` rows, so no new `vercel.json` cron entry needed). Flags any `(provider,
+  model)` pair with real, recent (30-day) token usage in `orchestra_executions` whose
+  `costUsd` is still null across every one of its calls -- the concrete, checkable
+  symptom of a missing `MODEL_PRICING` row (a real cost blind spot), since there''s
+  no live billing API to diff against instead.'
+- '**[Low] AI Context Compression** -- confirmed real gap: `src/app/api/help/ask/route.ts`
+  called `callLLM` directly with none of `chat-service.ts`''s `generateAiReply()`
+  pipeline (no `normalizeForLlm` -- the actual context-compression mechanism in this
+  codebase -- no reply gate, no PII redaction, no `orchestra_executions`/prompt-cache
+  observability at all; confirmed via `HelpWidget.tsx` that the UI renders `answer`
+  as plain text with no structured-message rendering, so nothing there depended on
+  the old shape). Wired in `normalizeForLlm`, `passesReplyGate`, `redactPii`, `recordOrchestraExecution`
+  (with the now-centrally-tracked real `durationMs`), and the prompt-cache `compileStaticPrefix`/`recordPromptCacheMetric`
+  pair -- additive, the widget''s `{ question, currentPath } -> { answer }` contract
+  is unchanged. Also added a try/catch around the LLM call (previously absent), matching
+  chat-service.ts''s own failure-handling posture instead of letting an uncaught exception
+  500 the route.'
+- 'Verification: `bunx tsc --noEmit` clean (no new errors introduced; pre-existing
+  `scripts/`/`*.config.ts` errors are unrelated missing @types/node, present before
+  this change). `bun run lint`: 0 errors, 3 pre-existing warnings unrelated to these
+  files. `bun test`: 1421 pass / 0 fail across 103 files (full suite).'
+remaining_steps: &id003
+- Owner decision on Cache Strategy finding (fund `ANTHROPIC_API_KEY` or accept the
+  current honest limitation) -- not actionable by an agent, see note above.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T05:50:04.026391+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  - 97dd8773 Re-trigger CI after corrected audit comment
+  note: worker started (resume=0)
+- at: '2026-07-18T05:55:04.361456+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/llm-client.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8b97ad71 Register active claim: AI Architecture / Performance & Cost Efficiency
+    gap closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T06:00:04.539746+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/api/help/ask/route.ts
+  - src/app/api/internal/loops/run/route.ts
+  - src/lib/llm-client.ts
+  - src/lib/llm-response-cache.ts
+  - src/lib/loops/model-pricing-audit.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8b97ad71 Register active claim: AI Architecture / Performance & Cost Efficiency
+    gap closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T06:01:47.328019+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - df0a8768 Close AI Architecture / Performance & Cost Efficiency review findings
+  - '8b97ad71 Register active claim: AI Architecture / Performance & Cost Efficiency
+    gap closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  note: worker finished, no changes to commit
+execution_seconds: 704
+restart_count: 0
+token_usage:
+  input_tokens: 152
+  cache_creation_input_tokens: 161425
+  cache_read_input_tokens: 10516986
+  output_tokens: 49653
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 161425
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 450
+    cache_read_input_tokens: 184831
+    cache_creation_input_tokens: 132
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 132
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T06:30:03.286946+00:00'

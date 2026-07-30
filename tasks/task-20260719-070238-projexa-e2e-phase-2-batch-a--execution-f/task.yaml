@@ -1,0 +1,930 @@
+id: task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f
+title: 'PROJEXA E2E Phase 2 Batch A: execution+field modules'
+status: completed
+repo: projexa
+branch: worker/task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f
+workspace: /opt/veridian/ai-os/tasks/task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f
+service: veridian-worker@task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f.service
+created_at: '2026-07-19T07:02:39.871986+00:00'
+last_checkpoint_at: '2026-07-19T08:19:47.876053+00:00'
+completed_steps: &id002
+- Read PHASE1_SEED_REPORT.md in full, extracted exact per-project seed counts from
+  the as-run seed scripts (scripts/phase1-seed-compliance-tracker-batch{1,2}.mjs)
+  for precise assertions
+- 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #480,
+  merged) -- no Batch B/C collision found'
+- Read all 10 Batch A module page/client-component source files (via Explore agent
+  + direct reads) for real selectors/controls/API routes
+- 'Discovered and self-corrected a false premise: this repo had NO playwright.config.ts,
+  NO e2e/ dir, and NO Playwright CI job at all (task brief claimed otherwise) -- built
+  the scaffold from scratch'
+- Added @playwright/test devDependency, playwright.config.ts (live-site default baseURL,
+  PLAYWRIGHT_BASE_URL override for local dev), e2e/auth.setup.ts, e2e/helpers.ts,
+  e2e/test-data.ts
+- Wrote real Playwright tests for all 10 Batch A modules (dashboard, schedule incl.
+  4 sub-tabs, scope, rfis, submittals, punch-list, change-orders, site-diary, work-progress,
+  meetings) + a member-role access smoke test
+- Ran the suite against the live projexa-ai.com site via a Docker-based Playwright
+  runner (no browser deps installable in this sandbox without sudo)
+- 'Root-caused and fixed 3 classes of test-infra issues found by the first live run:
+  (1) `.count()` races against real network latency, (2) 2 Playwright strict-mode
+  locator violations, (3) this suite''s own successful write-op tests permanently
+  altering the live org''s data, breaking exact-count assertions on re-run -- added
+  `excludeSuiteWrites()` filtering'
+- tsc --noEmit and bun run lint clean on all new/changed files
+- 'Discovered and fixed a real repo gap: playwright-report/test-results output was
+  polluting `eslint .` (not gitignored/not eslint-ignored) -- fixed .gitignore + eslint.config.mjs'
+- 'Confirmed real, reportable product/seed gaps: meetings seeded into wrong table
+  (veri_meetings vs pms_meetings, 0 of 12 seeded meetings ever render), work-progress
+  has 0 seeded entries (construction_work_progress_entries never seeded), several
+  form `<Label>`s lack htmlFor/id association across every create dialog'
+remaining_steps: &id003
+- Confirm final clean run (run3) pass/fail counts
+- Write PHASE2_BATCH_A_FINDINGS.md
+- Push e2e/phase2-batch-a branch, open PR against FChecklist/projexa main
+- Post standard 8-field AUDIT comment, wait for CI, self-merge if TIER1 + green
+- 'Report final status to user: PR number, CI result, pass/fail counts, top 3 gaps'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-19T07:02:40.864531+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  note: worker started (resume=0)
+- at: '2026-07-19T07:07:41.180301+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  note: periodic checkpoint
+- at: '2026-07-19T07:12:41.508139+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - bun.lock
+  - package.json
+  - playwright.config.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  note: periodic checkpoint
+- at: '2026-07-19T07:17:41.820906+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - bun.lock
+  - package.json
+  - e2e/
+  - playwright.config.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  note: periodic checkpoint
+- at: '2026-07-19T07:22:42.200371+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - bun.lock
+  - package.json
+  - e2e/
+  - playwright.config.ts
+  - test-results/
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  note: periodic checkpoint
+- at: '2026-07-19T07:27:42.541774+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - bun.lock
+  - package.json
+  - e2e/
+  - playwright.config.ts
+  - test-results/
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  note: periodic checkpoint
+- at: '2026-07-19T07:32:42.868198+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - bun.lock
+  - package.json
+  - e2e/
+  - playwright-report/
+  - playwright.config.ts
+  - test-results/
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  note: periodic checkpoint
+- at: '2026-07-19T07:37:43.171432+00:00'
+  status: in_progress
+  files_modified:
+  - .gitignore
+  - PROGRESS.md
+  - bun.lock
+  - eslint.config.mjs
+  - package.json
+  - e2e/
+  - playwright.config.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  note: periodic checkpoint
+- at: '2026-07-19T07:42:43.473928+00:00'
+  status: in_progress
+  files_modified:
+  - .gitignore
+  - PROGRESS.md
+  - bun.lock
+  - eslint.config.mjs
+  - package.json
+  - e2e/
+  - playwright.config.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  note: periodic checkpoint
+- at: '2026-07-19T07:45:46.793658+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read PHASE1_SEED_REPORT.md in full, extracted exact per-project seed counts from
+    the as-run seed scripts (scripts/phase1-seed-compliance-tracker-batch{1,2}.mjs)
+    for precise assertions
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #480,
+    merged) -- no Batch B/C collision found'
+  - Read all 10 Batch A module page/client-component source files (via Explore agent
+    + direct reads) for real selectors/controls/API routes
+  - 'Discovered and self-corrected a false premise: this repo had NO playwright.config.ts,
+    NO e2e/ dir, and NO Playwright CI job at all (task brief claimed otherwise) --
+    built the scaffold from scratch'
+  - Added @playwright/test devDependency, playwright.config.ts (live-site default
+    baseURL, PLAYWRIGHT_BASE_URL override for local dev), e2e/auth.setup.ts, e2e/helpers.ts,
+    e2e/test-data.ts
+  - Wrote real Playwright tests for all 10 Batch A modules (dashboard, schedule incl.
+    4 sub-tabs, scope, rfis, submittals, punch-list, change-orders, site-diary, work-progress,
+    meetings) + a member-role access smoke test
+  - Ran the suite against the live projexa-ai.com site via a Docker-based Playwright
+    runner (no browser deps installable in this sandbox without sudo)
+  - 'Root-caused and fixed 3 classes of test-infra issues found by the first live
+    run: (1) `.count()` races against real network latency, (2) 2 Playwright strict-mode
+    locator violations, (3) this suite''s own successful write-op tests permanently
+    altering the live org''s data, breaking exact-count assertions on re-run -- added
+    `excludeSuiteWrites()` filtering'
+  - tsc --noEmit and bun run lint clean on all new/changed files
+  - 'Discovered and fixed a real repo gap: playwright-report/test-results output was
+    polluting `eslint .` (not gitignored/not eslint-ignored) -- fixed .gitignore +
+    eslint.config.mjs'
+  - 'Confirmed real, reportable product/seed gaps: meetings seeded into wrong table
+    (veri_meetings vs pms_meetings, 0 of 12 seeded meetings ever render), work-progress
+    has 0 seeded entries (construction_work_progress_entries never seeded), several
+    form `<Label>`s lack htmlFor/id association across every create dialog'
+  remaining_steps:
+  - Confirm final clean run (run3) pass/fail counts
+  - Write PHASE2_BATCH_A_FINDINGS.md
+  - Push e2e/phase2-batch-a branch, open PR against FChecklist/projexa main
+  - Post standard 8-field AUDIT comment, wait for CI, self-merge if TIER1 + green
+  - 'Report final status to user: PR number, CI result, pass/fail counts, top 3 gaps'
+  recent_commits:
+  - '2b5aed1 Worker task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f:
+    automated checkpoint commit'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  note: quality gates passed, pushed branch worker/task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f,
+    awaiting review
+- at: '2026-07-19T07:47:47.938084+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read PHASE1_SEED_REPORT.md in full, extracted exact per-project seed counts from
+    the as-run seed scripts (scripts/phase1-seed-compliance-tracker-batch{1,2}.mjs)
+    for precise assertions
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #480,
+    merged) -- no Batch B/C collision found'
+  - Read all 10 Batch A module page/client-component source files (via Explore agent
+    + direct reads) for real selectors/controls/API routes
+  - 'Discovered and self-corrected a false premise: this repo had NO playwright.config.ts,
+    NO e2e/ dir, and NO Playwright CI job at all (task brief claimed otherwise) --
+    built the scaffold from scratch'
+  - Added @playwright/test devDependency, playwright.config.ts (live-site default
+    baseURL, PLAYWRIGHT_BASE_URL override for local dev), e2e/auth.setup.ts, e2e/helpers.ts,
+    e2e/test-data.ts
+  - Wrote real Playwright tests for all 10 Batch A modules (dashboard, schedule incl.
+    4 sub-tabs, scope, rfis, submittals, punch-list, change-orders, site-diary, work-progress,
+    meetings) + a member-role access smoke test
+  - Ran the suite against the live projexa-ai.com site via a Docker-based Playwright
+    runner (no browser deps installable in this sandbox without sudo)
+  - 'Root-caused and fixed 3 classes of test-infra issues found by the first live
+    run: (1) `.count()` races against real network latency, (2) 2 Playwright strict-mode
+    locator violations, (3) this suite''s own successful write-op tests permanently
+    altering the live org''s data, breaking exact-count assertions on re-run -- added
+    `excludeSuiteWrites()` filtering'
+  - tsc --noEmit and bun run lint clean on all new/changed files
+  - 'Discovered and fixed a real repo gap: playwright-report/test-results output was
+    polluting `eslint .` (not gitignored/not eslint-ignored) -- fixed .gitignore +
+    eslint.config.mjs'
+  - 'Confirmed real, reportable product/seed gaps: meetings seeded into wrong table
+    (veri_meetings vs pms_meetings, 0 of 12 seeded meetings ever render), work-progress
+    has 0 seeded entries (construction_work_progress_entries never seeded), several
+    form `<Label>`s lack htmlFor/id association across every create dialog'
+  remaining_steps:
+  - Confirm final clean run (run3) pass/fail counts
+  - Write PHASE2_BATCH_A_FINDINGS.md
+  - Push e2e/phase2-batch-a branch, open PR against FChecklist/projexa main
+  - Post standard 8-field AUDIT comment, wait for CI, self-merge if TIER1 + green
+  - 'Report final status to user: PR number, CI result, pass/fail counts, top 3 gaps'
+  recent_commits:
+  - '2b5aed1 Worker task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f:
+    automated checkpoint commit'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  note: worker started (resume=1)
+- at: '2026-07-19T07:48:10.435265+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Read PHASE1_SEED_REPORT.md in full, extracted exact per-project seed counts from
+    the as-run seed scripts (scripts/phase1-seed-compliance-tracker-batch{1,2}.mjs)
+    for precise assertions
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #480,
+    merged) -- no Batch B/C collision found'
+  - Read all 10 Batch A module page/client-component source files (via Explore agent
+    + direct reads) for real selectors/controls/API routes
+  - 'Discovered and self-corrected a false premise: this repo had NO playwright.config.ts,
+    NO e2e/ dir, and NO Playwright CI job at all (task brief claimed otherwise) --
+    built the scaffold from scratch'
+  - Added @playwright/test devDependency, playwright.config.ts (live-site default
+    baseURL, PLAYWRIGHT_BASE_URL override for local dev), e2e/auth.setup.ts, e2e/helpers.ts,
+    e2e/test-data.ts
+  - Wrote real Playwright tests for all 10 Batch A modules (dashboard, schedule incl.
+    4 sub-tabs, scope, rfis, submittals, punch-list, change-orders, site-diary, work-progress,
+    meetings) + a member-role access smoke test
+  - Ran the suite against the live projexa-ai.com site via a Docker-based Playwright
+    runner (no browser deps installable in this sandbox without sudo)
+  - 'Root-caused and fixed 3 classes of test-infra issues found by the first live
+    run: (1) `.count()` races against real network latency, (2) 2 Playwright strict-mode
+    locator violations, (3) this suite''s own successful write-op tests permanently
+    altering the live org''s data, breaking exact-count assertions on re-run -- added
+    `excludeSuiteWrites()` filtering'
+  - tsc --noEmit and bun run lint clean on all new/changed files
+  - 'Discovered and fixed a real repo gap: playwright-report/test-results output was
+    polluting `eslint .` (not gitignored/not eslint-ignored) -- fixed .gitignore +
+    eslint.config.mjs'
+  - 'Confirmed real, reportable product/seed gaps: meetings seeded into wrong table
+    (veri_meetings vs pms_meetings, 0 of 12 seeded meetings ever render), work-progress
+    has 0 seeded entries (construction_work_progress_entries never seeded), several
+    form `<Label>`s lack htmlFor/id association across every create dialog'
+  remaining_steps:
+  - Confirm final clean run (run3) pass/fail counts
+  - Write PHASE2_BATCH_A_FINDINGS.md
+  - Push e2e/phase2-batch-a branch, open PR against FChecklist/projexa main
+  - Post standard 8-field AUDIT comment, wait for CI, self-merge if TIER1 + green
+  - 'Report final status to user: PR number, CI result, pass/fail counts, top 3 gaps'
+  recent_commits:
+  - '2b5aed1 Worker task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f:
+    automated checkpoint commit'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  note: "tier1, Superboss-approved, but the merge itself FAILED (see supervisor.log)\
+    \ \u2014 needs manual attention, NOT actually merged: "
+- at: '2026-07-19T07:52:48.248617+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Read PHASE1_SEED_REPORT.md in full, extracted exact per-project seed counts from
+    the as-run seed scripts (scripts/phase1-seed-compliance-tracker-batch{1,2}.mjs)
+    for precise assertions
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #480,
+    merged) -- no Batch B/C collision found'
+  - Read all 10 Batch A module page/client-component source files (via Explore agent
+    + direct reads) for real selectors/controls/API routes
+  - 'Discovered and self-corrected a false premise: this repo had NO playwright.config.ts,
+    NO e2e/ dir, and NO Playwright CI job at all (task brief claimed otherwise) --
+    built the scaffold from scratch'
+  - Added @playwright/test devDependency, playwright.config.ts (live-site default
+    baseURL, PLAYWRIGHT_BASE_URL override for local dev), e2e/auth.setup.ts, e2e/helpers.ts,
+    e2e/test-data.ts
+  - Wrote real Playwright tests for all 10 Batch A modules (dashboard, schedule incl.
+    4 sub-tabs, scope, rfis, submittals, punch-list, change-orders, site-diary, work-progress,
+    meetings) + a member-role access smoke test
+  - Ran the suite against the live projexa-ai.com site via a Docker-based Playwright
+    runner (no browser deps installable in this sandbox without sudo)
+  - 'Root-caused and fixed 3 classes of test-infra issues found by the first live
+    run: (1) `.count()` races against real network latency, (2) 2 Playwright strict-mode
+    locator violations, (3) this suite''s own successful write-op tests permanently
+    altering the live org''s data, breaking exact-count assertions on re-run -- added
+    `excludeSuiteWrites()` filtering'
+  - tsc --noEmit and bun run lint clean on all new/changed files
+  - 'Discovered and fixed a real repo gap: playwright-report/test-results output was
+    polluting `eslint .` (not gitignored/not eslint-ignored) -- fixed .gitignore +
+    eslint.config.mjs'
+  - 'Confirmed real, reportable product/seed gaps: meetings seeded into wrong table
+    (veri_meetings vs pms_meetings, 0 of 12 seeded meetings ever render), work-progress
+    has 0 seeded entries (construction_work_progress_entries never seeded), several
+    form `<Label>`s lack htmlFor/id association across every create dialog'
+  remaining_steps:
+  - Confirm final clean run (run3) pass/fail counts
+  - Write PHASE2_BATCH_A_FINDINGS.md
+  - Push e2e/phase2-batch-a branch, open PR against FChecklist/projexa main
+  - Post standard 8-field AUDIT comment, wait for CI, self-merge if TIER1 + green
+  - 'Report final status to user: PR number, CI result, pass/fail counts, top 3 gaps'
+  recent_commits:
+  - '2b5aed1 Worker task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f:
+    automated checkpoint commit'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  note: periodic checkpoint
+- at: '2026-07-19T07:57:48.551522+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Read PHASE1_SEED_REPORT.md in full, extracted exact per-project seed counts from
+    the as-run seed scripts (scripts/phase1-seed-compliance-tracker-batch{1,2}.mjs)
+    for precise assertions
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #480,
+    merged) -- no Batch B/C collision found'
+  - Read all 10 Batch A module page/client-component source files (via Explore agent
+    + direct reads) for real selectors/controls/API routes
+  - 'Discovered and self-corrected a false premise: this repo had NO playwright.config.ts,
+    NO e2e/ dir, and NO Playwright CI job at all (task brief claimed otherwise) --
+    built the scaffold from scratch'
+  - Added @playwright/test devDependency, playwright.config.ts (live-site default
+    baseURL, PLAYWRIGHT_BASE_URL override for local dev), e2e/auth.setup.ts, e2e/helpers.ts,
+    e2e/test-data.ts
+  - Wrote real Playwright tests for all 10 Batch A modules (dashboard, schedule incl.
+    4 sub-tabs, scope, rfis, submittals, punch-list, change-orders, site-diary, work-progress,
+    meetings) + a member-role access smoke test
+  - Ran the suite against the live projexa-ai.com site via a Docker-based Playwright
+    runner (no browser deps installable in this sandbox without sudo)
+  - 'Root-caused and fixed 3 classes of test-infra issues found by the first live
+    run: (1) `.count()` races against real network latency, (2) 2 Playwright strict-mode
+    locator violations, (3) this suite''s own successful write-op tests permanently
+    altering the live org''s data, breaking exact-count assertions on re-run -- added
+    `excludeSuiteWrites()` filtering'
+  - tsc --noEmit and bun run lint clean on all new/changed files
+  - 'Discovered and fixed a real repo gap: playwright-report/test-results output was
+    polluting `eslint .` (not gitignored/not eslint-ignored) -- fixed .gitignore +
+    eslint.config.mjs'
+  - 'Confirmed real, reportable product/seed gaps: meetings seeded into wrong table
+    (veri_meetings vs pms_meetings, 0 of 12 seeded meetings ever render), work-progress
+    has 0 seeded entries (construction_work_progress_entries never seeded), several
+    form `<Label>`s lack htmlFor/id association across every create dialog'
+  remaining_steps:
+  - Confirm final clean run (run3) pass/fail counts
+  - Write PHASE2_BATCH_A_FINDINGS.md
+  - Push e2e/phase2-batch-a branch, open PR against FChecklist/projexa main
+  - Post standard 8-field AUDIT comment, wait for CI, self-merge if TIER1 + green
+  - 'Report final status to user: PR number, CI result, pass/fail counts, top 3 gaps'
+  recent_commits:
+  - '2b5aed1 Worker task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f:
+    automated checkpoint commit'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  note: periodic checkpoint
+- at: '2026-07-19T08:02:48.858614+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Read PHASE1_SEED_REPORT.md in full, extracted exact per-project seed counts from
+    the as-run seed scripts (scripts/phase1-seed-compliance-tracker-batch{1,2}.mjs)
+    for precise assertions
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #480,
+    merged) -- no Batch B/C collision found'
+  - Read all 10 Batch A module page/client-component source files (via Explore agent
+    + direct reads) for real selectors/controls/API routes
+  - 'Discovered and self-corrected a false premise: this repo had NO playwright.config.ts,
+    NO e2e/ dir, and NO Playwright CI job at all (task brief claimed otherwise) --
+    built the scaffold from scratch'
+  - Added @playwright/test devDependency, playwright.config.ts (live-site default
+    baseURL, PLAYWRIGHT_BASE_URL override for local dev), e2e/auth.setup.ts, e2e/helpers.ts,
+    e2e/test-data.ts
+  - Wrote real Playwright tests for all 10 Batch A modules (dashboard, schedule incl.
+    4 sub-tabs, scope, rfis, submittals, punch-list, change-orders, site-diary, work-progress,
+    meetings) + a member-role access smoke test
+  - Ran the suite against the live projexa-ai.com site via a Docker-based Playwright
+    runner (no browser deps installable in this sandbox without sudo)
+  - 'Root-caused and fixed 3 classes of test-infra issues found by the first live
+    run: (1) `.count()` races against real network latency, (2) 2 Playwright strict-mode
+    locator violations, (3) this suite''s own successful write-op tests permanently
+    altering the live org''s data, breaking exact-count assertions on re-run -- added
+    `excludeSuiteWrites()` filtering'
+  - tsc --noEmit and bun run lint clean on all new/changed files
+  - 'Discovered and fixed a real repo gap: playwright-report/test-results output was
+    polluting `eslint .` (not gitignored/not eslint-ignored) -- fixed .gitignore +
+    eslint.config.mjs'
+  - 'Confirmed real, reportable product/seed gaps: meetings seeded into wrong table
+    (veri_meetings vs pms_meetings, 0 of 12 seeded meetings ever render), work-progress
+    has 0 seeded entries (construction_work_progress_entries never seeded), several
+    form `<Label>`s lack htmlFor/id association across every create dialog'
+  remaining_steps:
+  - Confirm final clean run (run3) pass/fail counts
+  - Write PHASE2_BATCH_A_FINDINGS.md
+  - Push e2e/phase2-batch-a branch, open PR against FChecklist/projexa main
+  - Post standard 8-field AUDIT comment, wait for CI, self-merge if TIER1 + green
+  - 'Report final status to user: PR number, CI result, pass/fail counts, top 3 gaps'
+  recent_commits:
+  - '2b5aed1 Worker task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f:
+    automated checkpoint commit'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  note: periodic checkpoint
+- at: '2026-07-19T08:07:49.191384+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Read PHASE1_SEED_REPORT.md in full, extracted exact per-project seed counts from
+    the as-run seed scripts (scripts/phase1-seed-compliance-tracker-batch{1,2}.mjs)
+    for precise assertions
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #480,
+    merged) -- no Batch B/C collision found'
+  - Read all 10 Batch A module page/client-component source files (via Explore agent
+    + direct reads) for real selectors/controls/API routes
+  - 'Discovered and self-corrected a false premise: this repo had NO playwright.config.ts,
+    NO e2e/ dir, and NO Playwright CI job at all (task brief claimed otherwise) --
+    built the scaffold from scratch'
+  - Added @playwright/test devDependency, playwright.config.ts (live-site default
+    baseURL, PLAYWRIGHT_BASE_URL override for local dev), e2e/auth.setup.ts, e2e/helpers.ts,
+    e2e/test-data.ts
+  - Wrote real Playwright tests for all 10 Batch A modules (dashboard, schedule incl.
+    4 sub-tabs, scope, rfis, submittals, punch-list, change-orders, site-diary, work-progress,
+    meetings) + a member-role access smoke test
+  - Ran the suite against the live projexa-ai.com site via a Docker-based Playwright
+    runner (no browser deps installable in this sandbox without sudo)
+  - 'Root-caused and fixed 3 classes of test-infra issues found by the first live
+    run: (1) `.count()` races against real network latency, (2) 2 Playwright strict-mode
+    locator violations, (3) this suite''s own successful write-op tests permanently
+    altering the live org''s data, breaking exact-count assertions on re-run -- added
+    `excludeSuiteWrites()` filtering'
+  - tsc --noEmit and bun run lint clean on all new/changed files
+  - 'Discovered and fixed a real repo gap: playwright-report/test-results output was
+    polluting `eslint .` (not gitignored/not eslint-ignored) -- fixed .gitignore +
+    eslint.config.mjs'
+  - 'Confirmed real, reportable product/seed gaps: meetings seeded into wrong table
+    (veri_meetings vs pms_meetings, 0 of 12 seeded meetings ever render), work-progress
+    has 0 seeded entries (construction_work_progress_entries never seeded), several
+    form `<Label>`s lack htmlFor/id association across every create dialog'
+  remaining_steps:
+  - Confirm final clean run (run3) pass/fail counts
+  - Write PHASE2_BATCH_A_FINDINGS.md
+  - Push e2e/phase2-batch-a branch, open PR against FChecklist/projexa main
+  - Post standard 8-field AUDIT comment, wait for CI, self-merge if TIER1 + green
+  - 'Report final status to user: PR number, CI result, pass/fail counts, top 3 gaps'
+  recent_commits:
+  - '2b5aed1 Worker task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f:
+    automated checkpoint commit'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  note: periodic checkpoint
+- at: '2026-07-19T08:12:49.560516+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Read PHASE1_SEED_REPORT.md in full, extracted exact per-project seed counts from
+    the as-run seed scripts (scripts/phase1-seed-compliance-tracker-batch{1,2}.mjs)
+    for precise assertions
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #480,
+    merged) -- no Batch B/C collision found'
+  - Read all 10 Batch A module page/client-component source files (via Explore agent
+    + direct reads) for real selectors/controls/API routes
+  - 'Discovered and self-corrected a false premise: this repo had NO playwright.config.ts,
+    NO e2e/ dir, and NO Playwright CI job at all (task brief claimed otherwise) --
+    built the scaffold from scratch'
+  - Added @playwright/test devDependency, playwright.config.ts (live-site default
+    baseURL, PLAYWRIGHT_BASE_URL override for local dev), e2e/auth.setup.ts, e2e/helpers.ts,
+    e2e/test-data.ts
+  - Wrote real Playwright tests for all 10 Batch A modules (dashboard, schedule incl.
+    4 sub-tabs, scope, rfis, submittals, punch-list, change-orders, site-diary, work-progress,
+    meetings) + a member-role access smoke test
+  - Ran the suite against the live projexa-ai.com site via a Docker-based Playwright
+    runner (no browser deps installable in this sandbox without sudo)
+  - 'Root-caused and fixed 3 classes of test-infra issues found by the first live
+    run: (1) `.count()` races against real network latency, (2) 2 Playwright strict-mode
+    locator violations, (3) this suite''s own successful write-op tests permanently
+    altering the live org''s data, breaking exact-count assertions on re-run -- added
+    `excludeSuiteWrites()` filtering'
+  - tsc --noEmit and bun run lint clean on all new/changed files
+  - 'Discovered and fixed a real repo gap: playwright-report/test-results output was
+    polluting `eslint .` (not gitignored/not eslint-ignored) -- fixed .gitignore +
+    eslint.config.mjs'
+  - 'Confirmed real, reportable product/seed gaps: meetings seeded into wrong table
+    (veri_meetings vs pms_meetings, 0 of 12 seeded meetings ever render), work-progress
+    has 0 seeded entries (construction_work_progress_entries never seeded), several
+    form `<Label>`s lack htmlFor/id association across every create dialog'
+  remaining_steps:
+  - Confirm final clean run (run3) pass/fail counts
+  - Write PHASE2_BATCH_A_FINDINGS.md
+  - Push e2e/phase2-batch-a branch, open PR against FChecklist/projexa main
+  - Post standard 8-field AUDIT comment, wait for CI, self-merge if TIER1 + green
+  - 'Report final status to user: PR number, CI result, pass/fail counts, top 3 gaps'
+  recent_commits:
+  - '2b5aed1 Worker task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f:
+    automated checkpoint commit'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  note: periodic checkpoint
+- at: '2026-07-19T08:14:45.269117+00:00'
+  status: completed
+  files_modified: []
+  completed_steps:
+  - Read PHASE1_SEED_REPORT.md in full, extracted exact per-project seed counts from
+    the as-run seed scripts (scripts/phase1-seed-compliance-tracker-batch{1,2}.mjs)
+    for precise assertions
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #480,
+    merged) -- no Batch B/C collision found'
+  - Read all 10 Batch A module page/client-component source files (via Explore agent
+    + direct reads) for real selectors/controls/API routes
+  - 'Discovered and self-corrected a false premise: this repo had NO playwright.config.ts,
+    NO e2e/ dir, and NO Playwright CI job at all (task brief claimed otherwise) --
+    built the scaffold from scratch'
+  - Added @playwright/test devDependency, playwright.config.ts (live-site default
+    baseURL, PLAYWRIGHT_BASE_URL override for local dev), e2e/auth.setup.ts, e2e/helpers.ts,
+    e2e/test-data.ts
+  - Wrote real Playwright tests for all 10 Batch A modules (dashboard, schedule incl.
+    4 sub-tabs, scope, rfis, submittals, punch-list, change-orders, site-diary, work-progress,
+    meetings) + a member-role access smoke test
+  - Ran the suite against the live projexa-ai.com site via a Docker-based Playwright
+    runner (no browser deps installable in this sandbox without sudo)
+  - 'Root-caused and fixed 3 classes of test-infra issues found by the first live
+    run: (1) `.count()` races against real network latency, (2) 2 Playwright strict-mode
+    locator violations, (3) this suite''s own successful write-op tests permanently
+    altering the live org''s data, breaking exact-count assertions on re-run -- added
+    `excludeSuiteWrites()` filtering'
+  - tsc --noEmit and bun run lint clean on all new/changed files
+  - 'Discovered and fixed a real repo gap: playwright-report/test-results output was
+    polluting `eslint .` (not gitignored/not eslint-ignored) -- fixed .gitignore +
+    eslint.config.mjs'
+  - 'Confirmed real, reportable product/seed gaps: meetings seeded into wrong table
+    (veri_meetings vs pms_meetings, 0 of 12 seeded meetings ever render), work-progress
+    has 0 seeded entries (construction_work_progress_entries never seeded), several
+    form `<Label>`s lack htmlFor/id association across every create dialog'
+  remaining_steps:
+  - Confirm final clean run (run3) pass/fail counts
+  - Write PHASE2_BATCH_A_FINDINGS.md
+  - Push e2e/phase2-batch-a branch, open PR against FChecklist/projexa main
+  - Post standard 8-field AUDIT comment, wait for CI, self-merge if TIER1 + green
+  - 'Report final status to user: PR number, CI result, pass/fail counts, top 3 gaps'
+  recent_commits:
+  - '2b5aed1 Worker task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f:
+    automated checkpoint commit'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  note: worker finished, no changes to commit
+- at: '2026-07-19T08:16:46.502983+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read PHASE1_SEED_REPORT.md in full, extracted exact per-project seed counts from
+    the as-run seed scripts (scripts/phase1-seed-compliance-tracker-batch{1,2}.mjs)
+    for precise assertions
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #480,
+    merged) -- no Batch B/C collision found'
+  - Read all 10 Batch A module page/client-component source files (via Explore agent
+    + direct reads) for real selectors/controls/API routes
+  - 'Discovered and self-corrected a false premise: this repo had NO playwright.config.ts,
+    NO e2e/ dir, and NO Playwright CI job at all (task brief claimed otherwise) --
+    built the scaffold from scratch'
+  - Added @playwright/test devDependency, playwright.config.ts (live-site default
+    baseURL, PLAYWRIGHT_BASE_URL override for local dev), e2e/auth.setup.ts, e2e/helpers.ts,
+    e2e/test-data.ts
+  - Wrote real Playwright tests for all 10 Batch A modules (dashboard, schedule incl.
+    4 sub-tabs, scope, rfis, submittals, punch-list, change-orders, site-diary, work-progress,
+    meetings) + a member-role access smoke test
+  - Ran the suite against the live projexa-ai.com site via a Docker-based Playwright
+    runner (no browser deps installable in this sandbox without sudo)
+  - 'Root-caused and fixed 3 classes of test-infra issues found by the first live
+    run: (1) `.count()` races against real network latency, (2) 2 Playwright strict-mode
+    locator violations, (3) this suite''s own successful write-op tests permanently
+    altering the live org''s data, breaking exact-count assertions on re-run -- added
+    `excludeSuiteWrites()` filtering'
+  - tsc --noEmit and bun run lint clean on all new/changed files
+  - 'Discovered and fixed a real repo gap: playwright-report/test-results output was
+    polluting `eslint .` (not gitignored/not eslint-ignored) -- fixed .gitignore +
+    eslint.config.mjs'
+  - 'Confirmed real, reportable product/seed gaps: meetings seeded into wrong table
+    (veri_meetings vs pms_meetings, 0 of 12 seeded meetings ever render), work-progress
+    has 0 seeded entries (construction_work_progress_entries never seeded), several
+    form `<Label>`s lack htmlFor/id association across every create dialog'
+  remaining_steps:
+  - Confirm final clean run (run3) pass/fail counts
+  - Write PHASE2_BATCH_A_FINDINGS.md
+  - Push e2e/phase2-batch-a branch, open PR against FChecklist/projexa main
+  - Post standard 8-field AUDIT comment, wait for CI, self-merge if TIER1 + green
+  - 'Report final status to user: PR number, CI result, pass/fail counts, top 3 gaps'
+  recent_commits:
+  - '2b5aed1 Worker task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f:
+    automated checkpoint commit'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  note: worker started (resume=1)
+- at: '2026-07-19T08:19:47.876053+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '2b5aed1 Worker task-20260719-070238-projexa-e2e-phase-2-batch-a--execution-f:
+    automated checkpoint commit'
+  - '72ce9dc Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data (#45)'
+  - adf30e9 Add real command-palette search and in-app notifications (#44)
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  note: worker finished, no changes to commit
+execution_seconds: 4351
+restart_count: 2
+token_usage:
+  input_tokens: 4
+  cache_creation_input_tokens: 567
+  cache_read_input_tokens: 875029
+  output_tokens: 133
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 567
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 62
+    cache_read_input_tokens: 437755
+    cache_creation_input_tokens: 86
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 86
+    type: message
+  speed: standard
+master_synced_at: '2026-07-19T08:00:04.695278+00:00'

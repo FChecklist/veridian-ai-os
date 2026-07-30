@@ -1,0 +1,14 @@
+## OBJECTIVE
+SCENARIO-TEST-15 PROBE A: automated dedup-verification probe, no real action
+## SCOPE
+Scenario-test-only, submitted by an automated stress-test subagent, not real product work. If ever actually dispatched (it should not be, given current system state), take no repo action, write no files, open no PR -- exit immediately.
+## KNOWN_CONTEXT
+This is instruction A of a pair of two DIFFERENT concurrent test submissions (scenario test #15) verifying that resource_governor.py's task_identity dedup does not cross-flag two distinct submissions against each other. Companion instruction is PROBE B, submitted within the same second.
+## SUCCESS_CRITERIA
+This submission is accepted with its own distinct umr_id and task_identity, and is never rejected as a duplicate of PROBE B.
+## EXPECTED_OUTPUT
+No real output required. A queued or rejected_duplicate row in umr_tasks is sufficient evidence for this test.
+## CONSTRAINTS
+Must never touch or reference PR617-REVIEW, PR618-REVIEW, PR58-CONFLICT, PR610-CONFLICT, or PHASE-2-CROSSREF. Must not spend AI/API credit if somehow dispatched.
+## COMPLEXITY_TIER
+0

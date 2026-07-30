@@ -1,0 +1,78 @@
+id: task-20260728-101931-adopted-re-adopt-pr-610--merge-conflict-resoluti
+title: 'Re-adopt PR 610: merge conflict resolution'
+status: awaiting_human_approval
+repo: compliance-tracker
+branch: worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co
+workspace: /opt/veridian/ai-os/tasks/task-20260728-101931-adopted-re-adopt-pr-610--merge-conflict-resoluti/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-101931-adopted-re-adopt-pr-610--merge-conflict-resoluti
+service: veridian-supervisor@task-20260728-101931-adopted-re-adopt-pr-610--merge-conflict-resoluti.service
+created_at: '2026-07-28T10:19:32.782500+00:00'
+last_checkpoint_at: '2026-07-28T10:26:56.753349+00:00'
+completed_steps: &id002
+- Read ACTIVE-CLAIMS.yaml, registered this task's claim, pushed it standalone before
+  real work
+- 'Confirmed crmOpportunities.stage gap: 5 legacy free-text values, none of the mockup''s
+  8'
+- Confirmed no existing "monthly revenue target" concept anywhere (grepped schema.ts
+  +
+- Researched existing win-probability/health-scoring logic (aiWinProbability is an
+  opaque
+- Added `crm_sales_targets` table (schema.ts) + hand-written migration 0268 (additive
+  only,
+- 'Built pure aggregation module `sales-pipeline-dashboard-service.ts`: stage normalization'
+- 20 unit tests (`sales-pipeline-dashboard-service.test.ts`), all passing -- covers
+  KPI math
+- DB-fetch layer (`getSalesPipelineDashboardData`, `setSalesTarget` in crm-service.ts)
+  +
+- 'Dashboard page (`src/app/(app)/crm/sales-pipeline/page.tsx`): 6 KPI tiles, 2 filter'
+- Linked from `/crm` overview page
+- 'Verified: `npx tsc --noEmit` clean, `bun test` (20/20 pass), `eslint` clean on
+  all new/'
+- Committed + pushed
+remaining_steps: &id003
+- '`bun run build` (full production build) could not be completed in this session''s
+  sandbox:'
+- No settings UI for `setSalesTarget` -- only a raw POST endpoint exists. Out of scope
+  per
+- Awaiting fresh supervisor audit before merge (per task's own EXPECTED_OUTPUT --
+  not
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T10:19:32.782500+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co'
+    (https://github.com/FChecklist/compliance-tracker/pull/610) -- registered for
+    real audit, not a fresh worker dispatch
+- at: '2026-07-28T10:26:56.753349+00:00'
+  status: awaiting_human_approval
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 0332fa19 Merge remote-tracking branch 'origin/main' into m610v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  - 'b1631f6e docs: Phase 0 SAP-informed VERIDIAN baseline inventory (compliance-tracker
+    + PROJEXA)'
+  - '7fb4445c progress: Phase 0 baseline inventory -- data gathering complete, assembling
+    final YAML'
+  note: 'tier2, Superboss-approved, held for human merge: https://github.com/FChecklist/compliance-tracker/pull/610'
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/610
+master_synced_at: '2026-07-29T21:04:26.639459+00:00'

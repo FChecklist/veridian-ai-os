@@ -1,0 +1,734 @@
+id: task-20260727-100954-erp-hr-gaps--expense-reimbursement--loan
+title: 'ERP HR gaps: expense reimbursement, loans/advances, KRA/360 appraisals, shift/roster'
+status: awaiting_human_approval
+repo: compliance-tracker
+branch: worker/task-20260727-100954-erp-hr-gaps--expense-reimbursement--loan
+workspace: /opt/veridian/ai-os/tasks/task-20260727-100954-erp-hr-gaps--expense-reimbursement--loan/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-100954-erp-hr-gaps--expense-reimbursement--loan
+service: veridian-worker@task-20260727-100954-erp-hr-gaps--expense-reimbursement--loan.service
+created_at: '2026-07-27T10:09:56.115095+00:00'
+last_checkpoint_at: '2026-07-27T12:28:21.504424+00:00'
+completed_steps: &id002
+- Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (no conflicting
+  active claims found).
+- Fixed the stale `hr-service.ts:1-6` "Payroll deliberately out of scope" comment
+  (was already wrong -- `erp-payroll-service.ts` is a real, live payroll engine).
+- '**Gap 1: Employee expense claims/reimbursement.** New `hrExpenseClaims` table (schema.ts),
+  `hr-expense-service.ts` (create/list/decide), `src/app/api/hr/expenses/route.ts`
+  + `[id]/route.ts`. Payroll integration decision: an approved-but-unpaid claim is
+  picked up by `processPayrollRun()` as a real payslip **earning** line (not a separate
+  payment record) -- reuses the existing payslip/net-pay machinery, documented in
+  schema.ts''s own comment.'
+- '**Gap 2: Employee loans/salary advances.** New `hrEmployeeLoans` + `hrLoanInstallments`
+  tables, `hr-loan-service.ts` (request/approve-generates-full-schedule/reject), `src/app/api/hr/loans/route.ts`
+  + `[id]/route.ts` + `[id]/installments/route.ts`. Payroll integration: `processPayrollRun()`
+  deducts the earliest still-pending installment on every processed run (one per run,
+  in installment-number order -- documented simplification, does not match calendar
+  dueMonth/dueYear against the run''s own month/year), decrements `outstandingBalance`,
+  closes the loan at 0.'
+- '**Gap 3: KRA/weighted-goal + multi-rater (360) appraisal.** Extended (not replaced)
+  `performanceReviews`/`performance-service.ts`: new `performanceReviewGoals` (per-goal
+  weight+rating, `computeWeightedScore` pure helper enforces weights sum to 100),
+  new `performanceReviewRaters` (peer/subordinate/other, additive to the existing
+  self+manager pair), new nullable `performanceReviews.weightedScore` column (computed
+  on submit only if goals exist -- zero-goal reviews unchanged). Routes: `.../reviews/[id]/goals/route.ts`
+  + `[goalId]/route.ts`, `.../reviews/[id]/raters/route.ts` + `[raterId]/route.ts`.'
+- '**Gap 4: Shift management/roster.** New `hrShiftTypes` + `hrShiftRosterAssignments`
+  tables, `hr-shift-service.ts` (`resolveShiftForDate` pure helper + CRUD), new nullable
+  `hrAttendanceRecords.shiftTypeId` column -- `checkIn`/`markAttendance` in `hr-attendance-service.ts`
+  now snapshot the resolved expected shift at write time. Routes: `src/app/api/hr/shifts/route.ts`
+  + `roster/route.ts`.'
+- Drizzle migration `drizzle/0264_hr_gap_closure_expense_loan_appraisal_shift.sql`
+  (all 7 new tables + 2 additive columns, org-scoped RLS+FORCE+policies+grants+indexes,
+  matching drizzle/0050's own pattern) + `drizzle/meta/_journal.json` entry.
+- '`ai-os/registry/asset-registry-coverage.yaml`: all 7 new tables given an explicit
+  `exempted` decision with a real per-table reason (sensitive per-employee financial/performance
+  data, or a ledger/log record with no genuine display-name column -- same classes
+  as the already-exempted `performance_reviews`/`hr_attendance_records`/`crm_stage_history`).'
+- '`ai-os/registry/terminology-guardrail-exemptions.yaml`: 8 new files given real
+  per-file exemption entries (dated changelog-comment + test-fixture-date-literal
+  false positives, same class Phase 2 already established for this directory).'
+- 'Tests: `hr-loan-service.test.ts`, `hr-shift-service.test.ts`, `hr-expense-service.test.ts`,
+  `erp-payroll-service.test.ts` (proves a processed payroll run reflects both the
+  loan deduction and the expense reimbursement, per this task''s own SUCCESS_CRITERIA),
+  `performance-service.test.ts` -- all pure-function tests (no live DB in `.test.ts`,
+  matching this repo''s established convention).'
+- 'Verification: `bun test` -- 2073 pass / 0 fail (full suite, no regressions) + 63
+  pass / 0 fail (new + touched files run standalone). `bunx tsc --noEmit` -- 0 errors,
+  full repo. `check-asset-registry-coverage.mjs`, `check-terminology-guardrail.mjs
+  --diff-only`, `check-guardrail-presence.mjs` -- all pass.'
+remaining_steps: &id003
+- '`get_advisors(security)` via Supabase MCP -- not run this pass (no live Supabase
+  project connected in this session; the MCP server requires interactive OAuth authorization
+  this non-interactive session cannot complete). RLS+FORCE+policies were hand-written
+  to mirror `drizzle/0050`''s already-audited pattern exactly, but the SUCCESS_CRITERIA''s
+  explicit zero-new-findings check itself is unverified -- flag for the merging session/owner
+  to run before/at merge.'
+- Push commits, open the PR, and get the mandatory independent audit-verdict comment
+  (AGENTS.md Rule 6/7(c)/10) -- this session must not self-merge.
+- 'Optional follow-up (not required by this task''s SUCCESS_CRITERIA, noted honestly):
+  no UI screens were built for any of the 4 features (API + service + schema only,
+  matching this task''s own SCOPE wording) -- a real, separate future gap if the Owner
+  wants employee-facing UI for these before the next HR wave.'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T10:11:06.085017+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  - '6318fc77 Fix PR586 CI: terminology-guardrail exemptions + bunfig.toml scoping
+    bun test to src/ only'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T10:16:07.349565+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/db/schema.ts
+  - src/lib/services/hr-service.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b17290f6 chore: register ACTIVE-CLAIMS entry for HR gap-closure task (expense/loan/appraisal/shift)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  note: periodic checkpoint
+- at: '2026-07-27T10:22:42.613059+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/registry/asset-registry-coverage.yaml
+  - drizzle/meta/_journal.json
+  - src/lib/db/schema.ts
+  - src/lib/services/hr-service.ts
+  - drizzle/0264_hr_gap_closure_expense_loan_appraisal_shift.sql
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b17290f6 chore: register ACTIVE-CLAIMS entry for HR gap-closure task (expense/loan/appraisal/shift)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  note: periodic checkpoint
+- at: '2026-07-27T10:33:17.477141+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/registry/asset-registry-coverage.yaml
+  - drizzle/meta/_journal.json
+  - src/lib/db/schema.ts
+  - src/lib/services/hr-attendance-service.ts
+  - src/lib/services/hr-service.ts
+  - drizzle/0264_hr_gap_closure_expense_loan_appraisal_shift.sql
+  - src/lib/services/hr-expense-service.ts
+  - src/lib/services/hr-loan-service.ts
+  - src/lib/services/hr-shift-service.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b17290f6 chore: register ACTIVE-CLAIMS entry for HR gap-closure task (expense/loan/appraisal/shift)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  note: periodic checkpoint
+- at: '2026-07-27T11:04:17.791640+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/registry/asset-registry-coverage.yaml
+  - drizzle/meta/_journal.json
+  - src/lib/db/schema.ts
+  - src/lib/services/erp-payroll-service.ts
+  - src/lib/services/hr-attendance-service.ts
+  - src/lib/services/hr-service.ts
+  - drizzle/0264_hr_gap_closure_expense_loan_appraisal_shift.sql
+  - src/lib/services/hr-expense-service.ts
+  - src/lib/services/hr-loan-service.ts
+  - src/lib/services/hr-shift-service.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b17290f6 chore: register ACTIVE-CLAIMS entry for HR gap-closure task (expense/loan/appraisal/shift)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  note: periodic checkpoint
+- at: '2026-07-27T11:38:16.948180+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/registry/asset-registry-coverage.yaml
+  - drizzle/meta/_journal.json
+  - src/lib/db/schema.ts
+  - src/lib/services/erp-payroll-service.ts
+  - src/lib/services/hr-attendance-service.ts
+  - src/lib/services/hr-service.ts
+  - drizzle/0264_hr_gap_closure_expense_loan_appraisal_shift.sql
+  - src/lib/services/hr-expense-service.ts
+  - src/lib/services/hr-loan-service.ts
+  - src/lib/services/hr-shift-service.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b17290f6 chore: register ACTIVE-CLAIMS entry for HR gap-closure task (expense/loan/appraisal/shift)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  note: periodic checkpoint
+- at: '2026-07-27T11:43:22.495563+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/registry/asset-registry-coverage.yaml
+  - ai-os/registry/terminology-guardrail-exemptions.yaml
+  - drizzle/0264_hr_gap_closure_expense_loan_appraisal_shift.sql
+  - drizzle/meta/_journal.json
+  - src/app/api/hr/expenses/[id]/route.ts
+  - src/app/api/hr/expenses/route.ts
+  - src/app/api/hr/loans/[id]/installments/route.ts
+  - src/app/api/hr/loans/[id]/route.ts
+  - src/app/api/hr/loans/route.ts
+  - src/app/api/hr/shifts/roster/route.ts
+  - src/app/api/hr/shifts/route.ts
+  - src/app/api/performance-reviews/reviews/[id]/goals/[goalId]/route.ts
+  - src/app/api/performance-reviews/reviews/[id]/goals/route.ts
+  - src/app/api/performance-reviews/reviews/[id]/raters/[raterId]/route.ts
+  - src/app/api/performance-reviews/reviews/[id]/raters/route.ts
+  - src/lib/db/schema.ts
+  - src/lib/services/erp-payroll-service.test.ts
+  - src/lib/services/erp-payroll-service.ts
+  - src/lib/services/hr-attendance-service.ts
+  - src/lib/services/hr-expense-service.test.ts
+  - src/lib/services/hr-expense-service.ts
+  - src/lib/services/hr-loan-service.test.ts
+  - src/lib/services/hr-loan-service.ts
+  - src/lib/services/hr-service.ts
+  - src/lib/services/hr-shift-service.test.ts
+  - src/lib/services/hr-shift-service.ts
+  - src/lib/services/performance-service.test.ts
+  - src/lib/services/performance-service.ts
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (no conflicting
+    active claims found).
+  - Fixed the stale `hr-service.ts:1-6` "Payroll deliberately out of scope" comment
+    (was already wrong -- `erp-payroll-service.ts` is a real, live payroll engine).
+  - '**Gap 1: Employee expense claims/reimbursement.** New `hrExpenseClaims` table
+    (schema.ts), `hr-expense-service.ts` (create/list/decide), `src/app/api/hr/expenses/route.ts`
+    + `[id]/route.ts`. Payroll integration decision: an approved-but-unpaid claim
+    is picked up by `processPayrollRun()` as a real payslip **earning** line (not
+    a separate payment record) -- reuses the existing payslip/net-pay machinery, documented
+    in schema.ts''s own comment.'
+  - '**Gap 2: Employee loans/salary advances.** New `hrEmployeeLoans` + `hrLoanInstallments`
+    tables, `hr-loan-service.ts` (request/approve-generates-full-schedule/reject),
+    `src/app/api/hr/loans/route.ts` + `[id]/route.ts` + `[id]/installments/route.ts`.
+    Payroll integration: `processPayrollRun()` deducts the earliest still-pending
+    installment on every processed run (one per run, in installment-number order --
+    documented simplification, does not match calendar dueMonth/dueYear against the
+    run''s own month/year), decrements `outstandingBalance`, closes the loan at 0.'
+  - '**Gap 3: KRA/weighted-goal + multi-rater (360) appraisal.** Extended (not replaced)
+    `performanceReviews`/`performance-service.ts`: new `performanceReviewGoals` (per-goal
+    weight+rating, `computeWeightedScore` pure helper enforces weights sum to 100),
+    new `performanceReviewRaters` (peer/subordinate/other, additive to the existing
+    self+manager pair), new nullable `performanceReviews.weightedScore` column (computed
+    on submit only if goals exist -- zero-goal reviews unchanged). Routes: `.../reviews/[id]/goals/route.ts`
+    + `[goalId]/route.ts`, `.../reviews/[id]/raters/route.ts` + `[raterId]/route.ts`.'
+  - '**Gap 4: Shift management/roster.** New `hrShiftTypes` + `hrShiftRosterAssignments`
+    tables, `hr-shift-service.ts` (`resolveShiftForDate` pure helper + CRUD), new
+    nullable `hrAttendanceRecords.shiftTypeId` column -- `checkIn`/`markAttendance`
+    in `hr-attendance-service.ts` now snapshot the resolved expected shift at write
+    time. Routes: `src/app/api/hr/shifts/route.ts` + `roster/route.ts`.'
+  - Drizzle migration `drizzle/0264_hr_gap_closure_expense_loan_appraisal_shift.sql`
+    (all 7 new tables + 2 additive columns, org-scoped RLS+FORCE+policies+grants+indexes,
+    matching drizzle/0050's own pattern) + `drizzle/meta/_journal.json` entry.
+  - '`ai-os/registry/asset-registry-coverage.yaml`: all 7 new tables given an explicit
+    `exempted` decision with a real per-table reason (sensitive per-employee financial/performance
+    data, or a ledger/log record with no genuine display-name column -- same classes
+    as the already-exempted `performance_reviews`/`hr_attendance_records`/`crm_stage_history`).'
+  - '`ai-os/registry/terminology-guardrail-exemptions.yaml`: 8 new files given real
+    per-file exemption entries (dated changelog-comment + test-fixture-date-literal
+    false positives, same class Phase 2 already established for this directory).'
+  - 'Tests: `hr-loan-service.test.ts`, `hr-shift-service.test.ts`, `hr-expense-service.test.ts`,
+    `erp-payroll-service.test.ts` (proves a processed payroll run reflects both the
+    loan deduction and the expense reimbursement, per this task''s own SUCCESS_CRITERIA),
+    `performance-service.test.ts` -- all pure-function tests (no live DB in `.test.ts`,
+    matching this repo''s established convention).'
+  - 'Verification: `bun test` -- 2073 pass / 0 fail (full suite, no regressions) +
+    63 pass / 0 fail (new + touched files run standalone). `bunx tsc --noEmit` --
+    0 errors, full repo. `check-asset-registry-coverage.mjs`, `check-terminology-guardrail.mjs
+    --diff-only`, `check-guardrail-presence.mjs` -- all pass.'
+  remaining_steps:
+  - '`get_advisors(security)` via Supabase MCP -- not run this pass (no live Supabase
+    project connected in this session; the MCP server requires interactive OAuth authorization
+    this non-interactive session cannot complete). RLS+FORCE+policies were hand-written
+    to mirror `drizzle/0050`''s already-audited pattern exactly, but the SUCCESS_CRITERIA''s
+    explicit zero-new-findings check itself is unverified -- flag for the merging
+    session/owner to run before/at merge.'
+  - Push commits, open the PR, and get the mandatory independent audit-verdict comment
+    (AGENTS.md Rule 6/7(c)/10) -- this session must not self-merge.
+  - 'Optional follow-up (not required by this task''s SUCCESS_CRITERIA, noted honestly):
+    no UI screens were built for any of the 4 features (API + service + schema only,
+    matching this task''s own SCOPE wording) -- a real, separate future gap if the
+    Owner wants employee-facing UI for these before the next HR wave.'
+  recent_commits:
+  - 'b17290f6 chore: register ACTIVE-CLAIMS entry for HR gap-closure task (expense/loan/appraisal/shift)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  note: periodic checkpoint
+- at: '2026-07-27T11:48:41.206994+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (no conflicting
+    active claims found).
+  - Fixed the stale `hr-service.ts:1-6` "Payroll deliberately out of scope" comment
+    (was already wrong -- `erp-payroll-service.ts` is a real, live payroll engine).
+  - '**Gap 1: Employee expense claims/reimbursement.** New `hrExpenseClaims` table
+    (schema.ts), `hr-expense-service.ts` (create/list/decide), `src/app/api/hr/expenses/route.ts`
+    + `[id]/route.ts`. Payroll integration decision: an approved-but-unpaid claim
+    is picked up by `processPayrollRun()` as a real payslip **earning** line (not
+    a separate payment record) -- reuses the existing payslip/net-pay machinery, documented
+    in schema.ts''s own comment.'
+  - '**Gap 2: Employee loans/salary advances.** New `hrEmployeeLoans` + `hrLoanInstallments`
+    tables, `hr-loan-service.ts` (request/approve-generates-full-schedule/reject),
+    `src/app/api/hr/loans/route.ts` + `[id]/route.ts` + `[id]/installments/route.ts`.
+    Payroll integration: `processPayrollRun()` deducts the earliest still-pending
+    installment on every processed run (one per run, in installment-number order --
+    documented simplification, does not match calendar dueMonth/dueYear against the
+    run''s own month/year), decrements `outstandingBalance`, closes the loan at 0.'
+  - '**Gap 3: KRA/weighted-goal + multi-rater (360) appraisal.** Extended (not replaced)
+    `performanceReviews`/`performance-service.ts`: new `performanceReviewGoals` (per-goal
+    weight+rating, `computeWeightedScore` pure helper enforces weights sum to 100),
+    new `performanceReviewRaters` (peer/subordinate/other, additive to the existing
+    self+manager pair), new nullable `performanceReviews.weightedScore` column (computed
+    on submit only if goals exist -- zero-goal reviews unchanged). Routes: `.../reviews/[id]/goals/route.ts`
+    + `[goalId]/route.ts`, `.../reviews/[id]/raters/route.ts` + `[raterId]/route.ts`.'
+  - '**Gap 4: Shift management/roster.** New `hrShiftTypes` + `hrShiftRosterAssignments`
+    tables, `hr-shift-service.ts` (`resolveShiftForDate` pure helper + CRUD), new
+    nullable `hrAttendanceRecords.shiftTypeId` column -- `checkIn`/`markAttendance`
+    in `hr-attendance-service.ts` now snapshot the resolved expected shift at write
+    time. Routes: `src/app/api/hr/shifts/route.ts` + `roster/route.ts`.'
+  - Drizzle migration `drizzle/0264_hr_gap_closure_expense_loan_appraisal_shift.sql`
+    (all 7 new tables + 2 additive columns, org-scoped RLS+FORCE+policies+grants+indexes,
+    matching drizzle/0050's own pattern) + `drizzle/meta/_journal.json` entry.
+  - '`ai-os/registry/asset-registry-coverage.yaml`: all 7 new tables given an explicit
+    `exempted` decision with a real per-table reason (sensitive per-employee financial/performance
+    data, or a ledger/log record with no genuine display-name column -- same classes
+    as the already-exempted `performance_reviews`/`hr_attendance_records`/`crm_stage_history`).'
+  - '`ai-os/registry/terminology-guardrail-exemptions.yaml`: 8 new files given real
+    per-file exemption entries (dated changelog-comment + test-fixture-date-literal
+    false positives, same class Phase 2 already established for this directory).'
+  - 'Tests: `hr-loan-service.test.ts`, `hr-shift-service.test.ts`, `hr-expense-service.test.ts`,
+    `erp-payroll-service.test.ts` (proves a processed payroll run reflects both the
+    loan deduction and the expense reimbursement, per this task''s own SUCCESS_CRITERIA),
+    `performance-service.test.ts` -- all pure-function tests (no live DB in `.test.ts`,
+    matching this repo''s established convention).'
+  - 'Verification: `bun test` -- 2073 pass / 0 fail (full suite, no regressions) +
+    63 pass / 0 fail (new + touched files run standalone). `bunx tsc --noEmit` --
+    0 errors, full repo. `check-asset-registry-coverage.mjs`, `check-terminology-guardrail.mjs
+    --diff-only`, `check-guardrail-presence.mjs` -- all pass.'
+  remaining_steps:
+  - '`get_advisors(security)` via Supabase MCP -- not run this pass (no live Supabase
+    project connected in this session; the MCP server requires interactive OAuth authorization
+    this non-interactive session cannot complete). RLS+FORCE+policies were hand-written
+    to mirror `drizzle/0050`''s already-audited pattern exactly, but the SUCCESS_CRITERIA''s
+    explicit zero-new-findings check itself is unverified -- flag for the merging
+    session/owner to run before/at merge.'
+  - Push commits, open the PR, and get the mandatory independent audit-verdict comment
+    (AGENTS.md Rule 6/7(c)/10) -- this session must not self-merge.
+  - 'Optional follow-up (not required by this task''s SUCCESS_CRITERIA, noted honestly):
+    no UI screens were built for any of the 4 features (API + service + schema only,
+    matching this task''s own SCOPE wording) -- a real, separate future gap if the
+    Owner wants employee-facing UI for these before the next HR wave.'
+  recent_commits:
+  - '6136fac7 feat: close 4 real HR gaps -- expense reimbursement, employee loans,
+    KRA/360 appraisal, shift roster'
+  - 'b17290f6 chore: register ACTIVE-CLAIMS entry for HR gap-closure task (expense/loan/appraisal/shift)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  note: periodic checkpoint
+- at: '2026-07-27T11:57:23.301312+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (no conflicting
+    active claims found).
+  - Fixed the stale `hr-service.ts:1-6` "Payroll deliberately out of scope" comment
+    (was already wrong -- `erp-payroll-service.ts` is a real, live payroll engine).
+  - '**Gap 1: Employee expense claims/reimbursement.** New `hrExpenseClaims` table
+    (schema.ts), `hr-expense-service.ts` (create/list/decide), `src/app/api/hr/expenses/route.ts`
+    + `[id]/route.ts`. Payroll integration decision: an approved-but-unpaid claim
+    is picked up by `processPayrollRun()` as a real payslip **earning** line (not
+    a separate payment record) -- reuses the existing payslip/net-pay machinery, documented
+    in schema.ts''s own comment.'
+  - '**Gap 2: Employee loans/salary advances.** New `hrEmployeeLoans` + `hrLoanInstallments`
+    tables, `hr-loan-service.ts` (request/approve-generates-full-schedule/reject),
+    `src/app/api/hr/loans/route.ts` + `[id]/route.ts` + `[id]/installments/route.ts`.
+    Payroll integration: `processPayrollRun()` deducts the earliest still-pending
+    installment on every processed run (one per run, in installment-number order --
+    documented simplification, does not match calendar dueMonth/dueYear against the
+    run''s own month/year), decrements `outstandingBalance`, closes the loan at 0.'
+  - '**Gap 3: KRA/weighted-goal + multi-rater (360) appraisal.** Extended (not replaced)
+    `performanceReviews`/`performance-service.ts`: new `performanceReviewGoals` (per-goal
+    weight+rating, `computeWeightedScore` pure helper enforces weights sum to 100),
+    new `performanceReviewRaters` (peer/subordinate/other, additive to the existing
+    self+manager pair), new nullable `performanceReviews.weightedScore` column (computed
+    on submit only if goals exist -- zero-goal reviews unchanged). Routes: `.../reviews/[id]/goals/route.ts`
+    + `[goalId]/route.ts`, `.../reviews/[id]/raters/route.ts` + `[raterId]/route.ts`.'
+  - '**Gap 4: Shift management/roster.** New `hrShiftTypes` + `hrShiftRosterAssignments`
+    tables, `hr-shift-service.ts` (`resolveShiftForDate` pure helper + CRUD), new
+    nullable `hrAttendanceRecords.shiftTypeId` column -- `checkIn`/`markAttendance`
+    in `hr-attendance-service.ts` now snapshot the resolved expected shift at write
+    time. Routes: `src/app/api/hr/shifts/route.ts` + `roster/route.ts`.'
+  - Drizzle migration `drizzle/0264_hr_gap_closure_expense_loan_appraisal_shift.sql`
+    (all 7 new tables + 2 additive columns, org-scoped RLS+FORCE+policies+grants+indexes,
+    matching drizzle/0050's own pattern) + `drizzle/meta/_journal.json` entry.
+  - '`ai-os/registry/asset-registry-coverage.yaml`: all 7 new tables given an explicit
+    `exempted` decision with a real per-table reason (sensitive per-employee financial/performance
+    data, or a ledger/log record with no genuine display-name column -- same classes
+    as the already-exempted `performance_reviews`/`hr_attendance_records`/`crm_stage_history`).'
+  - '`ai-os/registry/terminology-guardrail-exemptions.yaml`: 8 new files given real
+    per-file exemption entries (dated changelog-comment + test-fixture-date-literal
+    false positives, same class Phase 2 already established for this directory).'
+  - 'Tests: `hr-loan-service.test.ts`, `hr-shift-service.test.ts`, `hr-expense-service.test.ts`,
+    `erp-payroll-service.test.ts` (proves a processed payroll run reflects both the
+    loan deduction and the expense reimbursement, per this task''s own SUCCESS_CRITERIA),
+    `performance-service.test.ts` -- all pure-function tests (no live DB in `.test.ts`,
+    matching this repo''s established convention).'
+  - 'Verification: `bun test` -- 2073 pass / 0 fail (full suite, no regressions) +
+    63 pass / 0 fail (new + touched files run standalone). `bunx tsc --noEmit` --
+    0 errors, full repo. `check-asset-registry-coverage.mjs`, `check-terminology-guardrail.mjs
+    --diff-only`, `check-guardrail-presence.mjs` -- all pass.'
+  remaining_steps:
+  - '`get_advisors(security)` via Supabase MCP -- not run this pass (no live Supabase
+    project connected in this session; the MCP server requires interactive OAuth authorization
+    this non-interactive session cannot complete). RLS+FORCE+policies were hand-written
+    to mirror `drizzle/0050`''s already-audited pattern exactly, but the SUCCESS_CRITERIA''s
+    explicit zero-new-findings check itself is unverified -- flag for the merging
+    session/owner to run before/at merge.'
+  - Push commits, open the PR, and get the mandatory independent audit-verdict comment
+    (AGENTS.md Rule 6/7(c)/10) -- this session must not self-merge.
+  - 'Optional follow-up (not required by this task''s SUCCESS_CRITERIA, noted honestly):
+    no UI screens were built for any of the 4 features (API + service + schema only,
+    matching this task''s own SCOPE wording) -- a real, separate future gap if the
+    Owner wants employee-facing UI for these before the next HR wave.'
+  recent_commits:
+  - '6136fac7 feat: close 4 real HR gaps -- expense reimbursement, employee loans,
+    KRA/360 appraisal, shift roster'
+  - 'b17290f6 chore: register ACTIVE-CLAIMS entry for HR gap-closure task (expense/loan/appraisal/shift)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  note: periodic checkpoint
+- at: '2026-07-27T11:59:40.129613+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (no conflicting
+    active claims found).
+  - Fixed the stale `hr-service.ts:1-6` "Payroll deliberately out of scope" comment
+    (was already wrong -- `erp-payroll-service.ts` is a real, live payroll engine).
+  - '**Gap 1: Employee expense claims/reimbursement.** New `hrExpenseClaims` table
+    (schema.ts), `hr-expense-service.ts` (create/list/decide), `src/app/api/hr/expenses/route.ts`
+    + `[id]/route.ts`. Payroll integration decision: an approved-but-unpaid claim
+    is picked up by `processPayrollRun()` as a real payslip **earning** line (not
+    a separate payment record) -- reuses the existing payslip/net-pay machinery, documented
+    in schema.ts''s own comment.'
+  - '**Gap 2: Employee loans/salary advances.** New `hrEmployeeLoans` + `hrLoanInstallments`
+    tables, `hr-loan-service.ts` (request/approve-generates-full-schedule/reject),
+    `src/app/api/hr/loans/route.ts` + `[id]/route.ts` + `[id]/installments/route.ts`.
+    Payroll integration: `processPayrollRun()` deducts the earliest still-pending
+    installment on every processed run (one per run, in installment-number order --
+    documented simplification, does not match calendar dueMonth/dueYear against the
+    run''s own month/year), decrements `outstandingBalance`, closes the loan at 0.'
+  - '**Gap 3: KRA/weighted-goal + multi-rater (360) appraisal.** Extended (not replaced)
+    `performanceReviews`/`performance-service.ts`: new `performanceReviewGoals` (per-goal
+    weight+rating, `computeWeightedScore` pure helper enforces weights sum to 100),
+    new `performanceReviewRaters` (peer/subordinate/other, additive to the existing
+    self+manager pair), new nullable `performanceReviews.weightedScore` column (computed
+    on submit only if goals exist -- zero-goal reviews unchanged). Routes: `.../reviews/[id]/goals/route.ts`
+    + `[goalId]/route.ts`, `.../reviews/[id]/raters/route.ts` + `[raterId]/route.ts`.'
+  - '**Gap 4: Shift management/roster.** New `hrShiftTypes` + `hrShiftRosterAssignments`
+    tables, `hr-shift-service.ts` (`resolveShiftForDate` pure helper + CRUD), new
+    nullable `hrAttendanceRecords.shiftTypeId` column -- `checkIn`/`markAttendance`
+    in `hr-attendance-service.ts` now snapshot the resolved expected shift at write
+    time. Routes: `src/app/api/hr/shifts/route.ts` + `roster/route.ts`.'
+  - Drizzle migration `drizzle/0264_hr_gap_closure_expense_loan_appraisal_shift.sql`
+    (all 7 new tables + 2 additive columns, org-scoped RLS+FORCE+policies+grants+indexes,
+    matching drizzle/0050's own pattern) + `drizzle/meta/_journal.json` entry.
+  - '`ai-os/registry/asset-registry-coverage.yaml`: all 7 new tables given an explicit
+    `exempted` decision with a real per-table reason (sensitive per-employee financial/performance
+    data, or a ledger/log record with no genuine display-name column -- same classes
+    as the already-exempted `performance_reviews`/`hr_attendance_records`/`crm_stage_history`).'
+  - '`ai-os/registry/terminology-guardrail-exemptions.yaml`: 8 new files given real
+    per-file exemption entries (dated changelog-comment + test-fixture-date-literal
+    false positives, same class Phase 2 already established for this directory).'
+  - 'Tests: `hr-loan-service.test.ts`, `hr-shift-service.test.ts`, `hr-expense-service.test.ts`,
+    `erp-payroll-service.test.ts` (proves a processed payroll run reflects both the
+    loan deduction and the expense reimbursement, per this task''s own SUCCESS_CRITERIA),
+    `performance-service.test.ts` -- all pure-function tests (no live DB in `.test.ts`,
+    matching this repo''s established convention).'
+  - 'Verification: `bun test` -- 2073 pass / 0 fail (full suite, no regressions) +
+    63 pass / 0 fail (new + touched files run standalone). `bunx tsc --noEmit` --
+    0 errors, full repo. `check-asset-registry-coverage.mjs`, `check-terminology-guardrail.mjs
+    --diff-only`, `check-guardrail-presence.mjs` -- all pass.'
+  remaining_steps:
+  - '`get_advisors(security)` via Supabase MCP -- not run this pass (no live Supabase
+    project connected in this session; the MCP server requires interactive OAuth authorization
+    this non-interactive session cannot complete). RLS+FORCE+policies were hand-written
+    to mirror `drizzle/0050`''s already-audited pattern exactly, but the SUCCESS_CRITERIA''s
+    explicit zero-new-findings check itself is unverified -- flag for the merging
+    session/owner to run before/at merge.'
+  - Push commits, open the PR, and get the mandatory independent audit-verdict comment
+    (AGENTS.md Rule 6/7(c)/10) -- this session must not self-merge.
+  - 'Optional follow-up (not required by this task''s SUCCESS_CRITERIA, noted honestly):
+    no UI screens were built for any of the 4 features (API + service + schema only,
+    matching this task''s own SCOPE wording) -- a real, separate future gap if the
+    Owner wants employee-facing UI for these before the next HR wave.'
+  recent_commits:
+  - '6136fac7 feat: close 4 real HR gaps -- expense reimbursement, employee loans,
+    KRA/360 appraisal, shift roster'
+  - 'b17290f6 chore: register ACTIVE-CLAIMS entry for HR gap-closure task (expense/loan/appraisal/shift)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-27T11:59:42.172587+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (no conflicting
+    active claims found).
+  - Fixed the stale `hr-service.ts:1-6` "Payroll deliberately out of scope" comment
+    (was already wrong -- `erp-payroll-service.ts` is a real, live payroll engine).
+  - '**Gap 1: Employee expense claims/reimbursement.** New `hrExpenseClaims` table
+    (schema.ts), `hr-expense-service.ts` (create/list/decide), `src/app/api/hr/expenses/route.ts`
+    + `[id]/route.ts`. Payroll integration decision: an approved-but-unpaid claim
+    is picked up by `processPayrollRun()` as a real payslip **earning** line (not
+    a separate payment record) -- reuses the existing payslip/net-pay machinery, documented
+    in schema.ts''s own comment.'
+  - '**Gap 2: Employee loans/salary advances.** New `hrEmployeeLoans` + `hrLoanInstallments`
+    tables, `hr-loan-service.ts` (request/approve-generates-full-schedule/reject),
+    `src/app/api/hr/loans/route.ts` + `[id]/route.ts` + `[id]/installments/route.ts`.
+    Payroll integration: `processPayrollRun()` deducts the earliest still-pending
+    installment on every processed run (one per run, in installment-number order --
+    documented simplification, does not match calendar dueMonth/dueYear against the
+    run''s own month/year), decrements `outstandingBalance`, closes the loan at 0.'
+  - '**Gap 3: KRA/weighted-goal + multi-rater (360) appraisal.** Extended (not replaced)
+    `performanceReviews`/`performance-service.ts`: new `performanceReviewGoals` (per-goal
+    weight+rating, `computeWeightedScore` pure helper enforces weights sum to 100),
+    new `performanceReviewRaters` (peer/subordinate/other, additive to the existing
+    self+manager pair), new nullable `performanceReviews.weightedScore` column (computed
+    on submit only if goals exist -- zero-goal reviews unchanged). Routes: `.../reviews/[id]/goals/route.ts`
+    + `[goalId]/route.ts`, `.../reviews/[id]/raters/route.ts` + `[raterId]/route.ts`.'
+  - '**Gap 4: Shift management/roster.** New `hrShiftTypes` + `hrShiftRosterAssignments`
+    tables, `hr-shift-service.ts` (`resolveShiftForDate` pure helper + CRUD), new
+    nullable `hrAttendanceRecords.shiftTypeId` column -- `checkIn`/`markAttendance`
+    in `hr-attendance-service.ts` now snapshot the resolved expected shift at write
+    time. Routes: `src/app/api/hr/shifts/route.ts` + `roster/route.ts`.'
+  - Drizzle migration `drizzle/0264_hr_gap_closure_expense_loan_appraisal_shift.sql`
+    (all 7 new tables + 2 additive columns, org-scoped RLS+FORCE+policies+grants+indexes,
+    matching drizzle/0050's own pattern) + `drizzle/meta/_journal.json` entry.
+  - '`ai-os/registry/asset-registry-coverage.yaml`: all 7 new tables given an explicit
+    `exempted` decision with a real per-table reason (sensitive per-employee financial/performance
+    data, or a ledger/log record with no genuine display-name column -- same classes
+    as the already-exempted `performance_reviews`/`hr_attendance_records`/`crm_stage_history`).'
+  - '`ai-os/registry/terminology-guardrail-exemptions.yaml`: 8 new files given real
+    per-file exemption entries (dated changelog-comment + test-fixture-date-literal
+    false positives, same class Phase 2 already established for this directory).'
+  - 'Tests: `hr-loan-service.test.ts`, `hr-shift-service.test.ts`, `hr-expense-service.test.ts`,
+    `erp-payroll-service.test.ts` (proves a processed payroll run reflects both the
+    loan deduction and the expense reimbursement, per this task''s own SUCCESS_CRITERIA),
+    `performance-service.test.ts` -- all pure-function tests (no live DB in `.test.ts`,
+    matching this repo''s established convention).'
+  - 'Verification: `bun test` -- 2073 pass / 0 fail (full suite, no regressions) +
+    63 pass / 0 fail (new + touched files run standalone). `bunx tsc --noEmit` --
+    0 errors, full repo. `check-asset-registry-coverage.mjs`, `check-terminology-guardrail.mjs
+    --diff-only`, `check-guardrail-presence.mjs` -- all pass.'
+  remaining_steps:
+  - '`get_advisors(security)` via Supabase MCP -- not run this pass (no live Supabase
+    project connected in this session; the MCP server requires interactive OAuth authorization
+    this non-interactive session cannot complete). RLS+FORCE+policies were hand-written
+    to mirror `drizzle/0050`''s already-audited pattern exactly, but the SUCCESS_CRITERIA''s
+    explicit zero-new-findings check itself is unverified -- flag for the merging
+    session/owner to run before/at merge.'
+  - Push commits, open the PR, and get the mandatory independent audit-verdict comment
+    (AGENTS.md Rule 6/7(c)/10) -- this session must not self-merge.
+  - 'Optional follow-up (not required by this task''s SUCCESS_CRITERIA, noted honestly):
+    no UI screens were built for any of the 4 features (API + service + schema only,
+    matching this task''s own SCOPE wording) -- a real, separate future gap if the
+    Owner wants employee-facing UI for these before the next HR wave.'
+  recent_commits:
+  - '6136fac7 feat: close 4 real HR gaps -- expense reimbursement, employee loans,
+    KRA/360 appraisal, shift roster'
+  - 'b17290f6 chore: register ACTIVE-CLAIMS entry for HR gap-closure task (expense/loan/appraisal/shift)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 2, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+- at: '2026-07-27T12:28:21.504424+00:00'
+  status: awaiting_human_approval
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '6136fac7 feat: close 4 real HR gaps -- expense reimbursement, employee loans,
+    KRA/360 appraisal, shift roster'
+  - 'b17290f6 chore: register ACTIVE-CLAIMS entry for HR gap-closure task (expense/loan/appraisal/shift)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  note: 'tier2, Superboss-approved, held for human merge: https://github.com/FChecklist/compliance-tracker/pull/593'
+execution_seconds: 5596
+restart_count: 1
+token_usage:
+  input_tokens: 278
+  cache_creation_input_tokens: 222824
+  cache_read_input_tokens: 22304001
+  output_tokens: 93035
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 222824
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 686
+    cache_read_input_tokens: 245037
+    cache_creation_input_tokens: 1471
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1471
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:25.852837+00:00'

@@ -1,0 +1,30 @@
+## OBJECTIVE
+Evaluate the two real, now-filed Security-domain ChatGPT-manual-bridge audits (AUDIT-000009 from ChatGPT, AUDIT-000010 from Z.AI, both at /opt/veridian/chatgpt-audit/Security/) against each other and against the real source files they analysed, then produce a single unified, real implementation plan closing every confirmed finding. Owner directive, given directly in chat 2026-07-25: "EVALUATE AUDIT BY BOTH CHATGPT AND Z.AI. MAKE IMPLEMENTATION PLAN. ALL DOCUMENTATION TO BE SAVED."
+
+## SCOPE
+1. Read both real audit records in full (AUDIT-000009, AUDIT-000010) plus the 6 real source files they analysed (drizzle/0007_wave9_unified_api_key_auth.sql, drizzle/0126_wave143_visual_design_authoring.sql, src/app/api/auth/failure-event/route.ts, src/app/api/auth/passcode-login/route.ts, src/app/api/auth/sso/[orgSlug]/acs/route.ts, src/app/api/auth/sso/[orgSlug]/login/route.ts in compliance-tracker) to confirm each finding against the real current code, not just the audit text.
+2. Cross-reference: identify findings both audits agree on (higher confidence), findings only one audit raised (verify independently against real code before accepting), and any findings that are stale/already-fixed or factually wrong (verify, do not assume either audit is correct by default).
+3. Write ai-os/SECURITY_AUDIT_EVALUATION_2026-07-25.yaml: the real cross-reference -- every confirmed finding, which audit(s) raised it, your own independent verification verdict (confirmed/refuted/already-fixed) against the real current code, and a severity ranking.
+4. Write ai-os/SECURITY_AUDIT_IMPLEMENTATION_PLAN_2026-07-25.yaml: a real phased plan (phases: list, each with id/name/depends_on/description -- same structure auto_phase_continuation.py already consumes for other initiatives) that closes every confirmed finding with real code, e.g.: shared src/lib/utils/request-ip.ts + src/lib/supabase/admin-client.ts to remove the duplicated IP-extraction and Supabase-admin-client logic; a new drizzle migration adding the missing FK constraints on interior_floor_plan_rooms material columns, a polygon-validity CHECK constraint, and updated_at columns; input validation (length/format) on the email parameter across all 3 public auth POST routes; request body size limits and basic rate-limiting on failure-event; structured distinct error codes replacing the generic passcode-login 500 responses; audit logging for SSO login-initiation attempts; security response headers. Phase 0 of this plan is this evaluation task itself (mark it done, citing this task's own real output).
+5. Register both new files in knowledge_engine (superboss-register.py register-knowledge) and in MASTER_INDEX.yaml (registries.security_audit_implementation_plan, live file at /opt/veridian/ai-os/MASTER_INDEX.yaml -- remember registries: is a YAML LIST of dicts with an id field, not a mapping).
+
+## KNOWN_CONTEXT
+- AUDIT-000009 (ChatGPT) and AUDIT-000010 (Z.AI) are both real, already filed at /opt/veridian/chatgpt-audit/Security/ -- read them directly, do not regenerate.
+- This is the first real ChatGPT-manual-bridge + Z.AI dual-audit round-trip completed this session; the workspace/schema/guard infrastructure (scripts/chatgpt_audit_guard.py, CHATGPT_AUDIT_RECORD_SCHEMA_2026-07-24.yaml) already exists and is merged.
+- Standing rules: no fabricated findings -- every item in the evaluation and plan must trace to a real line/file; auto_phase_continuation.py (cron-scheduled every 30 min) will pick up this plan's later phases automatically once merged, provided the phases: list structure matches its existing convention exactly.
+- Owner's standing directive across this whole session: 100% real implementation, don't stop until complete, Owner rights delegated, recommended options accepted by default, zero real customers currently (so no live-user risk blocks any of these fixes).
+
+## SUCCESS_CRITERIA
+- `test -f ai-os/SECURITY_AUDIT_EVALUATION_2026-07-25.yaml` exits 0.
+- `test -f ai-os/SECURITY_AUDIT_IMPLEMENTATION_PLAN_2026-07-25.yaml` exits 0 and contains a real `phases:` list with at least 5 phases beyond phase 0.
+- `python3 -c "import yaml; d=yaml.safe_load(open('ai-os/SECURITY_AUDIT_IMPLEMENTATION_PLAN_2026-07-25.yaml')); assert isinstance(d['phases'], list) and len(d['phases'])>=6"` exits 0.
+- `grep -c security_audit_implementation_plan ai-os/MASTER_INDEX.yaml` returns 1 or more (real registry entry exists).
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on claude-control) containing both new YAML files, the real MASTER_INDEX.yaml registry entry, the real knowledge_engine registration, and a final checkpoint listing every confirmed finding and its assigned implementation phase.
+
+## CONSTRAINTS
+This task produces the evaluation and the plan only -- do not implement the actual code fixes (shared utils, migration, validation, etc.) in this task; those are the plan's own later phases, to be dispatched separately by auto-continuation.
+
+## COMPLEXITY_TIER
+judgment

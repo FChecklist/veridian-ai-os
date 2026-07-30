@@ -1,0 +1,86 @@
+task_id: task-20260728-061556-sap-reports-prospect
+phase: phase_0_parallel_deduplication_check
+generated: 2026-07-28T06:20:00Z
+method: >-
+  Queried umr_tasks in superboss-register.sqlite for overlapping task_identity;
+  grepped compliance-tracker's real src/app/api/reports*, src/app/api/erp/reports*,
+  and drizzle/*report_definitions*.sql for the 4 report categories and 5 target
+  reports named in the task spec, to distinguish "catalog entry exists" from
+  "real calculation logic exists" before writing anything new.
+
+umr_overlap_found:
+  - task_identity: reporting_module_end_user
+    status: running
+    note: >-
+      Active, overlapping task. Its own scope (per prior session memory,
+      veridian_priority11_reports_engine_complete.md) already shipped a
+      taxonomy + dispatcher + 200 report_definitions catalog rows. Per the
+      ZERO_DUPLICATION constraint, this task's Phase 2 work must extend that
+      existing dispatcher/catalog, never create a parallel one.
+  - task_identity: sap_architecture_understanding_and_veridian_completion
+    status: not found as a distinct UMR row (Owner narrowed this to the
+      PROJEXA-prospect-focused backlog earlier in this session; see
+      PROSPECT_GAP_BACKLOG_2026-07-28.md). Treating that backlog + this SAP
+      reports task as the same effort track, not two.
+  - task_identity: target_saas_reverse_engineering_and_veridian_integration (Infisuite)
+    status: completed this session (manual UX study only, no build items
+      generated -- concluded no new insight beyond VERIDIAN's own existing
+      Sales Pipeline CRM dashboard). No overlap risk.
+
+real_existing_coverage_by_target_report:
+  finance:
+    balance_sheet: "REAL, implemented -- src/app/api/erp/reports/balance-sheet/route.ts"
+    profit_and_loss: "REAL, implemented -- src/app/api/erp/reports/profit-and-loss/route.ts"
+    trial_balance: "REAL, implemented -- src/app/api/erp/reports/trial-balance/route.ts"
+    cash_flow_actual: "REAL, implemented -- src/app/api/erp/reports/cash-flow/route.ts (historical/actual, not forecast)"
+    cash_flow_forecast: >-
+      CATALOG STUB ONLY. "Cash Flow Forecast Analysis" and "Cash Required
+      Next 30 Days" exist as named rows in
+      drizzle/0181_project_construction_report_definitions.sql, but no
+      handler implementing direct/indirect derivation logic was found under
+      src/lib/reports/ or src/app/api/. Real gap.
+    accounts_receivable_aging: >-
+      NOT FOUND anywhere -- no catalog row, no route, no 30/60/90 bucketing
+      logic. Genuine gap, zero duplication risk.
+  project_management:
+    wbs_earned_value: >-
+      CATALOG STUB ONLY. "Earned Value Analysis" and "Cost Performance Index
+      (CPI)" exist as named rows in
+      drizzle/0181_project_construction_report_definitions.sql. grep for
+      earned-value/CPI handler code under src/lib/reports/ and
+      src/app/api/erp+construction/reports/ found nothing -- the EV=PV math
+      is not implemented. Real gap, but the catalog entry point already
+      exists -- Phase 2 must attach logic to the EXISTING definition row
+      id, not insert a duplicate.
+    resource_utilization: not checked in this pass -- defer to Phase 1/2.
+  sales_crm:
+    sap_style_sales_pipeline_probability_report: >-
+      NOT FOUND in drizzle/0183_sales_report_definitions.sql (catalog has
+      Lead Conversion Analysis, Lead Register, Daily Sales Activity, etc.,
+      but no probability-of-closing-by-stage-duration report). Genuine gap.
+      MUST NOT be confused with the already-shipped, already-merged
+      compliance-tracker PR #610 CRM "Sales Pipeline" dashboard
+      (src/app/(app)/crm/sales-pipeline/page.tsx) -- that is a kanban-style
+      lead-stage visualization, a different feature from the SAP report's
+      probability math. Any new UI must use a visibly distinct name to
+      avoid prospect-facing confusion between the two "Sales Pipeline"
+      surfaces.
+    lead_source_effectiveness: not found. Real gap.
+  inventory:
+    stock_aging: not found. Real gap.
+    inventory_turnover: not found. Real gap.
+    material_shortage_analysis: not checked in this pass -- defer to Phase 1/2.
+
+conclusion_for_phase_1_and_2:
+  do_not_rebuild:
+    - Balance Sheet, P&L, Trial Balance, actual Cash Flow (already real, reuse as-is)
+    - The 200-row report_definitions catalog + its dispatcher (extend, never parallel)
+    - The CRM Sales Pipeline kanban dashboard (PR #610) -- unrelated feature, leave untouched
+  attach_real_logic_to_existing_stub_rows:
+    - Cash Flow Forecast Analysis / Cash Required Next 30 Days (existing definition_id in 0181)
+    - Earned Value Analysis / Cost Performance Index (existing definition_id in 0181)
+  build_from_scratch_no_duplication_risk:
+    - AR Aging (30/60/90 bucketing)
+    - SAP-style Sales Pipeline probability-of-closing report (distinct name from PR #610's dashboard)
+    - Lead Source Effectiveness
+    - Stock Aging / Inventory Turnover

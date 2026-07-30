@@ -1,0 +1,892 @@
+id: task-20260720-035002-superboss-v2-plan--surface-loop-derived
+title: 'SUPERBOSS_V2_PLAN: Surface loop-derived insights conversationally'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260720-035002-superboss-v2-plan--surface-loop-derived
+workspace: /opt/veridian/ai-os/tasks/task-20260720-035002-superboss-v2-plan--surface-loop-derived/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260720-035002-superboss-v2-plan--surface-loop-derived
+service: veridian-worker@task-20260720-035002-superboss-v2-plan--surface-loop-derived.service
+created_at: '2026-07-20T03:50:03.895288+00:00'
+last_checkpoint_at: '2026-07-20T11:24:30.321545+00:00'
+completed_steps: &id002
+- "Register claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (checked active list for collisions\
+  \ on the loop/insight-to-notification surface \u2014 none found)"
+- Read the loop/insight service + existing notification channels (`notifications`
+  table, `notificationTypeEnum`, `task-nudge-digest-service.ts` precedent for per-user
+  fan-out + `metadata.kind` discriminator)
+- "Build `src/lib/loop-insight-notifier.ts` \u2014 pure renderer (`summarizeLoopInsight`),\
+  \ audience decision (`audienceKindForTarget`), recipient resolution (`resolveInsightRecipients`),\
+  \ fan-out emitter (`notifyLoopInsight`). Reuses existing `notifications` channel\
+  \ (type `system`, `metadata.kind: \"loop_insight`) \u2014 no schema/enum migration\
+  \ (Tier1, additive)"
+- "Wire the hook into the single chokepoint `proposeLoopImprovement()` in `src/lib/loop-improvement-proposer.ts`\
+  \ \u2014 fire-and-forget, never blocks the proposal capture that just succeeded"
+- "Add `src/lib/loop-insight-notifier.test.ts` \u2014 20 tests covering the pure renderer\
+  \ + audience-decision logic (mirrors `byo-model-audit.test.ts` / `task-nudge-digest-service.test.ts`\
+  \ pure-vs-DB split; DB fan-out wrappers have no correctness logic of their own)"
+- "`bunx tsc --noEmit` \u2014 clean (0 errors)"
+- "`bun test src/lib/loop-insight-notifier.test.ts` \u2014 20 pass / 0 fail"
+- "`bun run lint` \u2014 0 errors (3 pre-existing warnings, none in new files)"
+- 'Fix lint: drop triple-slash `/// <reference types="bun:test" />` in test (matches
+  the dominant `import { ... } from "bun:test"` convention used by `abac.test.ts`
+  et al.)'
+remaining_steps: &id003
+- Commit + push incrementally
+- Open PR; let CI run all required checks green
+- "Tier1 (additive, no schema/auth/RLS/payment/.env changes) \u2192 merge autonomously\
+  \ once CI genuinely green on all required checks"
+- "Row re-score: CSV row #18 (`Suggests Process Improvements conversationally`) is\
+  \ closed by this PR; the CSV lives in `claude-control/` (separate, re-scored externally\
+  \ like V2-6 precedent) \u2014 PR body + COMPLETED.yaml entry (on merge) provide\
+  \ the auditable evidence for the re-score"
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-20T03:50:04.919319+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  note: worker started (resume=0, lifetime invocation 1/20)
+- at: '2026-07-20T03:55:05.485954+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  note: periodic checkpoint
+- at: '2026-07-20T04:00:05.846431+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  note: periodic checkpoint
+- at: '2026-07-20T04:05:06.195669+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  note: periodic checkpoint
+- at: '2026-07-20T04:10:06.577041+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  note: periodic checkpoint
+- at: '2026-07-20T04:15:06.966253+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - src/lib/loop-improvement-proposer.ts
+  - src/lib/loop-insight-notifier.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  note: periodic checkpoint
+- at: '2026-07-20T04:18:02.943556+00:00'
+  status: failed
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - src/lib/loop-improvement-proposer.ts
+  - src/lib/loop-insight-notifier.test.ts
+  - src/lib/loop-insight-notifier.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T04:18:33.697402+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - src/lib/loop-improvement-proposer.ts
+  - src/lib/loop-insight-notifier.test.ts
+  - src/lib/loop-insight-notifier.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  note: worker started (resume=1, lifetime invocation 2/20)
+- at: '2026-07-20T04:23:34.044799+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - src/lib/loop-improvement-proposer.ts
+  - src/lib/loop-insight-notifier.test.ts
+  - src/lib/loop-insight-notifier.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  note: periodic checkpoint
+- at: '2026-07-20T04:28:34.415912+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Register claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (checked active list for collisions\
+    \ on the loop/insight-to-notification surface \u2014 none found)"
+  - Read the loop/insight service + existing notification channels (`notifications`
+    table, `notificationTypeEnum`, `task-nudge-digest-service.ts` precedent for per-user
+    fan-out + `metadata.kind` discriminator)
+  - "Build `src/lib/loop-insight-notifier.ts` \u2014 pure renderer (`summarizeLoopInsight`),\
+    \ audience decision (`audienceKindForTarget`), recipient resolution (`resolveInsightRecipients`),\
+    \ fan-out emitter (`notifyLoopInsight`). Reuses existing `notifications` channel\
+    \ (type `system`, `metadata.kind: \"loop_insight`) \u2014 no schema/enum migration\
+    \ (Tier1, additive)"
+  - "Wire the hook into the single chokepoint `proposeLoopImprovement()` in `src/lib/loop-improvement-proposer.ts`\
+    \ \u2014 fire-and-forget, never blocks the proposal capture that just succeeded"
+  - "Add `src/lib/loop-insight-notifier.test.ts` \u2014 20 tests covering the pure\
+    \ renderer + audience-decision logic (mirrors `byo-model-audit.test.ts` / `task-nudge-digest-service.test.ts`\
+    \ pure-vs-DB split; DB fan-out wrappers have no correctness logic of their own)"
+  - "`bunx tsc --noEmit` \u2014 clean (0 errors)"
+  - "`bun test src/lib/loop-insight-notifier.test.ts` \u2014 20 pass / 0 fail"
+  - "`bun run lint` \u2014 0 errors (3 pre-existing warnings, none in new files)"
+  - 'Fix lint: drop triple-slash `/// <reference types="bun:test" />` in test (matches
+    the dominant `import { ... } from "bun:test"` convention used by `abac.test.ts`
+    et al.)'
+  remaining_steps:
+  - Commit + push incrementally
+  - Open PR; let CI run all required checks green
+  - "Tier1 (additive, no schema/auth/RLS/payment/.env changes) \u2192 merge autonomously\
+    \ once CI genuinely green on all required checks"
+  - "Row re-score: CSV row #18 (`Suggests Process Improvements conversationally`)\
+    \ is closed by this PR; the CSV lives in `claude-control/` (separate, re-scored\
+    \ externally like V2-6 precedent) \u2014 PR body + COMPLETED.yaml entry (on merge)\
+    \ provide the auditable evidence for the re-score"
+  recent_commits:
+  - 'a44b9ee3 V2-9: surface loop-derived insights to affected users via existing notifications'
+  - e3ded175 Register V2-9 (loop-insights-notify) claim in ACTIVE-CLAIMS + seed PROGRESS.md
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  note: periodic checkpoint
+- at: '2026-07-20T04:29:51.901750+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - "Register claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (checked active list for collisions\
+    \ on the loop/insight-to-notification surface \u2014 none found)"
+  - Read the loop/insight service + existing notification channels (`notifications`
+    table, `notificationTypeEnum`, `task-nudge-digest-service.ts` precedent for per-user
+    fan-out + `metadata.kind` discriminator)
+  - "Build `src/lib/loop-insight-notifier.ts` \u2014 pure renderer (`summarizeLoopInsight`),\
+    \ audience decision (`audienceKindForTarget`), recipient resolution (`resolveInsightRecipients`),\
+    \ fan-out emitter (`notifyLoopInsight`). Reuses existing `notifications` channel\
+    \ (type `system`, `metadata.kind: \"loop_insight`) \u2014 no schema/enum migration\
+    \ (Tier1, additive)"
+  - "Wire the hook into the single chokepoint `proposeLoopImprovement()` in `src/lib/loop-improvement-proposer.ts`\
+    \ \u2014 fire-and-forget, never blocks the proposal capture that just succeeded"
+  - "Add `src/lib/loop-insight-notifier.test.ts` \u2014 20 tests covering the pure\
+    \ renderer + audience-decision logic (mirrors `byo-model-audit.test.ts` / `task-nudge-digest-service.test.ts`\
+    \ pure-vs-DB split; DB fan-out wrappers have no correctness logic of their own)"
+  - "`bunx tsc --noEmit` \u2014 clean (0 errors)"
+  - "`bun test src/lib/loop-insight-notifier.test.ts` \u2014 20 pass / 0 fail"
+  - "`bun run lint` \u2014 0 errors (3 pre-existing warnings, none in new files)"
+  - 'Fix lint: drop triple-slash `/// <reference types="bun:test" />` in test (matches
+    the dominant `import { ... } from "bun:test"` convention used by `abac.test.ts`
+    et al.)'
+  remaining_steps:
+  - Commit + push incrementally
+  - Open PR; let CI run all required checks green
+  - "Tier1 (additive, no schema/auth/RLS/payment/.env changes) \u2192 merge autonomously\
+    \ once CI genuinely green on all required checks"
+  - "Row re-score: CSV row #18 (`Suggests Process Improvements conversationally`)\
+    \ is closed by this PR; the CSV lives in `claude-control/` (separate, re-scored\
+    \ externally like V2-6 precedent) \u2014 PR body + COMPLETED.yaml entry (on merge)\
+    \ provide the auditable evidence for the re-score"
+  recent_commits:
+  - 'a44b9ee3 V2-9: surface loop-derived insights to affected users via existing notifications'
+  - e3ded175 Register V2-9 (loop-insights-notify) claim in ACTIVE-CLAIMS + seed PROGRESS.md
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T04:30:22.495951+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Register claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (checked active list for collisions\
+    \ on the loop/insight-to-notification surface \u2014 none found)"
+  - Read the loop/insight service + existing notification channels (`notifications`
+    table, `notificationTypeEnum`, `task-nudge-digest-service.ts` precedent for per-user
+    fan-out + `metadata.kind` discriminator)
+  - "Build `src/lib/loop-insight-notifier.ts` \u2014 pure renderer (`summarizeLoopInsight`),\
+    \ audience decision (`audienceKindForTarget`), recipient resolution (`resolveInsightRecipients`),\
+    \ fan-out emitter (`notifyLoopInsight`). Reuses existing `notifications` channel\
+    \ (type `system`, `metadata.kind: \"loop_insight`) \u2014 no schema/enum migration\
+    \ (Tier1, additive)"
+  - "Wire the hook into the single chokepoint `proposeLoopImprovement()` in `src/lib/loop-improvement-proposer.ts`\
+    \ \u2014 fire-and-forget, never blocks the proposal capture that just succeeded"
+  - "Add `src/lib/loop-insight-notifier.test.ts` \u2014 20 tests covering the pure\
+    \ renderer + audience-decision logic (mirrors `byo-model-audit.test.ts` / `task-nudge-digest-service.test.ts`\
+    \ pure-vs-DB split; DB fan-out wrappers have no correctness logic of their own)"
+  - "`bunx tsc --noEmit` \u2014 clean (0 errors)"
+  - "`bun test src/lib/loop-insight-notifier.test.ts` \u2014 20 pass / 0 fail"
+  - "`bun run lint` \u2014 0 errors (3 pre-existing warnings, none in new files)"
+  - 'Fix lint: drop triple-slash `/// <reference types="bun:test" />` in test (matches
+    the dominant `import { ... } from "bun:test"` convention used by `abac.test.ts`
+    et al.)'
+  remaining_steps:
+  - Commit + push incrementally
+  - Open PR; let CI run all required checks green
+  - "Tier1 (additive, no schema/auth/RLS/payment/.env changes) \u2192 merge autonomously\
+    \ once CI genuinely green on all required checks"
+  - "Row re-score: CSV row #18 (`Suggests Process Improvements conversationally`)\
+    \ is closed by this PR; the CSV lives in `claude-control/` (separate, re-scored\
+    \ externally like V2-6 precedent) \u2014 PR body + COMPLETED.yaml entry (on merge)\
+    \ provide the auditable evidence for the re-score"
+  recent_commits:
+  - 'a44b9ee3 V2-9: surface loop-derived insights to affected users via existing notifications'
+  - e3ded175 Register V2-9 (loop-insights-notify) claim in ACTIVE-CLAIMS + seed PROGRESS.md
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  note: worker started (resume=1, lifetime invocation 3/20)
+- at: '2026-07-20T04:35:22.989314+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Register claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (checked active list for collisions\
+    \ on the loop/insight-to-notification surface \u2014 none found)"
+  - Read the loop/insight service + existing notification channels (`notifications`
+    table, `notificationTypeEnum`, `task-nudge-digest-service.ts` precedent for per-user
+    fan-out + `metadata.kind` discriminator)
+  - "Build `src/lib/loop-insight-notifier.ts` \u2014 pure renderer (`summarizeLoopInsight`),\
+    \ audience decision (`audienceKindForTarget`), recipient resolution (`resolveInsightRecipients`),\
+    \ fan-out emitter (`notifyLoopInsight`). Reuses existing `notifications` channel\
+    \ (type `system`, `metadata.kind: \"loop_insight`) \u2014 no schema/enum migration\
+    \ (Tier1, additive)"
+  - "Wire the hook into the single chokepoint `proposeLoopImprovement()` in `src/lib/loop-improvement-proposer.ts`\
+    \ \u2014 fire-and-forget, never blocks the proposal capture that just succeeded"
+  - "Add `src/lib/loop-insight-notifier.test.ts` \u2014 20 tests covering the pure\
+    \ renderer + audience-decision logic (mirrors `byo-model-audit.test.ts` / `task-nudge-digest-service.test.ts`\
+    \ pure-vs-DB split; DB fan-out wrappers have no correctness logic of their own)"
+  - "`bunx tsc --noEmit` \u2014 clean (0 errors)"
+  - "`bun test src/lib/loop-insight-notifier.test.ts` \u2014 20 pass / 0 fail"
+  - "`bun run lint` \u2014 0 errors (3 pre-existing warnings, none in new files)"
+  - 'Fix lint: drop triple-slash `/// <reference types="bun:test" />` in test (matches
+    the dominant `import { ... } from "bun:test"` convention used by `abac.test.ts`
+    et al.)'
+  remaining_steps:
+  - Commit + push incrementally
+  - Open PR; let CI run all required checks green
+  - "Tier1 (additive, no schema/auth/RLS/payment/.env changes) \u2192 merge autonomously\
+    \ once CI genuinely green on all required checks"
+  - "Row re-score: CSV row #18 (`Suggests Process Improvements conversationally`)\
+    \ is closed by this PR; the CSV lives in `claude-control/` (separate, re-scored\
+    \ externally like V2-6 precedent) \u2014 PR body + COMPLETED.yaml entry (on merge)\
+    \ provide the auditable evidence for the re-score"
+  recent_commits:
+  - 'db90cfe8 V2-9: surface loop-derived insights to affected users via existing notifications'
+  - 68b1c464 Register V2-9 (loop-insights-notify) claim in ACTIVE-CLAIMS + seed PROGRESS.md
+  - '92150717 V2-7: persistent Vercel staging env + per-env var scoping (design doc
+    + workflow patch handoff) (#495)'
+  - '16fab761 V2-10: Sentry DSN startup check (CSV row #10, C1) (#497)'
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  note: periodic checkpoint
+- at: '2026-07-20T04:40:23.374157+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Register claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (checked active list for collisions\
+    \ on the loop/insight-to-notification surface \u2014 none found)"
+  - Read the loop/insight service + existing notification channels (`notifications`
+    table, `notificationTypeEnum`, `task-nudge-digest-service.ts` precedent for per-user
+    fan-out + `metadata.kind` discriminator)
+  - "Build `src/lib/loop-insight-notifier.ts` \u2014 pure renderer (`summarizeLoopInsight`),\
+    \ audience decision (`audienceKindForTarget`), recipient resolution (`resolveInsightRecipients`),\
+    \ fan-out emitter (`notifyLoopInsight`). Reuses existing `notifications` channel\
+    \ (type `system`, `metadata.kind: \"loop_insight`) \u2014 no schema/enum migration\
+    \ (Tier1, additive)"
+  - "Wire the hook into the single chokepoint `proposeLoopImprovement()` in `src/lib/loop-improvement-proposer.ts`\
+    \ \u2014 fire-and-forget, never blocks the proposal capture that just succeeded"
+  - "Add `src/lib/loop-insight-notifier.test.ts` \u2014 20 tests covering the pure\
+    \ renderer + audience-decision logic (mirrors `byo-model-audit.test.ts` / `task-nudge-digest-service.test.ts`\
+    \ pure-vs-DB split; DB fan-out wrappers have no correctness logic of their own)"
+  - "`bunx tsc --noEmit` \u2014 clean (0 errors)"
+  - "`bun test src/lib/loop-insight-notifier.test.ts` \u2014 20 pass / 0 fail"
+  - "`bun run lint` \u2014 0 errors (3 pre-existing warnings, none in new files)"
+  - 'Fix lint: drop triple-slash `/// <reference types="bun:test" />` in test (matches
+    the dominant `import { ... } from "bun:test"` convention used by `abac.test.ts`
+    et al.)'
+  remaining_steps:
+  - Commit + push incrementally
+  - Open PR; let CI run all required checks green
+  - "Tier1 (additive, no schema/auth/RLS/payment/.env changes) \u2192 merge autonomously\
+    \ once CI genuinely green on all required checks"
+  - "Row re-score: CSV row #18 (`Suggests Process Improvements conversationally`)\
+    \ is closed by this PR; the CSV lives in `claude-control/` (separate, re-scored\
+    \ externally like V2-6 precedent) \u2014 PR body + COMPLETED.yaml entry (on merge)\
+    \ provide the auditable evidence for the re-score"
+  recent_commits:
+  - 'db90cfe8 V2-9: surface loop-derived insights to affected users via existing notifications'
+  - 68b1c464 Register V2-9 (loop-insights-notify) claim in ACTIVE-CLAIMS + seed PROGRESS.md
+  - '92150717 V2-7: persistent Vercel staging env + per-env var scoping (design doc
+    + workflow patch handoff) (#495)'
+  - '16fab761 V2-10: Sentry DSN startup check (CSV row #10, C1) (#497)'
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  note: periodic checkpoint
+- at: '2026-07-20T04:41:48.701952+00:00'
+  status: failed
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - "Register claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (checked active list for collisions\
+    \ on the loop/insight-to-notification surface \u2014 none found)"
+  - Read the loop/insight service + existing notification channels (`notifications`
+    table, `notificationTypeEnum`, `task-nudge-digest-service.ts` precedent for per-user
+    fan-out + `metadata.kind` discriminator)
+  - "Build `src/lib/loop-insight-notifier.ts` \u2014 pure renderer (`summarizeLoopInsight`),\
+    \ audience decision (`audienceKindForTarget`), recipient resolution (`resolveInsightRecipients`),\
+    \ fan-out emitter (`notifyLoopInsight`). Reuses existing `notifications` channel\
+    \ (type `system`, `metadata.kind: \"loop_insight`) \u2014 no schema/enum migration\
+    \ (Tier1, additive)"
+  - "Wire the hook into the single chokepoint `proposeLoopImprovement()` in `src/lib/loop-improvement-proposer.ts`\
+    \ \u2014 fire-and-forget, never blocks the proposal capture that just succeeded"
+  - "Add `src/lib/loop-insight-notifier.test.ts` \u2014 20 tests covering the pure\
+    \ renderer + audience-decision logic (mirrors `byo-model-audit.test.ts` / `task-nudge-digest-service.test.ts`\
+    \ pure-vs-DB split; DB fan-out wrappers have no correctness logic of their own)"
+  - "`bunx tsc --noEmit` \u2014 clean (0 errors)"
+  - "`bun test src/lib/loop-insight-notifier.test.ts` \u2014 20 pass / 0 fail"
+  - "`bun run lint` \u2014 0 errors (3 pre-existing warnings, none in new files)"
+  - 'Fix lint: drop triple-slash `/// <reference types="bun:test" />` in test (matches
+    the dominant `import { ... } from "bun:test"` convention used by `abac.test.ts`
+    et al.)'
+  remaining_steps:
+  - Commit + push incrementally
+  - Open PR; let CI run all required checks green
+  - "Tier1 (additive, no schema/auth/RLS/payment/.env changes) \u2192 merge autonomously\
+    \ once CI genuinely green on all required checks"
+  - "Row re-score: CSV row #18 (`Suggests Process Improvements conversationally`)\
+    \ is closed by this PR; the CSV lives in `claude-control/` (separate, re-scored\
+    \ externally like V2-6 precedent) \u2014 PR body + COMPLETED.yaml entry (on merge)\
+    \ provide the auditable evidence for the re-score"
+  recent_commits:
+  - '6dc7983e Super Boss v2 V2-8: mobile field UX cross-reference to projexa (docs-only,
+    CSV row #1790) (#496)'
+  - '92150717 V2-7: persistent Vercel staging env + per-env var scoping (design doc
+    + workflow patch handoff) (#495)'
+  - '16fab761 V2-10: Sentry DSN startup check (CSV row #10, C1) (#497)'
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T04:42:19.574477+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - "Register claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (checked active list for collisions\
+    \ on the loop/insight-to-notification surface \u2014 none found)"
+  - Read the loop/insight service + existing notification channels (`notifications`
+    table, `notificationTypeEnum`, `task-nudge-digest-service.ts` precedent for per-user
+    fan-out + `metadata.kind` discriminator)
+  - "Build `src/lib/loop-insight-notifier.ts` \u2014 pure renderer (`summarizeLoopInsight`),\
+    \ audience decision (`audienceKindForTarget`), recipient resolution (`resolveInsightRecipients`),\
+    \ fan-out emitter (`notifyLoopInsight`). Reuses existing `notifications` channel\
+    \ (type `system`, `metadata.kind: \"loop_insight`) \u2014 no schema/enum migration\
+    \ (Tier1, additive)"
+  - "Wire the hook into the single chokepoint `proposeLoopImprovement()` in `src/lib/loop-improvement-proposer.ts`\
+    \ \u2014 fire-and-forget, never blocks the proposal capture that just succeeded"
+  - "Add `src/lib/loop-insight-notifier.test.ts` \u2014 20 tests covering the pure\
+    \ renderer + audience-decision logic (mirrors `byo-model-audit.test.ts` / `task-nudge-digest-service.test.ts`\
+    \ pure-vs-DB split; DB fan-out wrappers have no correctness logic of their own)"
+  - "`bunx tsc --noEmit` \u2014 clean (0 errors)"
+  - "`bun test src/lib/loop-insight-notifier.test.ts` \u2014 20 pass / 0 fail"
+  - "`bun run lint` \u2014 0 errors (3 pre-existing warnings, none in new files)"
+  - 'Fix lint: drop triple-slash `/// <reference types="bun:test" />` in test (matches
+    the dominant `import { ... } from "bun:test"` convention used by `abac.test.ts`
+    et al.)'
+  remaining_steps:
+  - Commit + push incrementally
+  - Open PR; let CI run all required checks green
+  - "Tier1 (additive, no schema/auth/RLS/payment/.env changes) \u2192 merge autonomously\
+    \ once CI genuinely green on all required checks"
+  - "Row re-score: CSV row #18 (`Suggests Process Improvements conversationally`)\
+    \ is closed by this PR; the CSV lives in `claude-control/` (separate, re-scored\
+    \ externally like V2-6 precedent) \u2014 PR body + COMPLETED.yaml entry (on merge)\
+    \ provide the auditable evidence for the re-score"
+  recent_commits:
+  - '6dc7983e Super Boss v2 V2-8: mobile field UX cross-reference to projexa (docs-only,
+    CSV row #1790) (#496)'
+  - '92150717 V2-7: persistent Vercel staging env + per-env var scoping (design doc
+    + workflow patch handoff) (#495)'
+  - '16fab761 V2-10: Sentry DSN startup check (CSV row #10, C1) (#497)'
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  note: worker started (resume=1, lifetime invocation 4/20)
+- at: '2026-07-20T04:47:19.945643+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Register claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (checked active list for collisions\
+    \ on the loop/insight-to-notification surface \u2014 none found)"
+  - Read the loop/insight service + existing notification channels (`notifications`
+    table, `notificationTypeEnum`, `task-nudge-digest-service.ts` precedent for per-user
+    fan-out + `metadata.kind` discriminator)
+  - "Build `src/lib/loop-insight-notifier.ts` \u2014 pure renderer (`summarizeLoopInsight`),\
+    \ audience decision (`audienceKindForTarget`), recipient resolution (`resolveInsightRecipients`),\
+    \ fan-out emitter (`notifyLoopInsight`). Reuses existing `notifications` channel\
+    \ (type `system`, `metadata.kind: \"loop_insight`) \u2014 no schema/enum migration\
+    \ (Tier1, additive)"
+  - "Wire the hook into the single chokepoint `proposeLoopImprovement()` in `src/lib/loop-improvement-proposer.ts`\
+    \ \u2014 fire-and-forget, never blocks the proposal capture that just succeeded"
+  - "Add `src/lib/loop-insight-notifier.test.ts` \u2014 20 tests covering the pure\
+    \ renderer + audience-decision logic (mirrors `byo-model-audit.test.ts` / `task-nudge-digest-service.test.ts`\
+    \ pure-vs-DB split; DB fan-out wrappers have no correctness logic of their own)"
+  - "`bunx tsc --noEmit` \u2014 clean (0 errors)"
+  - "`bun test src/lib/loop-insight-notifier.test.ts` \u2014 20 pass / 0 fail"
+  - "`bun run lint` \u2014 0 errors (3 pre-existing warnings, none in new files)"
+  - 'Fix lint: drop triple-slash `/// <reference types="bun:test" />` in test (matches
+    the dominant `import { ... } from "bun:test"` convention used by `abac.test.ts`
+    et al.)'
+  remaining_steps:
+  - Commit + push incrementally
+  - Open PR; let CI run all required checks green
+  - "Tier1 (additive, no schema/auth/RLS/payment/.env changes) \u2192 merge autonomously\
+    \ once CI genuinely green on all required checks"
+  - "Row re-score: CSV row #18 (`Suggests Process Improvements conversationally`)\
+    \ is closed by this PR; the CSV lives in `claude-control/` (separate, re-scored\
+    \ externally like V2-6 precedent) \u2014 PR body + COMPLETED.yaml entry (on merge)\
+    \ provide the auditable evidence for the re-score"
+  recent_commits:
+  - 'eed7b1f1 V2-9: surface loop-derived insights to affected users via existing notifications'
+  - afc796b4 Register V2-9 (loop-insights-notify) claim in ACTIVE-CLAIMS + seed PROGRESS.md
+  - '6dc7983e Super Boss v2 V2-8: mobile field UX cross-reference to projexa (docs-only,
+    CSV row #1790) (#496)'
+  - '92150717 V2-7: persistent Vercel staging env + per-env var scoping (design doc
+    + workflow patch handoff) (#495)'
+  - '16fab761 V2-10: Sentry DSN startup check (CSV row #10, C1) (#497)'
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  note: periodic checkpoint
+- at: '2026-07-20T04:48:05.863749+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - "Register claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (checked active list for collisions\
+    \ on the loop/insight-to-notification surface \u2014 none found)"
+  - Read the loop/insight service + existing notification channels (`notifications`
+    table, `notificationTypeEnum`, `task-nudge-digest-service.ts` precedent for per-user
+    fan-out + `metadata.kind` discriminator)
+  - "Build `src/lib/loop-insight-notifier.ts` \u2014 pure renderer (`summarizeLoopInsight`),\
+    \ audience decision (`audienceKindForTarget`), recipient resolution (`resolveInsightRecipients`),\
+    \ fan-out emitter (`notifyLoopInsight`). Reuses existing `notifications` channel\
+    \ (type `system`, `metadata.kind: \"loop_insight`) \u2014 no schema/enum migration\
+    \ (Tier1, additive)"
+  - "Wire the hook into the single chokepoint `proposeLoopImprovement()` in `src/lib/loop-improvement-proposer.ts`\
+    \ \u2014 fire-and-forget, never blocks the proposal capture that just succeeded"
+  - "Add `src/lib/loop-insight-notifier.test.ts` \u2014 20 tests covering the pure\
+    \ renderer + audience-decision logic (mirrors `byo-model-audit.test.ts` / `task-nudge-digest-service.test.ts`\
+    \ pure-vs-DB split; DB fan-out wrappers have no correctness logic of their own)"
+  - "`bunx tsc --noEmit` \u2014 clean (0 errors)"
+  - "`bun test src/lib/loop-insight-notifier.test.ts` \u2014 20 pass / 0 fail"
+  - "`bun run lint` \u2014 0 errors (3 pre-existing warnings, none in new files)"
+  - 'Fix lint: drop triple-slash `/// <reference types="bun:test" />` in test (matches
+    the dominant `import { ... } from "bun:test"` convention used by `abac.test.ts`
+    et al.)'
+  remaining_steps:
+  - Commit + push incrementally
+  - Open PR; let CI run all required checks green
+  - "Tier1 (additive, no schema/auth/RLS/payment/.env changes) \u2192 merge autonomously\
+    \ once CI genuinely green on all required checks"
+  - "Row re-score: CSV row #18 (`Suggests Process Improvements conversationally`)\
+    \ is closed by this PR; the CSV lives in `claude-control/` (separate, re-scored\
+    \ externally like V2-6 precedent) \u2014 PR body + COMPLETED.yaml entry (on merge)\
+    \ provide the auditable evidence for the re-score"
+  recent_commits:
+  - 'eed7b1f1 V2-9: surface loop-derived insights to affected users via existing notifications'
+  - afc796b4 Register V2-9 (loop-insights-notify) claim in ACTIVE-CLAIMS + seed PROGRESS.md
+  - '6dc7983e Super Boss v2 V2-8: mobile field UX cross-reference to projexa (docs-only,
+    CSV row #1790) (#496)'
+  - '92150717 V2-7: persistent Vercel staging env + per-env var scoping (design doc
+    + workflow patch handoff) (#495)'
+  - '16fab761 V2-10: Sentry DSN startup check (CSV row #10, C1) (#497)'
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T04:48:36.588428+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Register claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (checked active list for collisions\
+    \ on the loop/insight-to-notification surface \u2014 none found)"
+  - Read the loop/insight service + existing notification channels (`notifications`
+    table, `notificationTypeEnum`, `task-nudge-digest-service.ts` precedent for per-user
+    fan-out + `metadata.kind` discriminator)
+  - "Build `src/lib/loop-insight-notifier.ts` \u2014 pure renderer (`summarizeLoopInsight`),\
+    \ audience decision (`audienceKindForTarget`), recipient resolution (`resolveInsightRecipients`),\
+    \ fan-out emitter (`notifyLoopInsight`). Reuses existing `notifications` channel\
+    \ (type `system`, `metadata.kind: \"loop_insight`) \u2014 no schema/enum migration\
+    \ (Tier1, additive)"
+  - "Wire the hook into the single chokepoint `proposeLoopImprovement()` in `src/lib/loop-improvement-proposer.ts`\
+    \ \u2014 fire-and-forget, never blocks the proposal capture that just succeeded"
+  - "Add `src/lib/loop-insight-notifier.test.ts` \u2014 20 tests covering the pure\
+    \ renderer + audience-decision logic (mirrors `byo-model-audit.test.ts` / `task-nudge-digest-service.test.ts`\
+    \ pure-vs-DB split; DB fan-out wrappers have no correctness logic of their own)"
+  - "`bunx tsc --noEmit` \u2014 clean (0 errors)"
+  - "`bun test src/lib/loop-insight-notifier.test.ts` \u2014 20 pass / 0 fail"
+  - "`bun run lint` \u2014 0 errors (3 pre-existing warnings, none in new files)"
+  - 'Fix lint: drop triple-slash `/// <reference types="bun:test" />` in test (matches
+    the dominant `import { ... } from "bun:test"` convention used by `abac.test.ts`
+    et al.)'
+  remaining_steps:
+  - Commit + push incrementally
+  - Open PR; let CI run all required checks green
+  - "Tier1 (additive, no schema/auth/RLS/payment/.env changes) \u2192 merge autonomously\
+    \ once CI genuinely green on all required checks"
+  - "Row re-score: CSV row #18 (`Suggests Process Improvements conversationally`)\
+    \ is closed by this PR; the CSV lives in `claude-control/` (separate, re-scored\
+    \ externally like V2-6 precedent) \u2014 PR body + COMPLETED.yaml entry (on merge)\
+    \ provide the auditable evidence for the re-score"
+  recent_commits:
+  - 'eed7b1f1 V2-9: surface loop-derived insights to affected users via existing notifications'
+  - afc796b4 Register V2-9 (loop-insights-notify) claim in ACTIVE-CLAIMS + seed PROGRESS.md
+  - '6dc7983e Super Boss v2 V2-8: mobile field UX cross-reference to projexa (docs-only,
+    CSV row #1790) (#496)'
+  - '92150717 V2-7: persistent Vercel staging env + per-env var scoping (design doc
+    + workflow patch handoff) (#495)'
+  - '16fab761 V2-10: Sentry DSN startup check (CSV row #10, C1) (#497)'
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  note: worker started (resume=1, lifetime invocation 5/20)
+- at: '2026-07-20T04:48:39.178801+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - "Register claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (checked active list for collisions\
+    \ on the loop/insight-to-notification surface \u2014 none found)"
+  - Read the loop/insight service + existing notification channels (`notifications`
+    table, `notificationTypeEnum`, `task-nudge-digest-service.ts` precedent for per-user
+    fan-out + `metadata.kind` discriminator)
+  - "Build `src/lib/loop-insight-notifier.ts` \u2014 pure renderer (`summarizeLoopInsight`),\
+    \ audience decision (`audienceKindForTarget`), recipient resolution (`resolveInsightRecipients`),\
+    \ fan-out emitter (`notifyLoopInsight`). Reuses existing `notifications` channel\
+    \ (type `system`, `metadata.kind: \"loop_insight`) \u2014 no schema/enum migration\
+    \ (Tier1, additive)"
+  - "Wire the hook into the single chokepoint `proposeLoopImprovement()` in `src/lib/loop-improvement-proposer.ts`\
+    \ \u2014 fire-and-forget, never blocks the proposal capture that just succeeded"
+  - "Add `src/lib/loop-insight-notifier.test.ts` \u2014 20 tests covering the pure\
+    \ renderer + audience-decision logic (mirrors `byo-model-audit.test.ts` / `task-nudge-digest-service.test.ts`\
+    \ pure-vs-DB split; DB fan-out wrappers have no correctness logic of their own)"
+  - "`bunx tsc --noEmit` \u2014 clean (0 errors)"
+  - "`bun test src/lib/loop-insight-notifier.test.ts` \u2014 20 pass / 0 fail"
+  - "`bun run lint` \u2014 0 errors (3 pre-existing warnings, none in new files)"
+  - 'Fix lint: drop triple-slash `/// <reference types="bun:test" />` in test (matches
+    the dominant `import { ... } from "bun:test"` convention used by `abac.test.ts`
+    et al.)'
+  remaining_steps:
+  - Commit + push incrementally
+  - Open PR; let CI run all required checks green
+  - "Tier1 (additive, no schema/auth/RLS/payment/.env changes) \u2192 merge autonomously\
+    \ once CI genuinely green on all required checks"
+  - "Row re-score: CSV row #18 (`Suggests Process Improvements conversationally`)\
+    \ is closed by this PR; the CSV lives in `claude-control/` (separate, re-scored\
+    \ externally like V2-6 precedent) \u2014 PR body + COMPLETED.yaml entry (on merge)\
+    \ provide the auditable evidence for the re-score"
+  recent_commits:
+  - 'eed7b1f1 V2-9: surface loop-derived insights to affected users via existing notifications'
+  - afc796b4 Register V2-9 (loop-insights-notify) claim in ACTIVE-CLAIMS + seed PROGRESS.md
+  - '6dc7983e Super Boss v2 V2-8: mobile field UX cross-reference to projexa (docs-only,
+    CSV row #1790) (#496)'
+  - '92150717 V2-7: persistent Vercel staging env + per-env var scoping (design doc
+    + workflow patch handoff) (#495)'
+  - '16fab761 V2-10: Sentry DSN startup check (CSV row #10, C1) (#497)'
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T11:24:30.321545+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'eed7b1f1 V2-9: surface loop-derived insights to affected users via existing notifications'
+  - afc796b4 Register V2-9 (loop-insights-notify) claim in ACTIVE-CLAIMS + seed PROGRESS.md
+  - '6dc7983e Super Boss v2 V2-8: mobile field UX cross-reference to projexa (docs-only,
+    CSV row #1790) (#496)'
+  - '92150717 V2-7: persistent Vercel staging env + per-env var scoping (design doc
+    + workflow patch handoff) (#495)'
+  - '16fab761 V2-10: Sentry DSN startup check (CSV row #10, C1) (#497)'
+  - 'eac7feee ACTIVE-CLAIMS: move V2-6 (decisions-of-record) to recently_completed
+    (PR #491 merged) (#493)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  note: 'PRE-FLIGHT HARD STOP (openrouter_balance_exhausted): OpenRouter account has
+    $-0.0676 remaining ($40.07 used of $40.00 credits) -- below the $0.1 safety floor.
+    This is the REAL, live account balance, not this proxy''s own internal spend tracker.
+    Add credits at https://openrouter.ai/settings/credits before retrying -- this
+    is a real money problem, not a code bug, and retrying will not help until the
+    balance is restored.'
+execution_seconds: 3390
+restart_count: 4
+token_usage:
+  input_tokens: 0
+  cache_creation_input_tokens: 0
+  cache_read_input_tokens: 0
+  output_tokens: 0
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 0
+    ephemeral_5m_input_tokens: 0
+  inference_geo: ''
+  iterations: []
+  speed: standard
+master_synced_at: '2026-07-20T04:30:05.206561+00:00'

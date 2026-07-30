@@ -1,0 +1,95 @@
+## OBJECTIVE
+Phase 14 of the continuous gap-closing loop. Close item 6 from ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml
+(health monitoring must run every 1 minute). Current PARTIAL evidence (re-verify yourself, do not trust
+blindly): scripts/health-check-15min.py is a real, working health monitor, but it is invoked via crontab
+line `*/15 * * * * ... health-check-15min.py` -- every 15 minutes, not every 1 minute. Prior phases (12, 13)
+treated crontab-line changes as blocked on Owner confirmation (AI_ENGINEERING_POLICY.yaml's
+genuinely_irreversible_actions exception, mechanically enforced since phase 12 by
+check_crontab_unauthorized_change() in preflight-guard.py) and routed similar gaps (items 36/51/54) to
+ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml instead of building them. Before assuming item 6 is blocked
+the same way, investigate whether a DIFFERENT mechanism -- one that does not touch the crontab file at all
+-- can deliver an effective 1-minute check cadence using only a code change to an already-scheduled script
+(the same category of solution phase 13 just used for item 60: no schedule/timing config touched, only
+code inside a script cron already invokes). One candidate worth evaluating: health-check-15min.py could
+run its own check logic in an internal loop (e.g. loop N times with a ~60s sleep between each, for close to
+the remaining span of its own cron interval, then exit normally so cron's next invocation continues the
+cadence) -- this is a real option, not a foregone conclusion; verify it actually satisfies "runs every 1
+minute" in spirit (each individual check executes on a ~1-minute cadence) before committing to it, and
+consider what happens on overlap/long-running checks/process crash mid-loop. If, after real investigation,
+no such code-only mechanism exists and true closure genuinely requires a crontab/schedule change, say so
+honestly and route it to ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml the way items 36/51/54 already do --
+do not force a fake closure.
+
+## SCOPE
+FIRST: run `python3 /opt/veridian/scripts/task-gateway.py submit --text "close governance item 6: 1-minute
+health-check cadence without a crontab schedule change" --source ai_agent --session-id phase14` -- cite the
+actual JSON (duplicate_found/active_collision_task_ids) as your zero-duplication check, same discipline as
+phases 11/12/13.
+
+Re-verify live before building anything:
+1. `crontab -l | grep health-check` -- confirm the current interval is still */15 and nothing has changed
+   since this prompt was written.
+2. `grep -n "def main\|if __name__\|while True\|time.sleep" /opt/veridian/scripts/health-check-15min.py`
+   -- understand the script's current structure (what checks it runs, how main() is organized) before
+   deciding how an internal loop would fit, or whether it would.
+3. `grep -n "def check_crontab_unauthorized_change" -A 40 /opt/veridian/scripts/preflight-guard.py` --
+   confirm item 50's gate only fires on an actual crontab diff, so you understand precisely what counts as
+   "a schedule change" for CONSTRAINTS purposes below (a code change inside the script body that keeps the
+   crontab line itself byte-identical is NOT a crontab change).
+
+If you build the internal-loop approach (or an equivalent code-only mechanism): make the loop's exit
+condition robust (bounded iteration count or elapsed-time check, not an unconditional `while True`), make
+sure a mid-loop crash or overlap with the next cron tick can't pile up duplicate processes (check for an
+existing lock/pidfile pattern already used elsewhere in this codebase -- system-sync.py and queue-
+dispatcher.py are worth checking for precedent), and don't change what each individual check actually
+verifies -- only how often the check loop runs. Write a real test proving the effective cadence: run the
+modified script and show real timestamps roughly 60s apart for consecutive check executions (not a claim,
+actual captured output).
+
+## KNOWN_CONTEXT
+zero_duplication_check_performed: via task-gateway.py submit (see SCOPE step 1)
+prior_finding: Phase 13 (2026-07-23) closed item 60 (automatic documentation generation) by adding a new
+check function inside system-sync.py, an already-scheduled script, with zero crontab changes -- confirmed
+via `diff <(crontab -l) ai-os/CRONTAB_APPROVED_SNAPSHOT.txt` empty both before and after. That is the
+precedent this phase should evaluate for item 6: can the same "code change inside an already-scheduled
+script, zero crontab delta" pattern deliver a 1-minute cadence, or does a 1-minute cadence genuinely require
+a schedule change no code-only trick can substitute for (be honest either way).
+item_6_current_partial_evidence: "crontab -l: */15 * * * * health-check-15min.py. Runs every 15 minutes,
+not every 1 minute (known_confirmed_finding, not re-derived)."
+governance_file_provenance: this branch already contains ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml as
+of Phase 13's commit 901bcae on worker/task-20260723-165232-phase-13--gap-closing-item60-doc-generat --
+check `git log --all --oneline -- '*GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml'` yourself first in case
+another phase landed after Phase 13, and merge/rebase onto whichever branch is actually latest.
+task_gateway_close_defect_history: task-gateway.py close --audit-cmd requires the string to be a VERBATIM
+SUBSTRING of this file's own ## SUCCESS_CRITERIA section AND a real, directly-executable bash -c command --
+phase 10 got this wrong (prose, not a command) and its own close attempt failed (ACT-20260723-162614-43d2).
+Phases 11/12/13 wrote SUCCESS_CRITERIA as a literal command for exactly this reason and all three closes
+succeeded. This phase's SUCCESS_CRITERIA below is written the same way -- copy it verbatim at close time.
+
+## SUCCESS_CRITERIA
+grep -n "sleep\|loop" /opt/veridian/scripts/health-check-15min.py | grep -q .
+
+## EXPECTED_OUTPUT
+UPDATE_FILE: ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml item 6 -> DONE (or honestly left PARTIAL with
+fresh evidence and a routed OWNER_DECISIONS_NEEDED_2026-07-23.yaml entry, if true closure needs a schedule
+change), with the exact commands run and real stdout proving the actual check cadence achieved.
+COMMIT+PUSH: to this phase's own worker branch (claude-control repo).
+CHECKPOINT: `python3 /opt/veridian/scripts/task-gateway.py close --task-id <own-id> --audit-cmd "<copy the
+SUCCESS_CRITERIA line above VERBATIM>" --evidence "<your real grep/test output, or the audit_id of a failed
+attempt>"` -- cite the actual result either way.
+NEXT_PHASE: create AND start Phase 15 with a real named target from the remaining list [1,3,4,15,25,36*,
+45,51*,54*] (* = already fully AI-buildable-portion-done, blocked on the same standing exception -- do not
+re-pick these unless you find NEW evidence the Owner already approved that specific change; 21/24 stay
+excluded, blocked on a different unrelated permission). Re-verify whichever target you pick against
+`git log --all --oneline -- '*GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml'` first.
+
+## CONSTRAINTS
+AI_ENGINEERING_POLICY.yaml's genuinely_irreversible_actions exception reserves persistent/standing
+server-config changes (including crontab schedule lines) for explicit Owner confirmation, mechanically
+enforced by item 50's preflight gate. Do not add, remove, or edit any crontab line as part of this build.
+If genuine closure turns out to require exactly that, defer it to
+ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml the way items 36/51/54 already do, rather than editing the
+crontab yourself.
+
+## COMPLEXITY_TIER
+judgment

@@ -1,0 +1,30 @@
+## OBJECTIVE
+Build PROJEXA's PWA/offline infrastructure and real task-dependency-blocking enforcement, per Owner directive PROJEXA_ERP_END_TO_END_REQUIREMENT_ANALYSIS_GAP_FILL_AND_IMPLEMENTATION. Both confirmed genuinely absent by a Phase 0 investigation on 2026-07-27.
+
+## KNOWN_CONTEXT
+Verified real state as of 2026-07-27, do not re-derive:
+- PWA: confirmed zero infrastructure in PROJEXA -- no `manifest.ts`/`manifest.json`, no service worker, no `next-pwa`/`workbox` anywhere in `projexa/src` or `projexa/public`. Note: `compliance-tracker/src/app/manifest.ts` exists but belongs to a DIFFERENT app (VERIDIAN AI's own VERI Chat share-target feature, WhatsApp/Telegram share-into-chat) -- that is not PROJEXA's manifest and should not be copied/assumed relevant.
+- Offline/IndexedDB: confirmed zero usage anywhere in `projexa/src` (grepped `indexedDB`/`idb-keyval`/`dexie`, zero matches).
+- The Owner's real requirement (from provided image #5, Daily Schedule/Timesheet, and image #6, handwritten task checklist listing "Work Progress Report (date filter, daily qty+picture entry...)") implies field/site workers need to enter progress data (quantities, site photos) while potentially offline (construction sites often have poor connectivity) and have it sync once back online.
+- Dependency blocking: `schedule-service.ts` (Wave 140) computes Gantt/critical-path purely as a READ-TIME projection from `pmsIssueRelations.lagDays` -- it never writes or blocks anything. `pms-issue-service.ts`'s `updateIssue()` (~line 148-180) accepts any `statusId`/`completionPercentage` patch with NO check against `pmsIssueRelations` -- a successor task can be marked done freely regardless of predecessor status today. `addIssueRelation()` just inserts the edge with no validation.
+- A separate, parallel task (this same directive's "hierarchical BoQ" work) touches `construction-boq-service.ts`/schema -- distinct files, no overlap expected, but check `ai-os/boss/ACTIVE-CLAIMS.yaml` for any real collision before starting.
+
+## SCOPE
+1. **PWA infrastructure**: add a real `projexa/src/app/manifest.ts` (Next.js native manifest route, same mechanism compliance-tracker already uses successfully -- read its real manifest.ts for the working pattern, adapt content for PROJEXA's own branding/purpose, do not copy its VERI-Chat-specific `share_target`). Add a real service worker (Next.js has native support via `next-pwa` or a hand-written `public/sw.js` registered in a client component -- your call, justify the choice) providing real offline page-shell caching at minimum.
+2. **Offline progress-entry cache**: a real IndexedDB-backed local cache (a small wrapper, e.g. via `idb-keyval` -- check if it's already a dependency anywhere in the monorepo before adding a new one) that queues work-progress entries (quantity, notes, and photo blobs) created while offline, and syncs them to the real `constructionWorkProgressEntries` API once connectivity returns. A real, visible "queued, will sync" UI state for the user, not silent.
+3. **Real dependency-blocking enforcement**: extend `pms-issue-service.ts`'s `updateIssue()` to check `pmsIssueRelations` before allowing a status transition to a "done"/completed state -- if a predecessor relation exists and that predecessor issue is not itself complete, reject the transition with a real, specific error (not a silent no-op). Also add a real conflict check in `addIssueRelation()` -- reject creating a relation that would immediately violate an already-completed successor's state (a real, if narrow, data-integrity check).
+
+## SUCCESS_CRITERIA
+- A real Playwright/E2E test proving: entering progress data with the network disabled queues it locally; re-enabling network triggers a real sync that lands the data server-side.
+- A real test proving: attempting to mark a successor issue "done" while its predecessor is incomplete is rejected with a specific error; marking it done after the predecessor completes succeeds.
+- `npx tsc --noEmit` clean on both repos touched, `bun test` passing.
+- Lighthouse or an equivalent real check confirms the PWA manifest is valid and installable (a real, runnable check, not just "the file exists").
+
+## EXPECTED_OUTPUT
+Real PRs against PROJEXA (PWA/offline) and compliance-tracker (dependency-blocking enforcement in pms-issue-service.ts), each through their repo's normal dispatch/review pipeline (structured audit-verdict comment required before merge, no direct push to main).
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do NOT touch `construction-boq-service.ts` or the BoQ schema -- that is a separate, parallel task's scope. The dependency-blocking check must not break existing, legitimate workflows where issues have no real dependency relations (the common case) -- only enforce the block when a real `pmsIssueRelations` edge exists and its predecessor is genuinely incomplete.
+
+## COMPLEXITY_TIER
+judgment

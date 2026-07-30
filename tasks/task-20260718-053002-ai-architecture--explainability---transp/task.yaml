@@ -1,0 +1,507 @@
+id: task-20260718-053002-ai-architecture--explainability---transp
+title: 'AI Architecture: Explainability & Transparency'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-053002-ai-architecture--explainability---transp
+workspace: /opt/veridian/ai-os/tasks/task-20260718-053002-ai-architecture--explainability---transp/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-053002-ai-architecture--explainability---transp
+service: veridian-worker@task-20260718-053002-ai-architecture--explainability---transp.service
+created_at: '2026-07-18T05:30:03.341717+00:00'
+last_checkpoint_at: '2026-07-18T06:06:09.579922+00:00'
+completed_steps: &id002
+- Read governance docs (ACTIVE-CLAIMS.yaml, CONSTITUTION.yaml) and registered claim
+- Ground-truthed all 26 findings against current code (report-engine-service.ts,
+- '`src/lib/errors/error-catalog.ts` -- ERROR_CODES lookup table (friendlyMessage
+  +'
+- '`src/lib/explainability/ai-decision-explanation.ts` -- generic `AiDecisionExplanation`'
+- '`src/components/ai/AiDecisionExplanationCard.tsx` -- shared UI component (extracted'
+- '`src/lib/engines/types.ts` -- shared `EngineResult<T>` type (explanation required,'
+- 'crm-service.ts: scoreLead/analyzeOpportunity request + store'
+- 'task-prediction-service.ts: `explainTaskPrediction()` converter, surfaced as an'
+- 'accounting-engine.ts / analytics-engine.ts: additive `verifyBalancesNetToZeroExplained()`'
+- 'report-engine-service.ts: `runAggregationFromConfig()` always returns a generated'
+- 'purpose-bound-ai.ts: `buildUserContextBlock()` + chat-service.ts wired to prepend
+  it to'
+- 'high-impact-action-detector.ts: broadened HIGH_IMPACT_CATEGORY_GUIDANCE from 9
+  to 12'
+- 'orchestra-execution-logger.ts: added optional `routingRationale` column (migration'
+- 'embeddings.ts pattern reused: knowledge-base-service.ts indexes KB pages on'
+- 'Glossary: `business_terminology_glossary` table (migration 0225, seeded with 10
+  real'
+- 'Unit tests: error-catalog, ai-decision-explanation, accounting-engine/analytics-engine'
+- '`bunx tsc --noEmit` clean, `bun run lint` clean (0 errors, 3 pre-existing unrelated'
+- Confirmed `src/lib/services/permission-service.ts` untouched, no overlap with other
+remaining_steps: &id003
+- Move this session's ACTIVE-CLAIMS.yaml entry to `recently_completed:` once this
+  PR
+- 'Not done, documented as deliberately out of scope this pass (see ground-truth notes):'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T05:30:03.952336+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  - 97dd8773 Re-trigger CI after corrected audit comment
+  note: worker started (resume=0)
+- at: '2026-07-18T05:35:04.216652+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '0beaa260 Register ACTIVE-CLAIMS entry: AI Architecture / Explainability & Transparency
+    gap-closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:40:04.340164+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '0beaa260 Register ACTIVE-CLAIMS entry: AI Architecture / Explainability & Transparency
+    gap-closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:45:04.488427+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/api/compliance/[id]/route.ts
+  - src/app/api/compliance/route.ts
+  - src/lib/db/schema.ts
+  - src/lib/services/compliance-service.ts
+  - src/lib/services/crm-service.ts
+  - src/lib/errors/
+  - src/lib/explainability/
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS.yaml, CONSTITUTION.yaml) and registered claim
+  - Ground-truthed all 26 findings against current code (report-engine-service.ts,
+  remaining_steps:
+  - '`src/lib/errors/error-catalog.ts` -- ERROR_CODES lookup table (friendlyMessage
+    +'
+  - '`src/lib/explainability/ai-decision-explanation.ts` -- generic `AiDecisionExplanation`'
+  - '`src/components/ai/AiDecisionExplanationCard.tsx` -- shared UI component (extracted'
+  - '`src/lib/engines/types.ts` -- shared `EngineResult<T>` type (explanation required,'
+  - 'crm-service.ts: scoreLead/analyzeOpportunity request + store'
+  - 'task-prediction-service.ts: `explainTaskPrediction()` converter (tasks case of'
+  - 'accounting-engine.ts / analytics-engine.ts: additive `*Explained()` variants
+    returning'
+  - 'report-engine-service.ts: `runAggregationFromConfig()` always returns a generated'
+  - 'purpose-bound-ai.ts: `buildUserContextBlock()` + chat-service.ts wired to append
+    it to'
+  - 'high-impact-action-detector.ts: broaden HIGH_IMPACT_CATEGORY_GUIDANCE with a
+    few new'
+  - 'orchestra-execution-logger.ts: add optional `routingRationale` field, populated
+    at'
+  - 'embeddings.ts pattern reused: knowledge-base-service.ts indexes KB pages on'
+  - 'Glossary: `business_terminology_glossary` table (migration) + glossary-service.ts
+    +'
+  - Unit tests for new services
+  - '`bunx tsc --noEmit` clean, `bun run lint` clean, `bun test` full suite green'
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed, open PR
+  recent_commits:
+  - '0beaa260 Register ACTIVE-CLAIMS entry: AI Architecture / Explainability & Transparency
+    gap-closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:50:04.590760+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/(app)/crm/page.tsx
+  - src/app/api/compliance/[id]/route.ts
+  - src/app/api/compliance/route.ts
+  - src/app/api/tasks/[id]/prediction/route.ts
+  - src/lib/db/schema.ts
+  - src/lib/engines/accounting-engine.ts
+  - src/lib/engines/analytics-engine.ts
+  - src/lib/services/compliance-service.ts
+  - src/lib/services/crm-service.ts
+  - src/lib/task-execution-engine.ts
+  - drizzle/0225_ai_explainability_gap_closure.sql
+  - src/app/api/crm/leads/[id]/explain/
+  - src/app/api/crm/opportunities/[id]/explain/
+  - src/components/ai/
+  - src/lib/engines/types.ts
+  - src/lib/errors/
+  - src/lib/explainability/
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS.yaml, CONSTITUTION.yaml) and registered claim
+  - Ground-truthed all 26 findings against current code (report-engine-service.ts,
+  remaining_steps:
+  - '`src/lib/errors/error-catalog.ts` -- ERROR_CODES lookup table (friendlyMessage
+    +'
+  - '`src/lib/explainability/ai-decision-explanation.ts` -- generic `AiDecisionExplanation`'
+  - '`src/components/ai/AiDecisionExplanationCard.tsx` -- shared UI component (extracted'
+  - '`src/lib/engines/types.ts` -- shared `EngineResult<T>` type (explanation required,'
+  - 'crm-service.ts: scoreLead/analyzeOpportunity request + store'
+  - 'task-prediction-service.ts: `explainTaskPrediction()` converter (tasks case of'
+  - 'accounting-engine.ts / analytics-engine.ts: additive `*Explained()` variants
+    returning'
+  - 'report-engine-service.ts: `runAggregationFromConfig()` always returns a generated'
+  - 'purpose-bound-ai.ts: `buildUserContextBlock()` + chat-service.ts wired to append
+    it to'
+  - 'high-impact-action-detector.ts: broaden HIGH_IMPACT_CATEGORY_GUIDANCE with a
+    few new'
+  - 'orchestra-execution-logger.ts: add optional `routingRationale` field, populated
+    at'
+  - 'embeddings.ts pattern reused: knowledge-base-service.ts indexes KB pages on'
+  - 'Glossary: `business_terminology_glossary` table (migration) + glossary-service.ts
+    +'
+  - Unit tests for new services
+  - '`bunx tsc --noEmit` clean, `bun run lint` clean, `bun test` full suite green'
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed, open PR
+  recent_commits:
+  - '0beaa260 Register ACTIVE-CLAIMS entry: AI Architecture / Explainability & Transparency
+    gap-closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:55:04.739988+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/(app)/crm/page.tsx
+  - src/app/api/compliance/[id]/route.ts
+  - src/app/api/compliance/route.ts
+  - src/app/api/tasks/[id]/prediction/route.ts
+  - src/lib/db/schema.ts
+  - src/lib/engines/accounting-engine.ts
+  - src/lib/engines/analytics-engine.ts
+  - src/lib/high-impact-action-detector.test.ts
+  - src/lib/high-impact-action-detector.ts
+  - src/lib/orchestra-execution-logger.ts
+  - src/lib/purpose-bound-ai.ts
+  - src/lib/services/chat-service.ts
+  - src/lib/services/compliance-service.ts
+  - src/lib/services/crm-service.ts
+  - src/lib/services/report-engine-service.ts
+  - src/lib/services/task-service.ts
+  - src/lib/task-execution-engine.ts
+  - drizzle/0225_ai_explainability_gap_closure.sql
+  - src/app/api/crm/leads/[id]/explain/
+  - src/app/api/crm/opportunities/[id]/explain/
+  - src/components/ai/
+  - src/lib/engines/types.ts
+  - src/lib/errors/
+  - src/lib/explainability/
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS.yaml, CONSTITUTION.yaml) and registered claim
+  - Ground-truthed all 26 findings against current code (report-engine-service.ts,
+  remaining_steps:
+  - '`src/lib/errors/error-catalog.ts` -- ERROR_CODES lookup table (friendlyMessage
+    +'
+  - '`src/lib/explainability/ai-decision-explanation.ts` -- generic `AiDecisionExplanation`'
+  - '`src/components/ai/AiDecisionExplanationCard.tsx` -- shared UI component (extracted'
+  - '`src/lib/engines/types.ts` -- shared `EngineResult<T>` type (explanation required,'
+  - 'crm-service.ts: scoreLead/analyzeOpportunity request + store'
+  - 'task-prediction-service.ts: `explainTaskPrediction()` converter (tasks case of'
+  - 'accounting-engine.ts / analytics-engine.ts: additive `*Explained()` variants
+    returning'
+  - 'report-engine-service.ts: `runAggregationFromConfig()` always returns a generated'
+  - 'purpose-bound-ai.ts: `buildUserContextBlock()` + chat-service.ts wired to append
+    it to'
+  - 'high-impact-action-detector.ts: broaden HIGH_IMPACT_CATEGORY_GUIDANCE with a
+    few new'
+  - 'orchestra-execution-logger.ts: add optional `routingRationale` field, populated
+    at'
+  - 'embeddings.ts pattern reused: knowledge-base-service.ts indexes KB pages on'
+  - 'Glossary: `business_terminology_glossary` table (migration) + glossary-service.ts
+    +'
+  - Unit tests for new services
+  - '`bunx tsc --noEmit` clean, `bun run lint` clean, `bun test` full suite green'
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed, open PR
+  recent_commits:
+  - '0beaa260 Register ACTIVE-CLAIMS entry: AI Architecture / Explainability & Transparency
+    gap-closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T06:00:04.895172+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/(app)/crm/page.tsx
+  - src/app/api/compliance/[id]/route.ts
+  - src/app/api/compliance/route.ts
+  - src/app/api/help/ask/route.ts
+  - src/app/api/tasks/[id]/prediction/route.ts
+  - src/components/HelpWidget.tsx
+  - src/lib/db/schema.ts
+  - src/lib/engines/accounting-engine.ts
+  - src/lib/engines/analytics-engine.ts
+  - src/lib/high-impact-action-detector.test.ts
+  - src/lib/high-impact-action-detector.ts
+  - src/lib/orchestra-execution-logger.ts
+  - src/lib/purpose-bound-ai.ts
+  - src/lib/services/chat-service.ts
+  - src/lib/services/compliance-service.ts
+  - src/lib/services/crm-service.ts
+  - src/lib/services/knowledge-base-service.ts
+  - src/lib/services/orchestra-analytics-service.ts
+  - src/lib/services/report-engine-service.test.ts
+  - src/lib/services/report-engine-service.ts
+  - src/lib/services/task-service.ts
+  - src/lib/task-execution-engine.ts
+  - drizzle/0225_ai_explainability_gap_closure.sql
+  - src/app/api/crm/leads/[id]/explain/
+  - src/app/api/crm/opportunities/[id]/explain/
+  - src/app/api/glossary/
+  - src/app/api/orchestra/executions/
+  - src/components/ai/
+  - src/lib/engines/types.ts
+  - src/lib/errors/
+  - src/lib/explainability/
+  - src/lib/services/glossary-service.ts
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS.yaml, CONSTITUTION.yaml) and registered claim
+  - Ground-truthed all 26 findings against current code (report-engine-service.ts,
+  remaining_steps:
+  - '`src/lib/errors/error-catalog.ts` -- ERROR_CODES lookup table (friendlyMessage
+    +'
+  - '`src/lib/explainability/ai-decision-explanation.ts` -- generic `AiDecisionExplanation`'
+  - '`src/components/ai/AiDecisionExplanationCard.tsx` -- shared UI component (extracted'
+  - '`src/lib/engines/types.ts` -- shared `EngineResult<T>` type (explanation required,'
+  - 'crm-service.ts: scoreLead/analyzeOpportunity request + store'
+  - 'task-prediction-service.ts: `explainTaskPrediction()` converter (tasks case of'
+  - 'accounting-engine.ts / analytics-engine.ts: additive `*Explained()` variants
+    returning'
+  - 'report-engine-service.ts: `runAggregationFromConfig()` always returns a generated'
+  - 'purpose-bound-ai.ts: `buildUserContextBlock()` + chat-service.ts wired to append
+    it to'
+  - 'high-impact-action-detector.ts: broaden HIGH_IMPACT_CATEGORY_GUIDANCE with a
+    few new'
+  - 'orchestra-execution-logger.ts: add optional `routingRationale` field, populated
+    at'
+  - 'embeddings.ts pattern reused: knowledge-base-service.ts indexes KB pages on'
+  - 'Glossary: `business_terminology_glossary` table (migration) + glossary-service.ts
+    +'
+  - Unit tests for new services
+  - '`bunx tsc --noEmit` clean, `bun run lint` clean, `bun test` full suite green'
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed, open PR
+  recent_commits:
+  - '0beaa260 Register ACTIVE-CLAIMS entry: AI Architecture / Explainability & Transparency
+    gap-closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T06:05:05.071072+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - drizzle/0225_ai_explainability_gap_closure.sql
+  - src/app/(app)/crm/page.tsx
+  - src/app/api/compliance/[id]/route.ts
+  - src/app/api/compliance/route.ts
+  - src/app/api/crm/leads/[id]/explain/route.ts
+  - src/app/api/crm/opportunities/[id]/explain/route.ts
+  - src/app/api/glossary/[id]/route.ts
+  - src/app/api/glossary/lookup/route.ts
+  - src/app/api/glossary/route.ts
+  - src/app/api/help/ask/route.ts
+  - src/app/api/orchestra/executions/[id]/route.ts
+  - src/app/api/tasks/[id]/prediction/route.ts
+  - src/components/HelpWidget.tsx
+  - src/components/ai/AiDecisionExplanationCard.tsx
+  - src/components/ai/GlossaryTermTooltip.tsx
+  - src/lib/db/schema.ts
+  - src/lib/engines/accounting-engine.test.ts
+  - src/lib/engines/accounting-engine.ts
+  - src/lib/engines/analytics-engine.test.ts
+  - src/lib/engines/analytics-engine.ts
+  - src/lib/engines/types.ts
+  - src/lib/errors/error-catalog.test.ts
+  - src/lib/errors/error-catalog.ts
+  - src/lib/explainability/ai-decision-explanation.test.ts
+  - src/lib/explainability/ai-decision-explanation.ts
+  - src/lib/high-impact-action-detector.test.ts
+  - src/lib/high-impact-action-detector.ts
+  - src/lib/orchestra-execution-logger.ts
+  - src/lib/purpose-bound-ai.ts
+  - src/lib/services/chat-service.ts
+  - src/lib/services/compliance-service.ts
+  - src/lib/services/crm-service.ts
+  - src/lib/services/glossary-service.ts
+  - src/lib/services/knowledge-base-service.ts
+  - src/lib/services/orchestra-analytics-service.ts
+  - src/lib/services/report-engine-service.test.ts
+  - src/lib/services/report-engine-service.ts
+  - src/lib/services/task-service.ts
+  - src/lib/task-execution-engine.ts
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS.yaml, CONSTITUTION.yaml) and registered claim
+  - Ground-truthed all 26 findings against current code (report-engine-service.ts,
+  - '`src/lib/errors/error-catalog.ts` -- ERROR_CODES lookup table (friendlyMessage
+    +'
+  - '`src/lib/explainability/ai-decision-explanation.ts` -- generic `AiDecisionExplanation`'
+  - '`src/components/ai/AiDecisionExplanationCard.tsx` -- shared UI component (extracted'
+  - '`src/lib/engines/types.ts` -- shared `EngineResult<T>` type (explanation required,'
+  - 'crm-service.ts: scoreLead/analyzeOpportunity request + store'
+  - 'task-prediction-service.ts: `explainTaskPrediction()` converter, surfaced as
+    an'
+  - 'accounting-engine.ts / analytics-engine.ts: additive `verifyBalancesNetToZeroExplained()`'
+  - 'report-engine-service.ts: `runAggregationFromConfig()` always returns a generated'
+  - 'purpose-bound-ai.ts: `buildUserContextBlock()` + chat-service.ts wired to prepend
+    it to'
+  - 'high-impact-action-detector.ts: broadened HIGH_IMPACT_CATEGORY_GUIDANCE from
+    9 to 12'
+  - 'orchestra-execution-logger.ts: added optional `routingRationale` column (migration'
+  - 'embeddings.ts pattern reused: knowledge-base-service.ts indexes KB pages on'
+  - 'Glossary: `business_terminology_glossary` table (migration 0225, seeded with
+    10 real'
+  - 'Unit tests: error-catalog, ai-decision-explanation, accounting-engine/analytics-engine'
+  - '`bunx tsc --noEmit` clean, `bun run lint` clean (0 errors, 3 pre-existing unrelated'
+  - Confirmed `src/lib/services/permission-service.ts` untouched, no overlap with
+    other
+  remaining_steps:
+  - Move this session's ACTIVE-CLAIMS.yaml entry to `recently_completed:` once this
+    PR
+  - 'Not done, documented as deliberately out of scope this pass (see ground-truth
+    notes):'
+  recent_commits:
+  - '0beaa260 Register ACTIVE-CLAIMS entry: AI Architecture / Explainability & Transparency
+    gap-closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T06:06:09.579922+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - bd01c658 Close AI Architecture / Explainability & Transparency gap-analysis findings
+    (26)
+  - '0beaa260 Register ACTIVE-CLAIMS entry: AI Architecture / Explainability & Transparency
+    gap-closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  note: worker finished, no changes to commit
+execution_seconds: 2166
+restart_count: 0
+token_usage:
+  input_tokens: 4640
+  cache_creation_input_tokens: 346035
+  cache_read_input_tokens: 60556888
+  output_tokens: 148113
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 346035
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 467
+    cache_read_input_tokens: 368913
+    cache_creation_input_tokens: 660
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 660
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T06:30:03.253559+00:00'

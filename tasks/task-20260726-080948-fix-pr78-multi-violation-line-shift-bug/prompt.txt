@@ -1,0 +1,23 @@
+## OBJECTIVE
+Fix a real, live-reproduced bug found by AUDIT: REJECT on the current claude-control PR #78 branch (task-20260726-074053-fix-pr78-confirm-merge-ambiguous-failure's own fix, itself a corrective round for the original phase_4 false-self-report incident). The previous round's fix (distinguishing ambiguous gh-failure from definitive not-merged) was itself correct and is not being reverted -- this round fixes a SEPARATE bug the reviewer found by live-reproducing the multi-violation-per-file case.
+
+## KNOWN_CONTEXT
+Read scripts/backfill_phase_self_report.py's audit_and_correct_plan_file() and blame_line() in full first. The real bug, verbatim from the review: when a single plan file has MORE THAN ONE phase falsely self-reporting done, the while-loop in audit_and_correct_plan_file() reverts the first violation (which can delete lines from the on-disk working copy when the parent revision lacks completed_by_task/evidence fields), then re-reads the now-mutated (shorter) file and computes the next violation's status_idx against it -- but blame_line() blames that line number against `git blame HEAD`, where HEAD still reflects the pre-revert (larger, original) file, since the revert hasn't been committed yet at that point in the loop. The line-number mismatch causes git blame to attribute the WRONG commit to the second violation -- in the reviewer's live reproduction this produced a corrupted commit hash (a stray git boundary-commit '^' character concatenated into the hash string), which then failed the parent-lookup step, left the second violation's false self-report un-reverted, and STILL auto-committed+pushed the first (correct) revert plus a misleading "could not auto-revert" incident to master with the corrupted hash baked permanently into the commit message.
+
+## SCOPE
+1. Fix the root cause: either (a) commit each revert individually inside the loop (so HEAD advances and stays in sync with the mutated on-disk file before the next blame_line() call), or (b) recompute/re-derive line numbers against the CURRENT on-disk state rather than blaming against a stale HEAD, or (c) process all violations' blame lookups FIRST (against the original, unmutated HEAD, before any revert happens), then apply all reverts in a single pass using the pre-computed blame results. Pick whichever is simplest and most robust given the existing function structure -- read the existing code first, don't guess at the shape.
+2. Add a regression test reproducing the exact scenario the reviewer used: a single plan file with TWO separate phases both falsely self-reporting done, where the first violation's revert would delete lines. Assert BOTH violations are correctly reverted with correct, non-corrupted commit hashes attributed to each.
+3. Fix the secondary, lower-severity issue also flagged: when audit_and_correct_plan_file() finds a violation it cannot auto-correct (blame/parent-lookup/fabricated-block failure) but changed_any stays False for that file, the incident is currently only visible in this invocation's own stdout/stderr -- ensure such "found but not auto-corrected" incidents are still recorded somewhere persistent (e.g. always call commit_and_push_audit() with an incident-only commit when any such case was found, even if no revert happened) so they don't silently vanish once the process exits.
+
+## SUCCESS_CRITERIA
+- `python3 -m pytest tests/backfill_phase_self_report_test.py -v` exits 0, including the new two-violations-in-one-file regression test.
+- The new test specifically asserts the second violation's recorded commit hash is a real, well-formed hash (not containing a stray '^' or any parent-lookup failure) after the fix.
+
+## EXPECTED_OUTPUT
+Push directly to the existing PR #78 branch in FChecklist/claude-control (find it via `gh pr view 78 --repo FChecklist/claude-control --json headRefName`). Do not open a new PR.
+
+## CONSTRAINTS
+Tier1 classification on paper, but this script auto-commits to master unattended on a cron sweep -- treat correctness with the same rigor as a higher tier. Do not merge yourself; this needs a fresh audit pass given two prior rejects on this same fix.
+
+## COMPLEXITY_TIER
+judgment

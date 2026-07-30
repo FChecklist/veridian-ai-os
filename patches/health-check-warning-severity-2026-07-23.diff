@@ -1,0 +1,48 @@
+--- a/scripts/health-check-15min.py
++++ b/scripts/health-check-15min.py
+@@ -34,6 +34,8 @@
+ STALE_THRESHOLD_MIN = 25  # 15-min cadence + 1 grace period
+ FAILURE_RATE_THRESHOLD = 0.20  # 2026-07-20, constitution-audit gap #3
+ ANOMALY_ESCALATION_STREAK = 3  # consecutive 15-min cycles (45 min) before escalating
++DISK_WARNING_PCT = 75  # governance item 10: distinct WARN tier below the DISK/MEM anomaly threshold (90)
++MEM_WARNING_PCT = 75
+ ENV_FILE = "/opt/veridian/repos/compliance-tracker/.env.local"
+ CREDIT_LEDGER_PATH = "/opt/veridian/ai-os/memory/credit-ledger.sqlite"
+ 
+@@ -578,10 +580,15 @@
+             f"{app_failures['recent_failed_count']} app-layer (orchestra_executions) "
+             f"task(s) failed in the last {app_failures['lookback_minutes']} min"
+         )
++    warnings = []
+     if server.get("disk_pct_used") is not None and server["disk_pct_used"] >= 90:
+         anomalies.append(f"Disk usage at {server['disk_pct_used']}%")
++    elif server.get("disk_pct_used") is not None and server["disk_pct_used"] >= DISK_WARNING_PCT:
++        warnings.append(f"Disk usage at {server['disk_pct_used']}%")
+     if server.get("mem_pct_used") is not None and server["mem_pct_used"] >= 90:
+         anomalies.append(f"Memory usage at {server['mem_pct_used']}%")
++    elif server.get("mem_pct_used") is not None and server["mem_pct_used"] >= MEM_WARNING_PCT:
++        warnings.append(f"Memory usage at {server['mem_pct_used']}%")
+     if claude_signal["exhaustion_signature_hits"]:
+         anomalies.append(f"Possible Claude/API quota exhaustion signature found in {len(claude_signal['exhaustion_signature_hits'])} recent log(s)")
+     if not credit_health.get("reachable") and "note" not in credit_health:
+@@ -622,6 +629,7 @@
+         "network_totals": network_totals,
+         "anomalies": anomalies,
+         "anomaly_streaks": anomaly_streaks,
++        "warnings": warnings,
+     }
+ 
+     with open(JSONL_LOG, "a") as f:
+@@ -631,9 +639,11 @@
+                f"tasks in_progress={tasks.get('in_progress', 0)} completed={tasks.get('completed', 0)} "
+                f"failed={tasks.get('failed', 0)} stalled={len(tasks['stalled'])} | "
+                f"router_reachable={router.get('reachable')} | disk={server.get('disk_pct_used')}% mem={server.get('mem_pct_used')}% | "
+-               f"anomalies={len(anomalies)}")
++               f"anomalies={len(anomalies)} warnings={len(warnings)}")
+     with open(TEXT_LOG, "a") as f:
+         f.write(summary + "\n")
++        for w in warnings:
++            f.write(f"WARN: {w}\n")
+ 
+     if anomalies:
+         with open(ATTENTION_FILE, "a") as f:

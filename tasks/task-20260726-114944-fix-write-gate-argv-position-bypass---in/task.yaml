@@ -1,0 +1,306 @@
+id: task-20260726-114944-fix-write-gate-argv-position-bypass---in
+title: Fix write-gate argv-position bypass + investigate systemd-run impersonation
+  (round 4)
+status: completed
+repo: claude-control
+branch: pr80-fix-local
+workspace: /opt/veridian/ai-os/tasks/task-20260726-114944-fix-write-gate-argv-position-bypass---in/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-114944-fix-write-gate-argv-position-bypass---in
+service: veridian-worker@task-20260726-114944-fix-write-gate-argv-position-bypass---in.service
+created_at: '2026-07-26T11:49:45.060387+00:00'
+last_checkpoint_at: '2026-07-26T12:11:23.368501+00:00'
+completed_steps: &id002
+- Read `ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet` in full;
+  confirmed round-3 fixes still hold.
+- 'Reproduced live: `git -C /tmp push origin master`, `git --git-dir=/tmp/.git push
+  origin master`, `gh --repo some/repo pr merge 1 --merge` all bypassed argv[1]-only
+  detection.'
+- Researched real git 2.43 / gh 2.45 global-flag sets from `man git` / `gh <cmd> --help`
+  and confirmed argument forms live (space vs `=`, attached short flags, which forms
+  error out).
+- Rewrote git wrapper detection (`_interactive_guard_git_find_subcommand()`) to scan
+  the full argv and skip real global flags before finding the subcommand.
+- Rewrote gh wrapper detection (`_interactive_guard_gh_strip_globals()`) to skip `-R`/`--repo`
+  (all 4 forms) + `--help`/`--version`.
+- Updated `_interactive_guard_git_push_verdict()` to carry the skipped global-flag
+  prefix through to the `symbolic-ref` current-branch lookup.
+- 'Empirically tested systemd-run impersonation on VERIDIAN-DEV: `systemd-run --user
+  --unit=veridian-worker@<fake>.service --scope ...` is currently rejected by systemd
+  itself (collides with the real installed template units) -- confirmed this is a
+  name collision, not systemd-run being broken (an unrelated unit name succeeds with
+  a real cgroup+INVOCATION_ID).'
+- 'Implemented signal 3 (task cross-reference) regardless, since the collision is
+  deployment-specific/incidental, not fundamental: `_interactive_guard_tasks_dir()`
+  (hardcoded, no override) + cross-reference requiring a real, in_progress `/opt/veridian/ai-os/tasks/<task_id>/task.yaml`.'
+- Manually verified all new logic against real git/gh binaries and simulated forged/real/wrong-status
+  cgroup scenarios.
+- Updated KNOWN LIMITATIONS honestly.
+- Updated `ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml` A15 article to match round
+  4.
+- Extended `tests/interactive_session_guard_test.sh` with ROUND 4 regression scenarios
+  (argv-bypass cases + forged-cgroup-no-matching-task + wrong-status cases), updated
+  fixtures for the new tasks-dir patch point. 65/65 scenarios pass.
+- 'Added `tests/write_gate_test.py` pytest wrapper. `python3 -m pytest tests/ -k write_gate
+  -v` exits 0 (and full `tests/` suite: 12/12 pass).'
+- Ran unrelated shell suites (supervisor_audit_rerun, supervisor_merge_detection,
+  worker_noop_pending_review) to confirm no collateral regression -- all pass.
+- 'Committed (`353fa09`) and pushed to PR #80 branch (`worker/task-20260726-083833-build-interactive-session-write-gate--re`),
+  rebased onto latest remote tip.'
+remaining_steps: &id003
+- 'None from this task''s scope. Per task constraints: do NOT merge; a fresh audit
+  pass should attempt live reproduction of the argv-bypass and systemd-run scenarios,
+  not review the diff alone.'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T11:49:49.252713+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'e34f9b4 Merge pull request #88 from FChecklist/worker/task-20260726-112102-fix-branch-resolution-edge-case--local-a'
+  - 0bd63d1 Prefer upstream tracking branch over local alias in branch resolution
+  - '9d69805 Merge pull request #82 from FChecklist/worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'
+  - 3b9173c Auto-sync 10 server task(s) to master controller
+  - 6496736 Auto-sync 14 server task(s) to master controller
+  - '8458277 Merge pull request #87 from FChecklist/worker/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis'
+  - '7e6cc4b Merge pull request #86 from FChecklist/worker/task-20260726-102517-analyze-update--server-engines-registrie'
+  - 'cdbf6d7 Fix tier1 merge-not-executed bug: empty PR_URL silently fell back to
+    gh''s current-branch resolution, which for-real merged claude-control PR #84 (2026-07-26)
+    via a completely unrelated task''s own approve+tier1 review.'
+  - ab21597 Re-verify 20-engine/10-gateway phase state, register 4 new registries
+    entries
+  - '581e734 Close 4 real AUDIT: REJECT gaps in OWNER_ENGINE-to-TASK_GATEWAY dispatch
+    (PR #82 round 2)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T11:54:50.422614+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'ee36e97 Round 3 (corrected): remove the env-var cgroup-path override the previous
+    round-3 attempt introduced (AUDIT: REJECT, live-reproduced)'
+  - '62fc664 Round 3: fix real cgroup-config-file bypass + two git-push refspec parsing
+    gaps (AUDIT: REJECT, live-reproduced)'
+  - '0118b1e Round 2: close 4 real bypass vectors in the interactive-session write
+    gate'
+  - abceec5 Add real technical guard blocking interactive gh pr merge / git push to
+    master-main
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  note: periodic checkpoint
+- at: '2026-07-26T11:59:51.613002+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'ee36e97 Round 3 (corrected): remove the env-var cgroup-path override the previous
+    round-3 attempt introduced (AUDIT: REJECT, live-reproduced)'
+  - '62fc664 Round 3: fix real cgroup-config-file bypass + two git-push refspec parsing
+    gaps (AUDIT: REJECT, live-reproduced)'
+  - '0118b1e Round 2: close 4 real bypass vectors in the interactive-session write
+    gate'
+  - abceec5 Add real technical guard blocking interactive gh pr merge / git push to
+    master-main
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  note: periodic checkpoint
+- at: '2026-07-26T12:04:52.724139+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml
+  - ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet
+  - tests/interactive_session_guard_test.sh
+  completed_steps:
+  - Read `ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet` in full;
+    confirmed round-3 fixes still hold.
+  - 'Reproduced live: `git -C /tmp push origin master`, `git --git-dir=/tmp/.git push
+    origin master`, `gh --repo some/repo pr merge 1 --merge` all bypassed argv[1]-only
+    detection.'
+  - Researched real git 2.43 / gh 2.45 global-flag sets from `man git` / `gh <cmd>
+    --help` and confirmed argument forms live (space vs `=`, attached short flags,
+    which forms error out).
+  - Rewrote git wrapper detection (`_interactive_guard_git_find_subcommand()`) to
+    scan the full argv and skip real global flags before finding the subcommand.
+  - Rewrote gh wrapper detection (`_interactive_guard_gh_strip_globals()`) to skip
+    `-R`/`--repo` (all 4 forms) + `--help`/`--version`.
+  - Updated `_interactive_guard_git_push_verdict()` to carry the skipped global-flag
+    prefix through to the `symbolic-ref` current-branch lookup.
+  - 'Empirically tested systemd-run impersonation on VERIDIAN-DEV: `systemd-run --user
+    --unit=veridian-worker@<fake>.service --scope ...` is currently rejected by systemd
+    itself (collides with the real installed template units) -- confirmed this is
+    a name collision, not systemd-run being broken (an unrelated unit name succeeds
+    with a real cgroup+INVOCATION_ID).'
+  - 'Implemented signal 3 (task cross-reference) regardless, since the collision is
+    deployment-specific/incidental, not fundamental: `_interactive_guard_tasks_dir()`
+    (hardcoded, no override) + cross-reference requiring a real, in_progress `/opt/veridian/ai-os/tasks/<task_id>/task.yaml`.'
+  - Manually verified all new logic against real git/gh binaries and simulated forged/real/wrong-status
+    cgroup scenarios.
+  - Updated KNOWN LIMITATIONS honestly.
+  - Updated `ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml` A15 article to match round
+    4.
+  remaining_steps:
+  - Extend `tests/interactive_session_guard_test.sh` with ROUND 4 regression scenarios
+    (argv-bypass cases + forged-cgroup-no-matching-task case), update fixtures for
+    the new tasks-dir patch point.
+  - Add a pytest wrapper (`tests/write_gate_test.py` or similar) so `python3 -m pytest
+    tests/ -k write_gate -v` runs the suite.
+  - Run full suite, confirm all pass.
+  - 'Commit and push to PR #80 branch (`worker/task-20260726-083833-build-interactive-session-write-gate--re`).'
+  recent_commits:
+  - 'ee36e97 Round 3 (corrected): remove the env-var cgroup-path override the previous
+    round-3 attempt introduced (AUDIT: REJECT, live-reproduced)'
+  - '62fc664 Round 3: fix real cgroup-config-file bypass + two git-push refspec parsing
+    gaps (AUDIT: REJECT, live-reproduced)'
+  - '0118b1e Round 2: close 4 real bypass vectors in the interactive-session write
+    gate'
+  - abceec5 Add real technical guard blocking interactive gh pr merge / git push to
+    master-main
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  note: periodic checkpoint
+- at: '2026-07-26T12:08:23.084119+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet` in full;
+    confirmed round-3 fixes still hold.
+  - 'Reproduced live: `git -C /tmp push origin master`, `git --git-dir=/tmp/.git push
+    origin master`, `gh --repo some/repo pr merge 1 --merge` all bypassed argv[1]-only
+    detection.'
+  - Researched real git 2.43 / gh 2.45 global-flag sets from `man git` / `gh <cmd>
+    --help` and confirmed argument forms live (space vs `=`, attached short flags,
+    which forms error out).
+  - Rewrote git wrapper detection (`_interactive_guard_git_find_subcommand()`) to
+    scan the full argv and skip real global flags before finding the subcommand.
+  - Rewrote gh wrapper detection (`_interactive_guard_gh_strip_globals()`) to skip
+    `-R`/`--repo` (all 4 forms) + `--help`/`--version`.
+  - Updated `_interactive_guard_git_push_verdict()` to carry the skipped global-flag
+    prefix through to the `symbolic-ref` current-branch lookup.
+  - 'Empirically tested systemd-run impersonation on VERIDIAN-DEV: `systemd-run --user
+    --unit=veridian-worker@<fake>.service --scope ...` is currently rejected by systemd
+    itself (collides with the real installed template units) -- confirmed this is
+    a name collision, not systemd-run being broken (an unrelated unit name succeeds
+    with a real cgroup+INVOCATION_ID).'
+  - 'Implemented signal 3 (task cross-reference) regardless, since the collision is
+    deployment-specific/incidental, not fundamental: `_interactive_guard_tasks_dir()`
+    (hardcoded, no override) + cross-reference requiring a real, in_progress `/opt/veridian/ai-os/tasks/<task_id>/task.yaml`.'
+  - Manually verified all new logic against real git/gh binaries and simulated forged/real/wrong-status
+    cgroup scenarios.
+  - Updated KNOWN LIMITATIONS honestly.
+  - Updated `ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml` A15 article to match round
+    4.
+  - Extended `tests/interactive_session_guard_test.sh` with ROUND 4 regression scenarios
+    (argv-bypass cases + forged-cgroup-no-matching-task + wrong-status cases), updated
+    fixtures for the new tasks-dir patch point. 65/65 scenarios pass.
+  - 'Added `tests/write_gate_test.py` pytest wrapper. `python3 -m pytest tests/ -k
+    write_gate -v` exits 0 (and full `tests/` suite: 12/12 pass).'
+  - Ran unrelated shell suites (supervisor_audit_rerun, supervisor_merge_detection,
+    worker_noop_pending_review) to confirm no collateral regression -- all pass.
+  - 'Committed (`353fa09`) and pushed to PR #80 branch (`worker/task-20260726-083833-build-interactive-session-write-gate--re`),
+    rebased onto latest remote tip.'
+  remaining_steps:
+  - 'None from this task''s scope. Per task constraints: do NOT merge; a fresh audit
+    pass should attempt live reproduction of the argv-bypass and systemd-run scenarios,
+    not review the diff alone.'
+  recent_commits:
+  - '353fa09 Round 4: fix real argv-position detection bypass + add task-registry
+    cross-reference (AUDIT: REJECT, live-reproduced)'
+  - 481e4f0 Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'e34f9b4 Merge pull request #88 from FChecklist/worker/task-20260726-112102-fix-branch-resolution-edge-case--local-a'
+  - 0bd63d1 Prefer upstream tracking branch over local alias in branch resolution
+  - '9d69805 Merge pull request #82 from FChecklist/worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'
+  - 'ee36e97 Round 3 (corrected): remove the env-var cgroup-path override the previous
+    round-3 attempt introduced (AUDIT: REJECT, live-reproduced)'
+  - 3b9173c Auto-sync 10 server task(s) to master controller
+  - 6496736 Auto-sync 14 server task(s) to master controller
+  - '8458277 Merge pull request #87 from FChecklist/worker/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis'
+  - '7e6cc4b Merge pull request #86 from FChecklist/worker/task-20260726-102517-analyze-update--server-engines-registrie'
+  note: quality gates passed, pushed branch worker/task-20260726-114944-fix-write-gate-argv-position-bypass---in,
+    awaiting review
+- at: '2026-07-26T12:11:23.368501+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '353fa09 Round 4: fix real argv-position detection bypass + add task-registry
+    cross-reference (AUDIT: REJECT, live-reproduced)'
+  - 481e4f0 Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'e34f9b4 Merge pull request #88 from FChecklist/worker/task-20260726-112102-fix-branch-resolution-edge-case--local-a'
+  - 0bd63d1 Prefer upstream tracking branch over local alias in branch resolution
+  - '9d69805 Merge pull request #82 from FChecklist/worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'
+  - 'ee36e97 Round 3 (corrected): remove the env-var cgroup-path override the previous
+    round-3 attempt introduced (AUDIT: REJECT, live-reproduced)'
+  - 3b9173c Auto-sync 10 server task(s) to master controller
+  - 6496736 Auto-sync 14 server task(s) to master controller
+  - '8458277 Merge pull request #87 from FChecklist/worker/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis'
+  - '7e6cc4b Merge pull request #86 from FChecklist/worker/task-20260726-102517-analyze-update--server-engines-registrie'
+  note: "supervisor could not resolve a real PR for branch 'pr80-fix-local' (gh pr\
+    \ create failed, no existing open PR found for it) \u2014 refusing to proceed\
+    \ rather than risk operating on an unrelated PR via gh's empty-argument fallback.\
+    \ See supervisor.log."
+execution_seconds: 1112
+restart_count: 0
+token_usage:
+  input_tokens: 204
+  cache_creation_input_tokens: 182115
+  cache_read_input_tokens: 13011932
+  output_tokens: 85618
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 182115
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 757
+    cache_read_input_tokens: 205177
+    cache_creation_input_tokens: 622
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 622
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-26T13:00:09.644962+00:00'
+status_corrected_at: '2026-07-27T03:38:38.072963+00:00'
+status_correction_reason: 'Real PR #80 already merged -- patch task.yaml status to
+  completed, no redispatch.'
+real_pr_evidence:
+  mergeable: UNKNOWN
+  mergedAt: '2026-07-26T17:18:34Z'
+  reviewDecision: ''
+  state: MERGED
+  title: Add real technical guard blocking interactive gh pr merge / git push to master/main
+  url: https://github.com/FChecklist/claude-control/pull/80

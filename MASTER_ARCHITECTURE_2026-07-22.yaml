@@ -1,0 +1,263 @@
+id: VERIDIAN-MASTER-ARCHITECTURE-2026-07-22
+version: '2.0'
+source: 'Owner''s 3-layer brand diagram (2026-07-22), consolidated with Analyses 1-5, the 360-degree synthesis,
+  and retroactive audit findings from the same day -- built per explicit Owner instruction: one file, rigorous automated
+  verification, no shallow/self-reported status.'
+verification_methodology:
+  rule: no status below is self-certified or memory-recalled without a fresh check this session. Every VERIFIED_REAL
+    status has an attached grep/DB-query evidence trail (see evidence field). Where a first-pass script produced
+    a wrong zero (regex bugs found and corrected this session), the corrected result is what's recorded, with the
+    bug noted so it isn't silently repeated.
+  self_certification: forbidden, per ai-os/STANDING_DIRECTIVE.yaml
+layer_3_experience:
+  channels:
+  - web
+  - mobile
+  - desktop
+  - chat
+  - voice
+  - api
+  - whatsapp
+  status: design-level only, matches Analysis-1 Layer 10, not independently re-verified this session (uncontested,
+    low risk)
+layer_2_brands:
+  the_firm:
+    status: VERIFIED_REAL
+    evidence:
+    - 'live page: src/app/(app)/the-firm-practice/page.tsx'
+    - 'dedicated git branch: wave5-brand-naming-infra'
+    - 'seed generator: scripts/gen-wave111-seed-sql.ts'
+    - 40 code references across compliance-tracker
+  projexa:
+    status: VERIFIED_REAL
+    evidence:
+    - 583 code references in compliance-tracker
+    - live at projexa-ai.com (HTTP 200, confirmed prior session)
+    - real product_branches row (id 5fceebcd-0a7a-4448-ae2b-a72637124f13)
+    - real customer demo accounts exist
+  the_advisor:
+    status: UNCONFIRMED_MAPPING
+    evidence: zero references to the literal string in any of the 7 VERIDIAN repos
+    note: 'Veda Advisors is a real, separately-built product (different repo, different domain: financial advisory)
+      that may be what this brand name refers to -- but that mapping has NOT been confirmed by the Owner. Do not
+      assume they are the same thing. Still open: Owner has not yet confirmed whether this maps to Veda Advisors.'
+    action_needed: 'OWNER MUST CONFIRM: is THE ADVISOR = Veda Advisors, or a new/different brand?'
+  the_office:
+    status: FUTURE_BRAND_SLOT_ILLUSTRATIVE_EXAMPLE
+    evidence: zero real references across all 7 repos + the claude-control tracker (3 incidental string collisions
+      found and ruled out as false positives, e.g. generic phrase 'the office/company selector', not a brand reference)
+    note: 'Owner clarified 2026-07-22: these were given as EXAMPLES of ''we will have many brands following this
+      same pattern'', not as specific segments to build now. No longer flagged as an urgent gap -- correctly understood
+      as an illustration of the shared-architecture model, actionable only once/if a specific segment is actually
+      assigned to one of these names.'
+  the_coordinator:
+    status: FUTURE_BRAND_SLOT_ILLUSTRATIVE_EXAMPLE
+    evidence: zero real references anywhere checked
+    note: 'Owner clarified 2026-07-22: these were given as EXAMPLES of ''we will have many brands following this
+      same pattern'', not as specific segments to build now. No longer flagged as an urgent gap -- correctly understood
+      as an illustration of the shared-architecture model, actionable only once/if a specific segment is actually
+      assigned to one of these names.'
+  the_forge:
+    status: FUTURE_BRAND_SLOT_ILLUSTRATIVE_EXAMPLE
+    evidence: zero real references anywhere checked
+    note: 'Owner clarified 2026-07-22: these were given as EXAMPLES of ''we will have many brands following this
+      same pattern'', not as specific segments to build now. No longer flagged as an urgent gap -- correctly understood
+      as an illustration of the shared-architecture model, actionable only once/if a specific segment is actually
+      assigned to one of these names.'
+  future_brands:
+    status: PLACEHOLDER_ONLY
+    note: no names, no scope defined; not actionable until named
+layer_1_veridian_ai_os:
+  authentication:
+    status: VERIFIED_REAL
+    evidence: 11 files incl. auth/callback route, login/signup pages
+  organizations:
+    status: VERIFIED_REAL
+    evidence: real DB table 'organisations' (British spelling -- first script pass wrongly reported 0 by searching
+      American spelling only, corrected via live DATABASE_CATALOG.json read)
+  multi_tenancy:
+    status: VERIFIED_REAL_DIFFERENT_PATTERN
+    evidence: no literal 'tenant' table/column exists; tenancy is implemented via organization-scoping (org_id-style
+      FKs) instead -- a real, different-but-valid architecture, not a gap
+  user_management:
+    status: VERIFIED_REAL
+    evidence: 'DB tables: users, user_active_sessions, user_client_access'
+  rbac:
+    status: VERIFIED_REAL
+    evidence: 11 files incl. access-review page, approval-workflow-service.ts
+  workflow_engine:
+    status: VERIFIED_REAL
+    evidence: 5 files incl. posh/whistleblower/incidents routes referencing workflow status in schema.ts
+  business_rule_engine:
+    status: VERIFIED_REAL
+    evidence: 11 files incl. lib/monitors/ (board-meeting-hold, task-completion, workflow-completion monitors)
+  calculation_engine:
+    status: VERIFIED_REAL
+    evidence: task-execution-engine.ts, gst-reconciliation-service.ts, asset-registry-cache.ts (first script pass
+      wrongly reported 0 due to overly strict pattern, corrected)
+    known_gap: per prior session's audit, only 41 of a 247-item computation-engine registry are actually implemented
+      -- registered != wired for most of it
+  notification_engine:
+    status: VERIFIED_REAL
+    evidence: api/notifications routes (first pass wrongly reported 0, corrected)
+  document_engine:
+    status: PARTIAL
+    evidence: only 1 direct match (PROJEXA payslip PDF route) -- narrow, not a general-purpose document engine yet
+  search_engine:
+    status: VERIFIED_REAL
+    evidence: 12 files incl. api/search/semantic, api/search
+  audit_engine:
+    status: VERIFIED_REAL
+    evidence: audit198 framework confirmed real and committed (git 1fde5a06), controls-health-audit.ts, api/ai/team/controls-health
+      route
+    known_gap: the 22/153/14/9 verdict breakdown from this framework is genuine but confirmed stale by 2 commits
+      vs current main as of this session
+  reporting_engine:
+    status: PARTIAL
+    evidence: 15 files, real report_definitions/custom-charts routes exist
+    known_gap: per prior session's finding, 200 report_definitions rows exist in Postgres with zero rendering UI
+      for most of them
+  dashboard_engine:
+    status: VERIFIED_REAL
+    evidence: 21 files, mostly PROJEXA dashboard/project routes
+  integration_engine:
+    status: VERIFIED_REAL
+    evidence: 12 files incl. connectors/[toolkit]/sync, workspace-memory drive-import/export
+  ai_governance:
+    status: PARTIAL
+    evidence: governance-health route, re-audit route, executive-review route exist (first pass wrongly reported
+      0, corrected)
+    known_gap: no enforced gate exists yet that blocks a merge/dispatch on a governance failure -- routes exist
+      to report status, not confirmed to block bad actions
+  universal_registry:
+    status: NOT_FOUND
+    evidence: zero matches for URID or any universal-registry naming anywhere in compliance-tracker, even with a
+      loosened case-insensitive search -- double-checked, genuine gap
+    known_gap: 'this is the single most-discussed gap across Analyses 2 and 4: a URID scheme was proposed but never
+      implemented; existing catalogs (FUNCTION_CATALOG.json, DATABASE_CATALOG.json) are flat, uncross-linked lists,
+      not a registry'
+  knowledge_graph:
+    status: NOT_FOUND
+    evidence: zero matches anywhere, even loosened search -- genuine gap, this item in the diagram does not exist
+      in any form yet
+  ai_router:
+    status: VERIFIED_REAL
+    evidence: api/ai/team/dispatch route, schema.ts references
+  mother_router:
+    status: VERIFIED_REAL_WITH_KNOWN_GAP
+    evidence: real file at src/lib/ai-router/mother-router.ts, task-register-service.ts, orchestra-model-resolver.ts
+    known_gap: per this session's own recheck, a fresh count found 10 dispatchTool() caller files vs 16 direct-LLM-provider-call
+      files -- these numbers don't match the prior '~35 bypass/~20 real caller' figure from memory, and neither
+      has been reconciled to a trusted final count yet. Whatever the true number, some bypass exists and is not
+      yet closed.
+  dynamic_mode_pills:
+    status: PARTIAL
+    evidence: 4 files incl. capability-tree-service.ts, capability-audit-service.ts
+  dynamic_chain:
+    status: VERIFIED_REAL
+    evidence: 18 files incl. api/dynamic-chains routes, capability-learning-service.ts
+  ui_framework:
+    status: VERIFIED_REAL_VERSION_DRIFT
+    evidence: veridian-ui-kit pinned at github:FChecklist/veridian-ui-kit#v0.2.2 in package.json
+    known_gap: per prior session's finding the real ui-kit repo is at v0.3.0 -- this app is 1 version behind what's
+      already built and available, a cheap reconciliation not a build task
+  apis:
+    status: VERIFIED_REAL
+    evidence: 913 route.ts files under src/app/api -- higher than the 614-routes figure from a prior session's catalog;
+      difference not reconciled (could be real growth or a counting-method difference), noted not asserted
+  storage:
+    status: VERIFIED_REAL
+    evidence: 11 files incl. documents routes, branding/logo route
+  security:
+    status: INCONCLUSIVE
+    evidence: the RLS-policy grep across the full repo timed out (30s) this session -- not a zero, a genuine non-result.
+      Needs a narrower, indexed check (e.g. query the live DB's pg_policies directly) rather than a full-repo grep
+      next time.
+  logging:
+    status: VERIFIED_REAL
+    evidence: 12 files incl. ai-observability page, orchestra-trace-service.ts, superboss-register references
+  monitoring:
+    status: VERIFIED_REAL
+    evidence: instrumentation.ts, governance-health route, controls-health route, dispatch-completion-monitor route
+      (first pass wrongly reported 0, corrected)
+  learning_engine:
+    status: PARTIAL
+    evidence: token-usage-service.ts, cost-anomaly-service.ts, adoption-metrics-service.ts exist
+    known_gap: per prior session's finding, the underlying token_usage_ledger table has zero live rows despite this
+      write-path code existing -- the engine's code exists but isn't actually accumulating real data yet
+carried_forward_from_360_synthesis:
+  root_cause: self-reported completion/governance claims trusted without independent re-verification against live
+    code
+  owner_decisions_already_resolved_2026_07_22:
+    autonomy_model: 'HYBRID: full autonomy for technical/engineering changes, Owner-personal approval required for
+      anything touching business rules/compliance/pricing/irreversible data'
+    execution_model: 'RUN_IN_PARALLEL: Tier-0 security fixes proceed now, foundation work scheduled alongside ongoing
+      feature work, no blanket freeze'
+  open_tier_0_items_not_yet_executed:
+  - rotate/scrub veda-advisors committed secrets (last confirmed 2026-07-11, needs live recheck)
+  - decide + apply projexa contact_requests RLS fix (remediation SQL already exists)
+  - 'check + merge veda-advisors PR #13 if still open (last confirmed 2026-07-10)'
+  - add systemctl is-enabled ssh check to health-check-15min.py cron
+open_questions_for_owner:
+- 'THE ADVISOR: is this Veda Advisors rebranded, or a distinct new brand? Zero code evidence either way.'
+- 'THE OFFICE, THE COORDINATOR, THE FORGE: completely undefined -- no business vertical, no scope, no code, anywhere.
+  Need a one-line definition each before any planning is possible.'
+- Universal Registry and Knowledge Graph are both listed as peer components in the Layer-1 diagram but neither exists
+  in any form -- confirm these are still wanted as build targets, and at what priority relative to the other Tier-0/1/2
+  work already queued.
+brand_architecture_model:
+  principle: ONE backend, ONE set of modules/engines, MANY brands. Brands never get their own copy of any engine/module
+    -- they all call the exact same VERIDIAN AI OS core described in layer_1_veridian_ai_os below.
+  what_varies_per_brand_or_segment:
+  - organization-level configuration (which org row a brand's customers belong to)
+  - end-user experience/personalization (terminology, look-and-feel content, which modules are exposed)
+  - business rules (customizable per organization/segment)
+  - workflows (customizable per organization/segment)
+  what_never_varies:
+  - the underlying engines (workflow engine, business rule engine, calculation engine, etc. -- one copy, shared)
+  - UI/UX design system (same interface framework across every brand)
+  - the fact that everything executes inside VERIDIAN AI OS -- no brand has its own separate backend
+  invisibility_principle: the end user is never meant to know they are using VERIDIAN. Their only visible touchpoint
+    is VERI (Your Assistant) and VERI Chat, presented under whichever brand they belong to.
+  interaction_model: end user states a task/intent; VERIDIAN AI OS (software + AI, per the existing software-first/AI-second
+    governance rule) completes the work end-to-end.
+  human_facing_priority: Owner explicitly flagged communication, visual representation, dashboards, reports, and
+    analysis as VERY IMPORTANT for human usage -- this elevates the priority of the two engines already found PARTIAL
+    in this file (reporting_engine, dashboard_engine) above other partial items; they are not just 'nice to have'
+    polish.
+  verification_status:
+    organization_level_scoping: CONFIRMED REAL -- organisations table + org-scoped access already verified this
+      session
+    per_organization_business_rule_customization: NOT YET VERIFIED -- business_rule_engine was confirmed to exist,
+      but whether its rules are actually configurable per-organization (vs one global rule set) has not been checked.
+      This is the single most important open technical question this new brand model raises.
+    per_organization_workflow_customization: NOT YET VERIFIED -- same open question as above, for workflow_engine.
+local_machine_policy_finding_2026_07_22:
+  trigger: Owner asked about a file path on the local Windows machine (C:\Users\Dell\Downloads\Claude Code\ai-os\...),
+    which should not exist under the 'thin client only, SSH-only' standing rule.
+  finding: 'confirmed real: dozens of full repository clones and git worktrees exist locally under C:\Users\Dell\Downloads\Claude
+    Code (compliance-tracker-wt-*, projexa-wt-*, subagent-*, verify-*, etc.) -- consistent with the known 2026-07-16
+    finding that isolation:''worktree'' dispatches run real local compute, which the standing rule was written specifically
+    to stop.'
+  severity: the local tree is large enough that two independent search tools (a full recursive find, and the ripgrep-backed
+    Glob tool) both timed out attempting to locate one specific filename in it -- the scale itself is evidence of
+    the problem, independent of whether that exact file is present.
+  not_yet_done: did not confirm whether the specific STRATEGIC_PLAN_2026-07-21_v2.yaml file exists locally or, if
+    it does, whether it matches or has diverged from the real server copy -- inconclusive, not a false negative,
+    the search itself did not finish
+  recommended_next_step: a proper inventory of what's actually in C:\Users\Dell\Downloads\Claude Code needs a scoped,
+    deliberate pass (e.g. list top-level dirs with sizes and last-modified dates, decide what's safe to delete vs
+    what holds real uncommitted work) rather than another ad-hoc timed-out search -- separate task from this architecture
+    consolidation, flagged here so it is not lost.
+single_file_index_note:
+  purpose: 'Per Owner instruction (2026-07-22): this file is the ONE file to check for ''what has to be done''.
+    It does not duplicate the full detail of other files -- it summarizes and points to them, so nothing has two
+    competing copies of the same fact.'
+  related_files_on_server:
+    STRATEGIC_PLAN_2026-07-21_v2.yaml: full 16-task plan, dependency table, and the synthesis_2026_07_22_360_degree_review
+      section (root cause, 5 failure patterns, merged recommendations, resolved Owner decisions on autonomy model
+      and parallel execution)
+    AUDIT_RECHECK_2026-07-22.json: the retroactive verification of the 198-rule audit and the Mother Router bypass
+      count, including 2 corrections made mid-session
+    LAYER1_28_SUBSYSTEM_VERIFY_2026-07-22.json / LAYER1_FALSE_ZERO_RECHECK_2026-07-22.json: raw evidence backing
+      every status in layer_1_veridian_ai_os below

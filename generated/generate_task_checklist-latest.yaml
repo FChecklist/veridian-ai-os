@@ -1,0 +1,376 @@
+self_use_task_checklist:
+  purpose: 'The one prompt this session (or superboss) reads before and after every task, regardless of size. Generated
+    by ai-os/scripts/generate_task_checklist.py -- re-run after any registries: edit that changes one of the paths
+    cited in the evidence fields below, do not hand-edit this block.'
+  structure_note: 'Restructured 2026-07-23 (per the "EXECUTION_RULES_AUDIT_2026-07-23" analysis''s roadmap_next_phases.pre_execution_checklist_automation
+    -- that analysis was never persisted as a real file on disk, corrected 2026-07-24 task-20260724-033446) to mirror
+    VERIDIAN_EXECUTION_RULES_2026-07-23.md Part 39''s A-J, 77-item structure one-for-one. Every item carries a status:
+    REAL (a real mechanism backs it today, cited in evidence), NOT_YET_AVAILABLE (a real, honestly-documented gap),
+    or NOT_MECHANICALLY_TESTABLE (an inherent judgment/discipline item, same honest category ai-os/scripts/veridian_self_check.py
+    already uses for its own rule_5). Nothing is silently dropped.'
+  sections:
+  - letter: A
+    title: Recover Context
+    items:
+    - n: 1
+      text: Load the complete task context.
+      status: REAL
+      evidence: ai-os/scripts/session_bootstrap.py prints the last N instructions/work_items/actions from ai-os/memory/superboss-register.sqlite
+    - n: 2
+      text: Load the Owner, Organization, and End User memory.
+      status: NOT_YET_AVAILABLE
+      evidence: no such memory store exists yet -- Parts 33-35 of the (never-persisted-to-disk) "EXECUTION_RULES_AUDIT_2026-07-23"
+        analysis named this MISSING, explicitly out of scope for that phase (roadmap deferred it to a future task;
+        corrected 2026-07-24, task-20260724-033446, to stop citing a file that was never actually written)
+    - n: 3
+      text: Load previous conversations.
+      status: REAL
+      evidence: ai-os/scripts/session_bootstrap.py prints instructions.raw_text rows (closest real analog to 'conversations'
+        in this system)
+    - n: 4
+      text: Load previous commitments.
+      status: REAL
+      evidence: ai-os/scripts/session_bootstrap.py queries rca_open WHERE rca_status='OPEN_NEEDS_RCA' from ai-os/memory/superboss-register.sqlite
+    - n: 5
+      text: Load unfinished tasks.
+      status: REAL
+      evidence: ai-os/scripts/session_bootstrap.py queries work_items + unregistered_mentions WHERE status='NEEDS_REGISTRATION'
+    - n: 6
+      text: Load pending approvals.
+      status: NOT_YET_AVAILABLE
+      evidence: no dedicated pending-approvals store exists distinct from work_items.status / gap_queue.yaml status
+    - n: 7
+      text: Load previous decisions.
+      status: REAL
+      evidence: ai-os/scripts/session_bootstrap.py prints work_items/actions history rows (each carries a status/result
+        already decided)
+    - n: 8
+      text: Load previous execution plans.
+      status: NOT_YET_AVAILABLE
+      evidence: no persisted execution-plan artifact store exists; AI planning-mode output is not written back to
+        the register DB
+  - letter: B
+    title: Search System Knowledge
+    items:
+    - n: 9
+      text: Search metadata.
+      status: REAL
+      evidence: superboss-register.py search / check-duplicate against /opt/veridian/ai-os/memory/superboss-register.sqlite#system_index
+    - n: 10
+      text: Search YAML files.
+      status: REAL
+      evidence: ai-os/scripts/session_bootstrap.py loads MASTER_INDEX.yaml/SYSTEM_MAP.yaml/STANDING_DIRECTIVE.yaml/MASTER_ARCHITECTURE_2026-07-22.yaml
+    - n: 11
+      text: Search entity relationships.
+      status: REAL
+      evidence: system_index.calls / called_by columns (superboss-register.py search)
+    - n: 12
+      text: Search dependency relationships.
+      status: REAL
+      evidence: system_index.calls / called_by columns (same mechanism as item 11)
+    - n: 13
+      text: Search business rules.
+      status: REAL
+      evidence: ai-os/scripts/session_bootstrap.py prints STANDING_DIRECTIVE.yaml assistant_working_protocol rule_*
+        keys; ai-os/RULES_ARTICLES_198.json
+    - n: 14
+      text: Search workflows.
+      status: REAL
+      evidence: ai-os/queues/*.yaml structured task records (grep / check-duplicate)
+    - n: 15
+      text: Search documentation.
+      status: REAL
+      evidence: ai-os/scripts/session_bootstrap.py prints MASTER_ARCHITECTURE_2026-07-22.yaml open_questions_for_owner
+    - n: 16
+      text: Search scripts.
+      status: REAL
+      evidence: system_index (category/path fields) via check-duplicate -- see /opt/veridian/ai-os/memory/superboss-register.sqlite#system_index
+    - n: 17
+      text: Search automation.
+      status: REAL
+      evidence: system_index rows with category in (dispatch_entrypoint, monitor, audit) + crontab -l
+    - n: 18
+      text: Search Software modules.
+      status: REAL
+      evidence: 'MASTER_INDEX.yaml registries: section + system_index'
+    - n: 19
+      text: Search APIs.
+      status: NOT_YET_AVAILABLE
+      evidence: no ai-os-layer API registry exists; app-layer API routes are compliance-tracker/projexa product
+        code, out of this task's scope
+    - n: 20
+      text: Search configuration files.
+      status: REAL
+      evidence: STANDING_DIRECTIVE.yaml / AI_ENGINEERING_POLICY.yaml loaded and printed
+    - n: 21
+      text: Search cache.
+      status: REAL
+      evidence: work_items.cache_id / ai_cache_id reference the existing glm-response-cache.sqlite L1 cache (superboss-register.py
+        search)
+    - n: 22
+      text: Search logs.
+      status: REAL
+      evidence: ai-os/scripts/session_bootstrap.py reads ATTENTION.md-adjacent state + runs file_inventory.py for
+        a real diff
+    - n: 23
+      text: Search audit records.
+      status: REAL
+      evidence: ai-os/scripts/session_bootstrap.py queries task_audits (new this phase -- see ai-os/scripts/postflight_audit_gate.py)
+    - n: 24
+      text: Search history.
+      status: REAL
+      evidence: ai-os/scripts/session_bootstrap.py queries directive_compliance_runs + work_items/actions history
+  - letter: C
+    title: Reuse Before Create
+    items:
+    - n: 25
+      text: Check if Software already exists.
+      status: REAL
+      evidence: superboss-register.py check-duplicate <term>
+    - n: 26
+      text: Check if a script already exists.
+      status: REAL
+      evidence: superboss-register.py check-duplicate --category <script category>
+    - n: 27
+      text: Check if automation already exists.
+      status: REAL
+      evidence: check-duplicate + /opt/veridian/scripts/system-sync.py's own do_not_build_a_new_sync_script precedent
+    - n: 28
+      text: Check if workflow already exists.
+      status: REAL
+      evidence: check-duplicate + grep across ai-os/queues/*.yaml
+    - n: 29
+      text: Check if business logic already exists.
+      status: NOT_YET_AVAILABLE
+      evidence: system_index has no distinct 'business_logic' category yet -- only a same-category or keyword proxy
+        check is possible today
+    - n: 30
+      text: Check if API already exists.
+      status: NOT_YET_AVAILABLE
+      evidence: same gap as item 19 -- no ai-os-layer API registry
+    - n: 31
+      text: Check if the solution already exists.
+      status: REAL
+      evidence: check-duplicate (general free-text form)
+    - n: 32
+      text: Reuse existing assets whenever possible.
+      status: REAL
+      evidence: check-duplicate's own verdict field ('STOP -- existing mechanism(s) found, review before building')
+        is the real, machine-produced trigger for this
+  - letter: D
+    title: Understand the Task
+    items:
+    - n: 33
+      text: Understand the business objective.
+      status: REAL
+      evidence: every ai-os task's prompt.txt has a structured OBJECTIVE field (see this task's own prompt.txt)
+    - n: 34
+      text: Understand the expected outcome.
+      status: REAL
+      evidence: prompt.txt's SUCCESS_CRITERIA + EXPECTED_OUTPUT fields
+    - n: 35
+      text: Identify required inputs.
+      status: REAL
+      evidence: prompt.txt's KNOWN_CONTEXT field
+    - n: 36
+      text: Identify required outputs.
+      status: REAL
+      evidence: prompt.txt's EXPECTED_OUTPUT field
+    - n: 37
+      text: Identify dependencies.
+      status: REAL
+      evidence: prompt.txt's KNOWN_CONTEXT field (e.g. this phase's own prior-phase commit references)
+    - n: 38
+      text: Identify risks.
+      status: NOT_YET_AVAILABLE
+      evidence: the task prompt schema has no dedicated RISKS field
+    - n: 39
+      text: Identify constraints.
+      status: REAL
+      evidence: prompt.txt's CONSTRAINTS field
+    - n: 40
+      text: Identify edge cases.
+      status: NOT_YET_AVAILABLE
+      evidence: the task prompt schema has no dedicated EDGE_CASES field
+  - letter: E
+    title: Break Down the Task
+    items:
+    - n: 41
+      text: Break the task into small steps.
+      status: NOT_YET_AVAILABLE
+      evidence: no general mid-task step-decomposition mechanism -- master-decompose.py exists but is scoped to
+        the Owner-directive-to-task dispatch pipeline only (Part 38a), not a reusable per-task tool
+    - n: 42
+      text: 'Classify each step as: Software / Script / Automation / Workflow / AI / Human Approval.'
+      status: NOT_YET_AVAILABLE
+      evidence: no coded per-step taxonomy exists; PROGRESS.md is free text, not a schema
+    - n: 43
+      text: Minimise AI work.
+      status: REAL
+      evidence: registries.credit_spend_governance gates every AI-costing action ('software first, AI second' rule
+        enforced before spend)
+    - n: 44
+      text: Maximise Software execution.
+      status: REAL
+      evidence: same mechanism as item 43 (registries.credit_spend_governance)
+  - letter: F
+    title: Create Execution Plan
+    items:
+    - n: 45
+      text: Prepare the execution plan.
+      status: REAL
+      evidence: 'PROGRESS.md (## Completed / ## Remaining) is this session''s real, git-committed execution-plan
+        record, per phase0/phase1 precedent'
+    - n: 46
+      text: Validate the execution plan.
+      status: NOT_YET_AVAILABLE
+      evidence: no automated plan-validation script exists
+    - n: 47
+      text: Verify required resources.
+      status: NOT_YET_AVAILABLE
+      evidence: no automated resource-verification mechanism exists
+    - n: 48
+      text: Verify permissions.
+      status: REAL
+      evidence: scripts/preflight-guard.py hard-gates on disk/mem/circuit-breaker before invoking the model
+    - n: 49
+      text: Verify dependencies.
+      status: REAL
+      evidence: system_index.calls/called_by (item 11/12) + scope-check.py's file-ownership.yaml cross-check
+    - n: 50
+      text: Verify configurations.
+      status: NOT_YET_AVAILABLE
+      evidence: STANDING_DIRECTIVE.yaml is searched/read (item 20) but not verified against a schema
+  - letter: G
+    title: AI Decision
+    items:
+    - n: 51
+      text: Can Software complete the task? If YES -> Execute through Software. If NO -> Build reusable Software
+        first -> Execute through Software -> Call AI only if required.
+      status: REAL
+      evidence: registries.credit_spend_governance's own 'software first, AI second' rule is exactly this gate
+  - letter: H
+    title: Verification Before Execution
+    items:
+    - n: 52
+      text: Verify no previous commitment is forgotten.
+      status: REAL
+      evidence: rca_open check (same mechanism as item 4)
+    - n: 53
+      text: Verify no existing work is duplicated.
+      status: REAL
+      evidence: check-duplicate (mandatory, same mechanism as item 25)
+    - n: 54
+      text: Verify no business rule is violated.
+      status: NOT_YET_AVAILABLE
+      evidence: ai-os/audit198/run-audit.mjs checks RULES_ARTICLES_198.json post-hoc, not as a pre-execution gate
+    - n: 55
+      text: Verify all required context is loaded.
+      status: REAL
+      evidence: completion of ai-os/scripts/session_bootstrap.py (sections A+B above)
+    - n: 56
+      text: Verify execution is safe.
+      status: REAL
+      evidence: scripts/preflight-guard.py hard gate (disk/mem/circuit-breaker) before model invocation
+    - n: 57
+      text: Verify approval is available if required.
+      status: NOT_YET_AVAILABLE
+      evidence: same gap as item 6 -- no approval-queue mechanism
+  - letter: I
+    title: Execute
+    items:
+    - n: 58
+      text: Execute through Software.
+      status: REAL
+      evidence: registries.credit_spend_governance + this session's own scripts
+    - n: 59
+      text: Execute AI only where required.
+      status: REAL
+      evidence: same mechanism as item 58 (registries.credit_spend_governance)
+    - n: 60
+      text: Validate outputs.
+      status: REAL
+      evidence: ai-os/scripts/postflight_audit_gate.py's audit_cmd (real command, real exit code, never trusted-by-claim)
+    - n: 61
+      text: Handle failures.
+      status: REAL
+      evidence: ai-os/scripts/postflight_audit_gate.py writes a FAILED verdict + a real rca_open row for later investigation
+        (logs and flags; does not auto-remediate)
+    - n: 62
+      text: Retry when appropriate.
+      status: REAL
+      evidence: worker-entrypoint.sh's own checkpoint/resume mechanism (registries.auto_execution_wrapper)
+  - letter: J
+    title: Post Execution
+    items:
+    - n: 63
+      text: Update Software.
+      status: REAL
+      evidence: /opt/veridian/scripts/system-sync.py --check mirror + system_index index-add
+    - n: 64
+      text: Update scripts.
+      status: REAL
+      evidence: superboss-register.py index-add (re-verifies path, refreshes verified_ts)
+    - n: 65
+      text: Update automation.
+      status: NOT_YET_AVAILABLE
+      evidence: no automated crontab/systemd diff-checker exists; changes are verified manually (crontab -l / systemctl)
+    - n: 66
+      text: Update workflows.
+      status: NOT_YET_AVAILABLE
+      evidence: ai-os/queues/*.yaml is hand/script-edited case-by-case, no generic workflow-update mechanism
+    - n: 67
+      text: Update metadata.
+      status: REAL
+      evidence: superboss-register.py index-add
+    - n: 68
+      text: Update YAML.
+      status: REAL
+      evidence: 'MASTER_INDEX.yaml registries: section edit + generate_quick_reference.py re-splice'
+    - n: 69
+      text: Update relationships.
+      status: REAL
+      evidence: system_index.calls/called_by fields (same mechanism as items 11/12)
+    - n: 70
+      text: Update documentation.
+      status: REAL
+      evidence: commit message (WHY not just WHAT) + PROGRESS.md convention
+    - n: 71
+      text: Update logs.
+      status: REAL
+      evidence: superboss-register.py log-work / log-action
+    - n: 72
+      text: Update audit.
+      status: REAL
+      evidence: ai-os/scripts/postflight_audit_gate.py's task_audits row + this phase's new execution_log row
+    - n: 73
+      text: Update history.
+      status: REAL
+      evidence: work_items/actions rows (superboss-register.py)
+    - n: 74
+      text: Update memory.
+      status: REAL
+      evidence: ai-os/memory/superboss-register.sqlite writes (all of the above)
+    - n: 75
+      text: Save reusable knowledge.
+      status: REAL
+      evidence: system_index registration + MASTER_INDEX.yaml registries entry
+    - n: 76
+      text: Convert repeatable AI work into Software.
+      status: REAL
+      evidence: 'this exact phase is one instance: generate_task_checklist.py/superboss-register.py extended so
+        future tasks reuse a script instead of re-deriving this checklist by prose'
+    - n: 77
+      text: Reduce future AI dependency.
+      status: REAL
+      evidence: same evidence as item 76
+  coverage_summary:
+    sections_covered: 10
+    sections_total_in_part_39: 10
+    items_total: 77
+    items_real: 60
+    items_not_yet_available: 17
+    items_not_mechanically_testable: 0
+  credit_spend_reminder: Every AI-costing action referenced above (items 43/44/51/58/59) is gated by registries.credit_spend_governance
+    -- see that entry for the full mechanism. This checklist does not duplicate that gate's own rules, only points
+    to it.

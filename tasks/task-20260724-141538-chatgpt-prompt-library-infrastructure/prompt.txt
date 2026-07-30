@@ -1,0 +1,32 @@
+## OBJECTIVE
+Build the real ChatGPT Prompt Library Workspace infrastructure (sandboxed directory, access-control, CSV/prompt schema, coverage/duplicate-detection scripts driven by the real capability registry, versioning, regeneration trigger). Instruction INS-20260724-141341-5f67. The LLM-execution step (ChatGPT actually generating the 10,000 prompts) is explicitly out of scope for this task -- no OPENAI_API_KEY exists yet.
+
+## SCOPE
+1. Create /opt/veridian/chatgpt-prompt-library/ with subfolders: CSV/ Intent/ Keywords/ Variables/ Capabilities/ Entities/ Modules/ Domains/ Routes/ Coverage/ Validation/ Duplicates/ Statistics/ Reports/ History/.
+2. Write a real access-control guard (reuse or extend scripts/chatgpt_audit_guard.py's pattern from the sibling ChatGPT Audit Workspace task if it already exists, otherwise build an equivalent scripts/chatgpt_promptlib_guard.py) restricting writes to this sandbox only.
+3. Design ai-os/CHATGPT_PROMPT_SCHEMA_2026-07-24.yaml: the real per-prompt schema (Prompt ID, Prompt, Intent, Business Domain, Module, Capability, Business Process, Entity, Action, Variables, Keywords, Expected Software Capability, Expected Output, AI Required Yes/No, Confidence) plus the placeholder-variable convention (<Entity.Attribute>, reusing this session's earlier VARIABLE_DICTIONARY work from the Terminology Standardization initiative -- cross-link, do not rebuild).
+4. Build a real script (scripts/generate_prompt_coverage_report.py or .mjs) that reads the real capability registry (from the 20-Engines/Capability-Registry live wiring already built this session) and computes: which capabilities have zero prompts, Prompt-Coverage-pct, Capability-Coverage-pct, Intent-Coverage-pct -- run it for real now (with zero prompts existing yet, it should report 0pct coverage and list every real capability as missing, which is the honest correct baseline).
+5. Build a real duplicate-detection script (scripts/detect_prompt_duplicates.py) that would flag duplicate prompts/intents once prompts exist -- unit-test it against a small synthetic fixture (2-3 fake prompt rows) to prove the logic works, since no real prompts exist yet to test against.
+6. Write ai-os/CHATGPT_PROMPTLIB_BLOCKER_2026-07-24.yaml documenting exactly what's needed to go live (the real OPENAI_API_KEY, and the exact generation call shape: one real capability -> N real prompts, referencing the schema from item 3, written only through the guard script). Register as an OWNER_DECISIONS_NEEDED entry.
+7. Register all new artifacts in knowledge_engine and MASTER_INDEX.yaml (registries.chatgpt_prompt_library, live file), cross-linked to registries.chatgpt_audit_workspace if that registration already landed.
+
+## KNOWN_CONTEXT
+- Confirmed this session: no real OPENAI_API_KEY exists (`grep -i openai /opt/veridian/shared/.env` shows only a placeholder comment). Do not fabricate one or silently route this through Claude/GROQ/OpenRouter instead without saying so.
+- This session already built a real Capability Registry (task-20260724-083420-phase1-capability-registry-live-wiring, merged) and a real Variable Dictionary (Terminology Standardization Phase 0/1, merged) -- reuse both as the real data sources for items 3 and 4, do not rebuild them.
+- A sibling task (ChatGPT Audit Workspace infrastructure) may be running or already merged concurrently -- check for its guard-script pattern before building a duplicate one from scratch.
+- Standing rules: registry writes come from scripts not hand-authored prose; any crontab need follows the Owner-approval-citation pattern in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml.
+
+## SUCCESS_CRITERIA
+- `test -d /opt/veridian/chatgpt-prompt-library/CSV && test -d /opt/veridian/chatgpt-prompt-library/History` exits 0 (all 15 real subfolders exist).
+- `python3 scripts/generate_prompt_coverage_report.py` runs and exits 0, producing real output (0pct coverage, real capability names listed as missing).
+- `python3 scripts/detect_prompt_duplicates.py --test-fixture` runs and exits 0, correctly identifying the planted duplicate in the synthetic fixture.
+- `test -f ai-os/CHATGPT_PROMPT_SCHEMA_2026-07-24.yaml && test -f ai-os/CHATGPT_PROMPTLIB_BLOCKER_2026-07-24.yaml` exits 0.
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on claude-control), the real coverage-report and duplicate-detection run outputs as evidence, and a final checkpoint stating the infrastructure is 100% ready and exactly what's needed (the API key) to generate real prompts.
+
+## CONSTRAINTS
+Keep this task's real work limited to infrastructure (folders, guard, schema, coverage script, duplicate-detection script, blocker documentation) -- the actual prompt-generation call belongs to a future task once the real key exists, and must use the model the Owner actually named when it runs.
+
+## COMPLEXITY_TIER
+integrative

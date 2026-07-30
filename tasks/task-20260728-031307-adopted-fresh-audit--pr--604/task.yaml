@@ -1,0 +1,63 @@
+id: task-20260728-031307-adopted-fresh-audit--pr--604
+title: 'Fresh audit: PR #604'
+status: awaiting_human_approval
+repo: compliance-tracker
+branch: worker/task-20260727-153110-tet-engine-increment-1--trace-core---reu
+workspace: /opt/veridian/ai-os/tasks/task-20260728-031307-adopted-fresh-audit--pr--604/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-031307-adopted-fresh-audit--pr--604
+service: veridian-supervisor@task-20260728-031307-adopted-fresh-audit--pr--604.service
+created_at: '2026-07-28T03:13:08.913536+00:00'
+last_checkpoint_at: '2026-07-28T03:16:52.437701+00:00'
+completed_steps: &id002
+- Read governance docs (CLAUDE.md/AGENTS.md/CONSTITUTION.yaml/ACTIVE-CLAIMS.yaml),
+  claim
+- Built `src/app/api/v1/reports/catalog/route.ts` (GET) -- lists the caller's visible
+- Built `src/app/api/v1/reports/definitions/[id]/run/route.ts` (POST) -- executes
+  a
+- '`src/lib/report-export-shared.ts` -- server-safe (no browser APIs) `rowsToCSV`/'
+- '`requireReportsReadAccess()` added to `src/lib/supabase/auth-guard.ts` -- OR-semantics
+  gate'
+- '`compliance.api_keys.scopes` extended (comma-separated) to accept `read:reports`
+  in'
+- '`src/lib/openapi/generate.ts` -- documented `/reports/catalog` and'
+- 'Tests: `catalog/route.test.ts` (3), `definitions/[id]/run/route.test.ts` (6, incl.
+  the'
+- 'Fixed bugs found while verifying inherited invocation-1 work: (a) `NextResponse`
+  body-type'
+remaining_steps: &id003 []
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T03:13:08.913536+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'worker/task-20260727-153110-tet-engine-increment-1--trace-core---reu'
+    (https://github.com/FChecklist/compliance-tracker/pull/604) -- registered for
+    real audit, not a fresh worker dispatch
+- at: '2026-07-28T03:16:52.437701+00:00'
+  status: awaiting_human_approval
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '7c213e8d docs: restore PROGRESS.md prior-task history, add TET increment-1 gap-map'
+  - '078c98ea Worker task-20260727-153110-tet-engine-increment-1--trace-core---reu:
+    checkpoint commit (invocation failed, exit 1)'
+  - '896d7a3f ai-os: register active claim for TET engine increment 1'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  note: 'tier2, Superboss-approved, held for human merge: https://github.com/FChecklist/compliance-tracker/pull/604'
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/604
+master_synced_at: '2026-07-29T21:04:26.269852+00:00'

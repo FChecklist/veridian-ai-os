@@ -1,0 +1,34 @@
+## OBJECTIVE
+Fix a real, currently-live TypeScript-breaking bug on PROJEXA's `main` branch, found by a Phase 0 investigation on 2026-07-27 (Owner directive PROJEXA_ERP_END_TO_END_REQUIREMENT_ANALYSIS_GAP_FILL_AND_IMPLEMENTATION). This is urgent -- confirmed via `npx tsc --noEmit` against current main.
+
+## KNOWN_CONTEXT
+Verified real state as of 2026-07-27, do not re-derive:
+- `projexa/src/app/(app)/layout.tsx` and `projexa/src/components/AppTopbar.tsx` both assume `@fchecklist/veridian-ui-kit/shell` exports an `AppHeader` component, and that `AppShellFrame` accepts a `header` prop. NEITHER EXISTS -- confirmed by checking both the installed `node_modules` copy (pinned `github:FChecklist/veridian-ui-kit#v0.2.2`) and the package's latest tag (`v0.3.0`, one commit ahead, no `AppHeader` added).
+- Real tsc errors on current main:
+  ```
+  src/app/(app)/layout.tsx(37,7): error TS2322: ... Property 'header' does not exist on type 'IntrinsicAttributes & AppShellFrameProps'.
+  src/components/AppTopbar.tsx(25,10): error TS2305: Module '"@fchecklist/veridian-ui-kit/shell"' has no exported member 'AppHeader'.
+  ```
+- Because the `header` prop is silently dropped by React (not a runtime crash, just a typecheck failure + missing feature), PROJEXA's topbar (search, sidebar toggle, panel toggle, user menu) is NOT rendering in production today.
+- PR #42 on PROJEXA ("Migrate to veridian-ui-kit's real shell/composer/panel/header components") is the origin of this assumption -- read it for the intended design before rebuilding from scratch.
+- `AppShellFrame` (in `veridian-ui-kit/src/shell/`) already correctly implements the mockup's "merged Home page" panel-hiding behavior (`isHome` branch) -- that part works. What's broken/incomplete: (a) no real `AppHeader` component exists in veridian-ui-kit to export, (b) `AppShellFrame` has no `header` prop to accept one, (c) `layout.tsx` never passes `homeThreadSlot` to `AppShellFrame` either, so even once header is fixed, the Home page's merged inline-chat content (the mockup's actual core idea) has nothing wired into it.
+- veridian-ui-kit repo: `github.com/FChecklist/veridian-ui-kit`. It is consumed by BOTH compliance-tracker and PROJEXA (both pin it via git ref in package.json) -- any change here must not break compliance-tracker's own usage. Check compliance-tracker's own AppShell.tsx (which already correctly uses `PanelShell` from this same package, per this session's own earlier VERI Chat investigation) to confirm you aren't duplicating a working pattern that already exists there.
+
+## SCOPE
+1. In `veridian-ui-kit`: build a real `AppHeader` component (search input, sidebar toggle, panel toggle, user menu -- read `AppTopbar.tsx`'s existing usage/props expectations to match its real intended interface) and export it from `@fchecklist/veridian-ui-kit/shell`. Add a real `header` prop to `AppShellFrame` that renders it in the expected position (above content, consistent across Home and non-Home routes).
+2. Also add a real `homeThreadSlot` prop path if `AppShellFrame` doesn't already wire one through on the `isHome` branch -- this is what lets the merged-Home pattern actually show live chat content, not just hide the side panel.
+3. Tag/publish the fix (or confirm how this repo's existing consumers pin versions -- check if compliance-tracker/PROJEXA use a git-ref pin that needs bumping, or an npm-style version) and bump PROJEXA's `package.json` dependency to the fixed version/ref.
+4. In PROJEXA: wire `layout.tsx` to actually pass `homeThreadSlot` (real content -- the merged inline chat area from the reference mockup, reusing PROJEXA's existing `VeriChatPanel`/`VeriComposer` components, not new UI) once the prop path exists.
+5. Verify `npx tsc --noEmit` is clean on PROJEXA afterward, and that compliance-tracker's own use of this package (`AppShell.tsx`'s `PanelShell` import) still typechecks too -- do not break the other consumer.
+
+## SUCCESS_CRITERIA
+`npx tsc --noEmit` exits 0 on both PROJEXA and compliance-tracker. A real screenshot or Playwright test proves PROJEXA's topbar (search/toggles/user menu) actually renders after the fix.
+
+## EXPECTED_OUTPUT
+Real PRs against `veridian-ui-kit` and `projexa` (and a trivial dependency-bump commit/PR against compliance-tracker only if its own typecheck needs it, which is not expected but must be verified), each through their repo's normal dispatch/review pipeline.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not redesign AppShellFrame's existing, working `isHome` panel-hiding logic -- only add the missing header/homeThreadSlot pieces.
+
+## COMPLEXITY_TIER
+judgment

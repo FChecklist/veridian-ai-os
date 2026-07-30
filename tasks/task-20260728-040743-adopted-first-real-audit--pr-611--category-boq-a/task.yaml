@@ -1,0 +1,76 @@
+id: task-20260728-040743-adopted-first-real-audit--pr-611--category-boq-a
+title: 'First real audit: PR 611 (category-boq-amounts endpoint)'
+status: blocked
+repo: compliance-tracker
+branch: feat/category-boq-amounts-report
+workspace: /opt/veridian/ai-os/tasks/task-20260728-040743-adopted-first-real-audit--pr-611--category-boq-a/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-040743-adopted-first-real-audit--pr-611--category-boq-a
+service: veridian-supervisor@task-20260728-040743-adopted-first-real-audit--pr-611--category-boq-a.service
+created_at: '2026-07-28T04:07:44.296700+00:00'
+last_checkpoint_at: '2026-07-28T04:12:35.793186+00:00'
+completed_steps: &id002
+- "Read ACTIVE-CLAIMS.yaml + v2 plan \xA72/V2-8 + CSV row #1790 (verified the row's\
+  \ own observation: no in-repo consuming UI in compliance-tracker; UI lives in sibling\
+  \ projexa)"
+- 'Verified projexa field-usable UI exists live: src/app/(app)/site-diary/page.tsx
+  (SiteDiaryClient.tsx) + src/app/(app)/labour/page.tsx "Manpower & Attendance" (LabourClient.tsx,
+  Roster+Attendance tabs), consuming compliance-tracker /api/v1/projexa/{site-diary,attendance}
+  aliases -> real engines here'
+- 'Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml (collision check: no other active
+  claim on this scope; 3 projexa-e2e-phase-2 claims are Playwright test files, not
+  these source screens)'
+- 'Wrote ai-os/REVIEW_FRAMEWORK_V2-8_MOBILE_UX_CROSSREF_2026-07-20.md (cross-ref note
+  + re-score to "Decided -- cross-repo scope confirmed"; honest nuance that projexa
+  screens exist but are not mobile-tuned = separate open rows #106/#1792/#1793/#1794,
+  not closed here; optional deep-link deliberately not added per anti-scope-inflation)'
+- Registered new doc in ai-os/OS.yaml health_and_compliance index
+- Commit + push + open PR (#496)
+- 'Posted structured AUDIT: PASS verdict comment on PR #496 (8 AuditProtocolFields);
+  re-triggered audit-check with an empty commit (initial run raced the comment)'
+- 'Merged origin/main (brings in merged V2-7 PR #495) into this worker branch; resolved
+  PROGRESS.md + ai-os/OS.yaml conflicts (kept both V2-8 and V2-7 doc index entries)
+  to unblock PR #496''s CONFLICTING merge state'
+remaining_steps: &id003
+- 'PR #496 passes required CI checks (Lint/Type Check/Build/audit-check/Guardrail
+  Presence/Asset Registry/Unit Tests) -- merge autonomously (Tier1 docs-only) once
+  green; E2E is a pre-existing playwright/module env issue, not caused by this docs-only
+  PR'
+- Move ACTIVE-CLAIMS V2-8 entry from `active:` to `recently_completed:` after merge
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T04:07:44.296700+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'feat/category-boq-amounts-report' (https://github.com/FChecklist/compliance-tracker/pull/611)
+    -- registered for real audit, not a fresh worker dispatch
+- at: '2026-07-28T04:12:35.793186+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '6051e330 Add category-boq-amounts report: BOQ line-item amounts grouped by category'
+  - c4d74e87 Register CRM completion + VERIDIAN/PROJEXA brand-merge claim in ACTIVE-CLAIMS
+  - f89e760b Merge branch 'main' of https://github.com/FChecklist/compliance-tracker
+    into docs/cost-control-2026-07-20
+  - 33f9c187 Document infisuite-reverse-engineering cityline merge (Contracts branch
+    + Ticketing blocker resolution)
+  - 8061f246 Register zoho-reverse-engineering in system_boundary
+  - 'eee4b295 Close 2 disclosed audit gaps: doc-worker report call + ledger pruning'
+  - '6155372f Fix: credit_accountant_rejected must hard-stop, not retry (round-2 audit)'
+  - 570a6f8b Add self_use_task_checklist to MASTER_INDEX.yaml (script-generated)
+  - 74976672 Restore CRLF line endings in MASTER_INDEX.yaml
+  - 61e65413 Register credit_spend_governance + add missing system_boundary section
+  note: "tier1, Superboss-approved, but the merge itself FAILED (gh pr view confirms\
+    \ state=OPEN, mergedAt=; see supervisor.log) \u2014 needs manual attention, NOT\
+    \ actually merged: https://github.com/FChecklist/compliance-tracker/pull/611"
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/611
+master_synced_at: '2026-07-29T21:04:26.351848+00:00'

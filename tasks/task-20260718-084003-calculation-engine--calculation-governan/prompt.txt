@@ -1,0 +1,23 @@
+VERIDIAN Review Framework gap-closure: Calculation Engine / Calculation Governance.
+This covers 5 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] Calculation Explainability
+  Gap: No step-by-step calculation breakdown/explainability UI exists for VCEL engine outputs
+  Recommended approach: Extend engine output schemas to include an optional breakdown/steps array, surfaced in the UI where a calculator is wired.
+- [High] Calculation Version Control
+  Gap: Calculation Version Control does not exist -- a statutory-formula change (e.g. new GST slab) overwrites the engine with no history of the prior formula
+  Recommended approach: Add engineVersion + effectiveFrom/effectiveTo columns to computationEngines and snapshot the formula version used at calculation time on the calling record.
+- [Medium] Calculation Auditability
+  Gap: Auditability is real for the 26 Chain-Selector-wired engines but not guaranteed for the other 185 implemented-but-unwired engines called directly from service code
+  Recommended approach: Move audit logging into the engine-invocation layer itself (a thin wrapper) so it's guaranteed regardless of call path.
+- [Medium] Formula Testing Framework
+  Gap: No systematic Formula Testing Framework verifying engine outputs against known-correct statutory values exists as a product capability (as opposed to ad hoc unit tests some engines may have)
+  Recommended approach: Build a golden-value test suite covering all 'implemented' engines, sourced from statutory examples (income-tax slabs, GST rates, EPF/gratuity formulas).
+- [Low] AI Suggested Calculations
+  Gap: AI Suggested Calculations (proactive AI recommendation of a relevant calculator) does not exist
+  Recommended approach: Consider after Chain Selector wiring improves discoverability generally; low value while only 12.3% of engines are reachable.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

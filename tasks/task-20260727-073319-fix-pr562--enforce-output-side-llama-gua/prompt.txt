@@ -1,0 +1,23 @@
+## OBJECTIVE
+Round 2 fix for PR #562 (compliance-tracker, branch worker/task-20260726-043023-phase4-defense-in-depth-prompt-security). The real audit rejected it for a genuine defense-in-depth enforcement gap: in src/lib/prompt-security/defense-in-depth.ts, the post-call safety signals layer3.outputGuard (Llama Guard verdict on the model's actual output) and layer4.leakedSystemInstruction (verbatim system-prompt-leak detection) are both computed but never enforced -- the orchestrator unconditionally returns blocked: false and hands back the (PII-scrubbed-only) content even when either signal flags a real problem. Only the pre-call Layer 1/Layer 3 checks currently block anything.
+
+## KNOWN_CONTEXT
+Continue on the existing branch worker/task-20260726-043023-phase4-defense-in-depth-prompt-security -- this task's own workspace should check out that real branch directly (the same way prior round-2 fixes this session pushed straight to the original PR's branch rather than starting a fresh one) since real, review-approved work already exists on it (Layers 1-4, Quality Engine, Red Team battery, tool evaluation, all separately confirmed sound by the same review). Read src/lib/prompt-security/defense-in-depth.ts's real current orchestration logic in full first -- the fix is about what happens AFTER layer3.outputGuard and layer4.leakedSystemInstruction are computed, not about the detection logic itself, which the review already confirmed correct.
+
+## SCOPE
+1. In defense-in-depth.ts's orchestrator, make an 'unsafe' layer3.outputGuard verdict actually set blocked=true and prevent the unsafe content from being returned as `content` (return a real safe-refusal/blocked response instead, consistent with how the existing pre-call block path already behaves).
+2. Make a real layer4.leakedSystemInstruction detection actually block or fully strip the leak before the response is returned -- PII-scrubbing alone is not sufficient for a verbatim system-prompt leak; decide and implement whichever real behavior (block entirely vs. strip-and-continue) is consistent with how the pre-call equivalent already handles a comparable severity finding, and document the choice.
+3. Add real test coverage for both enforcement paths: one test where a real (mocked) post-call Llama Guard verdict is 'unsafe' and asserts the final response is actually blocked/refused, not just that the verdict field is set; one test where the model output verbatim-contains the system-instruction delimiter and asserts it is not present in the final returned content.
+4. Do not change the Layer 3 fail-open-on-network-error behavior -- the real audit flagged that as a real, distinct design tradeoff worth an explicit Owner decision, not a bug to silently fix in this round. Leave it exactly as-is and do not touch that code path.
+
+## SUCCESS_CRITERIA
+The two new tests from SCOPE item 3 both pass, and the full existing prompt-security test suite still passes: report the exact real test command used (e.g. `npx vitest run src/lib/prompt-security` or the repo's real equivalent) and its real exit code in the final checkpoint.
+
+## EXPECTED_OUTPUT
+An updated commit on the existing PR #562 branch (same PR, not a new one).
+
+## CONSTRAINTS
+This is a narrow fix to code already reviewed and approved apart from the two named enforcement gaps -- do not restructure the Layer 1/Layer 2 pre-call logic, the Quality Engine, or the Red Team battery, all of which the real audit already confirmed sound. Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task.
+
+## COMPLEXITY_TIER
+judgment

@@ -1,0 +1,25 @@
+## OBJECTIVE
+Resolve the real merge conflict on claude-control PR #79 (DDL pre-flight authorization gate, content already Superboss-approved in a prior round) against origin/master. The conflict arose after PR #84 (branch-resolution fix) merged to master.
+
+## KNOWN_CONTEXT
+`gh pr view 79 --repo FChecklist/claude-control --json mergeable,mergeStateStatus` currently shows CONFLICTING/DIRTY. This PR's actual content (scripts/ddl_authorization_check.py, its tests, the tightened citation check, expanded privilege-escalation keyword coverage) was already reviewed and approved in a prior round -- this task is a mechanical conflict resolution, not a re-implementation. Do not change the already-approved DDL-gate logic itself; only resolve the conflicting file(s) against the new master.
+
+## SCOPE
+1. Check out PR #79's branch, fetch and merge origin/master, identify the real conflicting file(s) (likely ai-os/MASTER_INDEX.yaml and/or scripts/task-gateway.py given recent merges to master touching both).
+2. Resolve conflicts by keeping both sides' real content where they are additive (e.g. MASTER_INDEX.yaml registries[] entries), and carefully reconciling scripts/task-gateway.py if it conflicts (master's version now includes the branch-resolution/HOLD_FOR_OWNER_SIGNOFF fix from PR #84 -- keep that AND this branch's DDL pre-flight check wiring, both must coexist in cmd_start()).
+3. After resolving, run the existing DDL-gate test suite to confirm the approved logic still passes after the merge.
+4. Push the resolved merge to the existing PR #79 branch.
+
+## SUCCESS_CRITERIA
+- `gh pr view 79 --repo FChecklist/claude-control --json mergeable -q '.mergeable'` returns MERGEABLE after the push.
+- `python3 -m pytest tests/ -k ddl_authorization -v` exits 0 after the merge (the previously-approved logic still works).
+- `grep -n "HOLD_FOR_OWNER_SIGNOFF" scripts/task-gateway.py` and `grep -n "ddl_authorization_check" scripts/task-gateway.py` both show real matches, confirming both fixes coexist in cmd_start().
+
+## EXPECTED_OUTPUT
+Push the resolved merge directly to the existing PR #79 branch. Do not open a new PR.
+
+## CONSTRAINTS
+Do not re-implement or change the already-approved DDL-gate logic -- this is conflict resolution only. Do not merge yourself.
+
+## COMPLEXITY_TIER
+integrative

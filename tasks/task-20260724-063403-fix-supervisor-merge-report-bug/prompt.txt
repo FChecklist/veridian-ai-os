@@ -1,0 +1,27 @@
+## OBJECTIVE
+Permanently fix the recurring supervisor-entrypoint.sh merge-report bug: `gh pr merge "$PR_URL" --merge --delete-branch` merges the PR successfully via the GitHub API but then exits non-zero because `--delete-branch` fails locally (git error: master already checked out in a sibling worktree at /opt/veridian/repos/claude-control). The script treats the whole command's failure as "merge FAILED" and checkpoints the task blocked, even though the merge genuinely succeeded. Confirmed via `gh pr view --json state,mergedAt` on 3 real, independent tasks this session (PR #10, #13, #14 -- all state=MERGED with a real mergeCommit, all task.yaml wrongly recorded blocked/not-merged).
+
+## SCOPE
+1. Read supervisor-entrypoint.sh's tier1 merge block (around the `gh pr merge` call and its surrounding if/else) and fix the root cause: stop relying on the combined exit code of merge+delete-branch as a single success/failure signal. Two acceptable fixes, pick the one that fits the existing script cleanest: (a) split into two calls -- `gh pr merge "$PR_URL" --merge` (no --delete-branch) followed by a separate remote branch deletion via `gh api -X DELETE repos/{owner}/{repo}/git/refs/heads/{branch}` (pure GitHub API, cannot hit a local worktree conflict) -- checkpoint success/failure based on the merge call's own exit code and a follow-up `gh pr view --json state,mergedAt` confirmation, treat the branch-delete step as best-effort/non-fatal; or (b) run the whole merge step from /opt/veridian/repos/claude-control (already on master, confirmed clean this session) instead of from within the task's own worktree, if that's structurally simpler given how the script is invoked today.
+2. After merging, always verify the real outcome with a fresh `gh pr view "$PR_URL" --json state,mergedAt` call before writing any checkpoint note -- the checkpoint's success/failure must be driven by this real API response, not by a shell command's exit code alone.
+3. Add a real regression test (or a manual reproduction documented in the task's own evidence) proving: a merge that succeeds via the API but whose branch-delete step fails no longer produces a false "blocked/not merged" checkpoint.
+4. Retroactively confirm (read-only check, do not re-merge) that no other currently-open PR on claude-control is a 4th unnoticed instance of this same false-blocked pattern -- if found, correct that task's checkpoint the same way the 3 known ones already were this session.
+
+## KNOWN_CONTEXT
+- This exact class of bug was already root-caused and manually verified 3 times this session (PRs #10, #13, #14) -- see task-20260724-033446-self-sustaining-system-engine-phase2-con, task-20260724-053213-veridian-20engines-10gateways-phase0-inv, and task-20260724-060203-xpost-github-catalog-2026-07-24's task.yaml checkpoint history for the exact error text each time: "failed to run git: fatal: 'master' is already used by worktree at '/opt/veridian/repos/claude-control'".
+- Owner directive: fix real issues found without stopping to ask, using this server's own resources, through this same task-gateway.py pipeline -- this task IS that fix, dispatched per that standing authorization.
+- Do not touch the tier2/awaiting_human_approval or reject code paths in supervisor-entrypoint.sh -- this fix is scoped to the tier1 auto-merge success-detection logic only.
+
+## SUCCESS_CRITERIA
+- supervisor-entrypoint.sh no longer treats a --delete-branch local-git failure as a merge failure when the merge itself succeeded.
+- A real test run (a genuine tier1-eligible task merged through the fixed script) shows a checkpoint of status=completed with an accurate note, not blocked.
+- Any 4th unnoticed false-blocked task found in step 4 is corrected with the same evidence-based approach used for the 3 known ones.
+
+## EXPECTED_OUTPUT
+Real committed and pushed fix (PR on claude-control), the regression-test evidence, and a final checkpoint summary confirming the fix was exercised against a real merge, not just read for correctness.
+
+## CONSTRAINTS
+Limit changes to the tier1 merge success-detection logic in supervisor-entrypoint.sh. Do not modify risk-tier.py's classification logic or the tier2/reject paths.
+
+## COMPLEXITY_TIER
+integrative

@@ -1,0 +1,27 @@
+## OBJECTIVE
+Close the real process gap where Terminology Phase 3's actual deliverable (CI job + guardrail script + exemptions registry) landed in compliance-tracker PR #552 but was never reviewed there, while a separate claude-control PR was correctly rejected for containing only bookkeeping. Instruction INS-20260724-140321-8748.
+
+## SCOPE
+1. Read compliance-tracker PR #552's real diff in full: `.github/workflows/ci.yml` (the new terminology-guardrail-check job), `scripts/check-terminology-guardrail.mjs`, `ai-os/registry/terminology-guardrail-exemptions.yaml`. Confirm it genuinely matches Phase 3's spec (structurally identical to the existing guardrail-presence/asset-registry-coverage jobs, diff-scoped not full-repo scan, exemption file shaped like asset-registry-coverage.yaml).
+2. If the content is real and correct, post a genuine structured `AUDIT: PASS` comment on PR #552 following compliance-tracker's own audit-protocol format (8 fields, same as this session's other real audits), then merge PR #552 for real once its required checks pass.
+3. If the content has real defects, fix them for real (push corrections to the PR552 branch) before posting AUDIT: PASS.
+4. Update ai-os/TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml (both live /opt/veridian/ai-os/ and repo-copy claude-control/ai-os/ paths) to record phase_3_ci_enforcement_wiring as done, citing compliance-tracker PR #552 (not the earlier rejected claude-control PR #38) as the real evidence.
+5. Add one sentence to the phase plan's own dependency/process notes: any future phase whose real deliverable lands in a repo other than claude-control must get reviewed and merged in that repo's own pipeline BEFORE the claude-control tracking task claims the phase done.
+
+## KNOWN_CONTEXT
+- compliance-tracker PR #552 confirmed real content exists (.github/workflows/ci.yml, scripts/check-terminology-guardrail.mjs, ai-os/registry/terminology-guardrail-exemptions.yaml) but its own `audit-check` required status check is FAILING (mergeStateStatus=BLOCKED, mergeable=MERGEABLE, state=OPEN) because no audit comment was ever posted -- confirmed via `gh pr view 552 --repo FChecklist/compliance-tracker`.
+- claude-control PR #38 was correctly rejected by the real reviewer for containing only a plan-tracking YAML update, not the actual deliverable -- do not try to resurrect or merge PR #38, it correctly stays closed/rejected.
+- Owner directive: 100% real live implementation, keep driving every phase to completion.
+
+## SUCCESS_CRITERIA
+- compliance-tracker PR #552 shows `state: MERGED` via a real `gh pr view 552 --repo FChecklist/compliance-tracker --json state,mergedAt` call.
+- The Terminology phase plan (both copies) shows phase_3_ci_enforcement_wiring done, citing PR #552.
+
+## EXPECTED_OUTPUT
+A real audit comment on PR #552, a real merge of PR #552 (or documented real defects fixed first), the updated phase plan in both live and repo-copy locations, and a final checkpoint confirming PR #552's real merged state.
+
+## CONSTRAINTS
+Do not touch claude-control PR #38 (leave it rejected/closed as-is). Limit corrections, if any are needed, to what's required to make PR #552's real content match Phase 3's spec.
+
+## COMPLEXITY_TIER
+integrative

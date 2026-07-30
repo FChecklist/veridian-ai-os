@@ -1,0 +1,11 @@
+VERIDIAN Review Framework gap-closure: AI Engineering Quality / Overall Code Quality.
+This covers 1 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] Overall Code Quality Score
+  Gap: Strong documentation discipline offset by monolithic files and low test coverage
+  Recommended approach: Split schema.ts by domain module and task-execution-engine.ts by responsibility; raise test coverage on the largest files first.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

@@ -1,0 +1,20 @@
+TASK: V2-19 -- Prompt & Cache real production metrics
+
+### V2-19 — Prompt & Cache real production metrics [C10]
+- READY: yes
+- SOFTWARE TEAM LEVEL: L3 Feature Worker
+- TASK ID: V2-19-CACHE-METRICS
+- MODULE: compliance-tracker
+- OBJECTIVE: Wire real production cache hit-rate + cost-savings metrics recording into the Prompt & Cache framework (framework exists from PR #323; metrics emission doesn't). Closes CSV rows #62/#63.
+- READ FIRST: `src/lib/llm-client.ts`/cache framework; `platform.ai_routing_audit_log`; the prompt-cache Phase 1 PR #323.
+- WHAT TO BUILD: Metrics emission + a small read view/report; tests.
+- CONSTRAINTS: No new metrics vendor. Tier2 if schema. Register claim.
+- DONE CRITERIA: Metrics recording live + report; rows re-scored; PR open.
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

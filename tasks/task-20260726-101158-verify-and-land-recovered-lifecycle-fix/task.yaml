@@ -1,0 +1,160 @@
+id: task-20260726-101158-verify-and-land-recovered-lifecycle-fix
+title: Verify and land recovered lifecycle-fix commit e6c7049 (PR84)
+status: completed
+repo: claude-control
+branch: worker/task-20260726-101158-verify-and-land-recovered-lifecycle-fix
+workspace: /opt/veridian/ai-os/tasks/task-20260726-101158-verify-and-land-recovered-lifecycle-fix/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-101158-verify-and-land-recovered-lifecycle-fix
+service: veridian-worker@task-20260726-101158-verify-and-land-recovered-lifecycle-fix.service
+created_at: '2026-07-26T10:11:59.955984+00:00'
+last_checkpoint_at: '2026-07-26T10:19:40.361387+00:00'
+completed_steps: &id002
+- 'Checked out PR #84 branch (recovered-lifecycle-fix-e6c7049) locally, HEAD=e6c7049'
+- 'Read full diff of PR #84 (ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml, scripts/supervisor-entrypoint.sh,
+  scripts/task-gateway.py, scripts/tight_task_validation.py, scripts/veridian-task.py,
+  both new test files)'
+- Ran `python3 -m pytest tests/hold_for_signoff_test.py tests/veridian_task_branch_resolution_test.py
+  -v` -- 7/7 passed
+- 'Verified branch-resolution fix: veridian-task.py cmd_checkpoint() reads real `git
+  rev-parse --abbrev-ref HEAD` and overwrites stale task["branch"] before save (confirmed
+  via code read + passing test)'
+- 'Verified HOLD_FOR_OWNER_SIGNOFF enforcement end-to-end: tight_task_validation.py
+  extract_hold_for_owner_signoff() -> task-gateway.py cmd_start() --hold-for-owner-signoff
+  -> veridian-task.py cmd_create() writes hold_for_owner_signoff into task.yaml ->
+  supervisor-entrypoint.sh merge-decision block checks it FIRST and skips auto-merge'
+- Cross-checked PR branch's 4 touched/added scripts against live production copies
+  at /opt/veridian/scripts/ -- byte-identical except for exactly the two intended
+  fixes, confirming this recovered checkpoint is complete finished work, not a partial
+  mid-task snapshot
+- No code changes needed -- recovered commit verified complete and correct as-is
+- 'Updated PR #84 body to flag it as a recovered-commit first-time verification pass,
+  with a summary of findings (via gh api PATCH, since `gh pr edit` hit an unrelated
+  GraphQL Projects-Classic deprecation error)'
+remaining_steps: &id003
+- 'None -- verification complete. PR #84 left open, unmerged, per instructions (Owner/normal
+  review to merge).'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T10:12:01.755837+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T10:16:39.106206+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Checked out PR #84 branch (recovered-lifecycle-fix-e6c7049) locally, HEAD=e6c7049'
+  - 'Read full diff of PR #84 (ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml, scripts/supervisor-entrypoint.sh,
+    scripts/task-gateway.py, scripts/tight_task_validation.py, scripts/veridian-task.py,
+    both new test files)'
+  - Ran `python3 -m pytest tests/hold_for_signoff_test.py tests/veridian_task_branch_resolution_test.py
+    -v` -- 7/7 passed
+  - 'Verified branch-resolution fix: veridian-task.py cmd_checkpoint() reads real
+    `git rev-parse --abbrev-ref HEAD` and overwrites stale task["branch"] before save
+    (confirmed via code read + passing test)'
+  - 'Verified HOLD_FOR_OWNER_SIGNOFF enforcement end-to-end: tight_task_validation.py
+    extract_hold_for_owner_signoff() -> task-gateway.py cmd_start() --hold-for-owner-signoff
+    -> veridian-task.py cmd_create() writes hold_for_owner_signoff into task.yaml
+    -> supervisor-entrypoint.sh merge-decision block checks it FIRST and skips auto-merge'
+  - Cross-checked PR branch's 4 touched/added scripts against live production copies
+    at /opt/veridian/scripts/ -- byte-identical except for exactly the two intended
+    fixes, confirming this recovered checkpoint is complete finished work, not a partial
+    mid-task snapshot
+  - No code changes needed -- recovered commit verified complete and correct as-is
+  - 'Updated PR #84 body to flag it as a recovered-commit first-time verification
+    pass, with a summary of findings (via gh api PATCH, since `gh pr edit` hit an
+    unrelated GraphQL Projects-Classic deprecation error)'
+  remaining_steps:
+  - 'None -- verification complete. PR #84 left open, unmerged, per instructions (Owner/normal
+    review to merge).'
+  recent_commits:
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  note: quality gates passed, pushed branch worker/task-20260726-101158-verify-and-land-recovered-lifecycle-fix,
+    awaiting review
+- at: '2026-07-26T10:19:40.361387+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  note: 'tier1, Superboss-approved, merged autonomously: '
+execution_seconds: 275
+restart_count: 0
+token_usage:
+  input_tokens: 70
+  cache_creation_input_tokens: 80646
+  cache_read_input_tokens: 2644798
+  output_tokens: 20591
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 80646
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 666
+    cache_read_input_tokens: 103866
+    cache_creation_input_tokens: 464
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 464
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T11:00:09.563398+00:00'

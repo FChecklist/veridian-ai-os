@@ -1,0 +1,245 @@
+id: task-20260724-140446-fix-terminology-phase3-pr552-review-gap
+title: fix-terminology-phase3-pr552-review-gap
+status: completed
+repo: claude-control
+branch: worker/task-20260724-140446-fix-terminology-phase3-pr552-review-gap
+workspace: /opt/veridian/ai-os/tasks/task-20260724-140446-fix-terminology-phase3-pr552-review-gap/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260724-140446-fix-terminology-phase3-pr552-review-gap
+service: veridian-worker@task-20260724-140446-fix-terminology-phase3-pr552-review-gap.service
+created_at: '2026-07-24T14:04:47.545906+00:00'
+last_checkpoint_at: '2026-07-24T14:23:26.989021+00:00'
+completed_steps: &id002
+- 'Updated ai-os/TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml: phase_3_ci_enforcement_wiring
+  marked `status: done`, `real_evidence_2026-07-24` block citing compliance-tracker#552
+  (not claude-control#38), 3 dependency_table rows flipped to `done`'
+- Added `process_notes.cross_repo_review_gap` -- standing rule that a future phase's
+  real deliverable landing in a repo other than claude-control must be reviewed/merged
+  in that repo's own pipeline before the claude-control tracking task claims it done
+- 'Committed + pushed the change on this task''s worker branch, opened claude-control
+  PR #41'
+- 'Per this repo''s own AGENTS.md Rule 7c (implementer != auditor), dispatched an
+  independent agent to audit PR #41 with real, live tool calls (not trusting PR prose)
+  -- verdict AUDIT: PASS (https://github.com/FChecklist/claude-control/pull/41#issuecomment-5070877091)'
+- 'Merged PR #41 (squash) -- mergedAt 2026-07-24T14:21:22Z, state MERGED'
+- 'Synced /opt/veridian/repos/claude-control to origin/master (fast-forward, now reflects
+  PR #41)'
+- Copied the updated phase plan into the live /opt/veridian/ai-os/TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml
+  path
+- 'Confirmed claude-control PR #38 untouched (still OPEN, unaffected, as required)'
+remaining_steps: &id003 []
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-24T14:04:49.380600+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 9962112 Auto-sync 3 server task(s) to master controller
+  - 'e018dc1 Merge pull request #39 from FChecklist/worker/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener'
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  - '65bacb1 Merge pull request #37 from FChecklist/worker/task-20260724-122143-phase3-data-model-static-quality-linting'
+  - a388bea Close Phase 3 (data-model + product-quality + documentation linting)
+  - 'dd59d41 Phase 3 documentation pipeline: markdownlint-cli default ruleset'
+  - '78c5134 Phase 3 product-quality pipeline: ESLint ruleset mapped to ISO 25010'
+  - 9bb335a Auto-sync 3 server task(s) to master controller
+  - '410f0fb Merge pull request #36 from FChecklist/worker/task-20260724-122137-phase3-formalize-task-gateway-py-task-ex'
+  - 'a773d73 Worker task-20260724-122137-phase3-formalize-task-gateway-py-task-ex:
+    checkpoint commit (invocation failed, exit 1)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-24T14:09:50.448693+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Posted structured `AUDIT: PASS` comment (8-field audit-protocol format) on PR
+    #552: https://github.com/FChecklist/compliance-tracker/pull/552#issuecomment-5070737581'
+  - Re-ran the audit-check job (it only triggers on pull_request open/sync/reopen,
+    not new comments, so a manual `gh api actions/runs/.../rerun` was needed) -- now
+    conclusion=success
+  - Confirmed all branch-protection-required checks green (Lint, Type Check, Build,
+    audit-check, Guardrail Presence Check, Asset Registry Coverage Check, Unit Tests);
+    the one failure (Metadata Index Coverage Check) is pre-existing/unrelated and
+    not in the required list
+  - 'Merged PR #552 (squash) -- mergedAt 2026-07-24T14:08:41Z, state MERGED'
+  remaining_steps:
+  - 'Update ai-os/TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml in both /opt/veridian/ai-os/
+    (live) and claude-control/ai-os/ (repo-copy) -- mark phase_3_ci_enforcement_wiring
+    done, cite PR #552'
+  - Add one-sentence process note to the phase plan about cross-repo deliverables
+    needing review/merge in their own pipeline before claude-control claims the phase
+    done
+  - Commit + push phase plan updates
+  - 'Final checkpoint: `gh pr view 552 --repo FChecklist/compliance-tracker --json
+    state,mergedAt` shows MERGED'
+  recent_commits:
+  - 9962112 Auto-sync 3 server task(s) to master controller
+  - 'e018dc1 Merge pull request #39 from FChecklist/worker/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener'
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  - '65bacb1 Merge pull request #37 from FChecklist/worker/task-20260724-122143-phase3-data-model-static-quality-linting'
+  - a388bea Close Phase 3 (data-model + product-quality + documentation linting)
+  - 'dd59d41 Phase 3 documentation pipeline: markdownlint-cli default ruleset'
+  - '78c5134 Phase 3 product-quality pipeline: ESLint ruleset mapped to ISO 25010'
+  - 9bb335a Auto-sync 3 server task(s) to master controller
+  - '410f0fb Merge pull request #36 from FChecklist/worker/task-20260724-122137-phase3-formalize-task-gateway-py-task-ex'
+  - 'a773d73 Worker task-20260724-122137-phase3-formalize-task-gateway-py-task-ex:
+    checkpoint commit (invocation failed, exit 1)'
+  note: periodic checkpoint
+- at: '2026-07-24T14:14:51.528434+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Posted structured `AUDIT: PASS` comment (8-field audit-protocol format) on PR
+    #552: https://github.com/FChecklist/compliance-tracker/pull/552#issuecomment-5070737581'
+  - Re-ran the audit-check job (it only triggers on pull_request open/sync/reopen,
+    not new comments, so a manual `gh api actions/runs/.../rerun` was needed) -- now
+    conclusion=success
+  - Confirmed all branch-protection-required checks green (Lint, Type Check, Build,
+    audit-check, Guardrail Presence Check, Asset Registry Coverage Check, Unit Tests);
+    the one failure (Metadata Index Coverage Check) is pre-existing/unrelated and
+    not in the required list
+  - 'Merged PR #552 (squash) -- mergedAt 2026-07-24T14:08:41Z, state MERGED'
+  remaining_steps:
+  - 'Update ai-os/TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml in both /opt/veridian/ai-os/
+    (live) and claude-control/ai-os/ (repo-copy) -- mark phase_3_ci_enforcement_wiring
+    done, cite PR #552'
+  - Add one-sentence process note to the phase plan about cross-repo deliverables
+    needing review/merge in their own pipeline before claude-control claims the phase
+    done
+  - Commit + push phase plan updates
+  - 'Final checkpoint: `gh pr view 552 --repo FChecklist/compliance-tracker --json
+    state,mergedAt` shows MERGED'
+  recent_commits:
+  - 9962112 Auto-sync 3 server task(s) to master controller
+  - 'e018dc1 Merge pull request #39 from FChecklist/worker/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener'
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  - '65bacb1 Merge pull request #37 from FChecklist/worker/task-20260724-122143-phase3-data-model-static-quality-linting'
+  - a388bea Close Phase 3 (data-model + product-quality + documentation linting)
+  - 'dd59d41 Phase 3 documentation pipeline: markdownlint-cli default ruleset'
+  - '78c5134 Phase 3 product-quality pipeline: ESLint ruleset mapped to ISO 25010'
+  - 9bb335a Auto-sync 3 server task(s) to master controller
+  - '410f0fb Merge pull request #36 from FChecklist/worker/task-20260724-122137-phase3-formalize-task-gateway-py-task-ex'
+  - 'a773d73 Worker task-20260724-122137-phase3-formalize-task-gateway-py-task-ex:
+    checkpoint commit (invocation failed, exit 1)'
+  note: periodic checkpoint
+- at: '2026-07-24T14:19:54.575842+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Posted structured `AUDIT: PASS` comment (8-field audit-protocol format) on PR
+    #552: https://github.com/FChecklist/compliance-tracker/pull/552#issuecomment-5070737581'
+  - Re-ran the audit-check job (it only triggers on pull_request open/sync/reopen,
+    not new comments, so a manual `gh api actions/runs/.../rerun` was needed) -- now
+    conclusion=success
+  - Confirmed all branch-protection-required checks green (Lint, Type Check, Build,
+    audit-check, Guardrail Presence Check, Asset Registry Coverage Check, Unit Tests);
+    the one failure (Metadata Index Coverage Check) is pre-existing/unrelated and
+    not in the required list
+  - 'Merged PR #552 (squash) -- mergedAt 2026-07-24T14:08:41Z, state MERGED'
+  remaining_steps:
+  - 'Update ai-os/TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml in both /opt/veridian/ai-os/
+    (live) and claude-control/ai-os/ (repo-copy) -- mark phase_3_ci_enforcement_wiring
+    done, cite PR #552'
+  - Add one-sentence process note to the phase plan about cross-repo deliverables
+    needing review/merge in their own pipeline before claude-control claims the phase
+    done
+  - Commit + push phase plan updates
+  - 'Final checkpoint: `gh pr view 552 --repo FChecklist/compliance-tracker --json
+    state,mergedAt` shows MERGED'
+  recent_commits:
+  - '8f14673 Close phase_3_ci_enforcement_wiring: real review + merge of compliance-tracker#552'
+  - 9962112 Auto-sync 3 server task(s) to master controller
+  - 'e018dc1 Merge pull request #39 from FChecklist/worker/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener'
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  - '65bacb1 Merge pull request #37 from FChecklist/worker/task-20260724-122143-phase3-data-model-static-quality-linting'
+  - a388bea Close Phase 3 (data-model + product-quality + documentation linting)
+  - 'dd59d41 Phase 3 documentation pipeline: markdownlint-cli default ruleset'
+  - '78c5134 Phase 3 product-quality pipeline: ESLint ruleset mapped to ISO 25010'
+  - 9bb335a Auto-sync 3 server task(s) to master controller
+  - '410f0fb Merge pull request #36 from FChecklist/worker/task-20260724-122137-phase3-formalize-task-gateway-py-task-ex'
+  note: periodic checkpoint
+- at: '2026-07-24T14:22:09.372744+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Updated ai-os/TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml: phase_3_ci_enforcement_wiring
+    marked `status: done`, `real_evidence_2026-07-24` block citing compliance-tracker#552
+    (not claude-control#38), 3 dependency_table rows flipped to `done`'
+  - Added `process_notes.cross_repo_review_gap` -- standing rule that a future phase's
+    real deliverable landing in a repo other than claude-control must be reviewed/merged
+    in that repo's own pipeline before the claude-control tracking task claims it
+    done
+  - 'Committed + pushed the change on this task''s worker branch, opened claude-control
+    PR #41'
+  - 'Per this repo''s own AGENTS.md Rule 7c (implementer != auditor), dispatched an
+    independent agent to audit PR #41 with real, live tool calls (not trusting PR
+    prose) -- verdict AUDIT: PASS (https://github.com/FChecklist/claude-control/pull/41#issuecomment-5070877091)'
+  - 'Merged PR #41 (squash) -- mergedAt 2026-07-24T14:21:22Z, state MERGED'
+  - 'Synced /opt/veridian/repos/claude-control to origin/master (fast-forward, now
+    reflects PR #41)'
+  - Copied the updated phase plan into the live /opt/veridian/ai-os/TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml
+    path
+  - 'Confirmed claude-control PR #38 untouched (still OPEN, unaffected, as required)'
+  remaining_steps: []
+  recent_commits:
+  - '8f14673 Close phase_3_ci_enforcement_wiring: real review + merge of compliance-tracker#552'
+  - 9962112 Auto-sync 3 server task(s) to master controller
+  - 'e018dc1 Merge pull request #39 from FChecklist/worker/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener'
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  - '65bacb1 Merge pull request #37 from FChecklist/worker/task-20260724-122143-phase3-data-model-static-quality-linting'
+  - a388bea Close Phase 3 (data-model + product-quality + documentation linting)
+  - 'dd59d41 Phase 3 documentation pipeline: markdownlint-cli default ruleset'
+  - '78c5134 Phase 3 product-quality pipeline: ESLint ruleset mapped to ISO 25010'
+  - 9bb335a Auto-sync 3 server task(s) to master controller
+  - '410f0fb Merge pull request #36 from FChecklist/worker/task-20260724-122137-phase3-formalize-task-gateway-py-task-ex'
+  note: quality gates passed, pushed branch worker/task-20260724-140446-fix-terminology-phase3-pr552-review-gap,
+    awaiting review
+- at: '2026-07-24T14:23:26.989021+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '8f14673 Close phase_3_ci_enforcement_wiring: real review + merge of compliance-tracker#552'
+  - 9962112 Auto-sync 3 server task(s) to master controller
+  - 'e018dc1 Merge pull request #39 from FChecklist/worker/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener'
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  - '65bacb1 Merge pull request #37 from FChecklist/worker/task-20260724-122143-phase3-data-model-static-quality-linting'
+  - a388bea Close Phase 3 (data-model + product-quality + documentation linting)
+  - 'dd59d41 Phase 3 documentation pipeline: markdownlint-cli default ruleset'
+  - '78c5134 Phase 3 product-quality pipeline: ESLint ruleset mapped to ISO 25010'
+  - 9bb335a Auto-sync 3 server task(s) to master controller
+  - '410f0fb Merge pull request #36 from FChecklist/worker/task-20260724-122137-phase3-formalize-task-gateway-py-task-ex'
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/43'
+execution_seconds: 1038
+restart_count: 0
+token_usage:
+  input_tokens: 158
+  cache_creation_input_tokens: 154335
+  cache_read_input_tokens: 8888857
+  output_tokens: 46532
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 154335
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 609
+    cache_read_input_tokens: 177442
+    cache_creation_input_tokens: 484
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 484
+    type: message
+  speed: standard
+master_synced_at: '2026-07-24T14:30:09.200702+00:00'

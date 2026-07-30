@@ -1,0 +1,24 @@
+## OBJECTIVE
+Task 2 Phase 0 of the Owner's OWNER_ENGINE directive (2026-07-27): Task 1 (OWNER_ENGINE document-accuracy convergence against VERIDIAN_Architecture_v2.0.docx) already completed 2026-07-25 with a real, evidenced 0.0% gap over 2 consecutive runs -- see ai-os/OWNER_ENGINE_DOCUMENT_ACCURACY_CONVERGENCE_2026-07-25.yaml. Task 2 (the full phased implementation driven by that document's content) was explicitly out of scope for that prior task and has never been started. Before dispatching any implementation phases, produce a real, grounded gap analysis: for every engine/spec/component the document's Part II describes, determine whether it already exists in the live system or is genuinely missing, so later phases only build what's real work and never redo what already exists.
+
+## KNOWN_CONTEXT
+Read ai-os/owner-attachments/VERIDIAN_Architecture_v2.0_extracted.txt in full -- Part II ("The Improved VERIDIAN Architecture") is the real target spec: 2.1 Complete Engine Catalog (74 engines), 2.2 Improved Prompt Compiler Pipeline, 2.3 Enhanced Multi-Level Cache Architecture, 2.4 Complete Technology Stack, 2.5 Performance Budget Framework, 2.6 Prompt Metadata Schema (200+ fields), 2.7 Modular YCML Specification Catalog (40 specs), 2.8 Defense-in-Depth Security Architecture, 2.9 Governance and Compliance Framework. This session's own history already shipped real pieces of several of these sections independently (e.g. defense-in-depth security work, a policy/governance gate registry, a VCEL engine registry with dozens of engines already implemented under src/lib/engines/) -- do not assume Part II is 0% built; the real starting point is unknown until measured.
+
+## SCOPE
+1. Extract a structured checklist from Part II: every named engine (2.1's table), every named YCML spec (2.7's table), and the major named components of 2.2/2.3/2.4/2.5/2.6/2.8/2.9 -- one row per item, with a stable identifier.
+2. For each item, real-check current system state: search src/lib/engines/ and any other relevant source trees across all 11 repos under /opt/veridian/repos/, search wiring_registry and knowledge_engine (superboss-register.sqlite) for a matching entity, search MASTER_INDEX.yaml's registries. Classify each item as one of: FULLY_IMPLEMENTED (real code/config exists doing what the spec describes), PARTIALLY_IMPLEMENTED (real but incomplete -- describe the real gap), NOT_IMPLEMENTED, or CANNOT_DETERMINE (needs a human call).
+3. Write the real classification table with evidence (file paths, wiring_registry entity_ids, or "no match found") to ai-os/OWNER_ENGINE_TASK2_GAP_ANALYSIS_2026-07-27.yaml.
+4. Group the NOT_IMPLEMENTED and PARTIALLY_IMPLEMENTED items into a real, ordered phase plan (smallest sensible batches that share a repo/module, sequenced to avoid the kind of same-repo merge collisions this session already hit and fixed elsewhere) and write it to ai-os/OWNER_ENGINE_TASK2_PHASE_PLAN_2026-07-27.yaml -- each phase entry needs: phase number, repo, real scope description, and a runnable verification command.
+5. Register both output files in MASTER_INDEX.yaml and via wiring_registry (reuse scripts/dispatch_core.py's record_dispatch_event, do not build a second writer).
+
+## SUCCESS_CRITERIA
+`test -f ai-os/OWNER_ENGINE_TASK2_GAP_ANALYSIS_2026-07-27.yaml` exits 0 and contains at least 74 classified items (the real engine count from 2.1) plus the 40 YCML specs from 2.7. `test -f ai-os/OWNER_ENGINE_TASK2_PHASE_PLAN_2026-07-27.yaml` exits 0 and every phase entry has a non-empty verification command. Runnable check: `python3 -c "import yaml; d=yaml.safe_load(open('ai-os/OWNER_ENGINE_TASK2_GAP_ANALYSIS_2026-07-27.yaml')); assert len(d.get('items', [])) >= 114"`.
+
+## EXPECTED_OUTPUT
+A real PR against claude-control containing both YAML files plus the MASTER_INDEX.yaml registration. This task does not implement any engine itself -- it only measures and plans.
+
+## CONSTRAINTS
+Read-only against every other repo -- this task inspects source trees and the wiring_registry database but writes only the two new YAML files (and MASTER_INDEX.yaml's registry entry) in claude-control. No live database schema changes, no new database credentials or connections requested. Do not touch the live crontab or any systemd auto-start unit.
+
+## COMPLEXITY_TIER
+judgment

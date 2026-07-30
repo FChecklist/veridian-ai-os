@@ -1,0 +1,67 @@
+id: task-20260728-031500-adopted-fresh-audit--pr--607
+title: 'Fresh audit: PR #607'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr
+workspace: /opt/veridian/ai-os/tasks/task-20260728-031500-adopted-fresh-audit--pr--607/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-031500-adopted-fresh-audit--pr--607
+service: veridian-supervisor@task-20260728-031500-adopted-fresh-audit--pr--607.service
+created_at: '2026-07-28T03:15:01.997015+00:00'
+last_checkpoint_at: '2026-07-28T03:18:02.540404+00:00'
+completed_steps: &id002
+- Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no live collision found; several
+  older
+- 'Root-caused the bug: `buildProductNodes()` in `src/lib/services/capability-tree-service.ts`'
+- Fixed `buildProductNodes()` to query `erpItems` (org-scoped, isActive) and attach
+  a new
+- Removed the now-dead `genericProjectActions()` helper (only caller was the old
+- Exported `GENERIC_ENTITY_ACTIONS`/`GENERIC_PRODUCT_ACTIONS` (were module-private)
+  so both
+- 'Added regression tests in `capability-tree-service.test.ts` (9 tests total, all
+  passing):'
+- 'Verified:'
+- 'Constraint check: did not touch any cron/systemd `.timer` state (no such files
+  touched at'
+- 'Committed, pushed, opened PR #607 against main:'
+remaining_steps: &id003
+- 'Fresh supervisor audit of PR #607, then merge (not by this session).'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T03:15:01.997015+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'worker/task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr'
+    (https://github.com/FChecklist/compliance-tracker/pull/607) -- registered for
+    real audit, not a fresh worker dispatch
+- at: '2026-07-28T03:18:02.540404+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '88e3ee3f progress: PR #607 opened, root-cause fix + tests done, awaiting supervisor
+    audit'
+  - '02e910c1 fix: VERI ERP Product chain-selector no longer surfaces Project rows/actions'
+  - '5cd9f45c claim: register active-claims entry for Product chain-selector bug fix
+    task'
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  note: "tier1, Superboss-approved, but the merge itself FAILED (gh pr view confirms\
+    \ state=OPEN, mergedAt=; see supervisor.log) \u2014 needs manual attention, NOT\
+    \ actually merged: https://github.com/FChecklist/compliance-tracker/pull/607"
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/607
+master_synced_at: '2026-07-29T21:04:26.282454+00:00'

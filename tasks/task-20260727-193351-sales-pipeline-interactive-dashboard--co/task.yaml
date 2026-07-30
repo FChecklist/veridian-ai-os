@@ -1,0 +1,505 @@
+id: task-20260727-193351-sales-pipeline-interactive-dashboard--co
+title: Sales Pipeline interactive dashboard (compliance-tracker CRM)
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co
+workspace: /opt/veridian/ai-os/tasks/task-20260727-193351-sales-pipeline-interactive-dashboard--co/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-193351-sales-pipeline-interactive-dashboard--co
+service: veridian-worker@task-20260727-193351-sales-pipeline-interactive-dashboard--co.service
+created_at: '2026-07-27T19:33:54.070338+00:00'
+last_checkpoint_at: '2026-07-27T20:36:09.683326+00:00'
+completed_steps: &id002
+- Read ACTIVE-CLAIMS.yaml, registered this task's claim, pushed it standalone before
+  real work
+- 'Confirmed crmOpportunities.stage gap: 5 legacy free-text values, none of the mockup''s
+  8'
+- Confirmed no existing "monthly revenue target" concept anywhere (grepped schema.ts
+  +
+- Researched existing win-probability/health-scoring logic (aiWinProbability is an
+  opaque
+- Added `crm_sales_targets` table (schema.ts) + hand-written migration 0268 (additive
+  only,
+- 'Built pure aggregation module `sales-pipeline-dashboard-service.ts`: stage normalization'
+- 20 unit tests (`sales-pipeline-dashboard-service.test.ts`), all passing -- covers
+  KPI math
+- DB-fetch layer (`getSalesPipelineDashboardData`, `setSalesTarget` in crm-service.ts)
+  +
+- 'Dashboard page (`src/app/(app)/crm/sales-pipeline/page.tsx`): 6 KPI tiles, 2 filter'
+- Linked from `/crm` overview page
+- 'Verified: `npx tsc --noEmit` clean, `bun test` (20/20 pass), `eslint` clean on
+  all new/'
+- Committed + pushed
+remaining_steps: &id003
+- '`bun run build` (full production build) could not be completed in this session''s
+  sandbox:'
+- No settings UI for `setSalesTarget` -- only a raw POST endpoint exists. Out of scope
+  per
+- Awaiting fresh supervisor audit before merge (per task's own EXPECTED_OUTPUT --
+  not
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T19:33:56.023040+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  - '581d29f3 merge: resolve conflicts with main + renumber migration 0265->0267 (0264-0266
+    now taken by Helpdesk/PM-gaps/HR-gaps)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T19:38:57.355392+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/db/schema.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8968c358 ai-os: register active claim for Sales Pipeline dashboard task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: periodic checkpoint
+- at: '2026-07-27T19:43:58.772418+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/db/schema.ts
+  - src/lib/services/crm-service.ts
+  - drizzle/0268_sales_pipeline_dashboard_targets.sql
+  - src/app/api/crm/sales-pipeline/
+  - src/lib/services/sales-pipeline-dashboard-service.test.ts
+  - src/lib/services/sales-pipeline-dashboard-service.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8968c358 ai-os: register active claim for Sales Pipeline dashboard task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: periodic checkpoint
+- at: '2026-07-27T19:49:08.590066+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/registry/terminology-guardrail-exemptions.yaml
+  - src/app/(app)/crm/page.tsx
+  - src/lib/db/schema.ts
+  - src/lib/services/crm-service.ts
+  - drizzle/0268_sales_pipeline_dashboard_targets.sql
+  - src/app/(app)/crm/sales-pipeline/
+  - src/app/api/crm/sales-pipeline/
+  - src/lib/services/sales-pipeline-dashboard-service.test.ts
+  - src/lib/services/sales-pipeline-dashboard-service.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8968c358 ai-os: register active claim for Sales Pipeline dashboard task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: periodic checkpoint
+- at: '2026-07-27T19:54:25.893606+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/registry/terminology-guardrail-exemptions.yaml
+  - src/app/(app)/crm/page.tsx
+  - src/lib/db/schema.ts
+  - src/lib/services/crm-service.ts
+  - drizzle/0268_sales_pipeline_dashboard_targets.sql
+  - src/app/(app)/crm/sales-pipeline/
+  - src/app/api/crm/sales-pipeline/
+  - src/lib/services/sales-pipeline-dashboard-service.test.ts
+  - src/lib/services/sales-pipeline-dashboard-service.ts
+  completed_steps:
+  - Read ACTIVE-CLAIMS.yaml, registered this task's claim, pushed it standalone before
+    real work
+  - 'Confirmed crmOpportunities.stage gap: 5 legacy free-text values, none of the
+    mockup''s 8'
+  - Confirmed no existing "monthly revenue target" concept anywhere (grepped schema.ts
+    +
+  - Researched existing win-probability/health-scoring logic (aiWinProbability is
+    an opaque
+  - Added `crm_sales_targets` table (schema.ts) + hand-written migration 0268 (additive
+    only,
+  - 'Built pure aggregation module `sales-pipeline-dashboard-service.ts`: stage normalization'
+  - 20 unit tests (`sales-pipeline-dashboard-service.test.ts`), all passing -- covers
+    KPI math
+  - DB-fetch layer (`getSalesPipelineDashboardData`, `setSalesTarget` in crm-service.ts)
+    +
+  - 'Dashboard page (`src/app/(app)/crm/sales-pipeline/page.tsx`): 6 KPI tiles, 2
+    filter'
+  - Linked from `/crm` overview page
+  - 'Verified: `npx tsc --noEmit` clean, `bun test` (20/20 pass), `eslint` clean on
+    all new/'
+  - Committed + pushed
+  remaining_steps:
+  - '`bun run build` (full production build) could not be completed in this session''s
+    sandbox:'
+  - No settings UI for `setSalesTarget` -- only a raw POST endpoint exists. Out of
+    scope per
+  - Awaiting fresh supervisor audit before merge (per task's own EXPECTED_OUTPUT --
+    not
+  recent_commits:
+  - '8968c358 ai-os: register active claim for Sales Pipeline dashboard task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: periodic checkpoint
+- at: '2026-07-27T20:00:22.781250+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ACTIVE-CLAIMS.yaml, registered this task's claim, pushed it standalone before
+    real work
+  - 'Confirmed crmOpportunities.stage gap: 5 legacy free-text values, none of the
+    mockup''s 8'
+  - Confirmed no existing "monthly revenue target" concept anywhere (grepped schema.ts
+    +
+  - Researched existing win-probability/health-scoring logic (aiWinProbability is
+    an opaque
+  - Added `crm_sales_targets` table (schema.ts) + hand-written migration 0268 (additive
+    only,
+  - 'Built pure aggregation module `sales-pipeline-dashboard-service.ts`: stage normalization'
+  - 20 unit tests (`sales-pipeline-dashboard-service.test.ts`), all passing -- covers
+    KPI math
+  - DB-fetch layer (`getSalesPipelineDashboardData`, `setSalesTarget` in crm-service.ts)
+    +
+  - 'Dashboard page (`src/app/(app)/crm/sales-pipeline/page.tsx`): 6 KPI tiles, 2
+    filter'
+  - Linked from `/crm` overview page
+  - 'Verified: `npx tsc --noEmit` clean, `bun test` (20/20 pass), `eslint` clean on
+    all new/'
+  - Committed + pushed
+  remaining_steps:
+  - '`bun run build` (full production build) could not be completed in this session''s
+    sandbox:'
+  - No settings UI for `setSalesTarget` -- only a raw POST endpoint exists. Out of
+    scope per
+  - Awaiting fresh supervisor audit before merge (per task's own EXPECTED_OUTPUT --
+    not
+  recent_commits:
+  - 'ddc75ed8 feat(crm): real interactive Sales Pipeline dashboard with cross-filtering'
+  - '8968c358 ai-os: register active claim for Sales Pipeline dashboard task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  note: periodic checkpoint
+- at: '2026-07-27T20:08:07.549965+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ACTIVE-CLAIMS.yaml, registered this task's claim, pushed it standalone before
+    real work
+  - 'Confirmed crmOpportunities.stage gap: 5 legacy free-text values, none of the
+    mockup''s 8'
+  - Confirmed no existing "monthly revenue target" concept anywhere (grepped schema.ts
+    +
+  - Researched existing win-probability/health-scoring logic (aiWinProbability is
+    an opaque
+  - Added `crm_sales_targets` table (schema.ts) + hand-written migration 0268 (additive
+    only,
+  - 'Built pure aggregation module `sales-pipeline-dashboard-service.ts`: stage normalization'
+  - 20 unit tests (`sales-pipeline-dashboard-service.test.ts`), all passing -- covers
+    KPI math
+  - DB-fetch layer (`getSalesPipelineDashboardData`, `setSalesTarget` in crm-service.ts)
+    +
+  - 'Dashboard page (`src/app/(app)/crm/sales-pipeline/page.tsx`): 6 KPI tiles, 2
+    filter'
+  - Linked from `/crm` overview page
+  - 'Verified: `npx tsc --noEmit` clean, `bun test` (20/20 pass), `eslint` clean on
+    all new/'
+  - Committed + pushed
+  remaining_steps:
+  - '`bun run build` (full production build) could not be completed in this session''s
+    sandbox:'
+  - No settings UI for `setSalesTarget` -- only a raw POST endpoint exists. Out of
+    scope per
+  - Awaiting fresh supervisor audit before merge (per task's own EXPECTED_OUTPUT --
+    not
+  recent_commits:
+  - 'ddc75ed8 feat(crm): real interactive Sales Pipeline dashboard with cross-filtering'
+  - '8968c358 ai-os: register active claim for Sales Pipeline dashboard task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  note: periodic checkpoint
+- at: '2026-07-27T20:16:14.797071+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ACTIVE-CLAIMS.yaml, registered this task's claim, pushed it standalone before
+    real work
+  - 'Confirmed crmOpportunities.stage gap: 5 legacy free-text values, none of the
+    mockup''s 8'
+  - Confirmed no existing "monthly revenue target" concept anywhere (grepped schema.ts
+    +
+  - Researched existing win-probability/health-scoring logic (aiWinProbability is
+    an opaque
+  - Added `crm_sales_targets` table (schema.ts) + hand-written migration 0268 (additive
+    only,
+  - 'Built pure aggregation module `sales-pipeline-dashboard-service.ts`: stage normalization'
+  - 20 unit tests (`sales-pipeline-dashboard-service.test.ts`), all passing -- covers
+    KPI math
+  - DB-fetch layer (`getSalesPipelineDashboardData`, `setSalesTarget` in crm-service.ts)
+    +
+  - 'Dashboard page (`src/app/(app)/crm/sales-pipeline/page.tsx`): 6 KPI tiles, 2
+    filter'
+  - Linked from `/crm` overview page
+  - 'Verified: `npx tsc --noEmit` clean, `bun test` (20/20 pass), `eslint` clean on
+    all new/'
+  - Committed + pushed
+  remaining_steps:
+  - '`bun run build` (full production build) could not be completed in this session''s
+    sandbox:'
+  - No settings UI for `setSalesTarget` -- only a raw POST endpoint exists. Out of
+    scope per
+  - Awaiting fresh supervisor audit before merge (per task's own EXPECTED_OUTPUT --
+    not
+  recent_commits:
+  - '74b6ef11 ai-os: mark Sales Pipeline dashboard claim as PR #610 open'
+  - 'ddc75ed8 feat(crm): real interactive Sales Pipeline dashboard with cross-filtering'
+  - '8968c358 ai-os: register active claim for Sales Pipeline dashboard task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  note: periodic checkpoint
+- at: '2026-07-27T20:24:17.130796+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ACTIVE-CLAIMS.yaml, registered this task's claim, pushed it standalone before
+    real work
+  - 'Confirmed crmOpportunities.stage gap: 5 legacy free-text values, none of the
+    mockup''s 8'
+  - Confirmed no existing "monthly revenue target" concept anywhere (grepped schema.ts
+    +
+  - Researched existing win-probability/health-scoring logic (aiWinProbability is
+    an opaque
+  - Added `crm_sales_targets` table (schema.ts) + hand-written migration 0268 (additive
+    only,
+  - 'Built pure aggregation module `sales-pipeline-dashboard-service.ts`: stage normalization'
+  - 20 unit tests (`sales-pipeline-dashboard-service.test.ts`), all passing -- covers
+    KPI math
+  - DB-fetch layer (`getSalesPipelineDashboardData`, `setSalesTarget` in crm-service.ts)
+    +
+  - 'Dashboard page (`src/app/(app)/crm/sales-pipeline/page.tsx`): 6 KPI tiles, 2
+    filter'
+  - Linked from `/crm` overview page
+  - 'Verified: `npx tsc --noEmit` clean, `bun test` (20/20 pass), `eslint` clean on
+    all new/'
+  - Committed + pushed
+  remaining_steps:
+  - '`bun run build` (full production build) could not be completed in this session''s
+    sandbox:'
+  - No settings UI for `setSalesTarget` -- only a raw POST endpoint exists. Out of
+    scope per
+  - Awaiting fresh supervisor audit before merge (per task's own EXPECTED_OUTPUT --
+    not
+  recent_commits:
+  - '74b6ef11 ai-os: mark Sales Pipeline dashboard claim as PR #610 open'
+  - 'ddc75ed8 feat(crm): real interactive Sales Pipeline dashboard with cross-filtering'
+  - '8968c358 ai-os: register active claim for Sales Pipeline dashboard task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  note: periodic checkpoint
+- at: '2026-07-27T20:35:33.060398+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ACTIVE-CLAIMS.yaml, registered this task's claim, pushed it standalone before
+    real work
+  - 'Confirmed crmOpportunities.stage gap: 5 legacy free-text values, none of the
+    mockup''s 8'
+  - Confirmed no existing "monthly revenue target" concept anywhere (grepped schema.ts
+    +
+  - Researched existing win-probability/health-scoring logic (aiWinProbability is
+    an opaque
+  - Added `crm_sales_targets` table (schema.ts) + hand-written migration 0268 (additive
+    only,
+  - 'Built pure aggregation module `sales-pipeline-dashboard-service.ts`: stage normalization'
+  - 20 unit tests (`sales-pipeline-dashboard-service.test.ts`), all passing -- covers
+    KPI math
+  - DB-fetch layer (`getSalesPipelineDashboardData`, `setSalesTarget` in crm-service.ts)
+    +
+  - 'Dashboard page (`src/app/(app)/crm/sales-pipeline/page.tsx`): 6 KPI tiles, 2
+    filter'
+  - Linked from `/crm` overview page
+  - 'Verified: `npx tsc --noEmit` clean, `bun test` (20/20 pass), `eslint` clean on
+    all new/'
+  - Committed + pushed
+  remaining_steps:
+  - '`bun run build` (full production build) could not be completed in this session''s
+    sandbox:'
+  - No settings UI for `setSalesTarget` -- only a raw POST endpoint exists. Out of
+    scope per
+  - Awaiting fresh supervisor audit before merge (per task's own EXPECTED_OUTPUT --
+    not
+  recent_commits:
+  - '74b6ef11 ai-os: mark Sales Pipeline dashboard claim as PR #610 open'
+  - 'ddc75ed8 feat(crm): real interactive Sales Pipeline dashboard with cross-filtering'
+  - '8968c358 ai-os: register active claim for Sales Pipeline dashboard task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  note: periodic checkpoint
+- at: '2026-07-27T20:36:07.170126+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ACTIVE-CLAIMS.yaml, registered this task's claim, pushed it standalone before
+    real work
+  - 'Confirmed crmOpportunities.stage gap: 5 legacy free-text values, none of the
+    mockup''s 8'
+  - Confirmed no existing "monthly revenue target" concept anywhere (grepped schema.ts
+    +
+  - Researched existing win-probability/health-scoring logic (aiWinProbability is
+    an opaque
+  - Added `crm_sales_targets` table (schema.ts) + hand-written migration 0268 (additive
+    only,
+  - 'Built pure aggregation module `sales-pipeline-dashboard-service.ts`: stage normalization'
+  - 20 unit tests (`sales-pipeline-dashboard-service.test.ts`), all passing -- covers
+    KPI math
+  - DB-fetch layer (`getSalesPipelineDashboardData`, `setSalesTarget` in crm-service.ts)
+    +
+  - 'Dashboard page (`src/app/(app)/crm/sales-pipeline/page.tsx`): 6 KPI tiles, 2
+    filter'
+  - Linked from `/crm` overview page
+  - 'Verified: `npx tsc --noEmit` clean, `bun test` (20/20 pass), `eslint` clean on
+    all new/'
+  - Committed + pushed
+  remaining_steps:
+  - '`bun run build` (full production build) could not be completed in this session''s
+    sandbox:'
+  - No settings UI for `setSalesTarget` -- only a raw POST endpoint exists. Out of
+    scope per
+  - Awaiting fresh supervisor audit before merge (per task's own EXPECTED_OUTPUT --
+    not
+  recent_commits:
+  - '74b6ef11 ai-os: mark Sales Pipeline dashboard claim as PR #610 open'
+  - 'ddc75ed8 feat(crm): real interactive Sales Pipeline dashboard with cross-filtering'
+  - '8968c358 ai-os: register active claim for Sales Pipeline dashboard task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-27T20:36:09.683326+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '74b6ef11 ai-os: mark Sales Pipeline dashboard claim as PR #610 open'
+  - 'ddc75ed8 feat(crm): real interactive Sales Pipeline dashboard with cross-filtering'
+  - '8968c358 ai-os: register active claim for Sales Pipeline dashboard task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 2, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+execution_seconds: 2827
+restart_count: 1
+token_usage:
+  input_tokens: 236
+  cache_creation_input_tokens: 150865
+  cache_read_input_tokens: 14387464
+  output_tokens: 69354
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 150865
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 229
+    cache_read_input_tokens: 174409
+    cache_creation_input_tokens: 140
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 140
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:26.233983+00:00'

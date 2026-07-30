@@ -1,0 +1,25 @@
+## OBJECTIVE
+Fix the real, safe-to-fix, docs/code-only findings on compliance-tracker PR #563 (migration-drift audit). Do NOT take any further live database action against the production Supabase project (pcrjmlpuqsbocqfwoxod) in this task -- the review already confirmed the live DDL that was applied is correct and verified; what remains is making the repo's own files consistent with that already-applied live state, and fixing CI.
+
+## KNOWN_CONTEXT
+The review verdict was reject, but explicitly NOT because the live database work was wrong -- it independently re-verified drizzle.__drizzle_migrations now has 261 rows matching the journal, all claimed-missing tables exist, and the rebuilt crm_activities table is correct with RLS intact. Three real, separate problems remain, all fixable without touching the live database further: (1) CI check "Metadata Index Coverage Check" is failing because this PR adds ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml without registering it in ai-os/OS.yaml's governance index (required by scripts/check-metadata-index-coverage.mjs). (2) Migration files drizzle/0140*.sql and drizzle/0199*.sql still reference compliance.dynamic_chains, but migration 0245 relocated that table to platform.dynamic_chains, and drizzle/0253*.sql references an unqualified ai_provider enum -- these .sql files were only corrected LIVE against production during the audit, never updated in the repo itself, so a fresh bootstrap of a new environment replaying these files verbatim would still fail today. (3) PROGRESS.md's "Remaining" checklist still shows "[ ] Open PR" unchecked even though PR #563 is confirmed open -- a stale checklist line, not a false claim, but worth fixing for consistency.
+
+## SCOPE
+1. Register ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml in ai-os/OS.yaml's governance index per the existing convention for every other governance doc already listed there.
+2. Correct drizzle/0140*.sql and drizzle/0199*.sql to reference platform.dynamic_chains instead of compliance.dynamic_chains (matching where migration 0245 actually relocated it), and correct drizzle/0253*.sql's ai_provider enum reference to be properly schema-qualified. Read migration 0245 first to confirm the exact real target schema/table name before editing.
+3. Fix PROGRESS.md's stale "[ ] Open PR" checklist line to reflect that PR #563 is real and open.
+4. Do NOT run drizzle-kit migrate, do NOT call any Supabase MCP write/DDL tool, do NOT apply any further migration in this task -- the live database is already correct; this task only fixes the repo's own files to match it.
+
+## SUCCESS_CRITERIA
+- `node scripts/check-metadata-index-coverage.mjs` (or however this repo's CI actually invokes it -- check .github/workflows/ for the real command) exits 0.
+- `grep -n "compliance.dynamic_chains" drizzle/0140*.sql drizzle/0199*.sql` returns no matches after the fix.
+- `gh pr checks 563 --repo FChecklist/compliance-tracker` shows "Metadata Index Coverage Check" passing.
+
+## EXPECTED_OUTPUT
+Push directly to the existing PR #563 branch (find it via `gh pr view 563 --repo FChecklist/compliance-tracker --json headRefName`). Do not open a new PR.
+
+## CONSTRAINTS
+Do not touch the live database in any way -- read-only Supabase MCP calls (list_tables, execute_sql SELECT-only) are fine for verification, but no apply_migration or any DDL-executing call. This PR must be held for explicit Owner sign-off regardless of what tier the classifier assigns it or what verdict a future audit gives it -- the prior review explicitly flagged that live production DDL happened before any PR/CI/human gate reviewed it, which is a real process exception to the standing rule that Supabase schema changes are tier2-by-definition and always held for human sign-off. Do not merge yourself under any circumstance.
+
+## COMPLEXITY_TIER
+judgment

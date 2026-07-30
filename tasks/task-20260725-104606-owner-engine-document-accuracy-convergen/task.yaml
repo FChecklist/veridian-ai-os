@@ -1,0 +1,311 @@
+id: task-20260725-104606-owner-engine-document-accuracy-convergen
+title: owner-engine-document-accuracy-convergence-task1
+status: completed
+repo: claude-control
+branch: worker/task-20260725-104606-owner-engine-document-accuracy-convergen
+workspace: /opt/veridian/ai-os/tasks/task-20260725-104606-owner-engine-document-accuracy-convergen/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260725-104606-owner-engine-document-accuracy-convergen
+service: veridian-worker@task-20260725-104606-owner-engine-document-accuracy-convergen.service
+created_at: '2026-07-25T10:46:07.363654+00:00'
+last_checkpoint_at: '2026-07-25T11:27:19.127717+00:00'
+completed_steps: &id002
+- Extracted real text from VERIDIAN_Architecture_v2.0.docx (stdlib zipfile+ElementTree
+  on word/document.xml, python-docx unavailable) -> ai-os/owner-attachments/VERIDIAN_Architecture_v2.0_extracted.txt
+- 'Confirmed live-vs-repo path: run scripts/prompt_gateway/gateway.py directly in
+  this workspace (not task-gateway.py --source owner, which hits the undeployed LIVE
+  copy)'
+- 'Built reproducible measurement methodology: scripts/owner_engine_convergence/{build_gold_items.py,measure_accuracy.py,gold_items.json}
+  -- 165-item fixed gold checklist (headings/engines/technologies/numeric_facts)'
+- 'RUN 1 (baseline, unmodified engine): 93.94% gap -- named 6 real gaps (single-category
+  forcing, template garbling, entity cap of 5, no numeric-fact extraction, table content
+  discarded, context-window echo bug)'
+- 'Built document-mode engine feature closing all RUN 1 gaps: scripts/prompt_gateway/engine/document_engine.py
+  (new), classifier.py (classify_document, extract_document_entities), gateway.py
+  (_process_document_chat, entity_cap param)'
+- 'RUN 2 (post document-mode fix): 0.0% gap'
+- 'RUN 3 (confirmation re-run, fresh state): 0.0% gap, byte-identical to RUN 2 --
+  convergence confirmed over 2 consecutive runs'
+- 'Regression check: short-message chat path unchanged (verified via stdin test +
+  classifier.py/prompt_engine.py self-tests)'
+- Wrote ai-os/OWNER_ENGINE_DOCUMENT_ACCURACY_CONVERGENCE_2026-07-25.yaml (full methodology,
+  per-run gap table, named gaps/fixes, final result statement)
+- Registered in MASTER_INDEX.yaml registries.owner_engine_document_accuracy_convergence
+- Registered via superboss-register.py register-knowledge (artifact_id KE-20260725-105910-4c75,
+  VERIFIED_MATCH)
+- 'Ran ai-os-scripts/sync_master_index_registries.py -- found a pre-existing, global
+  drift (all 103 registries fail, not just this new one): this workspace''s scripts/superboss-register.py
+  is missing the upsert-knowledge-fragment/list-knowledge subcommands the sync script
+  requires. Not caused by this task; out of scope to fix here (register-knowledge,
+  this task''s actual required registration command, succeeded).'
+- 'Committed (acc9534) + pushed, PR opened: https://github.com/FChecklist/claude-control/pull/69'
+remaining_steps: &id003
+- None -- task complete. Task 2 (phased implementation of the document's content)
+  explicitly out of scope, not started.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-25T10:46:11.692956+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b41e71f Merge pull request #67 from FChecklist/worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i'
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  - '35aa7f6 Merge pull request #59 from FChecklist/worker/task-20260725-041130-security-audit-evaluation-and-implementa'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-25T10:51:12.798349+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/owner-attachments/
+  - scripts/owner_engine_convergence/
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b41e71f Merge pull request #67 from FChecklist/worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i'
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  - '35aa7f6 Merge pull request #59 from FChecklist/worker/task-20260725-041130-security-audit-evaluation-and-implementa'
+  note: periodic checkpoint
+- at: '2026-07-25T10:56:16.568419+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/prompt_gateway/engine/classifier.py
+  - scripts/prompt_gateway/gateway.py
+  - ai-os/owner-attachments/
+  - scripts/owner_engine_convergence/
+  - scripts/prompt_gateway/engine/document_engine.py
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b41e71f Merge pull request #67 from FChecklist/worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i'
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  - '35aa7f6 Merge pull request #59 from FChecklist/worker/task-20260725-041130-security-audit-evaluation-and-implementa'
+  note: periodic checkpoint
+- at: '2026-07-25T11:00:43.309281+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Extracted real text from VERIDIAN_Architecture_v2.0.docx (stdlib zipfile+ElementTree
+    on word/document.xml, python-docx unavailable) -> ai-os/owner-attachments/VERIDIAN_Architecture_v2.0_extracted.txt
+  - 'Confirmed live-vs-repo path: run scripts/prompt_gateway/gateway.py directly in
+    this workspace (not task-gateway.py --source owner, which hits the undeployed
+    LIVE copy)'
+  - 'Built reproducible measurement methodology: scripts/owner_engine_convergence/{build_gold_items.py,measure_accuracy.py,gold_items.json}
+    -- 165-item fixed gold checklist (headings/engines/technologies/numeric_facts)'
+  - 'RUN 1 (baseline, unmodified engine): 93.94% gap -- named 6 real gaps (single-category
+    forcing, template garbling, entity cap of 5, no numeric-fact extraction, table
+    content discarded, context-window echo bug)'
+  - 'Built document-mode engine feature closing all RUN 1 gaps: scripts/prompt_gateway/engine/document_engine.py
+    (new), classifier.py (classify_document, extract_document_entities), gateway.py
+    (_process_document_chat, entity_cap param)'
+  - 'RUN 2 (post document-mode fix): 0.0% gap'
+  - 'RUN 3 (confirmation re-run, fresh state): 0.0% gap, byte-identical to RUN 2 --
+    convergence confirmed over 2 consecutive runs'
+  - 'Regression check: short-message chat path unchanged (verified via stdin test
+    + classifier.py/prompt_engine.py self-tests)'
+  - Wrote ai-os/OWNER_ENGINE_DOCUMENT_ACCURACY_CONVERGENCE_2026-07-25.yaml (full methodology,
+    per-run gap table, named gaps/fixes, final result statement)
+  - Registered in MASTER_INDEX.yaml registries.owner_engine_document_accuracy_convergence
+  - Registered via superboss-register.py register-knowledge (artifact_id KE-20260725-105910-4c75,
+    VERIFIED_MATCH)
+  - 'Ran ai-os-scripts/sync_master_index_registries.py -- found a pre-existing, global
+    drift (all 103 registries fail, not just this new one): this workspace''s scripts/superboss-register.py
+    is missing the upsert-knowledge-fragment/list-knowledge subcommands the sync script
+    requires. Not caused by this task; out of scope to fix here (register-knowledge,
+    this task''s actual required registration command, succeeded).'
+  - 'Committed (acc9534) + pushed, PR opened: https://github.com/FChecklist/claude-control/pull/69'
+  remaining_steps:
+  - None -- task complete. Task 2 (phased implementation of the document's content)
+    explicitly out of scope, not started.
+  recent_commits:
+  - 'acc9534 Close OWNER_ENGINE document-accuracy gap: 93.94% -> 0.0%, converged'
+  - 'b41e71f Merge pull request #67 from FChecklist/worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i'
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  note: quality gates passed, pushed branch worker/task-20260725-104606-owner-engine-document-accuracy-convergen,
+    awaiting review
+- at: '2026-07-25T11:05:36.314940+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Extracted real text from VERIDIAN_Architecture_v2.0.docx (stdlib zipfile+ElementTree
+    on word/document.xml, python-docx unavailable) -> ai-os/owner-attachments/VERIDIAN_Architecture_v2.0_extracted.txt
+  - 'Confirmed live-vs-repo path: run scripts/prompt_gateway/gateway.py directly in
+    this workspace (not task-gateway.py --source owner, which hits the undeployed
+    LIVE copy)'
+  - 'Built reproducible measurement methodology: scripts/owner_engine_convergence/{build_gold_items.py,measure_accuracy.py,gold_items.json}
+    -- 165-item fixed gold checklist (headings/engines/technologies/numeric_facts)'
+  - 'RUN 1 (baseline, unmodified engine): 93.94% gap -- named 6 real gaps (single-category
+    forcing, template garbling, entity cap of 5, no numeric-fact extraction, table
+    content discarded, context-window echo bug)'
+  - 'Built document-mode engine feature closing all RUN 1 gaps: scripts/prompt_gateway/engine/document_engine.py
+    (new), classifier.py (classify_document, extract_document_entities), gateway.py
+    (_process_document_chat, entity_cap param)'
+  - 'RUN 2 (post document-mode fix): 0.0% gap'
+  - 'RUN 3 (confirmation re-run, fresh state): 0.0% gap, byte-identical to RUN 2 --
+    convergence confirmed over 2 consecutive runs'
+  - 'Regression check: short-message chat path unchanged (verified via stdin test
+    + classifier.py/prompt_engine.py self-tests)'
+  - Wrote ai-os/OWNER_ENGINE_DOCUMENT_ACCURACY_CONVERGENCE_2026-07-25.yaml (full methodology,
+    per-run gap table, named gaps/fixes, final result statement)
+  - Registered in MASTER_INDEX.yaml registries.owner_engine_document_accuracy_convergence
+  - Registered via superboss-register.py register-knowledge (artifact_id KE-20260725-105910-4c75,
+    VERIFIED_MATCH)
+  - 'Ran ai-os-scripts/sync_master_index_registries.py -- found a pre-existing, global
+    drift (all 103 registries fail, not just this new one): this workspace''s scripts/superboss-register.py
+    is missing the upsert-knowledge-fragment/list-knowledge subcommands the sync script
+    requires. Not caused by this task; out of scope to fix here (register-knowledge,
+    this task''s actual required registration command, succeeded).'
+  - 'Committed (acc9534) + pushed, PR opened: https://github.com/FChecklist/claude-control/pull/69'
+  remaining_steps:
+  - None -- task complete. Task 2 (phased implementation of the document's content)
+    explicitly out of scope, not started.
+  recent_commits:
+  - 'acc9534 Close OWNER_ENGINE document-accuracy gap: 93.94% -> 0.0%, converged'
+  - 'b41e71f Merge pull request #67 from FChecklist/worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i'
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  note: "Superboss rejected: https://github.com/FChecklist/claude-control/pull/69\
+    \ \u2014 see review.json for issues"
+- at: '2026-07-25T11:24:06.809177+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Extracted real text from VERIDIAN_Architecture_v2.0.docx (stdlib zipfile+ElementTree
+    on word/document.xml, python-docx unavailable) -> ai-os/owner-attachments/VERIDIAN_Architecture_v2.0_extracted.txt
+  - 'Confirmed live-vs-repo path: run scripts/prompt_gateway/gateway.py directly in
+    this workspace (not task-gateway.py --source owner, which hits the undeployed
+    LIVE copy)'
+  - 'Built reproducible measurement methodology: scripts/owner_engine_convergence/{build_gold_items.py,measure_accuracy.py,gold_items.json}
+    -- 165-item fixed gold checklist (headings/engines/technologies/numeric_facts)'
+  - 'RUN 1 (baseline, unmodified engine): 93.94% gap -- named 6 real gaps (single-category
+    forcing, template garbling, entity cap of 5, no numeric-fact extraction, table
+    content discarded, context-window echo bug)'
+  - 'Built document-mode engine feature closing all RUN 1 gaps: scripts/prompt_gateway/engine/document_engine.py
+    (new), classifier.py (classify_document, extract_document_entities), gateway.py
+    (_process_document_chat, entity_cap param)'
+  - 'RUN 2 (post document-mode fix): 0.0% gap'
+  - 'RUN 3 (confirmation re-run, fresh state): 0.0% gap, byte-identical to RUN 2 --
+    convergence confirmed over 2 consecutive runs'
+  - 'Regression check: short-message chat path unchanged (verified via stdin test
+    + classifier.py/prompt_engine.py self-tests)'
+  - Wrote ai-os/OWNER_ENGINE_DOCUMENT_ACCURACY_CONVERGENCE_2026-07-25.yaml (full methodology,
+    per-run gap table, named gaps/fixes, final result statement)
+  - Registered in MASTER_INDEX.yaml registries.owner_engine_document_accuracy_convergence
+  - Registered via superboss-register.py register-knowledge (artifact_id KE-20260725-105910-4c75,
+    VERIFIED_MATCH)
+  - 'Ran ai-os-scripts/sync_master_index_registries.py -- found a pre-existing, global
+    drift (all 103 registries fail, not just this new one): this workspace''s scripts/superboss-register.py
+    is missing the upsert-knowledge-fragment/list-knowledge subcommands the sync script
+    requires. Not caused by this task; out of scope to fix here (register-knowledge,
+    this task''s actual required registration command, succeeded).'
+  - 'Committed (acc9534) + pushed, PR opened: https://github.com/FChecklist/claude-control/pull/69'
+  remaining_steps:
+  - None -- task complete. Task 2 (phased implementation of the document's content)
+    explicitly out of scope, not started.
+  recent_commits:
+  - 'acc9534 Close OWNER_ENGINE document-accuracy gap: 93.94% -> 0.0%, converged'
+  - 'b41e71f Merge pull request #67 from FChecklist/worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i'
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  note: 'Corrective commit 80c1dfe pushed: fixed the ModuleNotFoundError regression
+    the review caught, verified against the exact reproduction scenario. Core deliverable
+    (0.0% gap, 165/165 gold items) was already real. Resubmitting.'
+- at: '2026-07-25T11:27:19.127717+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'acc9534 Close OWNER_ENGINE document-accuracy gap: 93.94% -> 0.0%, converged'
+  - 'b41e71f Merge pull request #67 from FChecklist/worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i'
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/69'
+execution_seconds: 870
+restart_count: 0
+token_usage:
+  input_tokens: 144
+  cache_creation_input_tokens: 172743
+  cache_read_input_tokens: 9868745
+  output_tokens: 76539
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 172743
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 663
+    cache_read_input_tokens: 195827
+    cache_creation_input_tokens: 600
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 600
+    type: message
+  speed: standard
+master_synced_at: '2026-07-25T13:30:09.548527+00:00'

@@ -1,0 +1,332 @@
+id: task-20260726-035742-phase3-business-rule-permission-policy-c
+title: phase3-business-rule-permission-policy-compliance-governance
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260726-035742-phase3-business-rule-permission-policy-c
+workspace: /opt/veridian/ai-os/tasks/task-20260726-035742-phase3-business-rule-permission-policy-c/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-035742-phase3-business-rule-permission-policy-c
+service: veridian-worker@task-20260726-035742-phase3-business-rule-permission-policy-c.service
+created_at: '2026-07-26T03:57:44.537050+00:00'
+last_checkpoint_at: '2026-07-26T04:24:49.771924+00:00'
+completed_steps: &id002
+- Read governance docs (ACTIVE-CLAIMS, phase plan, gap analysis) + researched real
+  prior art
+- Registered ACTIVE-CLAIMS entry, pushed standalone commit
+- 'schema.ts: additive columns (promptTemplates.ownerId; promptVersions.approvedById/approvedAt/stagingEnteredAt)
+  + drizzle/0263 migration (seeds module_registry/module_rule_configs platform defaults
+  too)'
+- 'permission-service.ts: PROMPT_ACTION_ROLES (engine-permission)'
+- 'prompt-governance-service.ts (new): business-rule accessors, PII scan, ownership
+  assignment, dependency lookup, ABAC wiring, eval budget guardrail, audit event helper,
+  orchestrating gate function'
+- 'prompt-os-service.ts: named permissions + full gate stack wired into transitionPromptLifecycle
+  (governance-lifecycle-state-machine)'
+- 'prompt-eval-service.ts: named permissions + budget guardrail + audit trigger extension
+  (engine-audit)'
+- 'scripts/export-prompt-versions-gitops.ts: prompts-as-versioned-git-files half of
+  governance-gitops-workflow'
+- 'Tests: prompt-governance-service.test.ts (new) + existing prompt-os-service.test.ts/permission-service.test.ts
+  still pass (81 pass, 0 fail)'
+- tsc --noEmit clean, eslint clean on all touched/new files
+remaining_steps: &id003
+- 'claude-control: ai-os/VERIDIAN_V2_LIFECYCLE_GOVERNANCE_SCHEMA_2026-07-25.yaml (schema-only
+  design doc) -- committed directly to claude-control master (config-only repo, no
+  PR/CI gate there, matches phase_1/phase_2 backfill precedent)'
+- 'claude-control: register-knowledge (KE-20260726-041920-ec24) + query-knowledge
+  success criteria (found=1)'
+- 'claude-control: phase_3 entry status: done, completed_by_task + evidence set'
+- 'compliance-tracker: committed, pushed, PR #561 opened (https://github.com/FChecklist/compliance-tracker/pull/561)'
+- 'Move ACTIVE-CLAIMS entry to recently_completed -- NOT done (budget exhausted this
+  session); next session touching this repo should do so once PR #561 merges, or verify
+  CI status first'
+- 'Watch PR #561 CI and merge once green (not done this session)'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T03:57:46.264416+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b08e4096 Merge pull request #560 from FChecklist/worker/task-20260725-231836-phase2-prompt-compiler-pipeline-core-non'
+  - '605462b2 VERIDIAN_Architecture_v2.0 phase_2: compiler pipeline core (Layer 2-5)
+    + Intelligence/Matching engines'
+  - f9e99b7b Plan phase_2 implementation in PROGRESS.md
+  - '19c38a87 ai-os: register ACTIVE-CLAIMS entry for phase_2 prompt compiler/pipeline
+    work'
+  - '8e70869d Merge pull request #559 from FChecklist/worker/task-20260725-174858-phase1-prompt-registry-version-lifecycle'
+  - a41fdfd5 Note remaining claude-control-side work + session budget stop point
+  - 7828f391 Add terminology-guardrail exemptions for phase_1's dated header comments
+  - 'c86f277b phase_1: prompt registry semantic versioning + lifecycle_state + diff/rollback'
+  - 4f7f1762 Register ACTIVE-CLAIMS entry for phase_1 prompt registry lifecycle work
+  - '6eb519a9 Phase 4: migrate hardcoded terminology examples to registered placeholders
+    (#553)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T04:02:47.668328+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b08e4096 Merge pull request #560 from FChecklist/worker/task-20260725-231836-phase2-prompt-compiler-pipeline-core-non'
+  - '605462b2 VERIDIAN_Architecture_v2.0 phase_2: compiler pipeline core (Layer 2-5)
+    + Intelligence/Matching engines'
+  - f9e99b7b Plan phase_2 implementation in PROGRESS.md
+  - '19c38a87 ai-os: register ACTIVE-CLAIMS entry for phase_2 prompt compiler/pipeline
+    work'
+  - '8e70869d Merge pull request #559 from FChecklist/worker/task-20260725-174858-phase1-prompt-registry-version-lifecycle'
+  - a41fdfd5 Note remaining claude-control-side work + session budget stop point
+  - 7828f391 Add terminology-guardrail exemptions for phase_1's dated header comments
+  - 'c86f277b phase_1: prompt registry semantic versioning + lifecycle_state + diff/rollback'
+  - 4f7f1762 Register ACTIVE-CLAIMS entry for phase_1 prompt registry lifecycle work
+  - '6eb519a9 Phase 4: migrate hardcoded terminology examples to registered placeholders
+    (#553)'
+  note: periodic checkpoint
+- at: '2026-07-26T04:07:50.758136+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b08e4096 Merge pull request #560 from FChecklist/worker/task-20260725-231836-phase2-prompt-compiler-pipeline-core-non'
+  - '605462b2 VERIDIAN_Architecture_v2.0 phase_2: compiler pipeline core (Layer 2-5)
+    + Intelligence/Matching engines'
+  - f9e99b7b Plan phase_2 implementation in PROGRESS.md
+  - '19c38a87 ai-os: register ACTIVE-CLAIMS entry for phase_2 prompt compiler/pipeline
+    work'
+  - '8e70869d Merge pull request #559 from FChecklist/worker/task-20260725-174858-phase1-prompt-registry-version-lifecycle'
+  - a41fdfd5 Note remaining claude-control-side work + session budget stop point
+  - 7828f391 Add terminology-guardrail exemptions for phase_1's dated header comments
+  - 'c86f277b phase_1: prompt registry semantic versioning + lifecycle_state + diff/rollback'
+  - 4f7f1762 Register ACTIVE-CLAIMS entry for phase_1 prompt registry lifecycle work
+  - '6eb519a9 Phase 4: migrate hardcoded terminology examples to registered placeholders
+    (#553)'
+  note: periodic checkpoint
+- at: '2026-07-26T04:12:52.096669+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/db/schema.ts
+  - src/lib/services/permission-service.ts
+  - src/lib/services/prompt-os-service.ts
+  - drizzle/0263_prompt_lifecycle_governance_gates.sql
+  - src/lib/services/prompt-governance-service.ts
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS, phase plan, gap analysis) + researched real
+    prior art (permission-service.ts, prompt-os-service.ts, auth-guard.ts, schema.ts,
+    abac.ts/abac-policy-service.ts, module-rule-service.ts, cost-policy.ts, audit-event-triggers.ts,
+    llm-client.ts)
+  - Registered ACTIVE-CLAIMS entry, pushed standalone commit
+  remaining_steps:
+  - 'schema.ts: additive columns (promptTemplates.ownerId; promptVersions.approvedById/approvedAt/stagingEnteredAt)
+    + drizzle migration'
+  - 'permission-service.ts: PROMPT_ACTION_ROLES (engine-permission)'
+  - 'prompt-governance-service.ts: business-rule accessors (engine-business-rule),
+    PII scan (engine-compliance), ownership assignment (engine-governance), dependency
+    lookup (engine-dependency), ABAC wiring (engine-policy), eval budget guardrail
+    (engine-cost-optimization)'
+  - 'prompt-os-service.ts: wire named permissions + full gate stack into transitionPromptLifecycle
+    (governance-lifecycle-state-machine)'
+  - 'prompt-eval-service.ts: wire named permissions + budget guardrail + audit trigger
+    extension (engine-audit)'
+  - 'GitOps: export prompt_versions to versioned git files (governance-gitops-workflow)
+    -- CANNOT touch .github/workflows/*.yml this session (gh token lacks `workflow`
+    scope, see memory) -- document as honest limitation'
+  - Tests for new gates
+  - 'claude-control: ai-os/VERIDIAN_V2_LIFECYCLE_GOVERNANCE_SCHEMA_2026-07-25.yaml
+    (schema-only design doc)'
+  - 'claude-control: register-knowledge + query-knowledge success criteria'
+  - 'claude-control: update phase_3 entry in VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml
+    to status: done'
+  - 'compliance-tracker: open PR, get CI green'
+  - Move ACTIVE-CLAIMS entry to recently_completed
+  recent_commits:
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  - 'b08e4096 Merge pull request #560 from FChecklist/worker/task-20260725-231836-phase2-prompt-compiler-pipeline-core-non'
+  - '605462b2 VERIDIAN_Architecture_v2.0 phase_2: compiler pipeline core (Layer 2-5)
+    + Intelligence/Matching engines'
+  - f9e99b7b Plan phase_2 implementation in PROGRESS.md
+  - '19c38a87 ai-os: register ACTIVE-CLAIMS entry for phase_2 prompt compiler/pipeline
+    work'
+  - '8e70869d Merge pull request #559 from FChecklist/worker/task-20260725-174858-phase1-prompt-registry-version-lifecycle'
+  - a41fdfd5 Note remaining claude-control-side work + session budget stop point
+  - 7828f391 Add terminology-guardrail exemptions for phase_1's dated header comments
+  - 'c86f277b phase_1: prompt registry semantic versioning + lifecycle_state + diff/rollback'
+  - 4f7f1762 Register ACTIVE-CLAIMS entry for phase_1 prompt registry lifecycle work
+  note: periodic checkpoint
+- at: '2026-07-26T04:17:53.598480+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/db/schema.ts
+  - src/lib/services/permission-service.ts
+  - src/lib/services/prompt-eval-service.ts
+  - src/lib/services/prompt-os-service.ts
+  - drizzle/0263_prompt_lifecycle_governance_gates.sql
+  - scripts/export-prompt-versions-gitops.ts
+  - src/lib/services/prompt-governance-service.test.ts
+  - src/lib/services/prompt-governance-service.ts
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS, phase plan, gap analysis) + researched real
+    prior art (permission-service.ts, prompt-os-service.ts, auth-guard.ts, schema.ts,
+    abac.ts/abac-policy-service.ts, module-rule-service.ts, cost-policy.ts, audit-event-triggers.ts,
+    llm-client.ts)
+  - Registered ACTIVE-CLAIMS entry, pushed standalone commit
+  remaining_steps:
+  - 'schema.ts: additive columns (promptTemplates.ownerId; promptVersions.approvedById/approvedAt/stagingEnteredAt)
+    + drizzle migration'
+  - 'permission-service.ts: PROMPT_ACTION_ROLES (engine-permission)'
+  - 'prompt-governance-service.ts: business-rule accessors (engine-business-rule),
+    PII scan (engine-compliance), ownership assignment (engine-governance), dependency
+    lookup (engine-dependency), ABAC wiring (engine-policy), eval budget guardrail
+    (engine-cost-optimization)'
+  - 'prompt-os-service.ts: wire named permissions + full gate stack into transitionPromptLifecycle
+    (governance-lifecycle-state-machine)'
+  - 'prompt-eval-service.ts: wire named permissions + budget guardrail + audit trigger
+    extension (engine-audit)'
+  - 'GitOps: export prompt_versions to versioned git files (governance-gitops-workflow)
+    -- CANNOT touch .github/workflows/*.yml this session (gh token lacks `workflow`
+    scope, see memory) -- document as honest limitation'
+  - Tests for new gates
+  - 'claude-control: ai-os/VERIDIAN_V2_LIFECYCLE_GOVERNANCE_SCHEMA_2026-07-25.yaml
+    (schema-only design doc)'
+  - 'claude-control: register-knowledge + query-knowledge success criteria'
+  - 'claude-control: update phase_3 entry in VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml
+    to status: done'
+  - 'compliance-tracker: open PR, get CI green'
+  - Move ACTIVE-CLAIMS entry to recently_completed
+  recent_commits:
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  - 'b08e4096 Merge pull request #560 from FChecklist/worker/task-20260725-231836-phase2-prompt-compiler-pipeline-core-non'
+  - '605462b2 VERIDIAN_Architecture_v2.0 phase_2: compiler pipeline core (Layer 2-5)
+    + Intelligence/Matching engines'
+  - f9e99b7b Plan phase_2 implementation in PROGRESS.md
+  - '19c38a87 ai-os: register ACTIVE-CLAIMS entry for phase_2 prompt compiler/pipeline
+    work'
+  - '8e70869d Merge pull request #559 from FChecklist/worker/task-20260725-174858-phase1-prompt-registry-version-lifecycle'
+  - a41fdfd5 Note remaining claude-control-side work + session budget stop point
+  - 7828f391 Add terminology-guardrail exemptions for phase_1's dated header comments
+  - 'c86f277b phase_1: prompt registry semantic versioning + lifecycle_state + diff/rollback'
+  - 4f7f1762 Register ACTIVE-CLAIMS entry for phase_1 prompt registry lifecycle work
+  note: periodic checkpoint
+- at: '2026-07-26T04:21:35.295572+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS, phase plan, gap analysis) + researched real
+    prior art
+  - Registered ACTIVE-CLAIMS entry, pushed standalone commit
+  - 'schema.ts: additive columns (promptTemplates.ownerId; promptVersions.approvedById/approvedAt/stagingEnteredAt)
+    + drizzle/0263 migration (seeds module_registry/module_rule_configs platform defaults
+    too)'
+  - 'permission-service.ts: PROMPT_ACTION_ROLES (engine-permission)'
+  - 'prompt-governance-service.ts (new): business-rule accessors, PII scan, ownership
+    assignment, dependency lookup, ABAC wiring, eval budget guardrail, audit event
+    helper, orchestrating gate function'
+  - 'prompt-os-service.ts: named permissions + full gate stack wired into transitionPromptLifecycle
+    (governance-lifecycle-state-machine)'
+  - 'prompt-eval-service.ts: named permissions + budget guardrail + audit trigger
+    extension (engine-audit)'
+  - 'scripts/export-prompt-versions-gitops.ts: prompts-as-versioned-git-files half
+    of governance-gitops-workflow'
+  - 'Tests: prompt-governance-service.test.ts (new) + existing prompt-os-service.test.ts/permission-service.test.ts
+    still pass (81 pass, 0 fail)'
+  - tsc --noEmit clean, eslint clean on all touched/new files
+  remaining_steps:
+  - 'claude-control: ai-os/VERIDIAN_V2_LIFECYCLE_GOVERNANCE_SCHEMA_2026-07-25.yaml
+    (schema-only design doc) -- committed directly to claude-control master (config-only
+    repo, no PR/CI gate there, matches phase_1/phase_2 backfill precedent)'
+  - 'claude-control: register-knowledge (KE-20260726-041920-ec24) + query-knowledge
+    success criteria (found=1)'
+  - 'claude-control: phase_3 entry status: done, completed_by_task + evidence set'
+  - 'compliance-tracker: committed, pushed, PR #561 opened (https://github.com/FChecklist/compliance-tracker/pull/561)'
+  - 'Move ACTIVE-CLAIMS entry to recently_completed -- NOT done (budget exhausted
+    this session); next session touching this repo should do so once PR #561 merges,
+    or verify CI status first'
+  - 'Watch PR #561 CI and merge once green (not done this session)'
+  recent_commits:
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  - 'b94e238c VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines +
+    lifecycle approval gates'
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  - 'b08e4096 Merge pull request #560 from FChecklist/worker/task-20260725-231836-phase2-prompt-compiler-pipeline-core-non'
+  - '605462b2 VERIDIAN_Architecture_v2.0 phase_2: compiler pipeline core (Layer 2-5)
+    + Intelligence/Matching engines'
+  - f9e99b7b Plan phase_2 implementation in PROGRESS.md
+  - '19c38a87 ai-os: register ACTIVE-CLAIMS entry for phase_2 prompt compiler/pipeline
+    work'
+  - '8e70869d Merge pull request #559 from FChecklist/worker/task-20260725-174858-phase1-prompt-registry-version-lifecycle'
+  - a41fdfd5 Note remaining claude-control-side work + session budget stop point
+  - 7828f391 Add terminology-guardrail exemptions for phase_1's dated header comments
+  note: quality gates passed, pushed branch worker/task-20260726-035742-phase3-business-rule-permission-policy-c,
+    awaiting review
+- at: '2026-07-26T04:24:49.771924+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  - 'b94e238c VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines +
+    lifecycle approval gates'
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  - 'b08e4096 Merge pull request #560 from FChecklist/worker/task-20260725-231836-phase2-prompt-compiler-pipeline-core-non'
+  - '605462b2 VERIDIAN_Architecture_v2.0 phase_2: compiler pipeline core (Layer 2-5)
+    + Intelligence/Matching engines'
+  - f9e99b7b Plan phase_2 implementation in PROGRESS.md
+  - '19c38a87 ai-os: register ACTIVE-CLAIMS entry for phase_2 prompt compiler/pipeline
+    work'
+  - '8e70869d Merge pull request #559 from FChecklist/worker/task-20260725-174858-phase1-prompt-registry-version-lifecycle'
+  - a41fdfd5 Note remaining claude-control-side work + session budget stop point
+  - 7828f391 Add terminology-guardrail exemptions for phase_1's dated header comments
+  note: "Superboss rejected: https://github.com/FChecklist/compliance-tracker/pull/561\
+    \ \u2014 see review.json for issues"
+execution_seconds: 1321
+restart_count: 0
+token_usage:
+  input_tokens: 222
+  cache_creation_input_tokens: 224769
+  cache_read_input_tokens: 19759639
+  output_tokens: 92939
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 224769
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 529
+    cache_read_input_tokens: 248211
+    cache_creation_input_tokens: 242
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 242
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T05:00:09.118925+00:00'
+status_corrected_at: '2026-07-27T03:38:38.130685+00:00'
+status_correction_reason: 'Real PR #561 already merged -- patch task.yaml status to
+  completed, no redispatch.'
+real_pr_evidence:
+  mergeable: UNKNOWN
+  mergedAt: '2026-07-26T05:41:13Z'
+  reviewDecision: ''
+  state: MERGED
+  title: 'VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines + lifecycle
+    approval gates'
+  url: https://github.com/FChecklist/compliance-tracker/pull/561

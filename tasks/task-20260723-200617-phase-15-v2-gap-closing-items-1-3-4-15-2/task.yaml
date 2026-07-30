@@ -1,0 +1,257 @@
+id: task-20260723-200617-phase-15-v2-gap-closing-items-1-3-4-15-2
+title: phase-15-v2-gap-closing-items-1-3-4-15-25-45
+status: completed
+repo: claude-control
+branch: worker/task-20260723-200617-phase-15-v2-gap-closing-items-1-3-4-15-2
+workspace: /opt/veridian/ai-os/tasks/task-20260723-200617-phase-15-v2-gap-closing-items-1-3-4-15-2/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260723-200617-phase-15-v2-gap-closing-items-1-3-4-15-2
+service: veridian-worker@task-20260723-200617-phase-15-v2-gap-closing-items-1-3-4-15-2.service
+created_at: '2026-07-23T20:06:18.370812+00:00'
+last_checkpoint_at: '2026-07-23T20:26:55.997333+00:00'
+completed_steps: &id002
+- Re-read ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml and ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+  fresh
+- 'Item 15 (log every AI response): added ai_response log-action logging to doc-worker-entrypoint.sh
+  and supervisor-entrypoint.sh (worker-entrypoint.sh already had it, real evidence
+  found). DONE.'
+- 'Item 1 (keep Server + CLI connected): wired recover-failed-workers.py into veridian-task-watchdog.py''s
+  60s cycle for confirmed-safe (402-balance) auto-recovery, no crontab change. DONE.'
+- 'Item 4 (CLI monitoring service): found veridian-task-watchdog.py''s check_cli_health()
+  already live; added zero-cost check_claude_cli_credentials_health() to health-check-15min.py
+  answering decision_1''s known_incompatibility. DONE.'
+- 'Item 3 (server monitoring service): re-verified veridian-task-watchdog.py''s check_server_vitals()
+  (real 60s systemd timer) already closes this, audit file was stale. DONE.'
+- 'Item 25 (detect abnormal behaviour): re-verified veridian-task-watchdog.py''s STALL/LOOP
+  detection (real positive detections) already closes this beyond health-check-15min.py''s
+  operational anomalies. DONE.'
+- 'Item 45 (Owner connect from laptop or mobile): verified SSH is device-agnostic
+  (ss, hosts.allow/deny, fail2ban), documented in STANDING_DIRECTIVE.yaml. DONE.'
+- Re-confirmed items 21/24/36/51/54 still genuinely blocked (adm group missing, crontab
+  unchanged) -- left untouched per scope.
+- 'Updated ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml: items 1/3/4/15/25/45 ->
+  DONE, summary recomputed 49/11/0/60 -> 55/5/0/60, phase15_amendment added.'
+- All 5 live-host diffs captured under ai-os/patches/*-2026-07-24.diff, patch --dry-run
+  verified clean.
+remaining_steps: &id003
+- Commit + push this branch (c2175fa)
+- 'Open/merge PR to master: PR #8, mergeCommit 11828e635c01dea256990ebf12cacfe516512184,
+  confirmed via `gh pr view 8 --json state,mergedAt,mergeCommit` -> state=MERGED'
+- All 6 in-scope items reached DONE -> wrote ai-os/GOVERNANCE_PHASE15_CLOSEOUT_2026-07-24.yaml
+  (no Phase 16 needed)
+- 'BLOCKED (real, not fabricated): `python3 scripts/task-gateway.py close` requires
+  --audit-cmd to be a verbatim'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-23T20:06:20.201189+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '13d1797 Merge pull request #7 from FChecklist/integration/2026-07-24-full-reconciliation'
+  - '9f38746 task-gateway.py: verify branches actually reach master on close'
+  - ad5bbf5 Add write-lock fix for superboss-register.sqlite corruption (2026-07-24)
+  - f8a165e Merge remote-tracking branch 'origin/worker/task-20260723-133902-x-post-ai-tool-analysis-2026-07-23-lowpr'
+    into integration/2026-07-24-full-reconciliation
+  - d9ced9c Merge remote-tracking branch 'origin/worker/task-20260723-181151-knowledge-engine-phase1-build-populate-w'
+    into integration/2026-07-24-full-reconciliation
+  - e91a77d Merge remote-tracking branch 'origin/worker/task-20260723-170222-phase-14-gap-closing-item6-health-check'
+    into integration/2026-07-24-full-reconciliation
+  - 3fefcd7 Merge remote-tracking branch 'origin/worker/task-20260723-145839-build-task-gateway-software'
+    into integration/2026-07-24-full-reconciliation
+  - 5fae471 Merge remote-tracking branch 'origin/worker/task-20260723-142643-build-veridian-task-watchdog-service'
+    into integration/2026-07-24-full-reconciliation
+  - af2c265 Merge remote-tracking branch 'origin/worker/task-20260723-141444-gap-closing-phase9-warnings-login-log-in'
+    into integration/2026-07-24-full-reconciliation
+  - d18b3e0 Merge remote-tracking branch 'origin/worker/task-20260723-132537-gap-closing-phase8-coverage-notification'
+    into integration/2026-07-24-full-reconciliation
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-23T20:11:21.327214+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '13d1797 Merge pull request #7 from FChecklist/integration/2026-07-24-full-reconciliation'
+  - '9f38746 task-gateway.py: verify branches actually reach master on close'
+  - ad5bbf5 Add write-lock fix for superboss-register.sqlite corruption (2026-07-24)
+  - f8a165e Merge remote-tracking branch 'origin/worker/task-20260723-133902-x-post-ai-tool-analysis-2026-07-23-lowpr'
+    into integration/2026-07-24-full-reconciliation
+  - d9ced9c Merge remote-tracking branch 'origin/worker/task-20260723-181151-knowledge-engine-phase1-build-populate-w'
+    into integration/2026-07-24-full-reconciliation
+  - e91a77d Merge remote-tracking branch 'origin/worker/task-20260723-170222-phase-14-gap-closing-item6-health-check'
+    into integration/2026-07-24-full-reconciliation
+  - 3fefcd7 Merge remote-tracking branch 'origin/worker/task-20260723-145839-build-task-gateway-software'
+    into integration/2026-07-24-full-reconciliation
+  - 5fae471 Merge remote-tracking branch 'origin/worker/task-20260723-142643-build-veridian-task-watchdog-service'
+    into integration/2026-07-24-full-reconciliation
+  - af2c265 Merge remote-tracking branch 'origin/worker/task-20260723-141444-gap-closing-phase9-warnings-login-log-in'
+    into integration/2026-07-24-full-reconciliation
+  - d18b3e0 Merge remote-tracking branch 'origin/worker/task-20260723-132537-gap-closing-phase8-coverage-notification'
+    into integration/2026-07-24-full-reconciliation
+  note: periodic checkpoint
+- at: '2026-07-23T20:16:22.421544+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '13d1797 Merge pull request #7 from FChecklist/integration/2026-07-24-full-reconciliation'
+  - '9f38746 task-gateway.py: verify branches actually reach master on close'
+  - ad5bbf5 Add write-lock fix for superboss-register.sqlite corruption (2026-07-24)
+  - f8a165e Merge remote-tracking branch 'origin/worker/task-20260723-133902-x-post-ai-tool-analysis-2026-07-23-lowpr'
+    into integration/2026-07-24-full-reconciliation
+  - d9ced9c Merge remote-tracking branch 'origin/worker/task-20260723-181151-knowledge-engine-phase1-build-populate-w'
+    into integration/2026-07-24-full-reconciliation
+  - e91a77d Merge remote-tracking branch 'origin/worker/task-20260723-170222-phase-14-gap-closing-item6-health-check'
+    into integration/2026-07-24-full-reconciliation
+  - 3fefcd7 Merge remote-tracking branch 'origin/worker/task-20260723-145839-build-task-gateway-software'
+    into integration/2026-07-24-full-reconciliation
+  - 5fae471 Merge remote-tracking branch 'origin/worker/task-20260723-142643-build-veridian-task-watchdog-service'
+    into integration/2026-07-24-full-reconciliation
+  - af2c265 Merge remote-tracking branch 'origin/worker/task-20260723-141444-gap-closing-phase9-warnings-login-log-in'
+    into integration/2026-07-24-full-reconciliation
+  - d18b3e0 Merge remote-tracking branch 'origin/worker/task-20260723-132537-gap-closing-phase8-coverage-notification'
+    into integration/2026-07-24-full-reconciliation
+  note: periodic checkpoint
+- at: '2026-07-23T20:21:23.648599+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml
+  - ai-os/patches/doc-worker-entrypoint-ai-response-logging-2026-07-24.diff
+  - ai-os/patches/health-check-15min-item4-cli-credentials-2026-07-24.diff
+  - ai-os/patches/standing-directive-item45-mobile-connectivity-2026-07-24.diff
+  - ai-os/patches/supervisor-entrypoint-ai-response-logging-2026-07-24.diff
+  - ai-os/patches/veridian-task-watchdog-item1-recovery-2026-07-24.diff
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '13d1797 Merge pull request #7 from FChecklist/integration/2026-07-24-full-reconciliation'
+  - '9f38746 task-gateway.py: verify branches actually reach master on close'
+  - ad5bbf5 Add write-lock fix for superboss-register.sqlite corruption (2026-07-24)
+  - f8a165e Merge remote-tracking branch 'origin/worker/task-20260723-133902-x-post-ai-tool-analysis-2026-07-23-lowpr'
+    into integration/2026-07-24-full-reconciliation
+  - d9ced9c Merge remote-tracking branch 'origin/worker/task-20260723-181151-knowledge-engine-phase1-build-populate-w'
+    into integration/2026-07-24-full-reconciliation
+  - e91a77d Merge remote-tracking branch 'origin/worker/task-20260723-170222-phase-14-gap-closing-item6-health-check'
+    into integration/2026-07-24-full-reconciliation
+  - 3fefcd7 Merge remote-tracking branch 'origin/worker/task-20260723-145839-build-task-gateway-software'
+    into integration/2026-07-24-full-reconciliation
+  - 5fae471 Merge remote-tracking branch 'origin/worker/task-20260723-142643-build-veridian-task-watchdog-service'
+    into integration/2026-07-24-full-reconciliation
+  - af2c265 Merge remote-tracking branch 'origin/worker/task-20260723-141444-gap-closing-phase9-warnings-login-log-in'
+    into integration/2026-07-24-full-reconciliation
+  - d18b3e0 Merge remote-tracking branch 'origin/worker/task-20260723-132537-gap-closing-phase8-coverage-notification'
+    into integration/2026-07-24-full-reconciliation
+  note: periodic checkpoint
+- at: '2026-07-23T20:26:24.822191+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Re-read ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml and ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    fresh
+  - 'Item 15 (log every AI response): added ai_response log-action logging to doc-worker-entrypoint.sh
+    and supervisor-entrypoint.sh (worker-entrypoint.sh already had it, real evidence
+    found). DONE.'
+  - 'Item 1 (keep Server + CLI connected): wired recover-failed-workers.py into veridian-task-watchdog.py''s
+    60s cycle for confirmed-safe (402-balance) auto-recovery, no crontab change. DONE.'
+  - 'Item 4 (CLI monitoring service): found veridian-task-watchdog.py''s check_cli_health()
+    already live; added zero-cost check_claude_cli_credentials_health() to health-check-15min.py
+    answering decision_1''s known_incompatibility. DONE.'
+  - 'Item 3 (server monitoring service): re-verified veridian-task-watchdog.py''s
+    check_server_vitals() (real 60s systemd timer) already closes this, audit file
+    was stale. DONE.'
+  - 'Item 25 (detect abnormal behaviour): re-verified veridian-task-watchdog.py''s
+    STALL/LOOP detection (real positive detections) already closes this beyond health-check-15min.py''s
+    operational anomalies. DONE.'
+  - 'Item 45 (Owner connect from laptop or mobile): verified SSH is device-agnostic
+    (ss, hosts.allow/deny, fail2ban), documented in STANDING_DIRECTIVE.yaml. DONE.'
+  - Re-confirmed items 21/24/36/51/54 still genuinely blocked (adm group missing,
+    crontab unchanged) -- left untouched per scope.
+  - 'Updated ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml: items 1/3/4/15/25/45 ->
+    DONE, summary recomputed 49/11/0/60 -> 55/5/0/60, phase15_amendment added.'
+  - All 5 live-host diffs captured under ai-os/patches/*-2026-07-24.diff, patch --dry-run
+    verified clean.
+  remaining_steps:
+  - Commit + push this branch (c2175fa)
+  - 'Open/merge PR to master: PR #8, mergeCommit 11828e635c01dea256990ebf12cacfe516512184,
+    confirmed via `gh pr view 8 --json state,mergedAt,mergeCommit` -> state=MERGED'
+  - All 6 in-scope items reached DONE -> wrote ai-os/GOVERNANCE_PHASE15_CLOSEOUT_2026-07-24.yaml
+    (no Phase 16 needed)
+  - 'BLOCKED (real, not fabricated): `python3 scripts/task-gateway.py close` requires
+    --audit-cmd to be a verbatim'
+  recent_commits:
+  - 'c2175fa Phase 15: close governance items 1, 3, 4, 15, 25, 45 (55/60 DONE)'
+  - '13d1797 Merge pull request #7 from FChecklist/integration/2026-07-24-full-reconciliation'
+  - '9f38746 task-gateway.py: verify branches actually reach master on close'
+  - ad5bbf5 Add write-lock fix for superboss-register.sqlite corruption (2026-07-24)
+  - f8a165e Merge remote-tracking branch 'origin/worker/task-20260723-133902-x-post-ai-tool-analysis-2026-07-23-lowpr'
+    into integration/2026-07-24-full-reconciliation
+  - d9ced9c Merge remote-tracking branch 'origin/worker/task-20260723-181151-knowledge-engine-phase1-build-populate-w'
+    into integration/2026-07-24-full-reconciliation
+  - e91a77d Merge remote-tracking branch 'origin/worker/task-20260723-170222-phase-14-gap-closing-item6-health-check'
+    into integration/2026-07-24-full-reconciliation
+  - 3fefcd7 Merge remote-tracking branch 'origin/worker/task-20260723-145839-build-task-gateway-software'
+    into integration/2026-07-24-full-reconciliation
+  - 5fae471 Merge remote-tracking branch 'origin/worker/task-20260723-142643-build-veridian-task-watchdog-service'
+    into integration/2026-07-24-full-reconciliation
+  - af2c265 Merge remote-tracking branch 'origin/worker/task-20260723-141444-gap-closing-phase9-warnings-login-log-in'
+    into integration/2026-07-24-full-reconciliation
+  note: periodic checkpoint
+- at: '2026-07-23T20:26:55.997333+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '7ee9130 PROGRESS.md: document task-gateway.py close blocker'
+  - 'c2175fa Phase 15: close governance items 1, 3, 4, 15, 25, 45 (55/60 DONE)'
+  - '13d1797 Merge pull request #7 from FChecklist/integration/2026-07-24-full-reconciliation'
+  - '9f38746 task-gateway.py: verify branches actually reach master on close'
+  - ad5bbf5 Add write-lock fix for superboss-register.sqlite corruption (2026-07-24)
+  - f8a165e Merge remote-tracking branch 'origin/worker/task-20260723-133902-x-post-ai-tool-analysis-2026-07-23-lowpr'
+    into integration/2026-07-24-full-reconciliation
+  - d9ced9c Merge remote-tracking branch 'origin/worker/task-20260723-181151-knowledge-engine-phase1-build-populate-w'
+    into integration/2026-07-24-full-reconciliation
+  - e91a77d Merge remote-tracking branch 'origin/worker/task-20260723-170222-phase-14-gap-closing-item6-health-check'
+    into integration/2026-07-24-full-reconciliation
+  - 3fefcd7 Merge remote-tracking branch 'origin/worker/task-20260723-145839-build-task-gateway-software'
+    into integration/2026-07-24-full-reconciliation
+  - 5fae471 Merge remote-tracking branch 'origin/worker/task-20260723-142643-build-veridian-task-watchdog-service'
+    into integration/2026-07-24-full-reconciliation
+  note: worker finished, no changes to commit
+execution_seconds: 1236
+restart_count: 0
+token_usage:
+  input_tokens: 240
+  cache_creation_input_tokens: 231044
+  cache_read_input_tokens: 21469691
+  output_tokens: 94658
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 231044
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 738
+    cache_read_input_tokens: 254409
+    cache_creation_input_tokens: 226
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 226
+    type: message
+  speed: standard
+master_synced_at: '2026-07-23T20:30:08.372387+00:00'

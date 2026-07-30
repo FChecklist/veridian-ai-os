@@ -1,0 +1,198 @@
+id: task-20260726-210243-extend-44-worker-unit-disposition-audit
+title: Extend 44-worker-unit disposition audit to full coverage (redispatch, crontab
+  was stale)
+status: completed
+repo: claude-control
+branch: master
+workspace: /opt/veridian/ai-os/tasks/task-20260726-210243-extend-44-worker-unit-disposition-audit/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-210243-extend-44-worker-unit-disposition-audit
+service: veridian-worker@task-20260726-210243-extend-44-worker-unit-disposition-audit.service
+created_at: '2026-07-26T21:02:45.419941+00:00'
+last_checkpoint_at: '2026-07-26T21:16:03.301213+00:00'
+completed_steps: &id002
+- Enumerated all 44 task_ids from DISABLED_WORKER_UNITS_BACKUP_2026-07-26/list.txt
+  and symlink_targets.txt
+- Read task.yaml (status/repo/branch) for all 44 tasks (informational only, not trusted)
+- Ran `git status --short` (dirty check) and `git rev-list --left-right --count HEAD...@{u}`
+  (ahead/behind) in each workspace for all 44
+- For tasks with 0 dirty + 0 ahead/behind reported against a non-own-branch upstream
+  (e.g. tracking origin/master or origin/main directly), independently verified true
+  uniqueness via `git merge-base --is-ancestor HEAD origin/master` and `git rev-list
+  --count origin/master..HEAD`, since ahead/behind vs @{u} alone was misleading in
+  several cases
+- For tasks with local commits not reflected in their tracked upstream, verified via
+  `git branch -r --contains HEAD` whether those commits exist on ANY known remote
+  branch (distinguishes real CAT4 data-loss risk from commits already safely pushed/merged
+  elsewhere)
+- Cross-referenced every task's REAL branch (not the often-stale task.yaml branch
+  field) against GitHub via `gh pr list --repo <repo> --head <real-branch> --state
+  all`, plus fallback `--search <task_id substring>` queries for ambiguous cases
+- Categorized all 44 units into CAT1-CAT5 with full evidence
+- Wrote manifest to /opt/veridian/ai-os/WORKER_UNIT_DISPOSITION_MANIFEST_2026-07-27.yaml
+- 'Verified manifest: exactly 44 entries, all categories valid, task_id set matches
+  source list exactly (no dupes/missing/extra)'
+- 'Verified read-only constraint held: DISABLED_WORKER_UNITS_BACKUP_2026-07-26/ untouched,
+  no workspace/task.yaml modified, nothing pushed/merged/deleted'
+remaining_steps: &id003
+- None -- audit complete
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T21:02:47.238405+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 'e2c9f1c RCA task-20260726-171957 "periodic checkpoint" stall: cap Node build/lint
+    memory in quality-gate.sh to prevent OOM-kill loops'
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T21:07:48.545916+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 'e2c9f1c RCA task-20260726-171957 "periodic checkpoint" stall: cap Node build/lint
+    memory in quality-gate.sh to prevent OOM-kill loops'
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  note: periodic checkpoint
+- at: '2026-07-26T21:12:49.766441+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 'e2c9f1c RCA task-20260726-171957 "periodic checkpoint" stall: cap Node build/lint
+    memory in quality-gate.sh to prevent OOM-kill loops'
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  note: periodic checkpoint
+- at: '2026-07-26T21:13:55.749652+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Enumerated all 44 task_ids from DISABLED_WORKER_UNITS_BACKUP_2026-07-26/list.txt
+    and symlink_targets.txt
+  - Read task.yaml (status/repo/branch) for all 44 tasks (informational only, not
+    trusted)
+  - Ran `git status --short` (dirty check) and `git rev-list --left-right --count
+    HEAD...@{u}` (ahead/behind) in each workspace for all 44
+  - For tasks with 0 dirty + 0 ahead/behind reported against a non-own-branch upstream
+    (e.g. tracking origin/master or origin/main directly), independently verified
+    true uniqueness via `git merge-base --is-ancestor HEAD origin/master` and `git
+    rev-list --count origin/master..HEAD`, since ahead/behind vs @{u} alone was misleading
+    in several cases
+  - For tasks with local commits not reflected in their tracked upstream, verified
+    via `git branch -r --contains HEAD` whether those commits exist on ANY known remote
+    branch (distinguishes real CAT4 data-loss risk from commits already safely pushed/merged
+    elsewhere)
+  - Cross-referenced every task's REAL branch (not the often-stale task.yaml branch
+    field) against GitHub via `gh pr list --repo <repo> --head <real-branch> --state
+    all`, plus fallback `--search <task_id substring>` queries for ambiguous cases
+  - Categorized all 44 units into CAT1-CAT5 with full evidence
+  - Wrote manifest to /opt/veridian/ai-os/WORKER_UNIT_DISPOSITION_MANIFEST_2026-07-27.yaml
+  - 'Verified manifest: exactly 44 entries, all categories valid, task_id set matches
+    source list exactly (no dupes/missing/extra)'
+  - 'Verified read-only constraint held: DISABLED_WORKER_UNITS_BACKUP_2026-07-26/
+    untouched, no workspace/task.yaml modified, nothing pushed/merged/deleted'
+  remaining_steps:
+  - None -- audit complete
+  recent_commits:
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 'e2c9f1c RCA task-20260726-171957 "periodic checkpoint" stall: cap Node build/lint
+    memory in quality-gate.sh to prevent OOM-kill loops'
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  note: worker finished, no changes to commit and zero commits ahead of master --
+    genuine no-op, routing through pending_review (not completed directly) so the
+    state-machine invariant holds and the supervisor gets the final say
+- at: '2026-07-26T21:16:03.301213+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 'e2c9f1c RCA task-20260726-171957 "periodic checkpoint" stall: cap Node build/lint
+    memory in quality-gate.sh to prevent OOM-kill loops'
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  note: "supervisor could not resolve a real PR for branch 'master' (gh pr create\
+    \ failed, no existing open PR found for it) \u2014 refusing to proceed rather\
+    \ than risk operating on an unrelated PR via gh's empty-argument fallback. See\
+    \ supervisor.log."
+execution_seconds: 668
+restart_count: 0
+token_usage:
+  input_tokens: 80
+  cache_creation_input_tokens: 112948
+  cache_read_input_tokens: 3755799
+  output_tokens: 57846
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 112948
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 727
+    cache_read_input_tokens: 135466
+    cache_creation_input_tokens: 1166
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1166
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+status_corrected_at: '2026-07-27T03:49:39.804448+00:00'
+status_correction_reason: 'Independently re-verified 2026-07-27: WORKER_UNIT_DISPOSITION_MANIFEST_2026-07-27.yaml
+  exists (39292 bytes, all 44/44 units categorized), the intended real output. No
+  git/PR expected -- deliberate live filesystem output, not a code change.'
+master_synced_at: '2026-07-29T21:04:25.476993+00:00'

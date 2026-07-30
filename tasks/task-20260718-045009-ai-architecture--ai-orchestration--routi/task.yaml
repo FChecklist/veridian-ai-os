@@ -1,0 +1,421 @@
+id: task-20260718-045009-ai-architecture--ai-orchestration--routi
+title: 'AI Architecture: AI Orchestration, Routing & Failover'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-045009-ai-architecture--ai-orchestration--routi
+workspace: /opt/veridian/ai-os/tasks/task-20260718-045009-ai-architecture--ai-orchestration--routi/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-045009-ai-architecture--ai-orchestration--routi
+service: veridian-worker@task-20260718-045009-ai-architecture--ai-orchestration--routi.service
+created_at: '2026-07-18T04:50:09.925843+00:00'
+last_checkpoint_at: '2026-07-18T05:22:19.532853+00:00'
+completed_steps: &id002
+- Confirmed the AGGREGATE half already existed (orchestra-analytics-service.ts,
+- '`src/lib/services/orchestra-trace-service.ts` -- `listOrchestraTraces()`'
+- '`GET /api/orchestra/traces`, `GET /api/orchestra/traces/[id]`'
+- '`src/app/(app)/ai-observability/page.tsx` -- new sidebar page (Tools'
+- Sidebar entry (AppSidebar.tsx, `Activity` icon) + i18n keys
+- '`src/lib/services/routing-accuracy-report-service.ts` --'
+- '`GET /api/internal/routing-accuracy-report/run` (CRON_SECRET-gated,'
+- '`GET /api/orchestra/routing-accuracy` (veridian_admin-gated -- this is'
+- 'Tests: `routing-accuracy-report-service.test.ts` (9 tests)'
+- 'Read `platformFallbackFor()` fully first. Found TWO real gaps, not one:'
+- Added `ESCALATED_FALLBACK_MODEL` (deepseek/deepseek-v4-pro, a distinct
+- Wired `escalatedPlatformConfig()` to actually call `platformFallbackFor()`
+- Added MODEL_PRICING row for deepseek/deepseek-v4-pro in llm-client.ts
+- Deliberately did NOT invent a same-tier failover for arbitrary BYO/
+- 'Tests: 3 new cases in `orchestra-model-resolver.test.ts` (all 25 pass)'
+- 'Scoped as an ADDITIVE override layer, not a roster rewrite: roster.ts'
+- Migration `drizzle/0226_ai_team_role_overrides.sql` (hand-written, see
+- '`src/lib/db/schema.ts`: `aiTeamRoleOverrides` table'
+- '`src/lib/ai-team/roster-overrides.ts`: `resolveEffectiveModel()`'
+- Wired all 3 real dispatch surfaces named in AGENTS.md Operating Rule 10
+- 'Admin API: `PATCH /api/ai/team/dispatch` (set/clear one role''s'
+- 'UI: `src/components/AiTeamRosterSection.tsx`, wired into'
+- Deliberately did NOT touch `classifyTask()`'s ai_router model
+- 'Tests: `roster-overrides.test.ts` (7 tests -- KNOWN_MODELS + validation'
+- Extended Loop 14 (`byo-model-audit.ts`, BYO AI Model Loop) rather than
+- '`detectMissedEscalations()`: pure function, walks chat replies ordered'
+- 'Wired into `runByoModelAudit()`: proposes a `review_escalation_signal_coverage`'
+- 'Tests: `byo-model-audit.test.ts` (10 tests covering adjacency, cross-'
+- Recommended approach was explicitly "no action needed unless escalation
+- Confirmed `taskCapabilities` only stores CUMULATIVE
+- New table `ai_reduction_snapshots` (migration `drizzle/0225_...sql`,
+- '`src/lib/services/ai-reduction-service.ts`: `takeAiReductionSnapshot()`'
+- '`GET /api/internal/ai-reduction-snapshot/run` (CRON_SECRET-gated) +'
+- '`GET /api/orchestra/ai-reduction-trend` (veridian_admin-gated, platform-wide)'
+- 'Tests: `ai-reduction-service.test.ts` (5 tests)'
+remaining_steps: &id003
+- None of the 7 findings are outstanding.
+- Not yet committed/pushed/PR'd -- Rule 6 requires a branch + PR + green
+- The 2 new migrations (`0225`, `0226`) have not been applied to a live
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T04:50:10.489918+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  note: worker started (resume=0)
+- at: '2026-07-18T04:55:10.822372+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:00:10.966376+00:00'
+  status: in_progress
+  files_modified:
+  - src/lib/llm-client.ts
+  - src/lib/loops/byo-model-audit.ts
+  - src/lib/orchestra-model-resolver.test.ts
+  - src/lib/orchestra-model-resolver.ts
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:05:11.142237+00:00'
+  status: in_progress
+  files_modified:
+  - src/lib/db/schema.ts
+  - src/lib/llm-client.ts
+  - src/lib/loops/byo-model-audit.ts
+  - src/lib/orchestra-model-resolver.test.ts
+  - src/lib/orchestra-model-resolver.ts
+  - vercel.json
+  - src/app/api/internal/routing-accuracy-report/
+  - src/app/api/orchestra/routing-accuracy/
+  - src/lib/loops/byo-model-audit.test.ts
+  - src/lib/services/routing-accuracy-report-service.test.ts
+  - src/lib/services/routing-accuracy-report-service.ts
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:10:11.320881+00:00'
+  status: in_progress
+  files_modified:
+  - messages/en.json
+  - messages/hi.json
+  - src/lib/db/schema.ts
+  - src/lib/llm-client.ts
+  - src/lib/loops/byo-model-audit.ts
+  - src/lib/orchestra-model-resolver.test.ts
+  - src/lib/orchestra-model-resolver.ts
+  - vercel.json
+  - drizzle/0225_ai_reduction_snapshots.sql
+  - src/app/(app)/ai-observability/
+  - src/app/api/internal/ai-reduction-snapshot/
+  - src/app/api/internal/routing-accuracy-report/
+  - src/app/api/orchestra/ai-reduction-trend/
+  - src/app/api/orchestra/routing-accuracy/
+  - src/app/api/orchestra/traces/
+  - src/lib/loops/byo-model-audit.test.ts
+  - src/lib/services/ai-reduction-service.test.ts
+  - src/lib/services/ai-reduction-service.ts
+  - src/lib/services/orchestra-trace-service.ts
+  - src/lib/services/routing-accuracy-report-service.test.ts
+  - src/lib/services/routing-accuracy-report-service.ts
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:15:11.500012+00:00'
+  status: in_progress
+  files_modified:
+  - messages/en.json
+  - messages/hi.json
+  - src/app/api/ai/team/dispatch/route.ts
+  - src/components/AppSidebar.tsx
+  - src/lib/ai-team/dispatch-repo.ts
+  - src/lib/ai-team/team-service.ts
+  - src/lib/db/schema.ts
+  - src/lib/llm-client.ts
+  - src/lib/loops/byo-model-audit.ts
+  - src/lib/orchestra-model-resolver.test.ts
+  - src/lib/orchestra-model-resolver.ts
+  - src/lib/protected-routes.generated.ts
+  - vercel.json
+  - drizzle/0225_ai_reduction_snapshots.sql
+  - drizzle/0226_ai_team_role_overrides.sql
+  - src/app/(app)/ai-observability/
+  - src/app/api/ai/team/roster/
+  - src/app/api/internal/ai-reduction-snapshot/
+  - src/app/api/internal/routing-accuracy-report/
+  - src/app/api/orchestra/ai-reduction-trend/
+  - src/app/api/orchestra/routing-accuracy/
+  - src/app/api/orchestra/traces/
+  - src/lib/ai-team/roster-overrides.ts
+  - src/lib/loops/byo-model-audit.test.ts
+  - src/lib/services/ai-reduction-service.test.ts
+  - src/lib/services/ai-reduction-service.ts
+  - src/lib/services/orchestra-trace-service.ts
+  - src/lib/services/routing-accuracy-report-service.test.ts
+  - src/lib/services/routing-accuracy-report-service.ts
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:20:11.664918+00:00'
+  status: in_progress
+  files_modified:
+  - messages/en.json
+  - messages/hi.json
+  - scripts/ai-workforce-agent.mjs
+  - src/app/(app)/settings/page.tsx
+  - src/app/api/ai/team/dispatch/route.ts
+  - src/components/AppSidebar.tsx
+  - src/lib/ai-team/dispatch-repo.ts
+  - src/lib/ai-team/team-service.ts
+  - src/lib/db/schema.ts
+  - src/lib/llm-client.ts
+  - src/lib/loops/byo-model-audit.ts
+  - src/lib/orchestra-model-resolver.test.ts
+  - src/lib/orchestra-model-resolver.ts
+  - src/lib/protected-routes.generated.ts
+  - vercel.json
+  - drizzle/0225_ai_reduction_snapshots.sql
+  - drizzle/0226_ai_team_role_overrides.sql
+  - src/app/(app)/ai-observability/
+  - src/app/api/ai/team/roster/
+  - src/app/api/internal/ai-reduction-snapshot/
+  - src/app/api/internal/routing-accuracy-report/
+  - src/app/api/orchestra/ai-reduction-trend/
+  - src/app/api/orchestra/routing-accuracy/
+  - src/app/api/orchestra/traces/
+  - src/components/AiTeamRosterSection.tsx
+  - src/lib/ai-team/roster-overrides.test.ts
+  - src/lib/ai-team/roster-overrides.ts
+  - src/lib/loops/byo-model-audit.test.ts
+  - src/lib/services/ai-reduction-service.test.ts
+  - src/lib/services/ai-reduction-service.ts
+  - src/lib/services/orchestra-trace-service.ts
+  - src/lib/services/routing-accuracy-report-service.test.ts
+  - src/lib/services/routing-accuracy-report-service.ts
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:22:19.532853+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'a461b58d Worker task-20260718-045009-ai-architecture--ai-orchestration--routi:
+    close 7 AI Orchestration/Routing/Failover review findings'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  note: worker finished, no changes to commit
+execution_seconds: 1929
+restart_count: 0
+token_usage:
+  input_tokens: 460
+  cache_creation_input_tokens: 354723
+  cache_read_input_tokens: 57674047
+  output_tokens: 152321
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 354723
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 606
+    cache_read_input_tokens: 376957
+    cache_creation_input_tokens: 1304
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1304
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T05:30:03.041091+00:00'

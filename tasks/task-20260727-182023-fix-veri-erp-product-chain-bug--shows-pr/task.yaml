@@ -1,0 +1,488 @@
+id: task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr
+title: 'Fix VERI ERP Product-chain bug: shows Project records instead of product actions'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr
+workspace: /opt/veridian/ai-os/tasks/task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr
+service: veridian-worker@task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr.service
+created_at: '2026-07-27T18:20:25.070567+00:00'
+last_checkpoint_at: '2026-07-27T19:34:51.174020+00:00'
+completed_steps: &id002
+- Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no live collision found; several
+  older
+- 'Root-caused the bug: `buildProductNodes()` in `src/lib/services/capability-tree-service.ts`'
+- Fixed `buildProductNodes()` to query `erpItems` (org-scoped, isActive) and attach
+  a new
+- Removed the now-dead `genericProjectActions()` helper (only caller was the old
+- Exported `GENERIC_ENTITY_ACTIONS`/`GENERIC_PRODUCT_ACTIONS` (were module-private)
+  so both
+- 'Added regression tests in `capability-tree-service.test.ts` (9 tests total, all
+  passing):'
+- 'Verified:'
+- 'Constraint check: did not touch any cron/systemd `.timer` state (no such files
+  touched at'
+- 'Committed, pushed, opened PR #607 against main:'
+remaining_steps: &id003
+- 'Fresh supervisor audit of PR #607, then merge (not by this session).'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T18:20:28.839615+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  - '581d29f3 merge: resolve conflicts with main + renumber migration 0265->0267 (0264-0266
+    now taken by Helpdesk/PM-gaps/HR-gaps)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T18:20:34.321375+00:00'
+  status: failed
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: worker exited with code 1; failure signature recorded for circuit breaker;
+    pushed whatever progress existed; systemd will retry up to the burst limit
+- at: '2026-07-27T18:21:06.258112+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: worker started (resume=1, lifetime invocation 2/20, pre-flight passed)
+- at: '2026-07-27T18:21:11.368058+00:00'
+  status: failed
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: worker exited with code 1; failure signature recorded for circuit breaker;
+    pushed whatever progress existed; systemd will retry up to the burst limit
+- at: '2026-07-27T18:21:43.127811+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: worker started (resume=1, lifetime invocation 3/20, pre-flight passed)
+- at: '2026-07-27T18:21:47.749061+00:00'
+  status: failed
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: worker exited with code 1; failure signature recorded for circuit breaker;
+    pushed whatever progress existed; systemd will retry up to the burst limit
+- at: '2026-07-27T18:39:13.854920+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: worker started (resume=1, lifetime invocation 4/20, pre-flight passed)
+- at: '2026-07-27T18:49:19.429240+00:00'
+  status: failed
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: worker exited with code 1; failure signature recorded for circuit breaker;
+    pushed whatever progress existed; systemd will retry up to the burst limit
+- at: '2026-07-27T18:49:51.156932+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: worker started (resume=1, lifetime invocation 5/20, pre-flight passed)
+- at: '2026-07-27T18:49:55.712777+00:00'
+  status: failed
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: worker exited with code 1; failure signature recorded for circuit breaker;
+    pushed whatever progress existed; systemd will retry up to the burst limit
+- at: '2026-07-27T18:50:27.344281+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: worker started (resume=1, lifetime invocation 6/20, pre-flight passed)
+- at: '2026-07-27T18:50:32.247926+00:00'
+  status: failed
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: worker exited with code 1; failure signature recorded for circuit breaker;
+    pushed whatever progress existed; systemd will retry up to the burst limit
+- at: '2026-07-27T19:08:01.263790+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: worker started (resume=1, lifetime invocation 7/20, pre-flight passed)
+- at: '2026-07-27T19:13:03.039931+00:00'
+  status: in_progress
+  files_modified:
+  - src/lib/services/capability-tree-service.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5cd9f45c claim: register active-claims entry for Product chain-selector bug fix
+    task'
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  note: periodic checkpoint
+- at: '2026-07-27T19:18:04.414220+00:00'
+  status: in_progress
+  files_modified:
+  - src/lib/services/capability-tree-service.test.ts
+  - src/lib/services/capability-tree-service.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5cd9f45c claim: register active-claims entry for Product chain-selector bug fix
+    task'
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  note: periodic checkpoint
+- at: '2026-07-27T19:23:05.904098+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no live collision found;
+    several older
+  - 'Root-caused the bug: `buildProductNodes()` in `src/lib/services/capability-tree-service.ts`'
+  - Fixed `buildProductNodes()` to query `erpItems` (org-scoped, isActive) and attach
+    a new
+  - Removed the now-dead `genericProjectActions()` helper (only caller was the old
+  - Exported `GENERIC_ENTITY_ACTIONS`/`GENERIC_PRODUCT_ACTIONS` (were module-private)
+    so both
+  - 'Added regression tests in `capability-tree-service.test.ts` (9 tests total, all
+    passing):'
+  - 'Verified:'
+  - 'Constraint check: did not touch any cron/systemd `.timer` state (no such files
+    touched at'
+  - 'Committed, pushed, opened PR #607 against main:'
+  remaining_steps:
+  - 'Fresh supervisor audit of PR #607, then merge (not by this session).'
+  recent_commits:
+  - '88e3ee3f progress: PR #607 opened, root-cause fix + tests done, awaiting supervisor
+    audit'
+  - '02e910c1 fix: VERI ERP Product chain-selector no longer surfaces Project rows/actions'
+  - '5cd9f45c claim: register active-claims entry for Product chain-selector bug fix
+    task'
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  note: periodic checkpoint
+- at: '2026-07-27T19:31:21.335922+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no live collision found;
+    several older
+  - 'Root-caused the bug: `buildProductNodes()` in `src/lib/services/capability-tree-service.ts`'
+  - Fixed `buildProductNodes()` to query `erpItems` (org-scoped, isActive) and attach
+    a new
+  - Removed the now-dead `genericProjectActions()` helper (only caller was the old
+  - Exported `GENERIC_ENTITY_ACTIONS`/`GENERIC_PRODUCT_ACTIONS` (were module-private)
+    so both
+  - 'Added regression tests in `capability-tree-service.test.ts` (9 tests total, all
+    passing):'
+  - 'Verified:'
+  - 'Constraint check: did not touch any cron/systemd `.timer` state (no such files
+    touched at'
+  - 'Committed, pushed, opened PR #607 against main:'
+  remaining_steps:
+  - 'Fresh supervisor audit of PR #607, then merge (not by this session).'
+  recent_commits:
+  - '88e3ee3f progress: PR #607 opened, root-cause fix + tests done, awaiting supervisor
+    audit'
+  - '02e910c1 fix: VERI ERP Product chain-selector no longer surfaces Project rows/actions'
+  - '5cd9f45c claim: register active-claims entry for Product chain-selector bug fix
+    task'
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  note: periodic checkpoint
+- at: '2026-07-27T19:34:49.110972+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no live collision found;
+    several older
+  - 'Root-caused the bug: `buildProductNodes()` in `src/lib/services/capability-tree-service.ts`'
+  - Fixed `buildProductNodes()` to query `erpItems` (org-scoped, isActive) and attach
+    a new
+  - Removed the now-dead `genericProjectActions()` helper (only caller was the old
+  - Exported `GENERIC_ENTITY_ACTIONS`/`GENERIC_PRODUCT_ACTIONS` (were module-private)
+    so both
+  - 'Added regression tests in `capability-tree-service.test.ts` (9 tests total, all
+    passing):'
+  - 'Verified:'
+  - 'Constraint check: did not touch any cron/systemd `.timer` state (no such files
+    touched at'
+  - 'Committed, pushed, opened PR #607 against main:'
+  remaining_steps:
+  - 'Fresh supervisor audit of PR #607, then merge (not by this session).'
+  recent_commits:
+  - '88e3ee3f progress: PR #607 opened, root-cause fix + tests done, awaiting supervisor
+    audit'
+  - '02e910c1 fix: VERI ERP Product chain-selector no longer surfaces Project rows/actions'
+  - '5cd9f45c claim: register active-claims entry for Product chain-selector bug fix
+    task'
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-27T19:34:51.174020+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '88e3ee3f progress: PR #607 opened, root-cause fix + tests done, awaiting supervisor
+    audit'
+  - '02e910c1 fix: VERI ERP Product chain-selector no longer surfaces Project rows/actions'
+  - '5cd9f45c claim: register active-claims entry for Product chain-selector bug fix
+    task'
+  - '380bf7b1 Worker task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 2, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+execution_seconds: 1289
+restart_count: 7
+token_usage:
+  input_tokens: 0
+  cache_creation_input_tokens: 0
+  cache_read_input_tokens: 0
+  output_tokens: 0
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 0
+    ephemeral_5m_input_tokens: 0
+  inference_geo: ''
+  iterations: []
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:26.179197+00:00'

@@ -1,0 +1,28 @@
+## OBJECTIVE
+TASK REQUIRING AI JUDGMENT: use scripts/task-gateway.py (built today, live) for this task's own logging, dogfooding it per Owner directive "use same software in all ai routers." Close items 30/31/32 from ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml: item 30=let_claude_cli_manage_server, item 31=let_claude_cli_supervise_veridian, item 32=let_claude_cli_supervise_all_ai_models, all PARTIAL. STANDING_DIRECTIVE.yaml's own assistant_working_protocol already states Mother Router / AI roster supervision is CONFIRMED_GAP_NOT_FIXED, stateless -- determining what a real, bounded supervision mechanism looks like (not "AI watches everything" which is unbounded) is the judgment call.
+
+## SCOPE
+FIRST: run `python3 scripts/task-gateway.py submit --text "close governance items 30/31/32: bounded AI-model supervision mechanism" --source ai_agent --session-id phase10` -- use its duplicate_found/prior_search_results output as your real zero-duplication check, cite the actual JSON returned.
+
+TARGET: read src/lib/ai-router/mother-router.ts and src/lib/llm-client.ts (compliance-tracker repo) to find where AI model calls actually happen. Build a bounded supervision hook: BEFORE any Mother-Router-dispatched AI call, log {model, prompt_hash, ts} via a new function in those files calling scripts/superboss-register.py log-action (source=ai_supervision). AFTER the call, log {response_summary_hash, success: bool}. This is supervision-by-logging (item 30/31's minimum bar), not real-time intervention -- state explicitly that blocking/intervention is a separate, larger, not-yet-scoped capability, do not overclaim.
+
+## KNOWN_CONTEXT
+zero_duplication_check_performed: via task-gateway.py submit (see SCOPE step 1)
+compliance-tracker repo location: /opt/veridian/repos/compliance-tracker
+prior_finding: STANDING_DIRECTIVE.yaml assistant_working_protocol already documents this as CONFIRMED_GAP_NOT_FIXED, stateless -- read that section first, do not re-derive
+db_concurrency_constraint: sequential writes only to superboss-register.sqlite
+
+## SUCCESS_CRITERIA
+one real AI-router-dispatched call (test or historical) produces a real log-action row citable by action_id, proving the hook actually fires, not just exists as dead code
+
+## EXPECTED_OUTPUT
+COMMIT+PUSH: the mother-router.ts/llm-client.ts diffs (compliance-tracker repo, separate PR from claude-control)
+UPDATE_FILE: ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml items [30,31,32] -> DONE with evidence, explicitly noting the supervision-by-logging vs supervision-by-intervention distinction so this isn't overclaimed
+CHECKPOINT: use `python3 scripts/task-gateway.py close --task-id <own-id> --audit-cmd <exact test from SUCCESS_CRITERIA> --evidence <real action_id>` -- this is the real test of whether task-gateway.py's close command works end-to-end for a real task, cite the result either way
+NEXT_PHASE: create AND start Phase 11 with a real named target from the remaining list [1,3,4,6,15,21,24,25,25,29,36,45,50,51,54,60] -- re-verify 21/24/29 status first since they may already be closed on a different branch (v2.3 single_source_of_truth_rule applies)
+
+## CONSTRAINTS
+This phase delivers supervision-by-logging only; real-time blocking/intervention stays a separate, larger, future scope.
+
+## COMPLEXITY_TIER
+judgment

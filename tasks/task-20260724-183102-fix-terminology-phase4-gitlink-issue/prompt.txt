@@ -1,0 +1,26 @@
+## OBJECTIVE
+Fix the real rejected PR48 (Terminology Phase 4, task-20260724-143013-phase4-migrate-existing-hardcoded-exampl) where compliance-tracker-work was committed as a dangling git gitlink instead of real files. Instruction INS-20260724-182954-1e27.
+
+## SCOPE
+1. Read /opt/veridian/ai-os/tasks/task-20260724-143013-phase4-migrate-existing-hardcoded-exampl/review.json in full for the exact rejection text.
+2. In the PR48 branch, find the path recorded as a gitlink (mode 160000, commit dd159cc1406cb816...) via `git ls-files -s | grep 160000`. Remove that gitlink entry from the index.
+3. Determine what real compliance-tracker changes this phase actually produced (migrated hardcoded examples, exemption entries) and commit them properly to compliance-tracker's own repo as a real PR there (mirroring the same cross-repo pattern already used successfully for Phase 3 / PR #552) -- not nested inside a claude-control commit.
+4. Update the claude-control-side PR to reference the real compliance-tracker PR (once opened) instead of containing a gitlink.
+5. Re-verify: `git show HEAD --stat` on the fixed branch must show real file diffs, not a gitlink line, for anything under compliance-tracker paths.
+
+## KNOWN_CONTEXT
+- Real root cause: the worker ran `git add` on a path that is itself a nested git checkout of compliance-tracker inside the claude-control worktree, so git recorded a gitlink reference (a pointer to a commit hash) instead of tracking the real file contents.
+- The exact same cross-repo pattern (real work lands in compliance-tracker's own PR, reviewed and merged there, then the claude-control tracking PR cites it) was already used successfully for Phase 3 / compliance-tracker PR #552 -- follow that same pattern here.
+
+## SUCCESS_CRITERIA
+- `git ls-files -s | grep 160000` returns nothing on the fixed branch (no gitlink entries remain).
+- `gh pr view <new-compliance-tracker-pr> --repo FChecklist/compliance-tracker --json state` shows the real compliance-tracker PR exists with real file changes.
+
+## EXPECTED_OUTPUT
+A real compliance-tracker PR with the actual migrated files, a corrected claude-control PR referencing it (no gitlink), and a final checkpoint confirming both.
+
+## CONSTRAINTS
+Fix only the gitlink/cross-repo-commit issue -- do not redo the underlying migration logic itself if it was otherwise correct.
+
+## COMPLEXITY_TIER
+mechanical

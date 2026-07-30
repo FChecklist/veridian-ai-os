@@ -1,0 +1,32 @@
+## OBJECTIVE
+Implement phase_9_gateway_knowledge_sync_infrastructure from ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml (lines 563-607, repo claude-control). This phase exists specifically to prevent the most likely zero-duplication violation in the whole v2 plan: the document's "Gateway Integration Engine" and "Knowledge Sync Engine" have real, live, differently-scoped namesakes already in the system (the 10-gateway G01-G10 architecture and the knowledge_engine table). Rather than building parallel routing/knowledge-sync logic, this phase decides how VERIDIAN v2's prompt-platform gateway/knowledge needs attach to the EXISTING infrastructure. This phase's dependencies (phase_1_prompt_registry_lifecycle_foundation, phase_3_governance_policy_cost_engines) are both real, merged, and confirmed -- this is the one phase among 6-10 that is genuinely unblocked and ready right now (independently research + adversarially verified 2026-07-27, verdict: verified, zero corrections needed).
+
+## KNOWN_CONTEXT
+Real, independently-verified current state (do not re-derive, use directly):
+- Gateway G05 (repos/compliance-tracker/src/lib/ai-router/mother-router.ts + model-tier-eligibility.ts) is the real, live provider/model-selection gateway boundary. All 10 gateways G01-G10 exist as real rows in wiring_registry with real file paths.
+- capability_registry table (10 real rows, e.g. gratuity_calculator, gst_calculation_engine) is the existing, reusable capability-matching pattern -- reuse via scripts/superboss-register.py register-capability/lookup-capability, do not build a parallel matcher.
+- knowledge_engine table has 344 real rows, 7 tagged domain:veridian_architecture_v2, 0 tagged this phase's own identifier.
+- resolvePromptTemplate() (from @/lib/prompt-os-resolver) is called from ~22 real production files including src/app/api/ai/orchestrate/route.ts -- this is the real VERIDIAN-v2 prompt-execution surface.
+- The ONLY real caller of G05's resolveModel (aliased resolveMotherRouterModel) anywhere in the repo is api/ai/team/dispatch/route.ts, a functionally separate AI-team-dispatch endpoint. Zero real request today flows prompt-registry -> G05 -- this is the exact, concrete gap this phase closes.
+- The sqlite3 CLI binary is NOT installed on the server -- use Python's sqlite3 module for any direct DB queries, not a `sqlite3` shell invocation.
+- Reuse WIRING_ENGINE_PHASE_PLAN_2026-07-25.yaml's phase_1_end_to_end_gateway_verification (status: done) as the proven method template: pick the single strongest real candidate path, trace/build each hop with file:line evidence, re-run scripts/generate_wiring_registry.py to confirm.
+
+## SCOPE
+1. Pick the single strongest real candidate VERIDIAN-v2 prompt-execution request (src/app/api/ai/orchestrate/route.ts, which already calls resolvePromptTemplate(), is the leading candidate identified by research -- verify it against the other ~21 real callers before committing). Either (a) find/trace a real, currently-uninstrumented call site that makes it genuinely cross G05, citing file:line, or (b) build the minimum real wiring (have that request's model-selection step call resolveModel/checkTierEligibility from the real mother-router/model-tier-eligibility modules instead of resolving the model independently) so the hop becomes real. Never mark it wired without a citable mechanism_path.
+2. Wire VERIDIAN v2's prompt-needs-to-capability matching onto the existing capability_registry table via register-capability/lookup-capability -- do not build a parallel capability matcher.
+3. Register a new knowledge_engine row tagged domain:veridian_architecture_v2 with identifier veridian_v2_gateway_knowledge_sync via the real query-knowledge write-path. As an explicit, named decision (not silent), consider whether the existing PATH_MISSING drift on the prompt-pipeline-tagged knowledge_engine row (artifact_id KE-20260725-233806-1d75) should be reconciled as part of proving this sync mechanism is real.
+4. Re-run scripts/generate_wiring_registry.py after the real G05 hop is built/confirmed, and verify ai-os/WIRING_ENGINE_REGISTRY_2026-07-25.json now contains a real "veridian-v2" entity reference tied to the traced/built request.
+5. Do NOT touch WIRING_ENGINE_PHASE_PLAN's own phase_4 (extend_gateway_coverage_beyond_first_proven_path) -- this phase only reuses that plan's phase_1 as a method template.
+6. Update OWNER_ENGINE_TASK2_GAP_ANALYSIS_2026-07-27.yaml's three items (engine-gateway-integration, engine-knowledge-sync, engine-capability-intel) with real, re-verified verdicts once the above is built and evidenced -- do not upgrade a verdict on anything this phase's real work did not actually touch (e.g. rate-limiting/protocol-translation for engine-gateway-integration remains a distinct, separate open gap after this phase, not closed by it).
+
+## SUCCESS_CRITERIA
+On the server: `cd /opt/veridian/repos/claude-control && python3 scripts/superboss-register.py query-knowledge "veridian_v2_gateway_knowledge_sync" --tag domain:veridian_architecture_v2` must return found>=1 (currently returns found=0, independently verified live 2026-07-27). Then `python3 scripts/generate_wiring_registry.py && grep -q veridian-v2 ai-os/WIRING_ENGINE_REGISTRY_2026-07-25.json` must exit 0 (currently exits 1, independently verified live).
+
+## EXPECTED_OUTPUT
+A real PR against compliance-tracker for the gateway-wiring code changes, plus the knowledge_engine registration and wiring_registry regeneration (claude-control side, via direct script execution, not necessarily a separate PR if these are server-side registry writes rather than repo-tracked files).
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. This phase's own scope is exactly the three items named above (gateway hop, capability-intel wiring, knowledge-sync registration) -- do not expand into rate-limiting/protocol-translation work for engine-gateway-integration, which is a separate, distinct gap this phase does not close.
+
+## COMPLEXITY_TIER
+judgment

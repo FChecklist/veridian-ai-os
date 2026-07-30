@@ -1,0 +1,619 @@
+id: task-20260727-094843-architecture-phase-8-increment-1--dspy-e
+title: 'Architecture Phase 8 increment 1: DSPy evaluation + AI-learning reuse + zero-prior-art
+  engine scoping'
+status: awaiting_human_approval
+repo: compliance-tracker
+branch: worker/task-20260727-094843-architecture-phase-8-increment-1--dspy-e
+workspace: /opt/veridian/ai-os/tasks/task-20260727-094843-architecture-phase-8-increment-1--dspy-e/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-094843-architecture-phase-8-increment-1--dspy-e
+service: veridian-worker@task-20260727-094843-architecture-phase-8-increment-1--dspy-e.service
+created_at: '2026-07-27T09:48:44.697492+00:00'
+last_checkpoint_at: '2026-07-27T10:46:15.724276+00:00'
+completed_steps: &id002
+- Read governance docs, registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed
+  standalone before real work)
+- Confirmed `python3 scripts/superboss-register.py query-knowledge "veridian_v2_dspy_learning"
+  --tag domain:veridian_architecture_v2` returns found=0 (live, before starting)
+- 'Investigated real state: `src/lib/prompt-compiler/` (phase_2, deterministic/zero-LLM
+  by explicit Owner directive), `services/doc-processing/` (real Python surface, confirmed
+  OCR/PDF/whisper only -- zero prompt-compilation logic), `src/lib/services/capability-learning-service.ts`
+  (re-verified real and current, 295 lines, 10 live callers)'
+- 'engine-dspy-integration: confirmed `dspy` pip-installs cleanly (dry-run) alongside
+  doc-processing''s pinned `numpy==1.26.4`/`PyMuPDF==1.20.2`, no conflict -- installability
+  is real'
+- 'engine-dspy-integration: made a real, justified **reject** decision -- `ai-os/VERIDIAN_V2_DSPY_TECH_DECISION_2026-07-27.md`
+  (every real candidate integration point either contradicts the Owner''s existing
+  2026-07-25 "no second AI pass" directive on phase_2''s pipeline, or requires a fresh
+  Python deployment this task explicitly forbids)'
+- 'Success-criteria before/after command satisfied via the justified alternative (phase_2''s
+  own existing compiler, no new engine built): `bun run scripts/prompt-compiler-smoke-test.ts`
+  -- real sample prompt, 22->9 estimated tokens (-59.1%), exit 0'
+- 'engine-ai-learning: re-verified the phase plan''s own gap analysis (`ai-os/VERIDIAN_ARCHITECTURE_V2_GAP_ANALYSIS_2026-07-25.yaml:807-815`,
+  claude-control) -- its verdict is "not_implemented / no functional match" against
+  the existing business-task learning loop, which is a DIFFERENT concern (task-execution
+  routing) from the real requirement ("learn from unknown prompts through autonomous
+  exploration/evaluation/registration"). Wired a genuine, minimal extension rather
+  than duplicating: `shouldExploreAsUnknownPrompt()` (pure, unit-tested evaluate step)
+  + `exploreUnknownPrompt()` (DB-touching, reuses `findOrCreateCapability`/`extendPromptWordIndex`)
+  added to `src/lib/services/capability-learning-service.ts`, wired into the real
+  live caller `src/app/api/prompt-compiler/execute/route.ts` (fires when Layer 4 found
+  no template match AND Layer 5 confidence is low). 4 new unit tests, all pass (27/27
+  total in that test file). `bunx tsc --noEmit` clean on touched files.'
+- 'Scope-only pass (schema/table design + build estimate, NOT implementation) for
+  the 5 zero-prior-art engines: `ai-os/VERIDIAN_V2_PROMPT_LIFECYCLE_ENGINES_SCOPING_2026-07-27.md`
+  (claude-control) -- real schema per engine, ~17-19.5 build-days total, no migration/service/route
+  code written (explicit hard boundary honored)'
+- 'Registered each of the 5 as a planned (status: planned, not built) entry under
+  `MASTER_INDEX.yaml`''s new `veridian_v2_dspy_learning_distribution_engines` registries
+  entry (claude-control)'
+- '`python3 scripts/superboss-register.py register-knowledge` for `veridian_v2_dspy_learning`
+  -- `query-knowledge "veridian_v2_dspy_learning" --tag domain:veridian_architecture_v2`
+  now returns found=1 (artifact_id `KE-20260727-100048-b8fe`)'
+- 'Opened compliance-tracker PR #589 (DSPy decision doc + engine-ai-learning code
+  changes) -- subject to AGENTS.md Rule 6/7(c), awaiting CI + `AUDIT: PASS`/`AUDIT:
+  FAIL` comment before merge'
+- 'Opened claude-control PR #113 (phase_8 MASTER_INDEX.yaml registration + 5-engine
+  scoping doc), matching PR #112 precedent'
+remaining_steps: &id003
+- 'compliance-tracker PR #589 and claude-control PR #113 need CI green + (for #589)
+  the mandatory audit comment before merge -- out of this session''s hands once opened'
+- Move this session's `ACTIVE-CLAIMS.yaml` entry from `active:` to `recently_completed:`
+  once both PRs merge (left `active:` for now since neither has merged yet)
+- 'Full phase_8 remains open beyond this increment: the phase plan''s own `status`
+  field is intentionally left at `not_started` (matching phase_5''s own increment-1
+  precedent of not fabricating an interim status value) -- a future increment should
+  build the 5 scoped-but-unbuilt engines and re-evaluate whether to close out phase_8''s
+  `status` field'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T09:48:47.030683+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  - '6318fc77 Fix PR586 CI: terminology-guardrail exemptions + bunfig.toml scoping
+    bun test to src/ only'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T09:53:48.676521+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'cfe28291 ACTIVE-CLAIMS: register phase_8 increment 1 (DSPy eval/decision + engine-ai-learning
+    + 5-engine scoping)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  note: periodic checkpoint
+- at: '2026-07-27T09:58:50.003236+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs, registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed
+    standalone before real work)
+  - Confirmed `python3 scripts/superboss-register.py query-knowledge "veridian_v2_dspy_learning"
+    --tag domain:veridian_architecture_v2` returns found=0 (live, before starting)
+  - 'Investigated real state: `src/lib/prompt-compiler/` (phase_2, deterministic/zero-LLM
+    by explicit Owner directive), `services/doc-processing/` (real Python surface,
+    confirmed OCR/PDF/whisper only -- zero prompt-compilation logic), `src/lib/services/capability-learning-service.ts`
+    (re-verified real and current, 295 lines, 10 live callers)'
+  - 'engine-dspy-integration: confirmed `dspy` pip-installs cleanly (dry-run) alongside
+    doc-processing''s pinned `numpy==1.26.4`/`PyMuPDF==1.20.2`, no conflict -- installability
+    is real'
+  - 'engine-dspy-integration: made a real, justified **reject** decision -- `ai-os/VERIDIAN_V2_DSPY_TECH_DECISION_2026-07-27.md`
+    (every real candidate integration point either contradicts the Owner''s existing
+    2026-07-25 "no second AI pass" directive on phase_2''s pipeline, or requires a
+    fresh Python deployment this task explicitly forbids)'
+  - 'Success-criteria before/after command satisfied via the justified alternative
+    (phase_2''s own existing compiler, no new engine built): `bun run scripts/prompt-compiler-smoke-test.ts`
+    -- real sample prompt, 22->9 estimated tokens (-59.1%), exit 0'
+  - 'engine-ai-learning: re-verified the phase plan''s own gap analysis (`ai-os/VERIDIAN_ARCHITECTURE_V2_GAP_ANALYSIS_2026-07-25.yaml:807-815`,
+    claude-control) -- its verdict is "not_implemented / no functional match" against
+    the existing business-task learning loop, which is a DIFFERENT concern (task-execution
+    routing) from the real requirement ("learn from unknown prompts through autonomous
+    exploration/evaluation/registration"). Wired a genuine, minimal extension rather
+    than duplicating: `shouldExploreAsUnknownPrompt()` (pure, unit-tested evaluate
+    step) + `exploreUnknownPrompt()` (DB-touching, reuses `findOrCreateCapability`/`extendPromptWordIndex`)
+    added to `src/lib/services/capability-learning-service.ts`, wired into the real
+    live caller `src/app/api/prompt-compiler/execute/route.ts` (fires when Layer 4
+    found no template match AND Layer 5 confidence is low). 4 new unit tests, all
+    pass (27/27 total in that test file). `bunx tsc --noEmit` clean on touched files.'
+  remaining_steps:
+  - 'Scope-only pass (schema/table design + build estimate, NOT implementation) for
+    the 5 zero-prior-art engines: engine-prompt-translation, engine-prompt-localization,
+    engine-prompt-marketplace, engine-prompt-export, engine-prompt-import'
+  - 'Register each of the 5 as a planned (status: planned, not built) `MASTER_INDEX.yaml`
+    entry in claude-control'
+  - '`python3 scripts/superboss-register.py register-knowledge` for `veridian_v2_dspy_learning`
+    (claude-control) so the phase''s own success-criteria query returns found>=1'
+  - 'Open compliance-tracker PR (this branch) for the DSPy decision doc + engine-ai-learning
+    code changes -- subject to AGENTS.md Rule 6/7(c) (structured `AUDIT: PASS`/`AUDIT:
+    FAIL` comment required before merge)'
+  - 'Open/update claude-control PR or direct commit (matching PR #112 precedent) for
+    phase_8 status update + MASTER_INDEX.yaml 5 planned entries'
+  - Move this session's ACTIVE-CLAIMS.yaml entry from `active:` to `recently_completed:`
+    once the above lands
+  recent_commits:
+  - '91a563d8 phase_8 increment 1: DSPy tech decision (reject, justified) + engine-ai-learning
+    wiring'
+  - 'cfe28291 ACTIVE-CLAIMS: register phase_8 increment 1 (DSPy eval/decision + engine-ai-learning
+    + 5-engine scoping)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  note: periodic checkpoint
+- at: '2026-07-27T10:03:51.470988+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs, registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed
+    standalone before real work)
+  - Confirmed `python3 scripts/superboss-register.py query-knowledge "veridian_v2_dspy_learning"
+    --tag domain:veridian_architecture_v2` returns found=0 (live, before starting)
+  - 'Investigated real state: `src/lib/prompt-compiler/` (phase_2, deterministic/zero-LLM
+    by explicit Owner directive), `services/doc-processing/` (real Python surface,
+    confirmed OCR/PDF/whisper only -- zero prompt-compilation logic), `src/lib/services/capability-learning-service.ts`
+    (re-verified real and current, 295 lines, 10 live callers)'
+  - 'engine-dspy-integration: confirmed `dspy` pip-installs cleanly (dry-run) alongside
+    doc-processing''s pinned `numpy==1.26.4`/`PyMuPDF==1.20.2`, no conflict -- installability
+    is real'
+  - 'engine-dspy-integration: made a real, justified **reject** decision -- `ai-os/VERIDIAN_V2_DSPY_TECH_DECISION_2026-07-27.md`
+    (every real candidate integration point either contradicts the Owner''s existing
+    2026-07-25 "no second AI pass" directive on phase_2''s pipeline, or requires a
+    fresh Python deployment this task explicitly forbids)'
+  - 'Success-criteria before/after command satisfied via the justified alternative
+    (phase_2''s own existing compiler, no new engine built): `bun run scripts/prompt-compiler-smoke-test.ts`
+    -- real sample prompt, 22->9 estimated tokens (-59.1%), exit 0'
+  - 'engine-ai-learning: re-verified the phase plan''s own gap analysis (`ai-os/VERIDIAN_ARCHITECTURE_V2_GAP_ANALYSIS_2026-07-25.yaml:807-815`,
+    claude-control) -- its verdict is "not_implemented / no functional match" against
+    the existing business-task learning loop, which is a DIFFERENT concern (task-execution
+    routing) from the real requirement ("learn from unknown prompts through autonomous
+    exploration/evaluation/registration"). Wired a genuine, minimal extension rather
+    than duplicating: `shouldExploreAsUnknownPrompt()` (pure, unit-tested evaluate
+    step) + `exploreUnknownPrompt()` (DB-touching, reuses `findOrCreateCapability`/`extendPromptWordIndex`)
+    added to `src/lib/services/capability-learning-service.ts`, wired into the real
+    live caller `src/app/api/prompt-compiler/execute/route.ts` (fires when Layer 4
+    found no template match AND Layer 5 confidence is low). 4 new unit tests, all
+    pass (27/27 total in that test file). `bunx tsc --noEmit` clean on touched files.'
+  - 'Scope-only pass (schema/table design + build estimate, NOT implementation) for
+    the 5 zero-prior-art engines: `ai-os/VERIDIAN_V2_PROMPT_LIFECYCLE_ENGINES_SCOPING_2026-07-27.md`
+    (claude-control) -- real schema per engine, ~17-19.5 build-days total, no migration/service/route
+    code written (explicit hard boundary honored)'
+  - 'Registered each of the 5 as a planned (status: planned, not built) entry under
+    `MASTER_INDEX.yaml`''s new `veridian_v2_dspy_learning_distribution_engines` registries
+    entry (claude-control)'
+  - '`python3 scripts/superboss-register.py register-knowledge` for `veridian_v2_dspy_learning`
+    -- `query-knowledge "veridian_v2_dspy_learning" --tag domain:veridian_architecture_v2`
+    now returns found=1 (artifact_id `KE-20260727-100048-b8fe`)'
+  - 'Opened compliance-tracker PR #589 (DSPy decision doc + engine-ai-learning code
+    changes) -- subject to AGENTS.md Rule 6/7(c), awaiting CI + `AUDIT: PASS`/`AUDIT:
+    FAIL` comment before merge'
+  - 'Opened claude-control PR #113 (phase_8 MASTER_INDEX.yaml registration + 5-engine
+    scoping doc), matching PR #112 precedent'
+  remaining_steps:
+  - 'compliance-tracker PR #589 and claude-control PR #113 need CI green + (for #589)
+    the mandatory audit comment before merge -- out of this session''s hands once
+    opened'
+  - Move this session's `ACTIVE-CLAIMS.yaml` entry from `active:` to `recently_completed:`
+    once both PRs merge (left `active:` for now since neither has merged yet)
+  - 'Full phase_8 remains open beyond this increment: the phase plan''s own `status`
+    field is intentionally left at `not_started` (matching phase_5''s own increment-1
+    precedent of not fabricating an interim status value) -- a future increment should
+    build the 5 scoped-but-unbuilt engines and re-evaluate whether to close out phase_8''s
+    `status` field'
+  recent_commits:
+  - 'd9de6342 PROGRESS.md: phase_8 increment 1 checkpoint -- PRs open (compliance-tracker#589,
+    claude-control#113)'
+  - '91a563d8 phase_8 increment 1: DSPy tech decision (reject, justified) + engine-ai-learning
+    wiring'
+  - 'cfe28291 ACTIVE-CLAIMS: register phase_8 increment 1 (DSPy eval/decision + engine-ai-learning
+    + 5-engine scoping)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  note: periodic checkpoint
+- at: '2026-07-27T10:16:22.736862+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs, registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed
+    standalone before real work)
+  - Confirmed `python3 scripts/superboss-register.py query-knowledge "veridian_v2_dspy_learning"
+    --tag domain:veridian_architecture_v2` returns found=0 (live, before starting)
+  - 'Investigated real state: `src/lib/prompt-compiler/` (phase_2, deterministic/zero-LLM
+    by explicit Owner directive), `services/doc-processing/` (real Python surface,
+    confirmed OCR/PDF/whisper only -- zero prompt-compilation logic), `src/lib/services/capability-learning-service.ts`
+    (re-verified real and current, 295 lines, 10 live callers)'
+  - 'engine-dspy-integration: confirmed `dspy` pip-installs cleanly (dry-run) alongside
+    doc-processing''s pinned `numpy==1.26.4`/`PyMuPDF==1.20.2`, no conflict -- installability
+    is real'
+  - 'engine-dspy-integration: made a real, justified **reject** decision -- `ai-os/VERIDIAN_V2_DSPY_TECH_DECISION_2026-07-27.md`
+    (every real candidate integration point either contradicts the Owner''s existing
+    2026-07-25 "no second AI pass" directive on phase_2''s pipeline, or requires a
+    fresh Python deployment this task explicitly forbids)'
+  - 'Success-criteria before/after command satisfied via the justified alternative
+    (phase_2''s own existing compiler, no new engine built): `bun run scripts/prompt-compiler-smoke-test.ts`
+    -- real sample prompt, 22->9 estimated tokens (-59.1%), exit 0'
+  - 'engine-ai-learning: re-verified the phase plan''s own gap analysis (`ai-os/VERIDIAN_ARCHITECTURE_V2_GAP_ANALYSIS_2026-07-25.yaml:807-815`,
+    claude-control) -- its verdict is "not_implemented / no functional match" against
+    the existing business-task learning loop, which is a DIFFERENT concern (task-execution
+    routing) from the real requirement ("learn from unknown prompts through autonomous
+    exploration/evaluation/registration"). Wired a genuine, minimal extension rather
+    than duplicating: `shouldExploreAsUnknownPrompt()` (pure, unit-tested evaluate
+    step) + `exploreUnknownPrompt()` (DB-touching, reuses `findOrCreateCapability`/`extendPromptWordIndex`)
+    added to `src/lib/services/capability-learning-service.ts`, wired into the real
+    live caller `src/app/api/prompt-compiler/execute/route.ts` (fires when Layer 4
+    found no template match AND Layer 5 confidence is low). 4 new unit tests, all
+    pass (27/27 total in that test file). `bunx tsc --noEmit` clean on touched files.'
+  - 'Scope-only pass (schema/table design + build estimate, NOT implementation) for
+    the 5 zero-prior-art engines: `ai-os/VERIDIAN_V2_PROMPT_LIFECYCLE_ENGINES_SCOPING_2026-07-27.md`
+    (claude-control) -- real schema per engine, ~17-19.5 build-days total, no migration/service/route
+    code written (explicit hard boundary honored)'
+  - 'Registered each of the 5 as a planned (status: planned, not built) entry under
+    `MASTER_INDEX.yaml`''s new `veridian_v2_dspy_learning_distribution_engines` registries
+    entry (claude-control)'
+  - '`python3 scripts/superboss-register.py register-knowledge` for `veridian_v2_dspy_learning`
+    -- `query-knowledge "veridian_v2_dspy_learning" --tag domain:veridian_architecture_v2`
+    now returns found=1 (artifact_id `KE-20260727-100048-b8fe`)'
+  - 'Opened compliance-tracker PR #589 (DSPy decision doc + engine-ai-learning code
+    changes) -- subject to AGENTS.md Rule 6/7(c), awaiting CI + `AUDIT: PASS`/`AUDIT:
+    FAIL` comment before merge'
+  - 'Opened claude-control PR #113 (phase_8 MASTER_INDEX.yaml registration + 5-engine
+    scoping doc), matching PR #112 precedent'
+  remaining_steps:
+  - 'compliance-tracker PR #589 and claude-control PR #113 need CI green + (for #589)
+    the mandatory audit comment before merge -- out of this session''s hands once
+    opened'
+  - Move this session's `ACTIVE-CLAIMS.yaml` entry from `active:` to `recently_completed:`
+    once both PRs merge (left `active:` for now since neither has merged yet)
+  - 'Full phase_8 remains open beyond this increment: the phase plan''s own `status`
+    field is intentionally left at `not_started` (matching phase_5''s own increment-1
+    precedent of not fabricating an interim status value) -- a future increment should
+    build the 5 scoped-but-unbuilt engines and re-evaluate whether to close out phase_8''s
+    `status` field'
+  recent_commits:
+  - 'd9de6342 PROGRESS.md: phase_8 increment 1 checkpoint -- PRs open (compliance-tracker#589,
+    claude-control#113)'
+  - '91a563d8 phase_8 increment 1: DSPy tech decision (reject, justified) + engine-ai-learning
+    wiring'
+  - 'cfe28291 ACTIVE-CLAIMS: register phase_8 increment 1 (DSPy eval/decision + engine-ai-learning
+    + 5-engine scoping)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  note: periodic checkpoint
+- at: '2026-07-27T10:27:02.510441+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs, registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed
+    standalone before real work)
+  - Confirmed `python3 scripts/superboss-register.py query-knowledge "veridian_v2_dspy_learning"
+    --tag domain:veridian_architecture_v2` returns found=0 (live, before starting)
+  - 'Investigated real state: `src/lib/prompt-compiler/` (phase_2, deterministic/zero-LLM
+    by explicit Owner directive), `services/doc-processing/` (real Python surface,
+    confirmed OCR/PDF/whisper only -- zero prompt-compilation logic), `src/lib/services/capability-learning-service.ts`
+    (re-verified real and current, 295 lines, 10 live callers)'
+  - 'engine-dspy-integration: confirmed `dspy` pip-installs cleanly (dry-run) alongside
+    doc-processing''s pinned `numpy==1.26.4`/`PyMuPDF==1.20.2`, no conflict -- installability
+    is real'
+  - 'engine-dspy-integration: made a real, justified **reject** decision -- `ai-os/VERIDIAN_V2_DSPY_TECH_DECISION_2026-07-27.md`
+    (every real candidate integration point either contradicts the Owner''s existing
+    2026-07-25 "no second AI pass" directive on phase_2''s pipeline, or requires a
+    fresh Python deployment this task explicitly forbids)'
+  - 'Success-criteria before/after command satisfied via the justified alternative
+    (phase_2''s own existing compiler, no new engine built): `bun run scripts/prompt-compiler-smoke-test.ts`
+    -- real sample prompt, 22->9 estimated tokens (-59.1%), exit 0'
+  - 'engine-ai-learning: re-verified the phase plan''s own gap analysis (`ai-os/VERIDIAN_ARCHITECTURE_V2_GAP_ANALYSIS_2026-07-25.yaml:807-815`,
+    claude-control) -- its verdict is "not_implemented / no functional match" against
+    the existing business-task learning loop, which is a DIFFERENT concern (task-execution
+    routing) from the real requirement ("learn from unknown prompts through autonomous
+    exploration/evaluation/registration"). Wired a genuine, minimal extension rather
+    than duplicating: `shouldExploreAsUnknownPrompt()` (pure, unit-tested evaluate
+    step) + `exploreUnknownPrompt()` (DB-touching, reuses `findOrCreateCapability`/`extendPromptWordIndex`)
+    added to `src/lib/services/capability-learning-service.ts`, wired into the real
+    live caller `src/app/api/prompt-compiler/execute/route.ts` (fires when Layer 4
+    found no template match AND Layer 5 confidence is low). 4 new unit tests, all
+    pass (27/27 total in that test file). `bunx tsc --noEmit` clean on touched files.'
+  - 'Scope-only pass (schema/table design + build estimate, NOT implementation) for
+    the 5 zero-prior-art engines: `ai-os/VERIDIAN_V2_PROMPT_LIFECYCLE_ENGINES_SCOPING_2026-07-27.md`
+    (claude-control) -- real schema per engine, ~17-19.5 build-days total, no migration/service/route
+    code written (explicit hard boundary honored)'
+  - 'Registered each of the 5 as a planned (status: planned, not built) entry under
+    `MASTER_INDEX.yaml`''s new `veridian_v2_dspy_learning_distribution_engines` registries
+    entry (claude-control)'
+  - '`python3 scripts/superboss-register.py register-knowledge` for `veridian_v2_dspy_learning`
+    -- `query-knowledge "veridian_v2_dspy_learning" --tag domain:veridian_architecture_v2`
+    now returns found=1 (artifact_id `KE-20260727-100048-b8fe`)'
+  - 'Opened compliance-tracker PR #589 (DSPy decision doc + engine-ai-learning code
+    changes) -- subject to AGENTS.md Rule 6/7(c), awaiting CI + `AUDIT: PASS`/`AUDIT:
+    FAIL` comment before merge'
+  - 'Opened claude-control PR #113 (phase_8 MASTER_INDEX.yaml registration + 5-engine
+    scoping doc), matching PR #112 precedent'
+  remaining_steps:
+  - 'compliance-tracker PR #589 and claude-control PR #113 need CI green + (for #589)
+    the mandatory audit comment before merge -- out of this session''s hands once
+    opened'
+  - Move this session's `ACTIVE-CLAIMS.yaml` entry from `active:` to `recently_completed:`
+    once both PRs merge (left `active:` for now since neither has merged yet)
+  - 'Full phase_8 remains open beyond this increment: the phase plan''s own `status`
+    field is intentionally left at `not_started` (matching phase_5''s own increment-1
+    precedent of not fabricating an interim status value) -- a future increment should
+    build the 5 scoped-but-unbuilt engines and re-evaluate whether to close out phase_8''s
+    `status` field'
+  recent_commits:
+  - 'd9de6342 PROGRESS.md: phase_8 increment 1 checkpoint -- PRs open (compliance-tracker#589,
+    claude-control#113)'
+  - '91a563d8 phase_8 increment 1: DSPy tech decision (reject, justified) + engine-ai-learning
+    wiring'
+  - 'cfe28291 ACTIVE-CLAIMS: register phase_8 increment 1 (DSPy eval/decision + engine-ai-learning
+    + 5-engine scoping)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  note: periodic checkpoint
+- at: '2026-07-27T10:27:03.377663+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs, registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed
+    standalone before real work)
+  - Confirmed `python3 scripts/superboss-register.py query-knowledge "veridian_v2_dspy_learning"
+    --tag domain:veridian_architecture_v2` returns found=0 (live, before starting)
+  - 'Investigated real state: `src/lib/prompt-compiler/` (phase_2, deterministic/zero-LLM
+    by explicit Owner directive), `services/doc-processing/` (real Python surface,
+    confirmed OCR/PDF/whisper only -- zero prompt-compilation logic), `src/lib/services/capability-learning-service.ts`
+    (re-verified real and current, 295 lines, 10 live callers)'
+  - 'engine-dspy-integration: confirmed `dspy` pip-installs cleanly (dry-run) alongside
+    doc-processing''s pinned `numpy==1.26.4`/`PyMuPDF==1.20.2`, no conflict -- installability
+    is real'
+  - 'engine-dspy-integration: made a real, justified **reject** decision -- `ai-os/VERIDIAN_V2_DSPY_TECH_DECISION_2026-07-27.md`
+    (every real candidate integration point either contradicts the Owner''s existing
+    2026-07-25 "no second AI pass" directive on phase_2''s pipeline, or requires a
+    fresh Python deployment this task explicitly forbids)'
+  - 'Success-criteria before/after command satisfied via the justified alternative
+    (phase_2''s own existing compiler, no new engine built): `bun run scripts/prompt-compiler-smoke-test.ts`
+    -- real sample prompt, 22->9 estimated tokens (-59.1%), exit 0'
+  - 'engine-ai-learning: re-verified the phase plan''s own gap analysis (`ai-os/VERIDIAN_ARCHITECTURE_V2_GAP_ANALYSIS_2026-07-25.yaml:807-815`,
+    claude-control) -- its verdict is "not_implemented / no functional match" against
+    the existing business-task learning loop, which is a DIFFERENT concern (task-execution
+    routing) from the real requirement ("learn from unknown prompts through autonomous
+    exploration/evaluation/registration"). Wired a genuine, minimal extension rather
+    than duplicating: `shouldExploreAsUnknownPrompt()` (pure, unit-tested evaluate
+    step) + `exploreUnknownPrompt()` (DB-touching, reuses `findOrCreateCapability`/`extendPromptWordIndex`)
+    added to `src/lib/services/capability-learning-service.ts`, wired into the real
+    live caller `src/app/api/prompt-compiler/execute/route.ts` (fires when Layer 4
+    found no template match AND Layer 5 confidence is low). 4 new unit tests, all
+    pass (27/27 total in that test file). `bunx tsc --noEmit` clean on touched files.'
+  - 'Scope-only pass (schema/table design + build estimate, NOT implementation) for
+    the 5 zero-prior-art engines: `ai-os/VERIDIAN_V2_PROMPT_LIFECYCLE_ENGINES_SCOPING_2026-07-27.md`
+    (claude-control) -- real schema per engine, ~17-19.5 build-days total, no migration/service/route
+    code written (explicit hard boundary honored)'
+  - 'Registered each of the 5 as a planned (status: planned, not built) entry under
+    `MASTER_INDEX.yaml`''s new `veridian_v2_dspy_learning_distribution_engines` registries
+    entry (claude-control)'
+  - '`python3 scripts/superboss-register.py register-knowledge` for `veridian_v2_dspy_learning`
+    -- `query-knowledge "veridian_v2_dspy_learning" --tag domain:veridian_architecture_v2`
+    now returns found=1 (artifact_id `KE-20260727-100048-b8fe`)'
+  - 'Opened compliance-tracker PR #589 (DSPy decision doc + engine-ai-learning code
+    changes) -- subject to AGENTS.md Rule 6/7(c), awaiting CI + `AUDIT: PASS`/`AUDIT:
+    FAIL` comment before merge'
+  - 'Opened claude-control PR #113 (phase_8 MASTER_INDEX.yaml registration + 5-engine
+    scoping doc), matching PR #112 precedent'
+  remaining_steps:
+  - 'compliance-tracker PR #589 and claude-control PR #113 need CI green + (for #589)
+    the mandatory audit comment before merge -- out of this session''s hands once
+    opened'
+  - Move this session's `ACTIVE-CLAIMS.yaml` entry from `active:` to `recently_completed:`
+    once both PRs merge (left `active:` for now since neither has merged yet)
+  - 'Full phase_8 remains open beyond this increment: the phase plan''s own `status`
+    field is intentionally left at `not_started` (matching phase_5''s own increment-1
+    precedent of not fabricating an interim status value) -- a future increment should
+    build the 5 scoped-but-unbuilt engines and re-evaluate whether to close out phase_8''s
+    `status` field'
+  recent_commits:
+  - 'd9de6342 PROGRESS.md: phase_8 increment 1 checkpoint -- PRs open (compliance-tracker#589,
+    claude-control#113)'
+  - '91a563d8 phase_8 increment 1: DSPy tech decision (reject, justified) + engine-ai-learning
+    wiring'
+  - 'cfe28291 ACTIVE-CLAIMS: register phase_8 increment 1 (DSPy eval/decision + engine-ai-learning
+    + 5-engine scoping)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-27T10:27:05.925222+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Read governance docs, registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed
+    standalone before real work)
+  - Confirmed `python3 scripts/superboss-register.py query-knowledge "veridian_v2_dspy_learning"
+    --tag domain:veridian_architecture_v2` returns found=0 (live, before starting)
+  - 'Investigated real state: `src/lib/prompt-compiler/` (phase_2, deterministic/zero-LLM
+    by explicit Owner directive), `services/doc-processing/` (real Python surface,
+    confirmed OCR/PDF/whisper only -- zero prompt-compilation logic), `src/lib/services/capability-learning-service.ts`
+    (re-verified real and current, 295 lines, 10 live callers)'
+  - 'engine-dspy-integration: confirmed `dspy` pip-installs cleanly (dry-run) alongside
+    doc-processing''s pinned `numpy==1.26.4`/`PyMuPDF==1.20.2`, no conflict -- installability
+    is real'
+  - 'engine-dspy-integration: made a real, justified **reject** decision -- `ai-os/VERIDIAN_V2_DSPY_TECH_DECISION_2026-07-27.md`
+    (every real candidate integration point either contradicts the Owner''s existing
+    2026-07-25 "no second AI pass" directive on phase_2''s pipeline, or requires a
+    fresh Python deployment this task explicitly forbids)'
+  - 'Success-criteria before/after command satisfied via the justified alternative
+    (phase_2''s own existing compiler, no new engine built): `bun run scripts/prompt-compiler-smoke-test.ts`
+    -- real sample prompt, 22->9 estimated tokens (-59.1%), exit 0'
+  - 'engine-ai-learning: re-verified the phase plan''s own gap analysis (`ai-os/VERIDIAN_ARCHITECTURE_V2_GAP_ANALYSIS_2026-07-25.yaml:807-815`,
+    claude-control) -- its verdict is "not_implemented / no functional match" against
+    the existing business-task learning loop, which is a DIFFERENT concern (task-execution
+    routing) from the real requirement ("learn from unknown prompts through autonomous
+    exploration/evaluation/registration"). Wired a genuine, minimal extension rather
+    than duplicating: `shouldExploreAsUnknownPrompt()` (pure, unit-tested evaluate
+    step) + `exploreUnknownPrompt()` (DB-touching, reuses `findOrCreateCapability`/`extendPromptWordIndex`)
+    added to `src/lib/services/capability-learning-service.ts`, wired into the real
+    live caller `src/app/api/prompt-compiler/execute/route.ts` (fires when Layer 4
+    found no template match AND Layer 5 confidence is low). 4 new unit tests, all
+    pass (27/27 total in that test file). `bunx tsc --noEmit` clean on touched files.'
+  - 'Scope-only pass (schema/table design + build estimate, NOT implementation) for
+    the 5 zero-prior-art engines: `ai-os/VERIDIAN_V2_PROMPT_LIFECYCLE_ENGINES_SCOPING_2026-07-27.md`
+    (claude-control) -- real schema per engine, ~17-19.5 build-days total, no migration/service/route
+    code written (explicit hard boundary honored)'
+  - 'Registered each of the 5 as a planned (status: planned, not built) entry under
+    `MASTER_INDEX.yaml`''s new `veridian_v2_dspy_learning_distribution_engines` registries
+    entry (claude-control)'
+  - '`python3 scripts/superboss-register.py register-knowledge` for `veridian_v2_dspy_learning`
+    -- `query-knowledge "veridian_v2_dspy_learning" --tag domain:veridian_architecture_v2`
+    now returns found=1 (artifact_id `KE-20260727-100048-b8fe`)'
+  - 'Opened compliance-tracker PR #589 (DSPy decision doc + engine-ai-learning code
+    changes) -- subject to AGENTS.md Rule 6/7(c), awaiting CI + `AUDIT: PASS`/`AUDIT:
+    FAIL` comment before merge'
+  - 'Opened claude-control PR #113 (phase_8 MASTER_INDEX.yaml registration + 5-engine
+    scoping doc), matching PR #112 precedent'
+  remaining_steps:
+  - 'compliance-tracker PR #589 and claude-control PR #113 need CI green + (for #589)
+    the mandatory audit comment before merge -- out of this session''s hands once
+    opened'
+  - Move this session's `ACTIVE-CLAIMS.yaml` entry from `active:` to `recently_completed:`
+    once both PRs merge (left `active:` for now since neither has merged yet)
+  - 'Full phase_8 remains open beyond this increment: the phase plan''s own `status`
+    field is intentionally left at `not_started` (matching phase_5''s own increment-1
+    precedent of not fabricating an interim status value) -- a future increment should
+    build the 5 scoped-but-unbuilt engines and re-evaluate whether to close out phase_8''s
+    `status` field'
+  recent_commits:
+  - 'd9de6342 PROGRESS.md: phase_8 increment 1 checkpoint -- PRs open (compliance-tracker#589,
+    claude-control#113)'
+  - '91a563d8 phase_8 increment 1: DSPy tech decision (reject, justified) + engine-ai-learning
+    wiring'
+  - 'cfe28291 ACTIVE-CLAIMS: register phase_8 increment 1 (DSPy eval/decision + engine-ai-learning
+    + 5-engine scoping)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 2, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+- at: '2026-07-27T10:46:15.724276+00:00'
+  status: awaiting_human_approval
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'd9de6342 PROGRESS.md: phase_8 increment 1 checkpoint -- PRs open (compliance-tracker#589,
+    claude-control#113)'
+  - '91a563d8 phase_8 increment 1: DSPy tech decision (reject, justified) + engine-ai-learning
+    wiring'
+  - 'cfe28291 ACTIVE-CLAIMS: register phase_8 increment 1 (DSPy eval/decision + engine-ai-learning
+    + 5-engine scoping)'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  note: 'tier2, Superboss-approved, held for human merge: https://github.com/FChecklist/compliance-tracker/pull/589'
+execution_seconds: 850
+restart_count: 1
+token_usage:
+  input_tokens: 194
+  cache_creation_input_tokens: 177538
+  cache_read_input_tokens: 12492344
+  output_tokens: 63253
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 177538
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 69
+    cache_read_input_tokens: 200056
+    cache_creation_input_tokens: 1166
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1166
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:25.831019+00:00'

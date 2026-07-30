@@ -1,0 +1,23 @@
+## OBJECTIVE
+Resolve the real merge conflict on claude-control PR #85 (Vercel+GitHub current-state census) against origin/master. The conflict arose because PR #84 (branch-resolution fix) merged to master after PR #85's branch was created, and both touch ai-os/MASTER_INDEX.yaml.
+
+## KNOWN_CONTEXT
+`gh pr view 85 --repo FChecklist/claude-control --json mergeable,mergeStateStatus` currently shows CONFLICTING/DIRTY. `gh pr checkout 85 && git fetch origin master && git merge origin/master` is the real, confirmed command sequence to reproduce and begin resolving this (already surfaced by GitHub's own merge-failure message). This is the same class of conflict this session has resolved repeatedly on MASTER_INDEX.yaml and ai-os/boss/ACTIVE-CLAIMS.yaml: both sides' real content should be kept (union-merge for structured registries[] entries), not one side silently dropped.
+
+## SCOPE
+1. Check out PR #85's branch, merge origin/master, resolve the real conflict in ai-os/MASTER_INDEX.yaml by keeping both sides' real registries[] entries (this branch's Vercel/GitHub census entries plus master's PR #84/#86-related updates) -- do not drop either side's real content.
+2. Validate the merged file with a real `python3 -c "import yaml; yaml.safe_load(open('ai-os/MASTER_INDEX.yaml'))"` parse check plus a real entry-count comparison against both pre-merge versions (the merged count should be at least as large as either side, accounting for genuine overlaps).
+3. Push the resolved merge to the existing PR #85 branch.
+
+## SUCCESS_CRITERIA
+- `gh pr view 85 --repo FChecklist/claude-control --json mergeable -q '.mergeable'` returns MERGEABLE after the push.
+- `python3 -c "import yaml; d=yaml.safe_load(open('ai-os/MASTER_INDEX.yaml')); print(len(d['registries']))"` succeeds and prints a real integer.
+
+## EXPECTED_OUTPUT
+Push the resolved merge directly to the existing PR #85 branch. Do not open a new PR.
+
+## CONSTRAINTS
+Do not merge yourself; this needs a fresh audit pass. Do not drop real content from either side of the conflict.
+
+## COMPLEXITY_TIER
+mechanical

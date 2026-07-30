@@ -1,0 +1,11 @@
+[Unit]
+Description=Run veridian-cron-audit-pipeline-security on its scheduled cadence (jittered -- see the paired .service for why)
+
+[Timer]
+OnCalendar=*-*-* 05:06:00
+RandomizedDelaySec=600
+AccuracySec=1min
+Persistent=false
+
+[Install]
+WantedBy=timers.target

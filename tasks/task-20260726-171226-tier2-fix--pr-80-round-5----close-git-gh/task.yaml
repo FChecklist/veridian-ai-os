@@ -1,0 +1,509 @@
+id: task-20260726-171226-tier2-fix--pr-80-round-5----close-git-gh
+title: 'Tier2 fix: PR#80 round 5 -- close git/gh command-alias bypass'
+status: not_needed
+repo: claude-control
+branch: master
+workspace: /opt/veridian/ai-os/tasks/task-20260726-171226-tier2-fix--pr-80-round-5----close-git-gh/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-171226-tier2-fix--pr-80-round-5----close-git-gh
+service: veridian-worker@task-20260726-171226-tier2-fix--pr-80-round-5----close-git-gh.service
+created_at: '2026-07-26T17:12:27.117745+00:00'
+last_checkpoint_at: '2026-07-27T03:58:19.999174+00:00'
+completed_steps: &id002
+- Checked out worker/task-20260726-083833-build-interactive-session-write-gate--re
+  in its existing worktree, fast-forwarded local copy to origin's 353fa09 (round 4
+  tip)
+- Read the full guard snippet and test file end to end -- rounds 1-4 logic understood
+- 'Live-verified both bypass mechanics against real git 2.43 / gh 2.45 before fixing:
+  `git -c alias.wip=push wip origin master` really pushes; `gh alias set` + invoke
+  really merges'
+- 'Implemented round-5 fix in _lib.sh: one-shot `-c alias.*=`/`--config-env=alias.*`
+  hard-block (git) + persistent alias resolution (`git config --get-regexp ^alias\.`
+  / `gh alias list`) for both git and gh, wired into both wrapper scripts'
+- 'Found and fixed a real parsing bug during testing: `gh alias list` wraps shell-alias
+  (`!...`) expansions in a literal single-quote pair for display, which broke naive
+  shell-alias detection -- fixed by stripping the quote pair before checking'
+- 'Found and honestly disclosed (not silently fixed) 3 residual gaps while building/testing:
+  one-level-only alias resolution (nested aliases), gh shell aliases left unresolved
+  by this guard''s own logic (though often incidentally caught via the PATH mechanism
+  when real gh re-invokes `gh`), and quote/escape-spliced alias values (e.g. `push
+  origin "ma""ster"`) not recognized by the whitespace-only value split -- each has
+  a dedicated regression test proving the disclosed (not overclaimed) behavior'
+- Added 15 new regression-test scenarios (BYPASS VECTOR 10) to tests/interactive_session_guard_test.sh,
+  extended the fake git/gh fixtures to support `config --get-regexp`/`alias list`
+  fixture data without polluting the "real binary called" signal
+- 'Verified round-3/round-4 fixes untouched: all 67 pre-existing scenarios still pass'
+- '`bash tests/interactive_session_guard_test.sh`: 82/82 scenarios PASS, exit 0'
+- Committed and pushed to worker/task-20260726-083833-build-interactive-session-write-gate--re
+- '**Discovered mid-task that PR #80 merged into master (commit ec95532, 2026-07-26T17:18:34Z)
+  carrying the unpatched round-4 code** -- the round-4 alias bypass is live in master.
+  Since a merged PR cannot carry new commits through review, opened a new PR #98 (https://github.com/FChecklist/claude-control/pull/98)
+  from the same branch (now containing the round-5 fix on top of what merged as #80)
+  targeting master. Did NOT merge PR #98 myself -- left to the real review/dispatch
+  pipeline, per the explicit constraint and the same discipline this guard enforces.'
+remaining_steps: &id003
+- 'None -- PR #98 open, pending real review/merge by the pipeline (not by this task)'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T17:12:28.885340+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T17:17:30.050929+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Checked out worker/task-20260726-083833-build-interactive-session-write-gate--re
+    in its existing worktree, fast-forwarded local copy to origin's 353fa09 (round
+    4 tip)
+  - Read the full guard snippet (ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet)
+    and test file (tests/interactive_session_guard_test.sh) end to end -- rounds 1-4
+    logic understood
+  - 'Live-verified both bypass mechanics: `git -c alias.wip=push wip ...` really does
+    expand to push (git 2.43.0); `gh alias list` output format is `name: expansion`
+    (gh 2.45.0)'
+  remaining_steps:
+  - 'Implement round-5 fix in _lib.sh: git one-shot `-c alias.*=`/`--config-env=alias.*`
+    hard-block + persistent git alias resolution via `git config --get-regexp ^alias\.`'
+  - 'Implement round-5 fix: persistent gh alias resolution via `gh alias list`'
+  - Wire both into the git/gh wrapper scripts
+  - Add regression tests for both bypasses (+ sanity/passthrough + systemd-simulated
+    cases)
+  - 'Update KNOWN LIMITATIONS section (remove closed items, disclose any residual:
+    nested aliases, shell `!` aliases, alias args with complex quoting)'
+  - Run tests/interactive_session_guard_test.sh, confirm all PASS
+  - Commit and push to worker/task-20260726-083833-build-interactive-session-write-gate--re
+  recent_commits:
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  note: periodic checkpoint
+- at: '2026-07-26T17:22:31.219367+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Checked out worker/task-20260726-083833-build-interactive-session-write-gate--re
+    in its existing worktree, fast-forwarded local copy to origin's 353fa09 (round
+    4 tip)
+  - Read the full guard snippet (ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet)
+    and test file (tests/interactive_session_guard_test.sh) end to end -- rounds 1-4
+    logic understood
+  - 'Live-verified both bypass mechanics: `git -c alias.wip=push wip ...` really does
+    expand to push (git 2.43.0); `gh alias list` output format is `name: expansion`
+    (gh 2.45.0)'
+  remaining_steps:
+  - 'Implement round-5 fix in _lib.sh: git one-shot `-c alias.*=`/`--config-env=alias.*`
+    hard-block + persistent git alias resolution via `git config --get-regexp ^alias\.`'
+  - 'Implement round-5 fix: persistent gh alias resolution via `gh alias list`'
+  - Wire both into the git/gh wrapper scripts
+  - Add regression tests for both bypasses (+ sanity/passthrough + systemd-simulated
+    cases)
+  - 'Update KNOWN LIMITATIONS section (remove closed items, disclose any residual:
+    nested aliases, shell `!` aliases, alias args with complex quoting)'
+  - Run tests/interactive_session_guard_test.sh, confirm all PASS
+  - Commit and push to worker/task-20260726-083833-build-interactive-session-write-gate--re
+  recent_commits:
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  note: periodic checkpoint
+- at: '2026-07-26T17:27:32.440971+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Checked out worker/task-20260726-083833-build-interactive-session-write-gate--re
+    in its existing worktree, fast-forwarded local copy to origin's 353fa09 (round
+    4 tip)
+  - Read the full guard snippet (ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet)
+    and test file (tests/interactive_session_guard_test.sh) end to end -- rounds 1-4
+    logic understood
+  - 'Live-verified both bypass mechanics: `git -c alias.wip=push wip ...` really does
+    expand to push (git 2.43.0); `gh alias list` output format is `name: expansion`
+    (gh 2.45.0)'
+  remaining_steps:
+  - 'Implement round-5 fix in _lib.sh: git one-shot `-c alias.*=`/`--config-env=alias.*`
+    hard-block + persistent git alias resolution via `git config --get-regexp ^alias\.`'
+  - 'Implement round-5 fix: persistent gh alias resolution via `gh alias list`'
+  - Wire both into the git/gh wrapper scripts
+  - Add regression tests for both bypasses (+ sanity/passthrough + systemd-simulated
+    cases)
+  - 'Update KNOWN LIMITATIONS section (remove closed items, disclose any residual:
+    nested aliases, shell `!` aliases, alias args with complex quoting)'
+  - Run tests/interactive_session_guard_test.sh, confirm all PASS
+  - Commit and push to worker/task-20260726-083833-build-interactive-session-write-gate--re
+  recent_commits:
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  note: periodic checkpoint
+- at: '2026-07-26T17:34:10.546514+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Checked out worker/task-20260726-083833-build-interactive-session-write-gate--re
+    in its existing worktree, fast-forwarded local copy to origin's 353fa09 (round
+    4 tip)
+  - Read the full guard snippet and test file end to end -- rounds 1-4 logic understood
+  - 'Live-verified both bypass mechanics against real git 2.43 / gh 2.45 before fixing:
+    `git -c alias.wip=push wip origin master` really pushes; `gh alias set` + invoke
+    really merges'
+  - 'Implemented round-5 fix in _lib.sh: one-shot `-c alias.*=`/`--config-env=alias.*`
+    hard-block (git) + persistent alias resolution (`git config --get-regexp ^alias\.`
+    / `gh alias list`) for both git and gh, wired into both wrapper scripts'
+  - 'Found and fixed a real parsing bug during testing: `gh alias list` wraps shell-alias
+    (`!...`) expansions in a literal single-quote pair for display, which broke naive
+    shell-alias detection -- fixed by stripping the quote pair before checking'
+  - 'Found and honestly disclosed (not silently fixed) 3 residual gaps while building/testing:
+    one-level-only alias resolution (nested aliases), gh shell aliases left unresolved
+    by this guard''s own logic (though often incidentally caught via the PATH mechanism
+    when real gh re-invokes `gh`), and quote/escape-spliced alias values (e.g. `push
+    origin "ma""ster"`) not recognized by the whitespace-only value split -- each
+    has a dedicated regression test proving the disclosed (not overclaimed) behavior'
+  - Added 15 new regression-test scenarios (BYPASS VECTOR 10) to tests/interactive_session_guard_test.sh,
+    extended the fake git/gh fixtures to support `config --get-regexp`/`alias list`
+    fixture data without polluting the "real binary called" signal
+  - 'Verified round-3/round-4 fixes untouched: all 67 pre-existing scenarios still
+    pass'
+  - '`bash tests/interactive_session_guard_test.sh`: 82/82 scenarios PASS, exit 0'
+  - Committed and pushed to worker/task-20260726-083833-build-interactive-session-write-gate--re
+  - '**Discovered mid-task that PR #80 merged into master (commit ec95532, 2026-07-26T17:18:34Z)
+    carrying the unpatched round-4 code** -- the round-4 alias bypass is live in master.
+    Since a merged PR cannot carry new commits through review, opened a new PR #98
+    (https://github.com/FChecklist/claude-control/pull/98) from the same branch (now
+    containing the round-5 fix on top of what merged as #80) targeting master. Did
+    NOT merge PR #98 myself -- left to the real review/dispatch pipeline, per the
+    explicit constraint and the same discipline this guard enforces.'
+  remaining_steps:
+  - 'None -- PR #98 open, pending real review/merge by the pipeline (not by this task)'
+  recent_commits:
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  note: periodic checkpoint
+- at: '2026-07-26T17:40:22.485953+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Checked out worker/task-20260726-083833-build-interactive-session-write-gate--re
+    in its existing worktree, fast-forwarded local copy to origin's 353fa09 (round
+    4 tip)
+  - Read the full guard snippet and test file end to end -- rounds 1-4 logic understood
+  - 'Live-verified both bypass mechanics against real git 2.43 / gh 2.45 before fixing:
+    `git -c alias.wip=push wip origin master` really pushes; `gh alias set` + invoke
+    really merges'
+  - 'Implemented round-5 fix in _lib.sh: one-shot `-c alias.*=`/`--config-env=alias.*`
+    hard-block (git) + persistent alias resolution (`git config --get-regexp ^alias\.`
+    / `gh alias list`) for both git and gh, wired into both wrapper scripts'
+  - 'Found and fixed a real parsing bug during testing: `gh alias list` wraps shell-alias
+    (`!...`) expansions in a literal single-quote pair for display, which broke naive
+    shell-alias detection -- fixed by stripping the quote pair before checking'
+  - 'Found and honestly disclosed (not silently fixed) 3 residual gaps while building/testing:
+    one-level-only alias resolution (nested aliases), gh shell aliases left unresolved
+    by this guard''s own logic (though often incidentally caught via the PATH mechanism
+    when real gh re-invokes `gh`), and quote/escape-spliced alias values (e.g. `push
+    origin "ma""ster"`) not recognized by the whitespace-only value split -- each
+    has a dedicated regression test proving the disclosed (not overclaimed) behavior'
+  - Added 15 new regression-test scenarios (BYPASS VECTOR 10) to tests/interactive_session_guard_test.sh,
+    extended the fake git/gh fixtures to support `config --get-regexp`/`alias list`
+    fixture data without polluting the "real binary called" signal
+  - 'Verified round-3/round-4 fixes untouched: all 67 pre-existing scenarios still
+    pass'
+  - '`bash tests/interactive_session_guard_test.sh`: 82/82 scenarios PASS, exit 0'
+  - Committed and pushed to worker/task-20260726-083833-build-interactive-session-write-gate--re
+  - '**Discovered mid-task that PR #80 merged into master (commit ec95532, 2026-07-26T17:18:34Z)
+    carrying the unpatched round-4 code** -- the round-4 alias bypass is live in master.
+    Since a merged PR cannot carry new commits through review, opened a new PR #98
+    (https://github.com/FChecklist/claude-control/pull/98) from the same branch (now
+    containing the round-5 fix on top of what merged as #80) targeting master. Did
+    NOT merge PR #98 myself -- left to the real review/dispatch pipeline, per the
+    explicit constraint and the same discipline this guard enforces.'
+  remaining_steps:
+  - 'None -- PR #98 open, pending real review/merge by the pipeline (not by this task)'
+  recent_commits:
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  note: periodic checkpoint
+- at: '2026-07-26T17:40:33.733352+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Checked out worker/task-20260726-083833-build-interactive-session-write-gate--re
+    in its existing worktree, fast-forwarded local copy to origin's 353fa09 (round
+    4 tip)
+  - Read the full guard snippet and test file end to end -- rounds 1-4 logic understood
+  - 'Live-verified both bypass mechanics against real git 2.43 / gh 2.45 before fixing:
+    `git -c alias.wip=push wip origin master` really pushes; `gh alias set` + invoke
+    really merges'
+  - 'Implemented round-5 fix in _lib.sh: one-shot `-c alias.*=`/`--config-env=alias.*`
+    hard-block (git) + persistent alias resolution (`git config --get-regexp ^alias\.`
+    / `gh alias list`) for both git and gh, wired into both wrapper scripts'
+  - 'Found and fixed a real parsing bug during testing: `gh alias list` wraps shell-alias
+    (`!...`) expansions in a literal single-quote pair for display, which broke naive
+    shell-alias detection -- fixed by stripping the quote pair before checking'
+  - 'Found and honestly disclosed (not silently fixed) 3 residual gaps while building/testing:
+    one-level-only alias resolution (nested aliases), gh shell aliases left unresolved
+    by this guard''s own logic (though often incidentally caught via the PATH mechanism
+    when real gh re-invokes `gh`), and quote/escape-spliced alias values (e.g. `push
+    origin "ma""ster"`) not recognized by the whitespace-only value split -- each
+    has a dedicated regression test proving the disclosed (not overclaimed) behavior'
+  - Added 15 new regression-test scenarios (BYPASS VECTOR 10) to tests/interactive_session_guard_test.sh,
+    extended the fake git/gh fixtures to support `config --get-regexp`/`alias list`
+    fixture data without polluting the "real binary called" signal
+  - 'Verified round-3/round-4 fixes untouched: all 67 pre-existing scenarios still
+    pass'
+  - '`bash tests/interactive_session_guard_test.sh`: 82/82 scenarios PASS, exit 0'
+  - Committed and pushed to worker/task-20260726-083833-build-interactive-session-write-gate--re
+  - '**Discovered mid-task that PR #80 merged into master (commit ec95532, 2026-07-26T17:18:34Z)
+    carrying the unpatched round-4 code** -- the round-4 alias bypass is live in master.
+    Since a merged PR cannot carry new commits through review, opened a new PR #98
+    (https://github.com/FChecklist/claude-control/pull/98) from the same branch (now
+    containing the round-5 fix on top of what merged as #80) targeting master. Did
+    NOT merge PR #98 myself -- left to the real review/dispatch pipeline, per the
+    explicit constraint and the same discipline this guard enforces.'
+  remaining_steps:
+  - 'None -- PR #98 open, pending real review/merge by the pipeline (not by this task)'
+  recent_commits:
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  note: worker finished, no changes to commit and zero commits ahead of master --
+    genuine no-op, routing through pending_review (not completed directly) so the
+    state-machine invariant holds and the supervisor gets the final say
+- at: '2026-07-26T18:17:57.074655+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Checked out worker/task-20260726-083833-build-interactive-session-write-gate--re
+    in its existing worktree, fast-forwarded local copy to origin's 353fa09 (round
+    4 tip)
+  - Read the full guard snippet and test file end to end -- rounds 1-4 logic understood
+  - 'Live-verified both bypass mechanics against real git 2.43 / gh 2.45 before fixing:
+    `git -c alias.wip=push wip origin master` really pushes; `gh alias set` + invoke
+    really merges'
+  - 'Implemented round-5 fix in _lib.sh: one-shot `-c alias.*=`/`--config-env=alias.*`
+    hard-block (git) + persistent alias resolution (`git config --get-regexp ^alias\.`
+    / `gh alias list`) for both git and gh, wired into both wrapper scripts'
+  - 'Found and fixed a real parsing bug during testing: `gh alias list` wraps shell-alias
+    (`!...`) expansions in a literal single-quote pair for display, which broke naive
+    shell-alias detection -- fixed by stripping the quote pair before checking'
+  - 'Found and honestly disclosed (not silently fixed) 3 residual gaps while building/testing:
+    one-level-only alias resolution (nested aliases), gh shell aliases left unresolved
+    by this guard''s own logic (though often incidentally caught via the PATH mechanism
+    when real gh re-invokes `gh`), and quote/escape-spliced alias values (e.g. `push
+    origin "ma""ster"`) not recognized by the whitespace-only value split -- each
+    has a dedicated regression test proving the disclosed (not overclaimed) behavior'
+  - Added 15 new regression-test scenarios (BYPASS VECTOR 10) to tests/interactive_session_guard_test.sh,
+    extended the fake git/gh fixtures to support `config --get-regexp`/`alias list`
+    fixture data without polluting the "real binary called" signal
+  - 'Verified round-3/round-4 fixes untouched: all 67 pre-existing scenarios still
+    pass'
+  - '`bash tests/interactive_session_guard_test.sh`: 82/82 scenarios PASS, exit 0'
+  - Committed and pushed to worker/task-20260726-083833-build-interactive-session-write-gate--re
+  - '**Discovered mid-task that PR #80 merged into master (commit ec95532, 2026-07-26T17:18:34Z)
+    carrying the unpatched round-4 code** -- the round-4 alias bypass is live in master.
+    Since a merged PR cannot carry new commits through review, opened a new PR #98
+    (https://github.com/FChecklist/claude-control/pull/98) from the same branch (now
+    containing the round-5 fix on top of what merged as #80) targeting master. Did
+    NOT merge PR #98 myself -- left to the real review/dispatch pipeline, per the
+    explicit constraint and the same discipline this guard enforces.'
+  remaining_steps:
+  - 'None -- PR #98 open, pending real review/merge by the pipeline (not by this task)'
+  recent_commits:
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  note: "supervisor could not resolve a real PR for branch 'master' (gh pr create\
+    \ failed, no existing open PR found for it) \u2014 refusing to proceed rather\
+    \ than risk operating on an unrelated PR via gh's empty-argument fallback. See\
+    \ supervisor.log."
+- at: '2026-07-27T03:44:41.825693+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Checked out worker/task-20260726-083833-build-interactive-session-write-gate--re
+    in its existing worktree, fast-forwarded local copy to origin's 353fa09 (round
+    4 tip)
+  - Read the full guard snippet and test file end to end -- rounds 1-4 logic understood
+  - 'Live-verified both bypass mechanics against real git 2.43 / gh 2.45 before fixing:
+    `git -c alias.wip=push wip origin master` really pushes; `gh alias set` + invoke
+    really merges'
+  - 'Implemented round-5 fix in _lib.sh: one-shot `-c alias.*=`/`--config-env=alias.*`
+    hard-block (git) + persistent alias resolution (`git config --get-regexp ^alias\.`
+    / `gh alias list`) for both git and gh, wired into both wrapper scripts'
+  - 'Found and fixed a real parsing bug during testing: `gh alias list` wraps shell-alias
+    (`!...`) expansions in a literal single-quote pair for display, which broke naive
+    shell-alias detection -- fixed by stripping the quote pair before checking'
+  - 'Found and honestly disclosed (not silently fixed) 3 residual gaps while building/testing:
+    one-level-only alias resolution (nested aliases), gh shell aliases left unresolved
+    by this guard''s own logic (though often incidentally caught via the PATH mechanism
+    when real gh re-invokes `gh`), and quote/escape-spliced alias values (e.g. `push
+    origin "ma""ster"`) not recognized by the whitespace-only value split -- each
+    has a dedicated regression test proving the disclosed (not overclaimed) behavior'
+  - Added 15 new regression-test scenarios (BYPASS VECTOR 10) to tests/interactive_session_guard_test.sh,
+    extended the fake git/gh fixtures to support `config --get-regexp`/`alias list`
+    fixture data without polluting the "real binary called" signal
+  - 'Verified round-3/round-4 fixes untouched: all 67 pre-existing scenarios still
+    pass'
+  - '`bash tests/interactive_session_guard_test.sh`: 82/82 scenarios PASS, exit 0'
+  - Committed and pushed to worker/task-20260726-083833-build-interactive-session-write-gate--re
+  - '**Discovered mid-task that PR #80 merged into master (commit ec95532, 2026-07-26T17:18:34Z)
+    carrying the unpatched round-4 code** -- the round-4 alias bypass is live in master.
+    Since a merged PR cannot carry new commits through review, opened a new PR #98
+    (https://github.com/FChecklist/claude-control/pull/98) from the same branch (now
+    containing the round-5 fix on top of what merged as #80) targeting master. Did
+    NOT merge PR #98 myself -- left to the real review/dispatch pipeline, per the
+    explicit constraint and the same discipline this guard enforces.'
+  remaining_steps:
+  - 'None -- PR #98 open, pending real review/merge by the pipeline (not by this task)'
+  recent_commits:
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  note: "supervisor could not resolve a real PR for branch 'master' (gh pr create\
+    \ failed, no existing open PR found for it) \u2014 refusing to proceed rather\
+    \ than risk operating on an unrelated PR via gh's empty-argument fallback. See\
+    \ supervisor.log."
+- at: '2026-07-27T03:58:19.999174+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  note: "Superboss rejected: https://github.com/FChecklist/claude-control/pull/98\
+    \ \u2014 see review.json for issues"
+execution_seconds: 1684
+restart_count: 0
+token_usage:
+  input_tokens: 208
+  cache_creation_input_tokens: 192796
+  cache_read_input_tokens: 14670121
+  output_tokens: 102328
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 192796
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 528
+    cache_read_input_tokens: 215921
+    cache_creation_input_tokens: 559
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 559
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-26T18:32:02.036202+00:00'
+adopted_existing_pr: https://github.com/FChecklist/claude-control/pull/98
+routed_to_supervisor_at: '2026-07-27T03:38:38.179824+00:00'
+branch_corrected_at: '2026-07-27T03:52:29.626294+00:00'
+branch_correction_note: 'round-1 left branch=master (or wrong repo); corrected to
+  real PR #98 headRefName'
+closed_at: '2026-07-27T06:23:02.602796+00:00'
+closed_reason: 'Owner directive 2026-07-27: remaining blocked backlog items declared
+  not needed -- deliberately not fixed, not redispatched. Real workspace/branch left
+  intact (not deleted) in case reopened later.'

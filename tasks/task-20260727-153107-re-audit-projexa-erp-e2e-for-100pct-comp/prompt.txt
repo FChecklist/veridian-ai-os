@@ -1,0 +1,23 @@
+## OBJECTIVE
+Independently re-verify, from real current `main`-branch code and real test output across both the projexa and compliance-tracker repos, whether PROJEXA ERP E2E (task-20260727-104516) is genuinely 100% complete against its 5 dispatched items. Verification-only — report gaps, do not fix them.
+
+## KNOWN_CONTEXT
+Real, previously-merged PRs claimed to cover this scope: projexa PR #52 (AppShellFrame/homeThreadSlot header fix), projexa PR #54 (PWA manifest + offline-shell service worker + IndexedDB work-progress sync queue), projexa PR #56 (PM/Site-Engineer/Client-Viewer roles + server-side route gating + last-owner/admin demotion guard, supersedes closed PR #53), compliance-tracker PR #596 (hierarchical BoQ breakdown-%, interim-billing/valuation/retention with real taxTemplateId + holdback-not-taxable-reducer fix, Excel BoQ importer), compliance-tracker PR #597 (timesheet budget-vs-actual report fix).
+
+## SCOPE
+For each of the 5 PRs: (1) confirm the real current code on the relevant repo's `main` implements what's claimed — quote file:line for the core logic; (2) specifically re-check PR #54's offline queue is scoped per-user (not shared across users on one device) and has a real mutex/dedup against duplicate sync submissions, since that was a previously-audit-flagged risk class; (3) specifically re-check PR #56's role-gating covers every membership-mutating endpoint found by grepping the codebase for role/membership PATCH or DELETE routes, not just the one endpoint originally audited; (4) specifically re-check PR #596's interim-bill generation actually produces a nonzero tax amount on a real test invoice and that retention no longer reduces the taxable subtotal; (5) run real test suites for all touched files in both repos, report pass/fail counts; (6) run `npx tsc --noEmit` in both repos; (7) confirm real supervisor PASS verdicts exist for all 5 PRs, quote them.
+
+## SUCCESS_CRITERIA
+A structured findings report, one section per PR (52/54/56/596/597), each with: claimed items verified present (file:line references), any GAP found (especially the 3 specific re-checks above), test pass/fail counts, tsc clean yes/no, audit verdict quote. Final verdict per PR: COMPLETE or INCOMPLETE-WITH-GAPS. Verify by actually running:
+`npx tsc --noEmit` (in both repos)
+`bun test` (scoped to touched files in both repos)
+`git log --oneline -1 -- ai-os/audits/projexa_erp_e2e_reaudit_2026-07-27.md`
+
+## EXPECTED_OUTPUT
+A findings report written to `ai-os/audits/projexa_erp_e2e_reaudit_2026-07-27.md` in the compliance-tracker repo (cover both repos' findings in this one file, noting which repo each finding is from), on a new branch off current `main`, committed, pushed, PR opened containing only this report.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not modify any file outside `ai-os/audits/` in either repo — this is a report-only task, not a fix task.
+
+## COMPLEXITY_TIER
+judgment

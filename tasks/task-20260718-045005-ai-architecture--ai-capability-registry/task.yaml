@@ -1,0 +1,138 @@
+id: task-20260718-045005-ai-architecture--ai-capability-registry
+title: 'AI Architecture: AI Capability Registry'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-045005-ai-architecture--ai-capability-registry
+workspace: /opt/veridian/ai-os/tasks/task-20260718-045005-ai-architecture--ai-capability-registry/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-045005-ai-architecture--ai-capability-registry
+service: veridian-worker@task-20260718-045005-ai-architecture--ai-capability-registry.service
+created_at: '2026-07-18T04:50:06.751351+00:00'
+last_checkpoint_at: '2026-07-18T04:56:52.624178+00:00'
+completed_steps: &id002
+- Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no conflicting in-flight claim on
+- Read capability-backfill-service.ts, capability-registry-service.ts,
+- 'Added `measureCapabilityCoverage(ctx)` to capability-backfill-service.ts:'
+- Wired it into `backfillCapabilityIndex()`'s return value (additive
+- New GET route `/api/capability-registry/coverage` (admin-gated, same
+- 'Updated the Capability Registry admin page: new "Index coverage" card'
+- Unit tests for the pure `toCoverage()` math (capability-backfill-service.test.ts)
+- 'Verify: `bunx tsc --noEmit` -- 0 errors. `bunx eslint` on changed files'
+- Did not touch permission-service.ts or any other in-flight worker's
+remaining_steps: &id003
+- None -- gap closed. Not yet committed/pushed/PR'd from this session;
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T04:50:07.346568+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  note: worker started (resume=0)
+- at: '2026-07-18T04:55:07.659297+00:00'
+  status: in_progress
+  files_modified:
+  - src/app/(app)/capability-registry/page.tsx
+  - src/lib/services/capability-backfill-service.ts
+  - src/app/api/capability-registry/coverage/
+  - src/lib/services/capability-backfill-service.test.ts
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  note: periodic checkpoint
+- at: '2026-07-18T04:56:52.624178+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 43d5995b Instrument capability-backfill-service with independent coverage measurement
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  note: worker finished, no changes to commit
+execution_seconds: 405
+restart_count: 0
+token_usage:
+  input_tokens: 118
+  cache_creation_input_tokens: 80994
+  cache_read_input_tokens: 4632663
+  output_tokens: 24208
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 80994
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 339
+    cache_read_input_tokens: 103719
+    cache_creation_input_tokens: 813
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 813
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T05:00:03.180676+00:00'

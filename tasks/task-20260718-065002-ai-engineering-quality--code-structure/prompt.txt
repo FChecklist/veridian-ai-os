@@ -1,0 +1,23 @@
+VERIDIAN Review Framework gap-closure: AI Engineering Quality / Code Structure & Modularity.
+This covers 5 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] Code Modularity
+  Gap: A handful of monolithic files break the otherwise strong modularity pattern
+  Recommended approach: Split schema.ts into per-domain files re-exported from an index; extract task-execution-engine.ts's distinct responsibilities into services.
+- [Low] Component Reusability
+  Gap: No component/service registry documenting reuse candidates
+  Recommended approach: Add a short REUSABLE-UTILITIES index pointing to the most-reused cross-cutting helpers.
+- [Medium] Low Coupling / High Cohesion
+  Gap: Data-layer coupling is implicit, not enforced
+  Recommended approach: Add FK constraints incrementally for the highest-traffic relationships, starting with org/user scoping.
+- [Low] Design Pattern Consistency
+  Gap: Patterns are convention-enforced, not compiler/lint-enforced
+  Recommended approach: Add a custom lint rule requiring requireAuth()/ServiceError usage in new API routes/services.
+- [Medium] File & Folder Organization
+  Gap: API route and ai-os governance folders are large enough to need their own navigation aids
+  Recommended approach: Periodically consolidate ai-os/'s overlapping subtrees (tree4-unified vs audit-tree vs system-tree) per stale-doc-manifest.yaml's own stated direction.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

@@ -1,0 +1,26 @@
+## OBJECTIVE
+Inventory exactly what business-domain modules, tables, and API routes VERIDIAN (compliance-tracker + PROJEXA) currently has, as the real, evidence-based baseline for a future SAP-logic-informed gap-closure effort. Inventory only -- no schema design, no code changes, no SAP research yet.
+
+## KNOWN_CONTEXT
+This is Phase 0 of a larger Owner directive (SAP architecture understanding and VERIDIAN completion) -- deliberately scoped down to just the baseline-inventory step, since the full multi-phase directive (SAP documentation research, schema simplification, backend implementation, PROJEXA UI wiring) is too large to execute as one task and needs this real inventory as its foundation first. compliance-tracker's schema.ts is a single ~10,900+ line file -- do not attempt to read it in one pass; use grep/structural extraction. The wiring registry (`ai-os/WIRING_ENGINE_REGISTRY_2026-07-25.json`, regenerated 2026-07-28) and `ai-os/DATABASE_CATALOG.json` already contain real, current machine-generated inventories of tables/routes -- use these as your primary real data source rather than re-deriving everything by hand from scratch.
+
+## SCOPE
+1. From DATABASE_CATALOG.json + a real grep of schema.ts, produce a categorized list of every business-domain table (CRM, Sales, Purchase, Inventory, Accounting/GST, HR, Project Management, Helpdesk, Construction/BoQ) with a one-line real description each (table's actual columns/purpose, not a guess).
+2. From the wiring registry + a real grep of src/app/api, produce a categorized list of every business-domain API route (same categories as above).
+3. List PROJEXA's own current module exposure (what compliance-tracker functionality PROJEXA's UI currently surfaces vs. does not, per the recent VERI-chain-wiring work in PR #59/#609).
+4. Do not touch Manufacturing/Production-Planning/Plant-Maintenance domains -- explicitly out of scope per the Owner's own directive, skip inventorying anything in that space.
+
+## SUCCESS_CRITERIA
+- A real, evidence-based inventory document covering all 8 domain categories above, each table/route entry citing a real file:line or a real DATABASE_CATALOG.json/wiring-registry entry, not an assumption.
+- Verify by actually running:
+`grep -c "pgTable(" src/lib/db/schema.ts` (report the real total table count as a sanity check against the inventory's own count)
+`git log --oneline -1 -- ai-os/tasks/sap_mapping/PHASE_0_BASELINE.yaml`
+
+## EXPECTED_OUTPUT
+A real file at `ai-os/tasks/sap_mapping/PHASE_0_BASELINE.yaml` in compliance-tracker, committed on a new branch, PR opened containing only this inventory (documentation-only, no code changes).
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not design new schemas, do not research SAP documentation, do not write any implementation code -- this task is inventory-only, later phases (schema design, SAP research, implementation) are separate, not-yet-dispatched tasks that depend on this one's real output.
+
+## COMPLEXITY_TIER
+judgment

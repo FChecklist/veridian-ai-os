@@ -1,0 +1,86 @@
+VERIDIAN Review Framework gap-closure: AI Architecture / Explainability & Transparency.
+This covers 26 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] AI Explainability
+  Gap: No unified explainability standard across modules
+  Recommended approach: Standardize on the report-engine note/narrative pattern as the platform convention
+- [Medium] Business Explainability
+  Gap: No cross-module standard for business explainability
+  Recommended approach: Extract report-engine-service.ts's note pattern into a shared UI component
+- [Medium] Business decision explainability
+  Gap: Confined to one entity type (CRM opportunities)
+  Recommended approach: Extract a generic AiDecisionExplanation type and apply to approvals/tasks
+- [Medium] Explainability of Output
+  Gap: No personalization of the AI's actual generated content/tone
+  Recommended approach: Add a lightweight user-context block to llm-client.ts's system prompt assembly
+- [Medium] Knowledge Explainability
+  Gap: Duplicate of parameter 14's gap - not extended to dynamic_chains
+  Recommended approach: Same as parameter 14
+- [Medium] Explain Business Terminology
+  Gap: No structured business-terminology glossary/explainer feature
+  Recommended approach: Add a glossary table and a hover/inline explainer UI component
+- [Medium] Explain Software Functionality
+  Gap: Help chatbot is ungrounded freeform LLM text with no KB
+  Recommended approach: Build a docs-embedding index and retrieve relevant chunks before answering
+- [Medium] Explain Reports & Dashboards
+  Gap: Only ~40 of ~200 report_definitions have per-run explanation notes
+  Recommended approach: Add a generic note generator for TABLE_REGISTRY-based aggregation reports
+- [Medium] Explain Calculations
+  Gap: VCEL compute engines (src/lib/engines/*) return numbers only, no explanation
+  Recommended approach: Define a shared EngineResult<T> type with a required explanation field
+- [Medium] Explain Business Logic
+  Gap: Business logic explanation confined to reports layer only
+  Recommended approach: Extend ServiceError patterns to include a plain-language 'why' field
+- [Medium] Explain AI Decisions
+  Gap: No general-purpose 'explain this AI decision' UI feature
+  Recommended approach: Extract crm-service.ts's explanation pattern into a shared decision-explanation service
+- [High] Explain Errors in Simple Language
+  Gap: No error-to-plain-language translation layer exists
+  Recommended approach: Add a friendlyMessage field to ServiceError populated from an error-code lookup table
+- [Medium] Explain Impact of Decisions
+  Gap: Impact explanation limited to 9 high-impact action categories
+  Recommended approach: Broaden HIGH_IMPACT_CATEGORY_GUIDANCE's category list based on support-ticket analysis
+- [Low] Explain Risks Before Actions
+  Gap: Keyword/regex detection can miss risky actions phrased unusually
+  Recommended approach: Log all AI-initiated writes and sample-audit for missed high-impact classifications
+- [Medium] Explain "Why" Behind Recommendation
+  Gap: Confined to CRM opportunities, no general recommendation-explanation pattern
+  Recommended approach: Same as parameter 12/15
+- [High] Explain "Why Not" for Rejected Options
+  Gap: No mechanism explains why an alternative option was rejected
+  Recommended approach: Extend the CRM aiRecommendedAction schema with a rejectedAlternatives array
+- [Medium] Explains Why a Decision Was Made
+  Gap: Not general-purpose beyond CRM and internal capability audits
+  Recommended approach: Same as parameter 11
+- [High] Explains Why an Error Occurred
+  Gap: No mechanism explains the root cause of an error to the user
+  Recommended approach: Same as parameter 41
+- [High] Explains How to Fix Errors
+  Gap: No mechanism suggests how to fix an error
+  Recommended approach: Add a remediationSteps field to the error-code catalog alongside friendlyMessage (param 41)
+- [Medium] Explains Business Impact
+  Gap: No dedicated business-impact field on tasks/decisions generally
+  Recommended approach: Same as parameter 42
+- [Low] Explains Risks Before Actions
+  Gap: Same as parameter 43 - keyword-based detection can miss unusual phrasings
+  Recommended approach: Same as parameter 43
+- [Medium] Explains Assumptions Made
+  Gap: Confined to the Report Engine; assumptions elsewhere unsurfaced
+  Recommended approach: Require an 'assumptions' field on all new AI/engine output schemas
+- [Medium] Explains Confidence Level
+  Gap: General AI-reply confidence is entirely absent (only 2 narrow domains have real scores)
+  Recommended approach: Same as parameter 32/45
+- [Medium] Explains Business Logic Behind Every Result
+  Gap: 'Every result' claim is false - only ~20% of reports have logic notes
+  Recommended approach: Same as parameter 37
+- [High] Explains Calculations Step-by-Step
+  Gap: No engine or report emits an intermediate calculation trace
+  Recommended approach: Extend the EngineResult type (see param 38) with an optional intermediate-steps array
+- [High] Explains Workflow Decisions
+  Gap: No workflow/routing decision is ever explained to the user
+  Recommended approach: Add a routingRationale field to orchestra-execution-logger.ts entries, surfaced on request
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

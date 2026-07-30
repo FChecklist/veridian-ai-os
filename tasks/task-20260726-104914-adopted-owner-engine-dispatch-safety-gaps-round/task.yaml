@@ -1,0 +1,55 @@
+id: task-20260726-104914-adopted-owner-engine-dispatch-safety-gaps-round
+title: OWNER_ENGINE dispatch safety gaps round 2 (adopted after supervisor branch-resolution
+  failure)
+status: completed
+repo: claude-control
+branch: worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into
+workspace: /opt/veridian/ai-os/tasks/task-20260726-104914-adopted-owner-engine-dispatch-safety-gaps-round/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-104914-adopted-owner-engine-dispatch-safety-gaps-round
+service: veridian-supervisor@task-20260726-104914-adopted-owner-engine-dispatch-safety-gaps-round.service
+created_at: '2026-07-26T10:49:15.234440+00:00'
+last_checkpoint_at: '2026-07-26T11:02:44.608644+00:00'
+completed_steps: &id002 []
+remaining_steps: &id003 []
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T10:49:15.234440+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'
+    (https://github.com/FChecklist/claude-control/pull/82) -- registered for real
+    audit, not a fresh worker dispatch
+- at: '2026-07-26T11:02:44.608644+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '581e734 Close 4 real AUDIT: REJECT gaps in OWNER_ENGINE-to-TASK_GATEWAY dispatch
+    (PR #82 round 2)'
+  - 615ee53 Wire OWNER_ENGINE into the TASK lifecycle pipeline as one integrated flow
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/82'
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/claude-control/pull/82
+master_synced_at: '2026-07-26T12:00:09.817698+00:00'

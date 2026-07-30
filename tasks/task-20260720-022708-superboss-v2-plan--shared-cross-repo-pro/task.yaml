@@ -1,0 +1,482 @@
+id: task-20260720-022708-superboss-v2-plan--shared-cross-repo-pro
+title: 'SUPERBOSS_V2_PLAN: Shared cross-repo prompt-pattern module'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260720-022708-superboss-v2-plan--shared-cross-repo-pro
+workspace: /opt/veridian/ai-os/tasks/task-20260720-022708-superboss-v2-plan--shared-cross-repo-pro/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260720-022708-superboss-v2-plan--shared-cross-repo-pro
+service: veridian-worker@task-20260720-022708-superboss-v2-plan--shared-cross-repo-pro.service
+created_at: '2026-07-20T02:27:09.230513+00:00'
+last_checkpoint_at: '2026-07-20T11:23:17.552157+00:00'
+completed_steps: &id002
+- 'Read governance: ACTIVE-CLAIMS.yaml (collision check), veridian-ui-kit repo, both
+  repos'' prompt-construction sites, src/lib/ai-router/, roster.ts, prompt-os-resolver.ts,
+  llm-client.ts, policy-enforcement-engine.ts, orchestra-execution-logger.ts'
+- "Registered ACTIVE-CLAIMS entry (committed + pushed on its own, per Rule 11 protocol)\
+  \ \u2014 branch `worker/task-20260720-022708-superboss-v2-plan--shared-cross-repo-pro`"
+- "KEY FINDING (recorded in claim + here per task's \"doesn't match the code\" clause):\
+  \ projexa has ZERO prompt-construction code (no systemPrompt, no LLM-provider imports\
+  \ \u2014 every AI call proxies to compliance-tracker's `/api/v1/projexa/*` via `veridian-client.ts`).\
+  \ So there is NO live cross-repo prompt divergence to fix; projexa cannot diverge\
+  \ because it constructs no prompts. The real duplication is WITHIN compliance-tracker:\
+  \ ~30 call sites each hand-write the same 6-step sequence (resolveModelConfig \u2192\
+  \ buildUserMessage \u2192 resolvePromptTemplate \u2192 enforcePolicy \u2192 callLLM/callLLMJson\
+  \ \u2192 recordOrchestraExecution)."
+- "PR #1 \u2014 Built shared module `@fchecklist/veridian-ui-kit/prompt-patterns`\
+  \ (server-safe, zero UI deps): `src/prompt-patterns/{index,types,runner,catalog}.ts`\
+  \ + 10 unit tests + README section + package.json exports entry + tsconfig exclude\
+  \ tests. Tests green (10 pass), `tsc --noEmit` EXIT 0. PR #5 in FChecklist/veridian-ui-kit,\
+  \ squash-merged to master, tagged `v0.3.0`."
+remaining_steps: &id003
+- "Build shared module `@fchecklist/veridian-ui-kit/prompt-patterns` (new server-safe\
+  \ export path, zero UI deps): `src/prompt-patterns/{index,types,runner,catalog}.ts`\
+  \ + tests + README section + package.json exports entry + git tag \u2014 PR in FChecklist/veridian-ui-kit"
+- "Adopt at one call site in compliance-tracker (ticket-intelligence-service.ts) as\
+  \ proof + bump dep tag \u2014 PR in FChecklist/compliance-tracker"
+- "Projexa adoption: wire shared module as dep + ADR note (no prompt-construction\
+  \ site exists to adopt at; honest per finding) \u2014 PR in FChecklist/projexa"
+- Tests green; self-merge Tier1 PRs once CI green
+- 'Re-score CSV row #60; move ACTIVE-CLAIMS entry to recently_completed'
+files_modified: &id001
+- PROGRESS.md
+- bun.lock
+- package.json
+- src/lib/services/ticket-intelligence-service.ts
+checkpoints:
+- at: '2026-07-20T02:27:10.329408+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  - 'a52436c0 ACTIVE-CLAIMS.yaml: move AIROUTER-01 Phase 2 claim to recently_completed
+    (PR #483)'
+  note: worker started (resume=0, lifetime invocation 1/20)
+- at: '2026-07-20T02:32:10.841107+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  - 'a52436c0 ACTIVE-CLAIMS.yaml: move AIROUTER-01 Phase 2 claim to recently_completed
+    (PR #483)'
+  note: periodic checkpoint
+- at: '2026-07-20T02:37:11.220629+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Read governance: ACTIVE-CLAIMS.yaml (collision check), veridian-ui-kit repo,
+    both repos'' prompt-construction sites, src/lib/ai-router/, roster.ts, prompt-os-resolver.ts,
+    llm-client.ts, policy-enforcement-engine.ts, orchestra-execution-logger.ts'
+  - "Registered ACTIVE-CLAIMS entry (committed + pushed on its own, per Rule 11 protocol)\
+    \ \u2014 branch `worker/task-20260720-022708-superboss-v2-plan--shared-cross-repo-pro`"
+  - "KEY FINDING (recorded in claim + here per task's \"doesn't match the code\" clause):\
+    \ projexa has ZERO prompt-construction code (no systemPrompt, no LLM-provider\
+    \ imports \u2014 every AI call proxies to compliance-tracker's `/api/v1/projexa/*`\
+    \ via `veridian-client.ts`). So there is NO live cross-repo prompt divergence\
+    \ to fix; projexa cannot diverge because it constructs no prompts. The real duplication\
+    \ is WITHIN compliance-tracker: ~30 call sites each hand-write the same 6-step\
+    \ sequence (resolveModelConfig \u2192 buildUserMessage \u2192 resolvePromptTemplate\
+    \ \u2192 enforcePolicy \u2192 callLLM/callLLMJson \u2192 recordOrchestraExecution)."
+  remaining_steps:
+  - "Build shared module `@fchecklist/veridian-ui-kit/prompt-patterns` (new server-safe\
+    \ export path, zero UI deps): `src/prompt-patterns/{index,types,runner,catalog}.ts`\
+    \ + tests + README section + package.json exports entry + git tag \u2014 PR in\
+    \ FChecklist/veridian-ui-kit"
+  - "Adopt at one call site in compliance-tracker (ticket-intelligence-service.ts)\
+    \ as proof + bump dep tag \u2014 PR in FChecklist/compliance-tracker"
+  - "Projexa adoption: wire shared module as dep + ADR note (no prompt-construction\
+    \ site exists to adopt at; honest per finding) \u2014 PR in FChecklist/projexa"
+  - Tests green; self-merge Tier1 PRs once CI green
+  - 'Re-score CSV row #60; move ACTIVE-CLAIMS entry to recently_completed'
+  recent_commits:
+  - 762c251c Register ACTIVE-CLAIMS for V2-4 shared prompt-pattern module task
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: periodic checkpoint
+- at: '2026-07-20T02:38:17.975599+00:00'
+  status: failed
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Read governance: ACTIVE-CLAIMS.yaml (collision check), veridian-ui-kit repo,
+    both repos'' prompt-construction sites, src/lib/ai-router/, roster.ts, prompt-os-resolver.ts,
+    llm-client.ts, policy-enforcement-engine.ts, orchestra-execution-logger.ts'
+  - "Registered ACTIVE-CLAIMS entry (committed + pushed on its own, per Rule 11 protocol)\
+    \ \u2014 branch `worker/task-20260720-022708-superboss-v2-plan--shared-cross-repo-pro`"
+  - "KEY FINDING (recorded in claim + here per task's \"doesn't match the code\" clause):\
+    \ projexa has ZERO prompt-construction code (no systemPrompt, no LLM-provider\
+    \ imports \u2014 every AI call proxies to compliance-tracker's `/api/v1/projexa/*`\
+    \ via `veridian-client.ts`). So there is NO live cross-repo prompt divergence\
+    \ to fix; projexa cannot diverge because it constructs no prompts. The real duplication\
+    \ is WITHIN compliance-tracker: ~30 call sites each hand-write the same 6-step\
+    \ sequence (resolveModelConfig \u2192 buildUserMessage \u2192 resolvePromptTemplate\
+    \ \u2192 enforcePolicy \u2192 callLLM/callLLMJson \u2192 recordOrchestraExecution)."
+  remaining_steps:
+  - "Build shared module `@fchecklist/veridian-ui-kit/prompt-patterns` (new server-safe\
+    \ export path, zero UI deps): `src/prompt-patterns/{index,types,runner,catalog}.ts`\
+    \ + tests + README section + package.json exports entry + git tag \u2014 PR in\
+    \ FChecklist/veridian-ui-kit"
+  - "Adopt at one call site in compliance-tracker (ticket-intelligence-service.ts)\
+    \ as proof + bump dep tag \u2014 PR in FChecklist/compliance-tracker"
+  - "Projexa adoption: wire shared module as dep + ADR note (no prompt-construction\
+    \ site exists to adopt at; honest per finding) \u2014 PR in FChecklist/projexa"
+  - Tests green; self-merge Tier1 PRs once CI green
+  - 'Re-score CSV row #60; move ACTIVE-CLAIMS entry to recently_completed'
+  recent_commits:
+  - 762c251c Register ACTIVE-CLAIMS for V2-4 shared prompt-pattern module task
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T02:38:48.720147+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Read governance: ACTIVE-CLAIMS.yaml (collision check), veridian-ui-kit repo,
+    both repos'' prompt-construction sites, src/lib/ai-router/, roster.ts, prompt-os-resolver.ts,
+    llm-client.ts, policy-enforcement-engine.ts, orchestra-execution-logger.ts'
+  - "Registered ACTIVE-CLAIMS entry (committed + pushed on its own, per Rule 11 protocol)\
+    \ \u2014 branch `worker/task-20260720-022708-superboss-v2-plan--shared-cross-repo-pro`"
+  - "KEY FINDING (recorded in claim + here per task's \"doesn't match the code\" clause):\
+    \ projexa has ZERO prompt-construction code (no systemPrompt, no LLM-provider\
+    \ imports \u2014 every AI call proxies to compliance-tracker's `/api/v1/projexa/*`\
+    \ via `veridian-client.ts`). So there is NO live cross-repo prompt divergence\
+    \ to fix; projexa cannot diverge because it constructs no prompts. The real duplication\
+    \ is WITHIN compliance-tracker: ~30 call sites each hand-write the same 6-step\
+    \ sequence (resolveModelConfig \u2192 buildUserMessage \u2192 resolvePromptTemplate\
+    \ \u2192 enforcePolicy \u2192 callLLM/callLLMJson \u2192 recordOrchestraExecution)."
+  remaining_steps:
+  - "Build shared module `@fchecklist/veridian-ui-kit/prompt-patterns` (new server-safe\
+    \ export path, zero UI deps): `src/prompt-patterns/{index,types,runner,catalog}.ts`\
+    \ + tests + README section + package.json exports entry + git tag \u2014 PR in\
+    \ FChecklist/veridian-ui-kit"
+  - "Adopt at one call site in compliance-tracker (ticket-intelligence-service.ts)\
+    \ as proof + bump dep tag \u2014 PR in FChecklist/compliance-tracker"
+  - "Projexa adoption: wire shared module as dep + ADR note (no prompt-construction\
+    \ site exists to adopt at; honest per finding) \u2014 PR in FChecklist/projexa"
+  - Tests green; self-merge Tier1 PRs once CI green
+  - 'Re-score CSV row #60; move ACTIVE-CLAIMS entry to recently_completed'
+  recent_commits:
+  - 762c251c Register ACTIVE-CLAIMS for V2-4 shared prompt-pattern module task
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: worker started (resume=1, lifetime invocation 2/20)
+- at: '2026-07-20T02:43:49.083673+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read governance: ACTIVE-CLAIMS.yaml (collision check), veridian-ui-kit repo,
+    both repos'' prompt-construction sites, src/lib/ai-router/, roster.ts, prompt-os-resolver.ts,
+    llm-client.ts, policy-enforcement-engine.ts, orchestra-execution-logger.ts'
+  - "Registered ACTIVE-CLAIMS entry (committed + pushed on its own, per Rule 11 protocol)\
+    \ \u2014 branch `worker/task-20260720-022708-superboss-v2-plan--shared-cross-repo-pro`"
+  - "KEY FINDING (recorded in claim + here per task's \"doesn't match the code\" clause):\
+    \ projexa has ZERO prompt-construction code (no systemPrompt, no LLM-provider\
+    \ imports \u2014 every AI call proxies to compliance-tracker's `/api/v1/projexa/*`\
+    \ via `veridian-client.ts`). So there is NO live cross-repo prompt divergence\
+    \ to fix; projexa cannot diverge because it constructs no prompts. The real duplication\
+    \ is WITHIN compliance-tracker: ~30 call sites each hand-write the same 6-step\
+    \ sequence (resolveModelConfig \u2192 buildUserMessage \u2192 resolvePromptTemplate\
+    \ \u2192 enforcePolicy \u2192 callLLM/callLLMJson \u2192 recordOrchestraExecution)."
+  remaining_steps:
+  - "Build shared module `@fchecklist/veridian-ui-kit/prompt-patterns` (new server-safe\
+    \ export path, zero UI deps): `src/prompt-patterns/{index,types,runner,catalog}.ts`\
+    \ + tests + README section + package.json exports entry + git tag \u2014 PR in\
+    \ FChecklist/veridian-ui-kit"
+  - "Adopt at one call site in compliance-tracker (ticket-intelligence-service.ts)\
+    \ as proof + bump dep tag \u2014 PR in FChecklist/compliance-tracker"
+  - "Projexa adoption: wire shared module as dep + ADR note (no prompt-construction\
+    \ site exists to adopt at; honest per finding) \u2014 PR in FChecklist/projexa"
+  - Tests green; self-merge Tier1 PRs once CI green
+  - 'Re-score CSV row #60; move ACTIVE-CLAIMS entry to recently_completed'
+  recent_commits:
+  - '6f8565d7 PROGRESS.md: reset for V2-4 shared prompt-pattern module task'
+  - 762c251c Register ACTIVE-CLAIMS for V2-4 shared prompt-pattern module task
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  note: periodic checkpoint
+- at: '2026-07-20T02:46:14.204548+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - 'Read governance: ACTIVE-CLAIMS.yaml (collision check), veridian-ui-kit repo,
+    both repos'' prompt-construction sites, src/lib/ai-router/, roster.ts, prompt-os-resolver.ts,
+    llm-client.ts, policy-enforcement-engine.ts, orchestra-execution-logger.ts'
+  - "Registered ACTIVE-CLAIMS entry (committed + pushed on its own, per Rule 11 protocol)\
+    \ \u2014 branch `worker/task-20260720-022708-superboss-v2-plan--shared-cross-repo-pro`"
+  - "KEY FINDING (recorded in claim + here per task's \"doesn't match the code\" clause):\
+    \ projexa has ZERO prompt-construction code (no systemPrompt, no LLM-provider\
+    \ imports \u2014 every AI call proxies to compliance-tracker's `/api/v1/projexa/*`\
+    \ via `veridian-client.ts`). So there is NO live cross-repo prompt divergence\
+    \ to fix; projexa cannot diverge because it constructs no prompts. The real duplication\
+    \ is WITHIN compliance-tracker: ~30 call sites each hand-write the same 6-step\
+    \ sequence (resolveModelConfig \u2192 buildUserMessage \u2192 resolvePromptTemplate\
+    \ \u2192 enforcePolicy \u2192 callLLM/callLLMJson \u2192 recordOrchestraExecution)."
+  remaining_steps:
+  - "Build shared module `@fchecklist/veridian-ui-kit/prompt-patterns` (new server-safe\
+    \ export path, zero UI deps): `src/prompt-patterns/{index,types,runner,catalog}.ts`\
+    \ + tests + README section + package.json exports entry + git tag \u2014 PR in\
+    \ FChecklist/veridian-ui-kit"
+  - "Adopt at one call site in compliance-tracker (ticket-intelligence-service.ts)\
+    \ as proof + bump dep tag \u2014 PR in FChecklist/compliance-tracker"
+  - "Projexa adoption: wire shared module as dep + ADR note (no prompt-construction\
+    \ site exists to adopt at; honest per finding) \u2014 PR in FChecklist/projexa"
+  - Tests green; self-merge Tier1 PRs once CI green
+  - 'Re-score CSV row #60; move ACTIVE-CLAIMS entry to recently_completed'
+  recent_commits:
+  - '6f8565d7 PROGRESS.md: reset for V2-4 shared prompt-pattern module task'
+  - 762c251c Register ACTIVE-CLAIMS for V2-4 shared prompt-pattern module task
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T02:46:45.030780+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read governance: ACTIVE-CLAIMS.yaml (collision check), veridian-ui-kit repo,
+    both repos'' prompt-construction sites, src/lib/ai-router/, roster.ts, prompt-os-resolver.ts,
+    llm-client.ts, policy-enforcement-engine.ts, orchestra-execution-logger.ts'
+  - "Registered ACTIVE-CLAIMS entry (committed + pushed on its own, per Rule 11 protocol)\
+    \ \u2014 branch `worker/task-20260720-022708-superboss-v2-plan--shared-cross-repo-pro`"
+  - "KEY FINDING (recorded in claim + here per task's \"doesn't match the code\" clause):\
+    \ projexa has ZERO prompt-construction code (no systemPrompt, no LLM-provider\
+    \ imports \u2014 every AI call proxies to compliance-tracker's `/api/v1/projexa/*`\
+    \ via `veridian-client.ts`). So there is NO live cross-repo prompt divergence\
+    \ to fix; projexa cannot diverge because it constructs no prompts. The real duplication\
+    \ is WITHIN compliance-tracker: ~30 call sites each hand-write the same 6-step\
+    \ sequence (resolveModelConfig \u2192 buildUserMessage \u2192 resolvePromptTemplate\
+    \ \u2192 enforcePolicy \u2192 callLLM/callLLMJson \u2192 recordOrchestraExecution)."
+  remaining_steps:
+  - "Build shared module `@fchecklist/veridian-ui-kit/prompt-patterns` (new server-safe\
+    \ export path, zero UI deps): `src/prompt-patterns/{index,types,runner,catalog}.ts`\
+    \ + tests + README section + package.json exports entry + git tag \u2014 PR in\
+    \ FChecklist/veridian-ui-kit"
+  - "Adopt at one call site in compliance-tracker (ticket-intelligence-service.ts)\
+    \ as proof + bump dep tag \u2014 PR in FChecklist/compliance-tracker"
+  - "Projexa adoption: wire shared module as dep + ADR note (no prompt-construction\
+    \ site exists to adopt at; honest per finding) \u2014 PR in FChecklist/projexa"
+  - Tests green; self-merge Tier1 PRs once CI green
+  - 'Re-score CSV row #60; move ACTIVE-CLAIMS entry to recently_completed'
+  recent_commits:
+  - '6f8565d7 PROGRESS.md: reset for V2-4 shared prompt-pattern module task'
+  - 762c251c Register ACTIVE-CLAIMS for V2-4 shared prompt-pattern module task
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  note: worker started (resume=1, lifetime invocation 3/20)
+- at: '2026-07-20T02:51:45.409820+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read governance: ACTIVE-CLAIMS.yaml (collision check), veridian-ui-kit repo,
+    both repos'' prompt-construction sites, src/lib/ai-router/, roster.ts, prompt-os-resolver.ts,
+    llm-client.ts, policy-enforcement-engine.ts, orchestra-execution-logger.ts'
+  - "Registered ACTIVE-CLAIMS entry (committed + pushed on its own, per Rule 11 protocol)\
+    \ \u2014 branch `worker/task-20260720-022708-superboss-v2-plan--shared-cross-repo-pro`"
+  - "KEY FINDING (recorded in claim + here per task's \"doesn't match the code\" clause):\
+    \ projexa has ZERO prompt-construction code (no systemPrompt, no LLM-provider\
+    \ imports \u2014 every AI call proxies to compliance-tracker's `/api/v1/projexa/*`\
+    \ via `veridian-client.ts`). So there is NO live cross-repo prompt divergence\
+    \ to fix; projexa cannot diverge because it constructs no prompts. The real duplication\
+    \ is WITHIN compliance-tracker: ~30 call sites each hand-write the same 6-step\
+    \ sequence (resolveModelConfig \u2192 buildUserMessage \u2192 resolvePromptTemplate\
+    \ \u2192 enforcePolicy \u2192 callLLM/callLLMJson \u2192 recordOrchestraExecution)."
+  remaining_steps:
+  - "Build shared module `@fchecklist/veridian-ui-kit/prompt-patterns` (new server-safe\
+    \ export path, zero UI deps): `src/prompt-patterns/{index,types,runner,catalog}.ts`\
+    \ + tests + README section + package.json exports entry + git tag \u2014 PR in\
+    \ FChecklist/veridian-ui-kit"
+  - "Adopt at one call site in compliance-tracker (ticket-intelligence-service.ts)\
+    \ as proof + bump dep tag \u2014 PR in FChecklist/compliance-tracker"
+  - "Projexa adoption: wire shared module as dep + ADR note (no prompt-construction\
+    \ site exists to adopt at; honest per finding) \u2014 PR in FChecklist/projexa"
+  - Tests green; self-merge Tier1 PRs once CI green
+  - 'Re-score CSV row #60; move ACTIVE-CLAIMS entry to recently_completed'
+  recent_commits:
+  - '6f8565d7 PROGRESS.md: reset for V2-4 shared prompt-pattern module task'
+  - 762c251c Register ACTIVE-CLAIMS for V2-4 shared prompt-pattern module task
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  note: periodic checkpoint
+- at: '2026-07-20T02:56:31.892310+00:00'
+  status: failed
+  files_modified:
+  - PROGRESS.md
+  - bun.lock
+  - package.json
+  - src/lib/services/ticket-intelligence-service.ts
+  completed_steps:
+  - 'Read governance: ACTIVE-CLAIMS.yaml (collision check), veridian-ui-kit repo,
+    both repos'' prompt-construction sites, src/lib/ai-router/, roster.ts, prompt-os-resolver.ts,
+    llm-client.ts, policy-enforcement-engine.ts, orchestra-execution-logger.ts'
+  - "Registered ACTIVE-CLAIMS entry (committed + pushed on its own, per Rule 11 protocol)\
+    \ \u2014 branch `worker/task-20260720-022708-superboss-v2-plan--shared-cross-repo-pro`"
+  - "KEY FINDING (recorded in claim + here per task's \"doesn't match the code\" clause):\
+    \ projexa has ZERO prompt-construction code (no systemPrompt, no LLM-provider\
+    \ imports \u2014 every AI call proxies to compliance-tracker's `/api/v1/projexa/*`\
+    \ via `veridian-client.ts`). So there is NO live cross-repo prompt divergence\
+    \ to fix; projexa cannot diverge because it constructs no prompts. The real duplication\
+    \ is WITHIN compliance-tracker: ~30 call sites each hand-write the same 6-step\
+    \ sequence (resolveModelConfig \u2192 buildUserMessage \u2192 resolvePromptTemplate\
+    \ \u2192 enforcePolicy \u2192 callLLM/callLLMJson \u2192 recordOrchestraExecution)."
+  - "PR #1 \u2014 Built shared module `@fchecklist/veridian-ui-kit/prompt-patterns`\
+    \ (server-safe, zero UI deps): `src/prompt-patterns/{index,types,runner,catalog}.ts`\
+    \ + 10 unit tests + README section + package.json exports entry + tsconfig exclude\
+    \ tests. Tests green (10 pass), `tsc --noEmit` EXIT 0. PR #5 in FChecklist/veridian-ui-kit,\
+    \ squash-merged to master, tagged `v0.3.0`."
+  remaining_steps:
+  - "Build shared module `@fchecklist/veridian-ui-kit/prompt-patterns` (new server-safe\
+    \ export path, zero UI deps): `src/prompt-patterns/{index,types,runner,catalog}.ts`\
+    \ + tests + README section + package.json exports entry + git tag \u2014 PR in\
+    \ FChecklist/veridian-ui-kit"
+  - "Adopt at one call site in compliance-tracker (ticket-intelligence-service.ts)\
+    \ as proof + bump dep tag \u2014 PR in FChecklist/compliance-tracker"
+  - "Projexa adoption: wire shared module as dep + ADR note (no prompt-construction\
+    \ site exists to adopt at; honest per finding) \u2014 PR in FChecklist/projexa"
+  - Tests green; self-merge Tier1 PRs once CI green
+  - 'Re-score CSV row #60; move ACTIVE-CLAIMS entry to recently_completed'
+  recent_commits:
+  - '6f8565d7 PROGRESS.md: reset for V2-4 shared prompt-pattern module task'
+  - 762c251c Register ACTIVE-CLAIMS for V2-4 shared prompt-pattern module task
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T11:23:17.552157+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '6f8565d7 PROGRESS.md: reset for V2-4 shared prompt-pattern module task'
+  - 762c251c Register ACTIVE-CLAIMS for V2-4 shared prompt-pattern module task
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  note: 'PRE-FLIGHT HARD STOP (openrouter_balance_exhausted): OpenRouter account has
+    $-0.0676 remaining ($40.07 used of $40.00 credits) -- below the $0.1 safety floor.
+    This is the REAL, live account balance, not this proxy''s own internal spend tracker.
+    Add credits at https://openrouter.ai/settings/credits before retrying -- this
+    is a real money problem, not a code bug, and retrying will not help until the
+    balance is restored.'
+execution_seconds: 1699
+restart_count: 2
+token_usage:
+  input_tokens: 1902074
+  cache_creation_input_tokens: 0
+  cache_read_input_tokens: 0
+  output_tokens: 15356
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 0
+    ephemeral_5m_input_tokens: 0
+  inference_geo: ''
+  iterations: []
+  speed: standard
+master_synced_at: '2026-07-20T03:00:06.042280+00:00'

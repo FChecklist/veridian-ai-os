@@ -1,0 +1,239 @@
+id: task-20260718-212530-rescue-pr--425
+title: 'Rescue PR #425'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-212530-rescue-pr--425
+workspace: /opt/veridian/ai-os/tasks/task-20260718-212530-rescue-pr--425/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-212530-rescue-pr--425
+service: veridian-worker@task-20260718-212530-rescue-pr--425.service
+created_at: '2026-07-18T21:25:31.261710+00:00'
+last_checkpoint_at: '2026-07-18T21:45:16.797301+00:00'
+completed_steps: &id002
+- 'Read `ai-os/boss/ACTIVE-CLAIMS.yaml`, registered + pushed a claim for rescuing
+  PR #425'
+- '`gh pr checkout 425` failed (branch already checked out in another worktree) --
+  worked around via `git fetch origin pull/425/head:pr-425-rescue`'
+- Merged origin/main into the PR branch (31 commits behind); resolved PROGRESS.md
+  (`--ours`) and a real-but-additive conflict in `ai-os/boss/ACTIVE-CLAIMS.yaml` (kept
+  both sides)
+- 'Confirmed PR #425''s own diff is exactly `drizzle/0225_audit_trail_immutability_and_backstop_triggers.sql`
+  (new) + a comment-only change in `src/lib/db/schema.ts` -- no application code'
+- 'Checked `git ls-tree origin/main -- drizzle/`: highest existing is 0224, no 0225
+  on main yet -- this PR''s 0225 filename needed no renumbering, though PR #412 and
+  #414 independently also claim 0225 for their own still-open migrations (flagged
+  for whoever applies these live -- first to merge keeps the number)'
+- '`bun install --frozen-lockfile && bunx tsc --noEmit && bun run lint && bun test`:
+  0 tsc errors, 0 lint errors (3 pre-existing unrelated warnings), 1523 tests pass
+  / 0 fail -- confirms the PR''s original CI failures (audit-check, Unit Tests) were
+  staleness against main, not real defects'
+- Pushed the merged branch to `worker/task-20260718-084006-checks---balances--audit-trail---immutab`
+- 'Read the full PR diff personally, posted a structured `AUDIT: PASS` comment with
+  all 8 required fields (https://github.com/FChecklist/compliance-tracker/pull/425#issuecomment-5012997648)'
+- 'Watched CI to green: Lint, Type Check, Unit Tests, Build, E2E Tests, Analyze/CodeQL,
+  audit-check, all Sentinel/coverage checks all `pass`. Only non-required Vercel preview
+  failed (rate-limited, documented precedent from every sibling rescue this session)'
+- Classified TIER2 (touches `drizzle/0225_*.sql` + `src/lib/db/schema.ts`) -- did
+  NOT self-merge
+- Moved the claim from `active:` to `recently_completed:` in `ai-os/boss/ACTIVE-CLAIMS.yaml`
+remaining_steps: &id003
+- 'None from this session. PR #425 is TIER2, CI fully green, `AUDIT: PASS` posted
+  -- reported to Owner as ready for sign-off. Live migration application + merge needs
+  a supervising/DB-access-capable session, which must re-check `git ls-tree origin/main
+  -- drizzle/` immediately before applying (PR #412/#414 both also independently used
+  migration number 0225).'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T21:25:32.273022+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  - 097ae295 Add proactive AI cost-ceiling alerts and default free-tier spend cap
+    (#422)
+  note: worker started (resume=0)
+- at: '2026-07-18T21:30:32.767073+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read `ai-os/boss/ACTIVE-CLAIMS.yaml`, no conflicting active claim on PR #425
+    / branch worker/task-20260718-084006-checks---balances--audit-trail---immutab;
+    registered + pushed a claim entry'
+  - '`gh pr checkout 425` failed (branch already checked out in another worktree at
+    `ai-os/tasks/task-20260718-084006-.../workspace`) -- worked around via `git fetch
+    origin pull/425/head:pr-425-rescue && git checkout pr-425-rescue` in this task''s
+    own workspace instead'
+  - Merged origin/main into the PR branch (branch was 31 commits behind, only 1 commit
+    ahead of merge-base). Resolved PROGRESS.md via `--ours`, resolved a real conflict
+    in `ai-os/boss/ACTIVE-CLAIMS.yaml` (kept both concurrent sessions' claim entries
+    -- additive, not a real collision)
+  - 'Confirmed PR #425''s own diff (post-merge, vs origin/main) is exactly 2 files:
+    new `drizzle/0225_audit_trail_immutability_and_backstop_triggers.sql` + a comment-only
+    change in `src/lib/db/schema.ts` -- no application code touched'
+  - 'Checked `git ls-tree origin/main -- drizzle/` for the real highest existing migration
+    number: 0224 (two files share that number: `0224_crm_accounts_contacts_actor_columns_no_fk.sql`,
+    `0224_erp_exchange_rates_source.sql`). No `0225_*` exists on main yet, so this
+    PR''s `0225_audit_trail_immutability_and_backstop_triggers.sql` is currently the
+    correct next number -- no renumbering needed. (Noted risk: PR #412 and #414, both
+    also open/TIER2 and both independently claiming `0225` for their own migrations,
+    could merge first and take the number -- whoever applies this migration live needs
+    to re-check `git ls-tree origin/main -- drizzle/` immediately before running it.)'
+  - '`bun install --frozen-lockfile && bunx tsc --noEmit && bun run lint && bun test`
+    all clean: tsc 0 errors, lint 0 errors (3 pre-existing unrelated warnings), 1523
+    tests pass / 0 fail -- matches what prior sibling rescues (#413, #414) also saw
+    at HEAD, confirming the PR''s original CI failures (audit-check, Unit Tests) were
+    staleness-against-main, not real bugs in this PR''s own 2-file diff'
+  remaining_steps:
+  - Push the merged branch to `worker/task-20260718-084006-checks---balances--audit-trail---immutab`
+    (the real PR head ref)
+  - 'Read the full PR diff (2 files) personally and post a structured `AUDIT: PASS`/`AUDIT:
+    FAIL` comment with all 8 required fields'
+  - Watch CI to green on the final pushed commit
+  - 'Classify tier: TIER2 (touches `drizzle/0225_*.sql` + `src/lib/db/schema.ts`)
+    -- do NOT self-merge, per task Rule 7 / AGENTS.md Rule 7(c)/10; report to Owner
+    as ready for sign-off instead'
+  - Log this rescue in `ai-os/boss/ACTIVE-CLAIMS.yaml`'s `recently_completed` section
+  recent_commits:
+  - '57381a05 PROGRESS.md: rescue PR #425 in progress'
+  - 75bd974d Merge remote-tracking branch 'origin/main' into pr-425-rescue
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  note: periodic checkpoint
+- at: '2026-07-18T21:35:33.078516+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b0657822 chore: register active claim for PR #425 rescue'
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  note: periodic checkpoint
+- at: '2026-07-18T21:40:33.431544+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read `ai-os/boss/ACTIVE-CLAIMS.yaml`, registered + pushed a claim for rescuing
+    PR #425'
+  - '`gh pr checkout 425` failed (branch already checked out in another worktree)
+    -- worked around via `git fetch origin pull/425/head:pr-425-rescue`'
+  - Merged origin/main into the PR branch (31 commits behind); resolved PROGRESS.md
+    (`--ours`) and a real-but-additive conflict in `ai-os/boss/ACTIVE-CLAIMS.yaml`
+    (kept both sides)
+  - 'Confirmed PR #425''s own diff is exactly `drizzle/0225_audit_trail_immutability_and_backstop_triggers.sql`
+    (new) + a comment-only change in `src/lib/db/schema.ts` -- no application code'
+  - 'Checked `git ls-tree origin/main -- drizzle/`: highest existing is 0224, no 0225
+    on main yet -- this PR''s 0225 filename needed no renumbering, though PR #412
+    and #414 independently also claim 0225 for their own still-open migrations (flagged
+    for whoever applies these live -- first to merge keeps the number)'
+  - '`bun install --frozen-lockfile && bunx tsc --noEmit && bun run lint && bun test`:
+    0 tsc errors, 0 lint errors (3 pre-existing unrelated warnings), 1523 tests pass
+    / 0 fail -- confirms the PR''s original CI failures (audit-check, Unit Tests)
+    were staleness against main, not real defects'
+  - Pushed the merged branch to `worker/task-20260718-084006-checks---balances--audit-trail---immutab`
+  - 'Read the full PR diff personally, posted a structured `AUDIT: PASS` comment with
+    all 8 required fields (https://github.com/FChecklist/compliance-tracker/pull/425#issuecomment-5012997648)'
+  - 'Watched CI to green: Lint, Type Check, Unit Tests, Build, E2E Tests, Analyze/CodeQL,
+    audit-check, all Sentinel/coverage checks all `pass`. Only non-required Vercel
+    preview failed (rate-limited, documented precedent from every sibling rescue this
+    session)'
+  - Classified TIER2 (touches `drizzle/0225_*.sql` + `src/lib/db/schema.ts`) -- did
+    NOT self-merge
+  - Moved the claim from `active:` to `recently_completed:` in `ai-os/boss/ACTIVE-CLAIMS.yaml`
+  remaining_steps:
+  - 'None from this session. PR #425 is TIER2, CI fully green, `AUDIT: PASS` posted
+    -- reported to Owner as ready for sign-off. Live migration application + merge
+    needs a supervising/DB-access-capable session, which must re-check `git ls-tree
+    origin/main -- drizzle/` immediately before applying (PR #412/#414 both also independently
+    used migration number 0225).'
+  recent_commits:
+  - '8e5825d0 chore: close active claim for PR #425 rescue'
+  - 'b0657822 chore: register active claim for PR #425 rescue'
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  note: periodic checkpoint
+- at: '2026-07-18T21:45:16.797301+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '8e5825d0 chore: close active claim for PR #425 rescue'
+  - 'b0657822 chore: register active claim for PR #425 rescue'
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  note: worker finished, no changes to commit
+execution_seconds: 1184
+restart_count: 0
+token_usage:
+  input_tokens: 238
+  cache_creation_input_tokens: 119570
+  cache_read_input_tokens: 11772834
+  output_tokens: 33648
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 119570
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 115
+    cache_read_input_tokens: 143004
+    cache_creation_input_tokens: 104
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 104
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T22:00:04.480449+00:00'

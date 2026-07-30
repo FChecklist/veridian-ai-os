@@ -1,0 +1,34 @@
+## OBJECTIVE
+TASK REQUIRING AI JUDGMENT: continuation of the gap-closing chain after a full git reconciliation (2026-07-24, PR #7 merged to master, commit 13d1797) brought 8+ hours of previously-orphaned work onto master and fixed the same-day superboss-register.sqlite corruption. Close as many of the 6 genuinely-engineerable remaining PARTIAL governance items as real evidence supports: 1, 3, 4, 15, 25, 45 (source: ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml, re-read it fresh, do not trust this prompt's item numbers without re-verifying). Deciding which of these six can genuinely reach DONE with more engineering vs which are actually blocked on something not yet discovered is the judgment call.
+
+## SCOPE
+Engineering scope for this phase is exactly items 1, 3, 4, 15, 25, 45. Items 21, 24, 36, 51, 54 stay exactly as currently recorded in ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml (PARTIAL, pending an Owner decision already logged in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml). Re-verify those five items' blocked status is still accurate by re-reading the decisions file fresh, and leave their status/evidence text untouched either way -- confirming a blocker is still real is itself a valid, sufficient action for those five.
+
+For each of items 1, 3, 4, 15, 25, 45: read the item's current evidence field, independently re-verify the live system state the evidence claims (do not trust stale text), and either (a) close the specific real remaining sub-gap with real engineering + real verification, or (b) determine it is also actually blocked on something (an Owner decision, missing infrastructure, out of scope for this VM) and say so explicitly with evidence, leaving it PARTIAL with an honest reason -- a status only moves to DONE when it is actually earned.
+
+## KNOWN_CONTEXT
+zero_duplication_check_performed: true, checked via task-gateway.py submit before this phase's own dispatch
+db_corruption_status: RESOLVED 2026-07-24 -- every script writing to superboss-register.sqlite now uses the flock-based _write_lock() convention (verified via full-repo grep), safe to do normal sequential DB writes again
+git_reconciliation_status: DONE 2026-07-24, master is now the real single source of truth (PR #7, commit 13d1797) -- work FROM this point forward, no need to revisit the branch-consolidation history, that part is closed
+task_gateway_now_checks_merge_status: scripts/task-gateway.py's close command now runs check_branch_merged_to_master() and reports git_merge_status in its output -- when you close THIS task, read that field in the response; a value of MERGED is the real completion bar now, a value of NOT_MERGED means one more step (open and merge a real PR) remains before this task's own EXPECTED_OUTPUT is satisfied
+owner_reserved_decisions: adm group membership changes, crontab entries, and the continuous-gap-closing self-dispatch-pause policy are Owner-only decisions, already logged with full context in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml -- this phase's role for those specific topics is limited to re-confirming the recorded blocker is still accurate, not resolving it
+db_concurrency_constraint: sequential writes only to superboss-register.sqlite -- check no other active veridian-worker@ task before bulk writes (systemctl --user list-units veridian-worker@* --state=active)
+
+## SUCCESS_CRITERIA
+For every item touched (subset of 1,3,4,15,25,45): either status is DONE with real command output/commit-hash evidence appended, or status stays PARTIAL with an honest, specific, newly-verified reason (not a restatement of stale evidence)
+ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml summary counts (done/partial/missing) recomputed to match the actual items after this phase's edits, cite old vs new numbers
+This task's own close command (`python3 scripts/task-gateway.py close ...`) reports `git_merge_status.status` equal to `MERGED`
+
+## EXPECTED_OUTPUT
+COMMIT+PUSH+MERGE: open a PR from this task's worker branch to master and merge it (or confirm via gh pr list that it already landed on master by another path) -- completion means the work is on master, not merely pushed to a branch
+UPDATE_FILE: ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml with real per-item updates and a recomputed summary
+CHECKPOINT: task-gateway.py close --task-id <own-id> --audit-cmd <a real SUCCESS_CRITERIA test you can run> --evidence <real citation, including the git_merge_status field from the close output>
+NEXT_PHASE: if any of 1,3,4,15,25,45 remain genuinely open after honest re-verification (not blocked on an Owner decision, just not finished this phase), create AND start Phase 16 targeting exactly those, both create and start are mandatory steps, not optional -- if all six reach a settled state (DONE or an honestly re-confirmed blocker), instead write ai-os/GOVERNANCE_PHASE15_CLOSEOUT_2026-07-24.yaml summarizing the final state of all 60 items and treat the chain as having reached a natural stopping point pending Owner decisions on the five reserved items
+
+## CONSTRAINTS
+This phase's engineering authority covers items 1, 3, 4, 15, 25, 45 only -- the five items in owner_reserved_decisions above stay exactly as currently recorded
+EVIDENCE_REQUIRED: every status change cites real command output or commit hash
+Task completion is defined as this task's own commit reaching master, confirmed via the close command's git_merge_status field
+
+## COMPLEXITY_TIER
+judgment

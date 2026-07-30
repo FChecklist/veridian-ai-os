@@ -1,0 +1,26 @@
+## OBJECTIVE
+Fix the real, reviewer-rejected issues in Auditor Engine Phase 4 (PR #44, task-20260724-135839-phase4-architecture-judgment-domains-dep) and land it. Instruction INS-20260724-143241-45ad.
+
+## SCOPE
+1. Read /opt/veridian/ai-os/tasks/task-20260724-135839-phase4-architecture-judgment-domains-dep/review.json in full (do not rely on any paraphrase) to get the exact, complete rejection reasons.
+2. Fix ai-os-scripts/audit_pipeline_architecture.py's new_findings computation (around line 345): it currently counts all domain_records rather than genuinely new/changed findings since the last run -- correct it to compare against the prior run's stored findings and count only real deltas.
+3. Fix AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml's phase-4 close-out evidence block: remove or correct the claim about "every pipeline re-run confirmed..." so it only states what was actually verified, with real command output as evidence, not a self-reported narrative claim.
+4. Re-run the real pipeline (`python3 ai-os-scripts/audit_pipeline_architecture.py`) after the fix and capture its real output as the new evidence.
+5. Push the fix to the same branch (worker/task-20260724-135839-phase4-architecture-judgment-domains-dep) so PR #44 is updated, not a new PR.
+
+## KNOWN_CONTEXT
+- PR #44 already exists with real, mostly-correct architecture-judgment content (3 dependency-cruiser configs for ddd/clean-architecture/enterprise-architecture, a bounded-context map, a drift-findings registration script) -- only the 2 specific issues above need fixing, not a rewrite.
+- The reviewer's 4th note ("no .github/workflows files touched") was informational, not a rejection reason -- no action needed for it.
+
+## SUCCESS_CRITERIA
+- `python3 ai-os-scripts/audit_pipeline_architecture.py` runs and its real output shows new_findings computed as a genuine delta, not a raw record count.
+- `grep -c "confirmed" ai-os/AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml` (or equivalent) no longer contains the unverified re-run claim -- the close-out block cites only real, reproduced evidence.
+
+## EXPECTED_OUTPUT
+A real pushed fix commit on the same branch, the real corrected pipeline output as evidence, and a final checkpoint confirming both review issues are resolved.
+
+## CONSTRAINTS
+Fix only the 2 real issues identified in review.json -- do not restructure the already-accepted parts of PR #44 (the dependency-cruiser configs, bounded-context map, drift-findings script).
+
+## COMPLEXITY_TIER
+mechanical

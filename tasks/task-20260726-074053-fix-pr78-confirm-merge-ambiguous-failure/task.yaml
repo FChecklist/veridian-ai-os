@@ -1,0 +1,190 @@
+id: task-20260726-074053-fix-pr78-confirm-merge-ambiguous-failure
+title: Fix PR78 confirm_merge ambiguous-failure bug (real AUDIT REJECT findings)
+status: completed
+repo: claude-control
+branch: worker/task-20260726-074053-fix-pr78-confirm-merge-ambiguous-failure
+workspace: /opt/veridian/ai-os/tasks/task-20260726-074053-fix-pr78-confirm-merge-ambiguous-failure/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-074053-fix-pr78-confirm-merge-ambiguous-failure
+service: veridian-worker@task-20260726-074053-fix-pr78-confirm-merge-ambiguous-failure.service
+created_at: '2026-07-26T07:40:54.743887+00:00'
+last_checkpoint_at: '2026-07-26T07:52:45.068241+00:00'
+completed_steps: &id002
+- Read confirm_merge() and find_first_unverified_done_block() in full
+- confirm_merge() now returns a 4th `ambiguous` flag distinguishing
+- backfill_one() updated for the new confirm_merge() signature
+- 'find_first_unverified_done_block(): ambiguous=True now skips-with-'
+- 'find_first_unverified_done_block(): a missing target_repo now also'
+- audit_and_correct_plan_file()/audit_plans() thread the new
+- audit_and_correct_plan_file()'s blame_line()/parent-lookup failure
+- Confirmed all pre-existing scenarios in
+- 'Added 3 new test scenarios: gh-call-failure-must-not-revert,'
+- Added pytest-discoverable `test_*` wrapper functions (previously
+- 'Full suite green: standalone runner + `python3 -m pytest -v` exit 0'
+- 'Committed and pushed to the existing PR #78 branch (no new PR)'
+remaining_steps: &id003
+- None -- fix complete, pushed, awaiting fresh audit pass
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T07:40:56.516388+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - '5a93d3f Fix broken YAML (bare colon in SATISFIED: annotation) + backfill phase_3
+    self-report -- PR 561 merged with real security corrective fix'
+  - 8168e78 Merge branch 'master' of https://github.com/FChecklist/claude-control
+  - 'e6c0e44 Merge pull request #77 from FChecklist/worker/task-20260726-051203-server-owner-ai-protocol-memory-consolid'
+  - 32bf369 Consolidate server-side OWNER_DIRECTIVES into one protocol + one memory
+    file
+  - a85292e Auto-sync 4 server task(s) to master controller
+  - '4611924 phase_4 defense-in-depth/prompt-security/red-team/quality: status done
+    (compliance-tracker branch worker/task-20260726-043023)'
+  - '4f6dbcd Merge pull request #76 from FChecklist/worker/task-20260726-040056-fix-auto-continuation-self-report-and-ci'
+  - 88410cb Fix auto-continuation self-report gap + audit-check CI-timing race (root
+    causes, not symptoms)
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T07:45:57.871951+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/backfill_phase_self_report.py
+  completed_steps:
+  - Read confirm_merge() and find_first_unverified_done_block() in full
+  - confirm_merge() now returns a 4th `ambiguous` flag distinguishing
+  - backfill_one() updated for the new confirm_merge() signature
+  - 'find_first_unverified_done_block(): ambiguous=True now skips-with-'
+  - 'find_first_unverified_done_block(): a missing target_repo now also'
+  - audit_and_correct_plan_file()/audit_plans() thread the new
+  - audit_and_correct_plan_file()'s blame_line()/parent-lookup failure
+  - Confirmed all pre-existing scenarios in
+  - 'Added 3 new test scenarios: gh-call-failure-must-not-revert,'
+  - Added pytest-discoverable `test_*` wrapper functions (previously
+  - 'Full suite green: standalone runner + `python3 -m pytest -v` exit 0'
+  - 'Committed and pushed to the existing PR #78 branch (no new PR)'
+  remaining_steps:
+  - None -- fix complete, pushed, awaiting fresh audit pass
+  recent_commits:
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - '5a93d3f Fix broken YAML (bare colon in SATISFIED: annotation) + backfill phase_3
+    self-report -- PR 561 merged with real security corrective fix'
+  - 8168e78 Merge branch 'master' of https://github.com/FChecklist/claude-control
+  - 'e6c0e44 Merge pull request #77 from FChecklist/worker/task-20260726-051203-server-owner-ai-protocol-memory-consolid'
+  - 32bf369 Consolidate server-side OWNER_DIRECTIVES into one protocol + one memory
+    file
+  - a85292e Auto-sync 4 server task(s) to master controller
+  - '4611924 phase_4 defense-in-depth/prompt-security/red-team/quality: status done
+    (compliance-tracker branch worker/task-20260726-043023)'
+  - '4f6dbcd Merge pull request #76 from FChecklist/worker/task-20260726-040056-fix-auto-continuation-self-report-and-ci'
+  note: periodic checkpoint
+- at: '2026-07-26T07:47:37.675978+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read confirm_merge() and find_first_unverified_done_block() in full
+  - confirm_merge() now returns a 4th `ambiguous` flag distinguishing
+  - backfill_one() updated for the new confirm_merge() signature
+  - 'find_first_unverified_done_block(): ambiguous=True now skips-with-'
+  - 'find_first_unverified_done_block(): a missing target_repo now also'
+  - audit_and_correct_plan_file()/audit_plans() thread the new
+  - audit_and_correct_plan_file()'s blame_line()/parent-lookup failure
+  - Confirmed all pre-existing scenarios in
+  - 'Added 3 new test scenarios: gh-call-failure-must-not-revert,'
+  - Added pytest-discoverable `test_*` wrapper functions (previously
+  - 'Full suite green: standalone runner + `python3 -m pytest -v` exit 0'
+  - 'Committed and pushed to the existing PR #78 branch (no new PR)'
+  remaining_steps:
+  - None -- fix complete, pushed, awaiting fresh audit pass
+  recent_commits:
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - '5a93d3f Fix broken YAML (bare colon in SATISFIED: annotation) + backfill phase_3
+    self-report -- PR 561 merged with real security corrective fix'
+  - 8168e78 Merge branch 'master' of https://github.com/FChecklist/claude-control
+  - 'e6c0e44 Merge pull request #77 from FChecklist/worker/task-20260726-051203-server-owner-ai-protocol-memory-consolid'
+  - 32bf369 Consolidate server-side OWNER_DIRECTIVES into one protocol + one memory
+    file
+  - a85292e Auto-sync 4 server task(s) to master controller
+  - '4611924 phase_4 defense-in-depth/prompt-security/red-team/quality: status done
+    (compliance-tracker branch worker/task-20260726-043023)'
+  note: quality gates passed, pushed branch worker/task-20260726-074053-fix-pr78-confirm-merge-ambiguous-failure,
+    awaiting review
+- at: '2026-07-26T07:52:45.068241+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - '5a93d3f Fix broken YAML (bare colon in SATISFIED: annotation) + backfill phase_3
+    self-report -- PR 561 merged with real security corrective fix'
+  - 8168e78 Merge branch 'master' of https://github.com/FChecklist/claude-control
+  - 'e6c0e44 Merge pull request #77 from FChecklist/worker/task-20260726-051203-server-owner-ai-protocol-memory-consolid'
+  - 32bf369 Consolidate server-side OWNER_DIRECTIVES into one protocol + one memory
+    file
+  - a85292e Auto-sync 4 server task(s) to master controller
+  - '4611924 phase_4 defense-in-depth/prompt-security/red-team/quality: status done
+    (compliance-tracker branch worker/task-20260726-043023)'
+  note: "Superboss rejected:  \u2014 see review.json for issues"
+execution_seconds: 399
+restart_count: 0
+token_usage:
+  input_tokens: 80
+  cache_creation_input_tokens: 90157
+  cache_read_input_tokens: 3294241
+  output_tokens: 37949
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 90157
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 578
+    cache_read_input_tokens: 112706
+    cache_creation_input_tokens: 1135
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1135
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T10:00:09.646486+00:00'
+status_corrected_at: '2026-07-27T03:38:37.886162+00:00'
+status_correction_reason: 'Real PR #78 already merged -- patch task.yaml status to
+  completed, no redispatch.'
+real_pr_evidence:
+  mergeable: UNKNOWN
+  mergedAt: '2026-07-26T08:34:24Z'
+  reviewDecision: ''
+  state: MERGED
+  title: 'Close gap: worker''s own PR could write a false phase self-report'
+  url: https://github.com/FChecklist/claude-control/pull/78

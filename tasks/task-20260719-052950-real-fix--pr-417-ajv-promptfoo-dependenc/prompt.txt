@@ -1,0 +1,29 @@
+You are running headlessly, one-shot, with no ongoing session. Never defer any step to "wait for a notification" -- complete every step synchronously, including waiting for CI via `gh run watch <id> --exit-status`.
+
+TASK: Real, root-cause fix for PR #417's stuck ajv/promptfoo dependency conflict on FChecklist/compliance-tracker (`gh pr checkout 417`). Do NOT accept this as a permanent limitation without first genuinely trying the fix below and reporting real evidence either way.
+
+CONFIRMED FACTS (verified via npm registry before this task was written, do not re-derive, just use):
+- eslint (both 9.39.5 and the pending 10.7.0) requires ajv@^6.14.0.
+- promptfoo@0.121.17 (added by this PR) requires ajv@^8.18.0 and ajv-formats@^3.0.1 directly.
+- Root package.json currently has an explicit top-level `"ajv": "6.14.0"` devDependency pin (not an `overrides` block -- a plain direct pin).
+- The prior attempt to fix this via a package.json `overrides`/nested-override block failed because bun does not support npm-style nested (per-parent-package-scoped) overrides.
+
+REAL FIX TO ATTEMPT FIRST: npm/pnpm/bun all normally let a dependency's OWN transitive sub-dependency resolve to whatever version IT needs, independently of the root project's version, UNLESS something forces a single hoisted version. The explicit root-level `"ajv": "6.14.0"` pin is exactly that forcing mechanism. Try REMOVING that root-level ajv pin entirely (git blame it first / check why it was added -- if it was only ever added to satisfy eslint, removing it should be safe since eslint will still resolve its own required ^6.14.0 via its own dependency tree, it just won't be pinned at the ROOT anymore). After removing it, run a clean `rm -rf node_modules bun.lock && bun install` and check whether bun's resulting lockfile lets eslint and promptfoo each get a working ajv (even if that means two different ajv installations coexisting in node_modules, which is normal and fine -- most tools resolve their own `require`d dependencies correctly regardless of what else is hoisted at the root, that is the entire point of nested node_modules resolution).
+
+Verify concretely, do not assume: after the fresh install, run `bun run lint` (must still pass -- proves eslint's own ajv resolution still works) AND `bun run test:prompts` (or at minimum `bunx promptfoo --version` / a promptfoo eval dry run against promptfooconfig.yaml -- must not crash on an ajv-formats resolution error).
+
+If removing the root pin resolves both cleanly: that is the real fix -- commit it as part of this PR's rebase.
+
+If it does NOT resolve cleanly (report the EXACT error either way, do not guess): fall back to this second real option -- make the `ai-prompt-evals.yml` workflow install `promptfoo` in complete isolation from the main app's bun/ajv dependency tree, e.g. via `npm install -g promptfoo@0.121.17` (or a dedicated subdirectory with its own package.json/package-lock.json) inside that ONE workflow's job, instead of relying on the root project's `bun install --frozen-lockfile` to provide it. This sidesteps the conflict entirely since promptfoo would never share node_modules/the bun lockfile with eslint at all. If you take this path: remove `promptfoo` from the root package.json's dependencies entirely (it should never have needed to be a project dependency if it only runs in this one isolated CI job), keep `ajv: 6.14.0`'s root pin exactly as it is (undisturbed, since removing it is unnecessary once promptfoo is isolated), and update the workflow's install step accordingly. Update `test:prompts` in package.json only if the invocation command changes.
+
+Whichever path works, this is the definitive, tested fix -- do not report "still blocked" without having actually tried removing the root pin first and shown the real command output proving it does or doesn't work.
+
+STEPS:
+1. `gh pr checkout 417`, then `git fetch origin main && git merge origin/main --no-edit` -- resolve the usual PROGRESS.md (keep ours)/ACTIVE-CLAIMS.yaml (keep both) conflicts, and check for a migration-number collision the same way every other rescue this session did (`git ls-tree -r origin/main --name-only -- drizzle/ | grep '\.sql$' | xargs -n1 basename | sed -E 's/^([0-9]+)_.*/\1/' | sort -n | tail -3` -- renumber if this PR's own migration collides).
+2. Attempt the root-pin-removal fix above, with real verification (`bun run lint` + a real promptfoo invocation). Report exact command output for both, not a summary claim.
+3. If that fails, do the workflow-isolation fix instead, with the same real verification standard.
+4. Run the FULL normal check suite: `bunx tsc --noEmit`, `bun run lint`, `bun test`, `bun run build`.
+5. Push, post the standard 8-field `AUDIT: PASS` comment, wait for CI via `gh run watch --exit-status` -- ALL required checks including the newly-relevant `Promptfoo Evals` job itself (even though it's not a required merge-blocking check, it should now genuinely pass, not just be ignored).
+6. This PR touches drizzle/0224_erp_exchange_rates_source.sql -- check whether that migration is already applied/merged elsewhere (it may collide with already-merged work from earlier today) before assuming it's still needed; if it's already live, drop it from this PR's diff rather than reapplying.
+7. Classify tier normally (schema/migration touch = TIER2, hold for Owner sign-off; otherwise self-merge once CI is green).
+8. Report final status with the ACTUAL fix applied and the real verification evidence -- not "should work," actual command output.

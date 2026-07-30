@@ -1,0 +1,25 @@
+## OBJECTIVE
+Fix real, live-verified AUDIT: REJECT findings on the current claude-control PR #79 branch (scripts/ddl_authorization_check.py, round 3). Round 2 fixed the round-1 findings but the reviewer directly ran the script against crafted prompt text and found two more real gaps: privilege-escalation DDL/DCL statements are undetected, and the approval-citation check is spoofable while the script's own docstring falsely claims it is not.
+
+## KNOWN_CONTEXT
+Read scripts/ddl_authorization_check.py in full first. Real findings, verified live by the reviewer: (1) GRANT/REVOKE, CREATE OR REPLACE FUNCTION ... SECURITY DEFINER, and ALTER ROLE ... SUPERUSER -- Postgres privilege-escalation primitives, arguably more dangerous than the CREATE INDEX/CREATE SEQUENCE statements already covered -- all currently pass through as valid:true, completely undetected. (2) A fabricated, non-existent approval reference (tested live with `PRE-APPROVED-LIVE-DDL: KE-20260726-999999-dead`, an ID that does not exist anywhere) passes validation, because the citation check only validates the STRING SHAPE (regex match against a KE-<date>-<time>-<hex> or OWNER_DECISIONS_NEEDED_<date>.yaml pattern), never that the referenced ID/file actually exists -- yet the script's docstring and this round's own commit message claimed the citation "is not something a worker can fabricate," which direct testing proved false. The runtime-interception limitation (this is a dispatch-time text scan, not a live tool-call interceptor) is already honestly documented and does not need further work.
+
+## SCOPE
+1. Expand DDL/DCL keyword detection to cover privilege-escalation statement forms: GRANT, REVOKE, CREATE (OR REPLACE) FUNCTION combined with SECURITY DEFINER, CREATE ROLE, ALTER ROLE, DROP ROLE, CREATE VIEW, DROP VIEW -- case-insensitive, matching real Postgres DDL/DCL syntax variants. Read a few real migration files in drizzle/ plus Postgres's own reserved-word list for CREATE/ALTER/DROP/GRANT/REVOKE/TRUNCATE/COMMENT ON statement forms to build broad, real coverage rather than adding one keyword at a time reactively -- this is the third round finding a new gap in a hand-curated keyword list, so err toward a more complete initial pass this time.
+2. Fix the citation check to do a REAL existence check, not a format-only regex match: for a PRE-APPROVED-LIVE-DDL reference matching the KE-<date>-<time>-<hex> pattern, grep for that literal ID string across ai-os/ (it should appear in a real knowledge-entry/decision-log file if genuine); for one matching an OWNER_DECISIONS_NEEDED_<date>.yaml filename pattern, verify that file actually exists on disk at the expected path. If the reference does not correspond to a real, findable file/ID, the gate must reject it, not accept it on shape alone.
+3. Correct the docstring/commit-message claim to be accurate: only claim "cannot be fabricated" once the check genuinely verifies existence per SCOPE item 2; if any residual gap remains (e.g. a real-looking but never-actually-approved ID that happens to exist in some unrelated file), disclose that honestly rather than overclaiming, matching the existing honest disclosure style already used for the runtime-interception limitation.
+4. Extend tests/test_ddl_authorization_check.py to cover: GRANT/REVOKE detected, SECURITY DEFINER function detected, ALTER ROLE detected, a fabricated non-existent citation rejected, and a real existing citation (reference an actual entry already present in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml as the test's known-good fixture) accepted.
+
+## SUCCESS_CRITERIA
+- `python3 -m pytest tests/test_ddl_authorization_check.py -v` exits 0 with all new test cases (privilege-escalation detection, citation-existence check) passing.
+- `python3 scripts/ddl_authorization_check.py` run against a crafted test file containing `GRANT ALL ON compliance.users TO anon` with no citation prints valid:false.
+- `python3 scripts/ddl_authorization_check.py` run against a crafted test file containing a fabricated citation `PRE-APPROVED-LIVE-DDL: KE-20260726-999999-dead` alongside a DROP TABLE statement prints valid:false.
+
+## EXPECTED_OUTPUT
+Push directly to the existing PR #79 branch in FChecklist/claude-control (find it via `gh pr view 79 --repo FChecklist/claude-control --json headRefName`). Do not open a new PR.
+
+## CONSTRAINTS
+Do not attempt runtime MCP tool-call interception -- the existing honest disclosure of that limitation is sufficient and should be left as-is. Do not merge yourself; this needs a fresh, thorough audit pass given two prior rejects on this same fix -- the reviewer should be encouraged to directly test the script against crafted adversarial inputs again, not just review the diff.
+
+## COMPLEXITY_TIER
+judgment

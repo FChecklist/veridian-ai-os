@@ -1,0 +1,227 @@
+id: task-20260726-101954-fix-owner-engine-dispatch-safety-gaps--r
+title: Fix OWNER_ENGINE dispatch safety gaps (round 2, real AUDIT REJECT)
+status: completed
+repo: claude-control
+branch: worker/task-20260726-101954-fix-owner-engine-dispatch-safety-gaps--r
+workspace: /opt/veridian/ai-os/tasks/task-20260726-101954-fix-owner-engine-dispatch-safety-gaps--r/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-101954-fix-owner-engine-dispatch-safety-gaps--r
+service: veridian-worker@task-20260726-101954-fix-owner-engine-dispatch-safety-gaps--r.service
+created_at: '2026-07-26T10:19:55.669317+00:00'
+last_checkpoint_at: '2026-07-26T10:40:46.830679+00:00'
+completed_steps: &id002
+- Read gateway.py's dispatch_to_task_lifecycle/route_and_dispatch, query.py, OWNER_ENGINE_MANDATORY_GATE_IMPLEMENTATION_2026-07-25.yaml,
+  task-gateway.py, credit-accountant.py (both repo copy and live /opt/veridian/scripts/
+  copy)
+- 'Independently implemented all 4 fixes locally (gap 1: NEEDS_OWNER_CLARIFICATION
+  wired into dispatch, incl. fixing a real None-confidence crash in query.py it exposed;
+  gap 2: duplicate_found gates `start`; gap 3: real repo_override checkpoint; gap
+  4: verified credit-accountant.py''s live --repo flag is genuinely valid), with 7
+  new tests -- all green locally (23/23)'
+- '**COLLISION FOUND before push**: `git push` was rejected (remote had moved). `git
+  fetch` showed commit 581e734 "Close 4 real AUDIT: REJECT gaps in OWNER_ENGINE-to-TASK_GATEWAY
+  dispatch (PR #82 round 2)" already pushed to this exact PR branch by a concurrent
+  duplicate worker (task-20260726-101257), addressing the SAME 4 gaps with an equivalent
+  (in the credit-accountant test''s case, more rigorous/hermetic -- monkeypatched
+  LEDGER_PATH + network calls, zero live side effects) fix.'
+- 'Verified 581e734 for real (not just trusted the commit message): checked out in
+  a scratch worktree, ran `python3 -m pytest tests/ -k "owner_dispatch or gateway_task"
+  -v` (12 passed) and full suite (23 passed), confirmed both required greps (needs_owner_clarification,
+  duplicate_found) are present in the real dispatch code path.'
+- 'Per this task''s own standing NO DUPLICATION/NO COLLISION rule: did NOT push my
+  redundant/colliding local commit on top of already-completed, verified work. Left
+  it local and unpushed (harmless).'
+remaining_steps: &id003
+- 'None for this task -- PR #82 branch already satisfies all SUCCESS_CRITERIA via
+  the concurrent worker''s commit 581e734. Fresh audit pass is out of this task''s
+  scope regardless (per CONSTRAINTS).'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T10:19:57.584937+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '581e042 Merge pull request #84 from FChecklist/recovered-lifecycle-fix-e6c7049'
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T10:24:58.708994+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 615ee53 Wire OWNER_ENGINE into the TASK lifecycle pipeline as one integrated flow
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  note: periodic checkpoint
+- at: '2026-07-26T10:29:59.843423+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/prompt_gateway/gateway.py
+  - scripts/prompt_gateway/query.py
+  - tests/test_gateway_task_integration.py
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 615ee53 Wire OWNER_ENGINE into the TASK lifecycle pipeline as one integrated flow
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  note: periodic checkpoint
+- at: '2026-07-26T10:33:12.100468+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read gateway.py's dispatch_to_task_lifecycle/route_and_dispatch, query.py, OWNER_ENGINE_MANDATORY_GATE_IMPLEMENTATION_2026-07-25.yaml,
+    task-gateway.py, credit-accountant.py (both repo copy and live /opt/veridian/scripts/
+    copy)
+  - 'Independently implemented all 4 fixes locally (gap 1: NEEDS_OWNER_CLARIFICATION
+    wired into dispatch, incl. fixing a real None-confidence crash in query.py it
+    exposed; gap 2: duplicate_found gates `start`; gap 3: real repo_override checkpoint;
+    gap 4: verified credit-accountant.py''s live --repo flag is genuinely valid),
+    with 7 new tests -- all green locally (23/23)'
+  - '**COLLISION FOUND before push**: `git push` was rejected (remote had moved).
+    `git fetch` showed commit 581e734 "Close 4 real AUDIT: REJECT gaps in OWNER_ENGINE-to-TASK_GATEWAY
+    dispatch (PR #82 round 2)" already pushed to this exact PR branch by a concurrent
+    duplicate worker (task-20260726-101257), addressing the SAME 4 gaps with an equivalent
+    (in the credit-accountant test''s case, more rigorous/hermetic -- monkeypatched
+    LEDGER_PATH + network calls, zero live side effects) fix.'
+  - 'Verified 581e734 for real (not just trusted the commit message): checked out
+    in a scratch worktree, ran `python3 -m pytest tests/ -k "owner_dispatch or gateway_task"
+    -v` (12 passed) and full suite (23 passed), confirmed both required greps (needs_owner_clarification,
+    duplicate_found) are present in the real dispatch code path.'
+  - 'Per this task''s own standing NO DUPLICATION/NO COLLISION rule: did NOT push
+    my redundant/colliding local commit on top of already-completed, verified work.
+    Left it local and unpushed (harmless).'
+  remaining_steps:
+  - 'None for this task -- PR #82 branch already satisfies all SUCCESS_CRITERIA via
+    the concurrent worker''s commit 581e734. Fresh audit pass is out of this task''s
+    scope regardless (per CONSTRAINTS).'
+  recent_commits:
+  - 'b908755 Close 4 real safety gaps in OWNER_ENGINE->task-gateway dispatch (PR #82
+    review)'
+  - 615ee53 Wire OWNER_ENGINE into the TASK lifecycle pipeline as one integrated flow
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  note: quality gates passed, pushed branch worker/task-20260726-101954-fix-owner-engine-dispatch-safety-gaps--r,
+    awaiting review
+- at: '2026-07-26T10:40:46.830679+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'b908755 Close 4 real safety gaps in OWNER_ENGINE->task-gateway dispatch (PR #82
+    review)'
+  - 615ee53 Wire OWNER_ENGINE into the TASK lifecycle pipeline as one integrated flow
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  note: "supervisor could not resolve a real PR for branch 'worker/task-20260726-101954-fix-owner-engine-dispatch-safety-gaps--r'\
+    \ (gh pr create failed, no existing open PR found for it) \u2014 refusing to proceed\
+    \ rather than risk operating on an unrelated PR via gh's empty-argument fallback.\
+    \ See supervisor.log."
+execution_seconds: 792
+restart_count: 0
+token_usage:
+  input_tokens: 146
+  cache_creation_input_tokens: 163840
+  cache_read_input_tokens: 8839318
+  output_tokens: 58479
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 163840
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 602
+    cache_read_input_tokens: 186416
+    cache_creation_input_tokens: 1108
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1108
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T11:00:09.590756+00:00'
+status_corrected_at: '2026-07-27T03:38:38.027440+00:00'
+status_correction_reason: 'Real PR #82 already merged -- patch task.yaml status to
+  completed, no redispatch.'
+real_pr_evidence:
+  mergeable: UNKNOWN
+  mergedAt: '2026-07-26T11:02:41Z'
+  reviewDecision: ''
+  state: MERGED
+  title: Wire OWNER_ENGINE into TASK lifecycle as one integrated pipeline
+  url: https://github.com/FChecklist/claude-control/pull/82

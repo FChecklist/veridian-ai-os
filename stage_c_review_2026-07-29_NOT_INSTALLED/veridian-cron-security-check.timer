@@ -1,0 +1,11 @@
+[Unit]
+Description=Run veridian-cron-security-check on its scheduled cadence (jittered -- see the paired .service for why)
+
+[Timer]
+OnCalendar=*-*-* *:13/15:00
+RandomizedDelaySec=120
+AccuracySec=1s
+Persistent=false
+
+[Install]
+WantedBy=timers.target

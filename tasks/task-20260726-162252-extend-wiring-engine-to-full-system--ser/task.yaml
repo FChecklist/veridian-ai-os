@@ -1,0 +1,257 @@
+id: task-20260726-162252-extend-wiring-engine-to-full-system--ser
+title: 'Extend Wiring Engine to full system: Server+Supabase+Vercel+GitHub+Browser,
+  execute Phase 3 (live/auto-updating)'
+status: completed
+repo: claude-control
+branch: worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser
+workspace: /opt/veridian/ai-os/tasks/task-20260726-162252-extend-wiring-engine-to-full-system--ser/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-162252-extend-wiring-engine-to-full-system--ser
+service: veridian-worker@task-20260726-162252-extend-wiring-engine-to-full-system--ser.service
+created_at: '2026-07-26T16:22:53.192589+00:00'
+last_checkpoint_at: '2026-07-26T16:42:52.241389+00:00'
+completed_steps: &id002
+- 'Extend `entity_type` enum in WIRING_ENGINE_SCHEMA_2026-07-25.yaml: `table` -> `supabase_table`,
+  + `vercel_project`, `github_repo`, `browser_component`. Updated entity_id format
+  docs, relationship vocabulary, source_system docs, generation.sources.'
+- Add `wiring_registry` table (+ FTS5 + triggers + indexes, same convention as capability_registry)
+  to scripts/superboss-register.py, in both `init_db()` and a standalone `_ensure_wiring_registry_table()`.
+- Add `register-entity` / `lookup-entity` / `list-entities` CLI subcommands to scripts/superboss-register.py.
+- 'Update scripts/generate_wiring_registry.py: rename table->supabase_table builder,
+  add vercel_project/github_repo/browser_component builders with real citable relationships,
+  bulk-upsert all entities into the live `wiring_registry` table (direct sqlite3 +
+  _write_lock, same bypass-CLI-for-bulk convention as scripts/batch-import-conversation-log.py),
+  keep JSON snapshot.'
+- Ran generator twice, confirmed idempotent (0 net new rows 2nd run) and CLI list-entities
+  returns rows of all 4 new types.
+- 'Confirmed existing crontab entry (`0 */6 * * * ... generate_wiring_registry.py`)
+  already covers the extended scope -- no new cron entry needed, no new Owner approval
+  needed (script content changes, cron line unchanged, already `status: approved`).'
+- Updated ai-os/MASTER_INDEX.yaml wiring_engine registry entry to reflect Phase 3
+  completion + extended scope + honest phase_1/phase_2 status.
+- Committed and pushed; opened PR.
+remaining_steps: &id003
+- None for this task's scope. phase_2_wiring_registry_knowledge_engine_drift_remediation
+  and phase_4_extend_gateway_coverage remain not_started/blocked for future tasks
+  (not in this task's scope).
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T16:22:55.049616+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  - 485281c Merge remote-tracking branch 'origin/master' into pr85-local
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T16:27:56.292628+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  - 485281c Merge remote-tracking branch 'origin/master' into pr85-local
+  note: periodic checkpoint
+- at: '2026-07-26T16:32:57.596219+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/WIRING_ENGINE_SCHEMA_2026-07-25.yaml
+  - scripts/superboss-register.py
+  completed_steps:
+  - 'Extend `entity_type` enum in WIRING_ENGINE_SCHEMA_2026-07-25.yaml: `table` ->
+    `supabase_table`, + `vercel_project`, `github_repo`, `browser_component`. Updated
+    entity_id format docs, relationship vocabulary, source_system docs, generation.sources.'
+  - Add `wiring_registry` table (+ FTS5 + triggers + indexes, same convention as capability_registry)
+    to scripts/superboss-register.py, in both `init_db()` and a standalone `_ensure_wiring_registry_table()`.
+  - Add `register-entity` / `lookup-entity` / `list-entities` CLI subcommands to scripts/superboss-register.py.
+  - 'Update scripts/generate_wiring_registry.py: rename table->supabase_table builder,
+    add vercel_project/github_repo/browser_component builders with real citable relationships,
+    bulk-upsert all entities into the live `wiring_registry` table (direct sqlite3
+    + _write_lock, same bypass-CLI-for-bulk convention as scripts/batch-import-conversation-log.py),
+    keep JSON snapshot.'
+  - Ran generator twice, confirmed idempotent (0 net new rows 2nd run) and CLI list-entities
+    returns rows of all 4 new types.
+  - 'Confirmed existing crontab entry (`0 */6 * * * ... generate_wiring_registry.py`)
+    already covers the extended scope -- no new cron entry needed, no new Owner approval
+    needed (script content changes, cron line unchanged, already `status: approved`).'
+  - Updated ai-os/MASTER_INDEX.yaml wiring_engine registry entry to reflect Phase
+    3 completion + extended scope + honest phase_1/phase_2 status.
+  - Committed and pushed; opened PR.
+  remaining_steps:
+  - None for this task's scope. phase_2_wiring_registry_knowledge_engine_drift_remediation
+    and phase_4_extend_gateway_coverage remain not_started/blocked for future tasks
+    (not in this task's scope).
+  recent_commits:
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  - 485281c Merge remote-tracking branch 'origin/master' into pr85-local
+  note: periodic checkpoint
+- at: '2026-07-26T16:37:58.955879+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/MASTER_INDEX.yaml
+  - ai-os/WIRING_ENGINE_PHASE_PLAN_2026-07-25.yaml
+  - ai-os/WIRING_ENGINE_REGISTRY_2026-07-25.json
+  - ai-os/WIRING_ENGINE_SCHEMA_2026-07-25.yaml
+  - scripts/generate_wiring_registry.py
+  - scripts/superboss-register.py
+  completed_steps:
+  - 'Extend `entity_type` enum in WIRING_ENGINE_SCHEMA_2026-07-25.yaml: `table` ->
+    `supabase_table`, + `vercel_project`, `github_repo`, `browser_component`. Updated
+    entity_id format docs, relationship vocabulary, source_system docs, generation.sources.'
+  - Add `wiring_registry` table (+ FTS5 + triggers + indexes, same convention as capability_registry)
+    to scripts/superboss-register.py, in both `init_db()` and a standalone `_ensure_wiring_registry_table()`.
+  - Add `register-entity` / `lookup-entity` / `list-entities` CLI subcommands to scripts/superboss-register.py.
+  - 'Update scripts/generate_wiring_registry.py: rename table->supabase_table builder,
+    add vercel_project/github_repo/browser_component builders with real citable relationships,
+    bulk-upsert all entities into the live `wiring_registry` table (direct sqlite3
+    + _write_lock, same bypass-CLI-for-bulk convention as scripts/batch-import-conversation-log.py),
+    keep JSON snapshot.'
+  - Ran generator twice, confirmed idempotent (0 net new rows 2nd run) and CLI list-entities
+    returns rows of all 4 new types.
+  - 'Confirmed existing crontab entry (`0 */6 * * * ... generate_wiring_registry.py`)
+    already covers the extended scope -- no new cron entry needed, no new Owner approval
+    needed (script content changes, cron line unchanged, already `status: approved`).'
+  - Updated ai-os/MASTER_INDEX.yaml wiring_engine registry entry to reflect Phase
+    3 completion + extended scope + honest phase_1/phase_2 status.
+  - Committed and pushed; opened PR.
+  remaining_steps:
+  - None for this task's scope. phase_2_wiring_registry_knowledge_engine_drift_remediation
+    and phase_4_extend_gateway_coverage remain not_started/blocked for future tasks
+    (not in this task's scope).
+  recent_commits:
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  - 485281c Merge remote-tracking branch 'origin/master' into pr85-local
+  note: periodic checkpoint
+- at: '2026-07-26T16:40:06.298800+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Extend `entity_type` enum in WIRING_ENGINE_SCHEMA_2026-07-25.yaml: `table` ->
+    `supabase_table`, + `vercel_project`, `github_repo`, `browser_component`. Updated
+    entity_id format docs, relationship vocabulary, source_system docs, generation.sources.'
+  - Add `wiring_registry` table (+ FTS5 + triggers + indexes, same convention as capability_registry)
+    to scripts/superboss-register.py, in both `init_db()` and a standalone `_ensure_wiring_registry_table()`.
+  - Add `register-entity` / `lookup-entity` / `list-entities` CLI subcommands to scripts/superboss-register.py.
+  - 'Update scripts/generate_wiring_registry.py: rename table->supabase_table builder,
+    add vercel_project/github_repo/browser_component builders with real citable relationships,
+    bulk-upsert all entities into the live `wiring_registry` table (direct sqlite3
+    + _write_lock, same bypass-CLI-for-bulk convention as scripts/batch-import-conversation-log.py),
+    keep JSON snapshot.'
+  - Ran generator twice, confirmed idempotent (0 net new rows 2nd run) and CLI list-entities
+    returns rows of all 4 new types.
+  - 'Confirmed existing crontab entry (`0 */6 * * * ... generate_wiring_registry.py`)
+    already covers the extended scope -- no new cron entry needed, no new Owner approval
+    needed (script content changes, cron line unchanged, already `status: approved`).'
+  - Updated ai-os/MASTER_INDEX.yaml wiring_engine registry entry to reflect Phase
+    3 completion + extended scope + honest phase_1/phase_2 status.
+  - Committed and pushed; opened PR.
+  remaining_steps:
+  - None for this task's scope. phase_2_wiring_registry_knowledge_engine_drift_remediation
+    and phase_4_extend_gateway_coverage remain not_started/blocked for future tasks
+    (not in this task's scope).
+  recent_commits:
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  note: quality gates passed, pushed branch worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser,
+    awaiting review
+- at: '2026-07-26T16:42:52.241389+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/92'
+execution_seconds: 1030
+restart_count: 0
+token_usage:
+  input_tokens: 134
+  cache_creation_input_tokens: 181597
+  cache_read_input_tokens: 9841057
+  output_tokens: 73497
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 181597
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 652
+    cache_read_input_tokens: 203774
+    cache_creation_input_tokens: 1507
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1507
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-26T18:05:35.046665+00:00'

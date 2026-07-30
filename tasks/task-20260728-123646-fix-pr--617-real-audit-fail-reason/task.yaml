@@ -1,0 +1,421 @@
+id: task-20260728-123646-fix-pr--617-real-audit-fail-reason
+title: 'Fix PR #617 real AUDIT:FAIL reason'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260728-123646-fix-pr--617-real-audit-fail-reason
+workspace: /opt/veridian/ai-os/tasks/task-20260728-123646-fix-pr--617-real-audit-fail-reason/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-123646-fix-pr--617-real-audit-fail-reason
+service: veridian-worker@task-20260728-123646-fix-pr--617-real-audit-fail-reason.service
+created_at: '2026-07-28T12:36:48.063422+00:00'
+last_checkpoint_at: '2026-07-28T13:07:09.168676+00:00'
+completed_steps: &id002
+- 'Read PR #617 audit history via `gh api repos/FChecklist/compliance-tracker/issues/617/comments`'
+- 'Identified real FAIL reason (2026-07-28T10:25:43Z audit): permits GET DTO renamed
+  shipped `expiryDate` -> `endDate` with no backward-compat alias (breaking live contract
+  per docs/API_CHANGELOG.md), and no API_CHANGELOG.md entry was added for this PR''s
+  new routes'
+- Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+- Found the exact right fix had already been pushed to the PR branch (commit 14d9aba9,
+  12:34:31Z, ~2min before this task started) -- restores `expiryDate` alongside `endDate`
+  in toPermitDto + adds the docs/API_CHANGELOG.md entry. Verified both changes are
+  correct and complete against the audit's own findings.
+- '`bun install` (bun not on default PATH in this sandbox -- used `~/.bun/bin/bun`),
+  then `tsc --noEmit` clean, `eslint` clean, `bun test` on the 3 relevant test files
+  (14 pass/0 fail)'
+- 'Ran `gh pr checks 617` -- caught a NEW real CI failure the prior push introduced:
+  Terminology Guardrail Check failed on a literal `2026-07-28` ISO-date string inside
+  the new back-compat-alias comment (hardcoded_iso_date pattern). Fixed by rewording
+  the comment to not include a literal date (commit 12cd9771). Verified locally with
+  `node scripts/check-terminology-guardrail.mjs --diff-only` -- passes.'
+- Pushed fix to origin/feat/projexa-permits-drawings-moms (12cd9771)
+- 'Confirmed full CI is green on commit 12cd9771: Analyze, Asset Registry Coverage,
+  Build, Doc Cross-Reference, Doc Quarantine Banner, Documentation Sentinel, E2E Tests,
+  Guardrail Presence, Lint, Metadata Index Coverage, Secret Scanning, Security Pattern,
+  Terminology Guardrail, Type Check, Unit Tests all PASS. Only 2 non-passing: Vercel
+  (fails on a known unrelated `api-deployments-free-per-day` rate-limit, not a code
+  issue) and `audit-check` (fails as expected -- `scripts/validate-audit-verdict.ts`
+  correctly reports the most recent AUDIT comment is still the pre-fix 10:25:43Z FAIL
+  verdict; there is no CI-triggerable "sweep" workflow in .github/workflows -- fresh
+  audits are posted by a separate independent supervisor/auditor process outside this
+  session''s tool access)'
+- Updated ai-os/boss/ACTIVE-CLAIMS.yaml claim with final outcome
+remaining_steps: &id003
+- 'This session cannot post the required fresh AUDIT: PASS/FAIL comment itself (AGENTS.md
+  Rule 7c/10: the agent that implements a fix cannot self-certify it) -- needs a separate/independent
+  auditor session to re-review commit 12cd9771 and post a fresh verdict'
+- Do NOT merge -- per this task's own spec, tier2/FAIL stays open for review regardless
+  of outcome; leave PR open for the owner/next auditor
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T12:36:49.911917+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-28T12:41:52.027764+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision with
+  - Reconstructed the real prospect BoQ file's structural quirks
+  - Ran the real importer (`parseBoqSpreadsheet`) against this fixture
+  - Fixed `construction-boq-import-service.ts` (import/parsing layer
+  - Added a real regression test,
+  - 'Verified: `NODE_OPTIONS="--max-old-space-size=8192" npx tsc --noEmit`'
+  - 'Constraint check: no cron entries or systemd `.timer` units were'
+  remaining_steps:
+  - Open a PR on this task's branch (real code fix was required --
+  recent_commits:
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  note: periodic checkpoint
+- at: '2026-07-28T12:46:53.918400+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read PR #617 audit history via `gh api repos/FChecklist/compliance-tracker/issues/617/comments`'
+  - 'Identified real FAIL reason (2026-07-28T10:25:43Z audit): permits GET DTO renamed
+    shipped `expiryDate` -> `endDate` with no backward-compat alias (breaking live
+    contract per docs/API_CHANGELOG.md), and no API_CHANGELOG.md entry was added for
+    this PR''s new routes'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - Found the exact right fix had already been pushed to the PR branch (commit 14d9aba9,
+    12:34:31Z, ~2min before this task started) -- restores `expiryDate` alongside
+    `endDate` in toPermitDto + adds the docs/API_CHANGELOG.md entry. Verified both
+    changes are correct and complete against the audit's own findings.
+  - '`bun install` (bun not on default PATH in this sandbox -- used `~/.bun/bin/bun`),
+    then `tsc --noEmit` clean, `eslint` clean, `bun test` on the 3 relevant test files
+    (14 pass/0 fail)'
+  - 'Ran `gh pr checks 617` -- caught a NEW real CI failure the prior push introduced:
+    Terminology Guardrail Check failed on a literal `2026-07-28` ISO-date string inside
+    the new back-compat-alias comment (hardcoded_iso_date pattern). Fixed by rewording
+    the comment to not include a literal date (commit 12cd9771). Verified locally
+    with `node scripts/check-terminology-guardrail.mjs --diff-only` -- passes.'
+  - Pushed fix to origin/feat/projexa-permits-drawings-moms (12cd9771)
+  remaining_steps:
+  - 'Wait for full CI run to go green on commit 12cd9771 (was mid-run as of last check:
+    audit-check correctly still failing pending a fresh auditor comment, Vercel failing
+    on known unrelated rate-limit, everything else pending/pass)'
+  - 'Once CI (excluding Vercel/audit-check) is green, this PR needs a FRESH independent
+    audit comment (AUDIT: PASS/FAIL) -- cannot self-certify per AGENTS.md Rule 10/7c
+    since this session made the fix'
+  - Update ai-os/boss/ACTIVE-CLAIMS.yaml claim with outcome once audit lands
+  - Do NOT merge -- per this task's own spec, tier2/FAIL stays open for review regardless
+    of outcome; leave PR open for the owner/next auditor
+  recent_commits:
+  - '54b48e90 Update progress: found + fixed real audit-fail reason + a CI regression
+    it introduced, pushed to PR #617'
+  - 'e9f8ec3a Register claim + progress init for PR #617 audit-fail fix'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  note: periodic checkpoint
+- at: '2026-07-28T12:54:18.160210+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read PR #617 audit history via `gh api repos/FChecklist/compliance-tracker/issues/617/comments`'
+  - 'Identified real FAIL reason (2026-07-28T10:25:43Z audit): permits GET DTO renamed
+    shipped `expiryDate` -> `endDate` with no backward-compat alias (breaking live
+    contract per docs/API_CHANGELOG.md), and no API_CHANGELOG.md entry was added for
+    this PR''s new routes'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - Found the exact right fix had already been pushed to the PR branch (commit 14d9aba9,
+    12:34:31Z, ~2min before this task started) -- restores `expiryDate` alongside
+    `endDate` in toPermitDto + adds the docs/API_CHANGELOG.md entry. Verified both
+    changes are correct and complete against the audit's own findings.
+  - '`bun install` (bun not on default PATH in this sandbox -- used `~/.bun/bin/bun`),
+    then `tsc --noEmit` clean, `eslint` clean, `bun test` on the 3 relevant test files
+    (14 pass/0 fail)'
+  - 'Ran `gh pr checks 617` -- caught a NEW real CI failure the prior push introduced:
+    Terminology Guardrail Check failed on a literal `2026-07-28` ISO-date string inside
+    the new back-compat-alias comment (hardcoded_iso_date pattern). Fixed by rewording
+    the comment to not include a literal date (commit 12cd9771). Verified locally
+    with `node scripts/check-terminology-guardrail.mjs --diff-only` -- passes.'
+  - Pushed fix to origin/feat/projexa-permits-drawings-moms (12cd9771)
+  - 'Confirmed full CI is green on commit 12cd9771: Analyze, Asset Registry Coverage,
+    Build, Doc Cross-Reference, Doc Quarantine Banner, Documentation Sentinel, E2E
+    Tests, Guardrail Presence, Lint, Metadata Index Coverage, Secret Scanning, Security
+    Pattern, Terminology Guardrail, Type Check, Unit Tests all PASS. Only 2 non-passing:
+    Vercel (fails on a known unrelated `api-deployments-free-per-day` rate-limit,
+    not a code issue) and `audit-check` (fails as expected -- `scripts/validate-audit-verdict.ts`
+    correctly reports the most recent AUDIT comment is still the pre-fix 10:25:43Z
+    FAIL verdict; there is no CI-triggerable "sweep" workflow in .github/workflows
+    -- fresh audits are posted by a separate independent supervisor/auditor process
+    outside this session''s tool access)'
+  - Updated ai-os/boss/ACTIVE-CLAIMS.yaml claim with final outcome
+  remaining_steps:
+  - 'This session cannot post the required fresh AUDIT: PASS/FAIL comment itself (AGENTS.md
+    Rule 7c/10: the agent that implements a fix cannot self-certify it) -- needs a
+    separate/independent auditor session to re-review commit 12cd9771 and post a fresh
+    verdict'
+  - Do NOT merge -- per this task's own spec, tier2/FAIL stays open for review regardless
+    of outcome; leave PR open for the owner/next auditor
+  recent_commits:
+  - '9b33cfc5 Finalize: PR #617 real fix pushed + CI green, awaiting independent audit'
+  - '54b48e90 Update progress: found + fixed real audit-fail reason + a CI regression
+    it introduced, pushed to PR #617'
+  - 'e9f8ec3a Register claim + progress init for PR #617 audit-fail fix'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  note: periodic checkpoint
+- at: '2026-07-28T12:59:27.342153+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read PR #617 audit history via `gh api repos/FChecklist/compliance-tracker/issues/617/comments`'
+  - 'Identified real FAIL reason (2026-07-28T10:25:43Z audit): permits GET DTO renamed
+    shipped `expiryDate` -> `endDate` with no backward-compat alias (breaking live
+    contract per docs/API_CHANGELOG.md), and no API_CHANGELOG.md entry was added for
+    this PR''s new routes'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - Found the exact right fix had already been pushed to the PR branch (commit 14d9aba9,
+    12:34:31Z, ~2min before this task started) -- restores `expiryDate` alongside
+    `endDate` in toPermitDto + adds the docs/API_CHANGELOG.md entry. Verified both
+    changes are correct and complete against the audit's own findings.
+  - '`bun install` (bun not on default PATH in this sandbox -- used `~/.bun/bin/bun`),
+    then `tsc --noEmit` clean, `eslint` clean, `bun test` on the 3 relevant test files
+    (14 pass/0 fail)'
+  - 'Ran `gh pr checks 617` -- caught a NEW real CI failure the prior push introduced:
+    Terminology Guardrail Check failed on a literal `2026-07-28` ISO-date string inside
+    the new back-compat-alias comment (hardcoded_iso_date pattern). Fixed by rewording
+    the comment to not include a literal date (commit 12cd9771). Verified locally
+    with `node scripts/check-terminology-guardrail.mjs --diff-only` -- passes.'
+  - Pushed fix to origin/feat/projexa-permits-drawings-moms (12cd9771)
+  - 'Confirmed full CI is green on commit 12cd9771: Analyze, Asset Registry Coverage,
+    Build, Doc Cross-Reference, Doc Quarantine Banner, Documentation Sentinel, E2E
+    Tests, Guardrail Presence, Lint, Metadata Index Coverage, Secret Scanning, Security
+    Pattern, Terminology Guardrail, Type Check, Unit Tests all PASS. Only 2 non-passing:
+    Vercel (fails on a known unrelated `api-deployments-free-per-day` rate-limit,
+    not a code issue) and `audit-check` (fails as expected -- `scripts/validate-audit-verdict.ts`
+    correctly reports the most recent AUDIT comment is still the pre-fix 10:25:43Z
+    FAIL verdict; there is no CI-triggerable "sweep" workflow in .github/workflows
+    -- fresh audits are posted by a separate independent supervisor/auditor process
+    outside this session''s tool access)'
+  - Updated ai-os/boss/ACTIVE-CLAIMS.yaml claim with final outcome
+  remaining_steps:
+  - 'This session cannot post the required fresh AUDIT: PASS/FAIL comment itself (AGENTS.md
+    Rule 7c/10: the agent that implements a fix cannot self-certify it) -- needs a
+    separate/independent auditor session to re-review commit 12cd9771 and post a fresh
+    verdict'
+  - Do NOT merge -- per this task's own spec, tier2/FAIL stays open for review regardless
+    of outcome; leave PR open for the owner/next auditor
+  recent_commits:
+  - '9b33cfc5 Finalize: PR #617 real fix pushed + CI green, awaiting independent audit'
+  - '54b48e90 Update progress: found + fixed real audit-fail reason + a CI regression
+    it introduced, pushed to PR #617'
+  - 'e9f8ec3a Register claim + progress init for PR #617 audit-fail fix'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  note: periodic checkpoint
+- at: '2026-07-28T13:04:29.531837+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read PR #617 audit history via `gh api repos/FChecklist/compliance-tracker/issues/617/comments`'
+  - 'Identified real FAIL reason (2026-07-28T10:25:43Z audit): permits GET DTO renamed
+    shipped `expiryDate` -> `endDate` with no backward-compat alias (breaking live
+    contract per docs/API_CHANGELOG.md), and no API_CHANGELOG.md entry was added for
+    this PR''s new routes'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - Found the exact right fix had already been pushed to the PR branch (commit 14d9aba9,
+    12:34:31Z, ~2min before this task started) -- restores `expiryDate` alongside
+    `endDate` in toPermitDto + adds the docs/API_CHANGELOG.md entry. Verified both
+    changes are correct and complete against the audit's own findings.
+  - '`bun install` (bun not on default PATH in this sandbox -- used `~/.bun/bin/bun`),
+    then `tsc --noEmit` clean, `eslint` clean, `bun test` on the 3 relevant test files
+    (14 pass/0 fail)'
+  - 'Ran `gh pr checks 617` -- caught a NEW real CI failure the prior push introduced:
+    Terminology Guardrail Check failed on a literal `2026-07-28` ISO-date string inside
+    the new back-compat-alias comment (hardcoded_iso_date pattern). Fixed by rewording
+    the comment to not include a literal date (commit 12cd9771). Verified locally
+    with `node scripts/check-terminology-guardrail.mjs --diff-only` -- passes.'
+  - Pushed fix to origin/feat/projexa-permits-drawings-moms (12cd9771)
+  - 'Confirmed full CI is green on commit 12cd9771: Analyze, Asset Registry Coverage,
+    Build, Doc Cross-Reference, Doc Quarantine Banner, Documentation Sentinel, E2E
+    Tests, Guardrail Presence, Lint, Metadata Index Coverage, Secret Scanning, Security
+    Pattern, Terminology Guardrail, Type Check, Unit Tests all PASS. Only 2 non-passing:
+    Vercel (fails on a known unrelated `api-deployments-free-per-day` rate-limit,
+    not a code issue) and `audit-check` (fails as expected -- `scripts/validate-audit-verdict.ts`
+    correctly reports the most recent AUDIT comment is still the pre-fix 10:25:43Z
+    FAIL verdict; there is no CI-triggerable "sweep" workflow in .github/workflows
+    -- fresh audits are posted by a separate independent supervisor/auditor process
+    outside this session''s tool access)'
+  - Updated ai-os/boss/ACTIVE-CLAIMS.yaml claim with final outcome
+  remaining_steps:
+  - 'This session cannot post the required fresh AUDIT: PASS/FAIL comment itself (AGENTS.md
+    Rule 7c/10: the agent that implements a fix cannot self-certify it) -- needs a
+    separate/independent auditor session to re-review commit 12cd9771 and post a fresh
+    verdict'
+  - Do NOT merge -- per this task's own spec, tier2/FAIL stays open for review regardless
+    of outcome; leave PR open for the owner/next auditor
+  recent_commits:
+  - '9b33cfc5 Finalize: PR #617 real fix pushed + CI green, awaiting independent audit'
+  - '54b48e90 Update progress: found + fixed real audit-fail reason + a CI regression
+    it introduced, pushed to PR #617'
+  - 'e9f8ec3a Register claim + progress init for PR #617 audit-fail fix'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  note: periodic checkpoint
+- at: '2026-07-28T13:07:07.287376+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read PR #617 audit history via `gh api repos/FChecklist/compliance-tracker/issues/617/comments`'
+  - 'Identified real FAIL reason (2026-07-28T10:25:43Z audit): permits GET DTO renamed
+    shipped `expiryDate` -> `endDate` with no backward-compat alias (breaking live
+    contract per docs/API_CHANGELOG.md), and no API_CHANGELOG.md entry was added for
+    this PR''s new routes'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - Found the exact right fix had already been pushed to the PR branch (commit 14d9aba9,
+    12:34:31Z, ~2min before this task started) -- restores `expiryDate` alongside
+    `endDate` in toPermitDto + adds the docs/API_CHANGELOG.md entry. Verified both
+    changes are correct and complete against the audit's own findings.
+  - '`bun install` (bun not on default PATH in this sandbox -- used `~/.bun/bin/bun`),
+    then `tsc --noEmit` clean, `eslint` clean, `bun test` on the 3 relevant test files
+    (14 pass/0 fail)'
+  - 'Ran `gh pr checks 617` -- caught a NEW real CI failure the prior push introduced:
+    Terminology Guardrail Check failed on a literal `2026-07-28` ISO-date string inside
+    the new back-compat-alias comment (hardcoded_iso_date pattern). Fixed by rewording
+    the comment to not include a literal date (commit 12cd9771). Verified locally
+    with `node scripts/check-terminology-guardrail.mjs --diff-only` -- passes.'
+  - Pushed fix to origin/feat/projexa-permits-drawings-moms (12cd9771)
+  - 'Confirmed full CI is green on commit 12cd9771: Analyze, Asset Registry Coverage,
+    Build, Doc Cross-Reference, Doc Quarantine Banner, Documentation Sentinel, E2E
+    Tests, Guardrail Presence, Lint, Metadata Index Coverage, Secret Scanning, Security
+    Pattern, Terminology Guardrail, Type Check, Unit Tests all PASS. Only 2 non-passing:
+    Vercel (fails on a known unrelated `api-deployments-free-per-day` rate-limit,
+    not a code issue) and `audit-check` (fails as expected -- `scripts/validate-audit-verdict.ts`
+    correctly reports the most recent AUDIT comment is still the pre-fix 10:25:43Z
+    FAIL verdict; there is no CI-triggerable "sweep" workflow in .github/workflows
+    -- fresh audits are posted by a separate independent supervisor/auditor process
+    outside this session''s tool access)'
+  - Updated ai-os/boss/ACTIVE-CLAIMS.yaml claim with final outcome
+  remaining_steps:
+  - 'This session cannot post the required fresh AUDIT: PASS/FAIL comment itself (AGENTS.md
+    Rule 7c/10: the agent that implements a fix cannot self-certify it) -- needs a
+    separate/independent auditor session to re-review commit 12cd9771 and post a fresh
+    verdict'
+  - Do NOT merge -- per this task's own spec, tier2/FAIL stays open for review regardless
+    of outcome; leave PR open for the owner/next auditor
+  recent_commits:
+  - '9b33cfc5 Finalize: PR #617 real fix pushed + CI green, awaiting independent audit'
+  - '54b48e90 Update progress: found + fixed real audit-fail reason + a CI regression
+    it introduced, pushed to PR #617'
+  - 'e9f8ec3a Register claim + progress init for PR #617 audit-fail fix'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-28T13:07:09.168676+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '9b33cfc5 Finalize: PR #617 real fix pushed + CI green, awaiting independent audit'
+  - '54b48e90 Update progress: found + fixed real audit-fail reason + a CI regression
+    it introduced, pushed to PR #617'
+  - 'e9f8ec3a Register claim + progress init for PR #617 audit-fail fix'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 1, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+execution_seconds: 881
+restart_count: 1
+token_usage:
+  input_tokens: 168
+  cache_creation_input_tokens: 99577
+  cache_read_input_tokens: 6976883
+  output_tokens: 24458
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 99577
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 524
+    cache_read_input_tokens: 122902
+    cache_creation_input_tokens: 359
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 359
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:26.748362+00:00'

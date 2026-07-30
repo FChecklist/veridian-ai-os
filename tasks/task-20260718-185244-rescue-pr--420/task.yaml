@@ -1,0 +1,401 @@
+id: task-20260718-185244-rescue-pr--420
+title: 'Rescue PR #420'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260718-185244-rescue-pr--420
+workspace: /opt/veridian/ai-os/tasks/task-20260718-185244-rescue-pr--420/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-185244-rescue-pr--420
+service: veridian-worker@task-20260718-185244-rescue-pr--420.service
+created_at: '2026-07-18T18:52:45.457163+00:00'
+last_checkpoint_at: '2026-07-18T19:15:24.152987+00:00'
+completed_steps: &id002
+- Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no conflicting claim on this PR's file scope.
+- 'Checked out real PR #420 head branch (worker/task-20260718-055002-ai-architecture--performance---cost-effi).'
+- 'Merged origin/main into PR branch (twice, main advanced again mid-rescue). Conflicts:
+  PROGRESS.md (kept ours), ai-os/boss/ACTIVE-CLAIMS.yaml (both additive list entries,
+  kept both).'
+- Confirmed no drizzle/*.sql or src/lib/db/schema.ts changes anywhere in the merged
+  diff -- TIER1.
+- '`bun install --frozen-lockfile`, `bunx tsc --noEmit` (clean), `bun run lint` (0
+  errors, 3 pre-existing unrelated warnings), `bun test` (1477 pass / 0 fail across
+  106 files). No real bugs found -- the PR''s code was already correct.'
+- 'Root-caused original CI failures instead of guessing: audit-check failed only because
+  no AUDIT comment existed yet (stopped worker never reached that step); Unit Tests
+  failed on a pre-existing documented flake (tenant-isolation.test.ts''s bun mock.module()
+  leak, CI-Linux-order-dependent, self-documented in that file''s own comment) already
+  fixed by an unrelated commit on main before this rescue -- confirmed via 0 reproductions
+  across the full local suite post-merge.'
+- Pushed merged branch to origin.
+- 'Read the full PR diff myself; posted a structured `AUDIT: PASS` comment (all 8
+  audit-protocol.ts fields).'
+- 'Watched CI go green on the final pushed commit: all 7 required branch-protection
+  checks passed (Lint, Type Check, Build, audit-check, Guardrail Presence Check, Asset
+  Registry Coverage Check, Unit Tests). Only non-required check to fail: Vercel preview
+  (build-rate-limited, unrelated to code correctness).'
+- Moved this PR's ACTIVE-CLAIMS.yaml entry from `active:` to `recently_completed:`.
+- 'Merged PR #420 (squash, `gh pr merge 420 --squash --delete-branch`), merge commit
+  `0debed602b577aa5c391fdb2130f9a066f3814d8`. Manually deleted the remote branch after
+  `--delete-branch` failed on the local-branch step only (another task''s worktree
+  had it checked out).'
+remaining_steps: &id003
+- 'None. Task complete: PR #420 merged to main.'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T18:52:46.478506+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 0f85c896 Correct stale CAPABILITY_COVERAGE.md wiring numbers, wire 2 overlooked
+    banking engine aliases (#426)
+  - '16ff3d0f chore: register + close active claim for PR #430 rescue (#442)'
+  - 8902b86c Close Checks & Balances / Exception Handling & Recovery gaps (#430)
+  - '853fd9f8 chore: register active claim for PR #428 rescue (#441)'
+  - 7f631cf5 Wire business-rule pre-execution gate, calculation cross-verification,
+    and AI-output validation (#428)
+  - 'faf6c142 Checks & Balances: close Separation of Duties / Four-Eyes / Approval
+    Matrix / COI gaps (#431)'
+  - a356fdee Fix PROJEXA unable to create Knowledge Base or Wiki pages via API key
+    (#440)
+  - 22325b47 Fix sales invoices silently excluded from PROJEXA revenue reporting (#439)
+  - 5889d192 Add PROJEXA project creation (was the one missing CRUD path) (#438)
+  - 'c99d6c8f Move UI-kit adoption claim from active to recently_completed (merged
+    as PR #436) (#437)'
+  note: worker started (resume=0)
+- at: '2026-07-18T18:57:46.978286+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` (no conflicting claim on this area) and registered
+    this session's own claim before starting real work, per Rule 11.
+  - Read the actual current implementation of `src/lib/llm-client.ts`, `src/lib/orchestra-execution-logger.ts`,
+    `src/lib/loops/*`, `src/app/api/internal/loops/run/route.ts`, `src/app/api/help/ask/route.ts`,
+    `src/lib/services/chat-service.ts`, `src/lib/structured-message.ts`, and `src/lib/orchestra-model-resolver.ts`
+    before making any change (gap descriptions were 2026-07 era; codebase has moved
+    since).
+  - '**[Medium] AI Latency** -- confirmed real gap: ~30 call sites of `callLLM`/`callLLMJson`/`callLLMVision`,
+    each manually tracking (or, e.g. the pre-fix `api/help/ask/route.ts`, simply not
+    tracking) its own `Date.now()` before/after. Fixed by instrumenting `callLLM`/`callLLMJson`/`callLLMVision`
+    themselves in `src/lib/llm-client.ts`: every call now measures wall-clock time
+    centrally (through any retries/fallback) and returns it as `LLMResult.durationMs`,
+    with a new `LLM_LATENCY_SLA_MS` (8000ms) constant logged via `console.warn` on
+    breach -- systematic and automatic for every caller, no per-site opt-in required.
+    A breach only warns; it never truncates/fails an already-paid-for call. Updated
+    the internal per-provider dispatch functions'' return types accordingly, and `src/lib/llm-response-cache.ts`''s
+    cache-hit branch to report `durationMs: 0` (no real call made).'
+  - '**[Low] Cache Strategy** -- verified: Anthropic provider is fully wired (`llm-client.ts`''s
+    `callAnthropic`, `orchestra-model-resolver.ts`''s `platformApiKeyFor("anthropic")`)
+    but `ANTHROPIC_API_KEY` is unset, and every real call site (e.g. `prompt-eval-service.ts`)
+    already degrades gracefully (`ServiceError`, no crash) when it''s absent -- this
+    is a genuine, already-handled honest limitation, not a bug. Per the finding''s
+    own recommended approach, this is an **owner-funding decision**, not a code gap
+    -- **no code change made**; documented here instead of taking a unilateral action.
+    Decision needed: fund a live `ANTHROPIC_API_KEY` (unlocks Claude models for org
+    BYO config + the platform''s own prompt-caching path, which today only exercises
+    `callAnthropic`''s cache_control logic when an org supplies its own Anthropic
+    key) or leave as-is.'
+  - '**[Low] AI Cost Optimization** -- confirmed `MODEL_PRICING` (`llm-client.ts`)
+    is still a manual, honest-limitation constant with no live billing API behind
+    it. Added a new recurring audit, `src/lib/loops/model-pricing-audit.ts` (`runModelPricingAudit()`),
+    piggybacked onto the existing daily `/api/internal/loops/run` cron (same non-canonical-loop
+    pattern as `capability-index-freshness-audit.ts` -- not one of the 15 canonical
+    `loop_definitions` rows, so no new `vercel.json` cron entry needed). Flags any
+    `(provider, model)` pair with real, recent (30-day) token usage in `orchestra_executions`
+    whose `costUsd` is still null across every one of its calls -- the concrete, checkable
+    symptom of a missing `MODEL_PRICING` row (a real cost blind spot), since there''s
+    no live billing API to diff against instead.'
+  - '**[Low] AI Context Compression** -- confirmed real gap: `src/app/api/help/ask/route.ts`
+    called `callLLM` directly with none of `chat-service.ts`''s `generateAiReply()`
+    pipeline (no `normalizeForLlm` -- the actual context-compression mechanism in
+    this codebase -- no reply gate, no PII redaction, no `orchestra_executions`/prompt-cache
+    observability at all; confirmed via `HelpWidget.tsx` that the UI renders `answer`
+    as plain text with no structured-message rendering, so nothing there depended
+    on the old shape). Wired in `normalizeForLlm`, `passesReplyGate`, `redactPii`,
+    `recordOrchestraExecution` (with the now-centrally-tracked real `durationMs`),
+    and the prompt-cache `compileStaticPrefix`/`recordPromptCacheMetric` pair -- additive,
+    the widget''s `{ question, currentPath } -> { answer }` contract is unchanged.
+    Also added a try/catch around the LLM call (previously absent), matching chat-service.ts''s
+    own failure-handling posture instead of letting an uncaught exception 500 the
+    route.'
+  - 'Verification: `bunx tsc --noEmit` clean (no new errors introduced; pre-existing
+    `scripts/`/`*.config.ts` errors are unrelated missing @types/node, present before
+    this change). `bun run lint`: 0 errors, 3 pre-existing warnings unrelated to these
+    files. `bun test`: 1421 pass / 0 fail across 103 files (full suite).'
+  remaining_steps:
+  - Owner decision on Cache Strategy finding (fund `ANTHROPIC_API_KEY` or accept the
+    current honest limitation) -- not actionable by an agent, see note above.
+  recent_commits:
+  - b5488136 Merge remote-tracking branch 'origin/main' into pr-420-rescue
+  - '9c6b8293 chore: rescue-task PROGRESS.md tracking for PR #420'
+  - 0f85c896 Correct stale CAPABILITY_COVERAGE.md wiring numbers, wire 2 overlooked
+    banking engine aliases (#426)
+  - '16ff3d0f chore: register + close active claim for PR #430 rescue (#442)'
+  - 8902b86c Close Checks & Balances / Exception Handling & Recovery gaps (#430)
+  - '853fd9f8 chore: register active claim for PR #428 rescue (#441)'
+  - 7f631cf5 Wire business-rule pre-execution gate, calculation cross-verification,
+    and AI-output validation (#428)
+  - 'faf6c142 Checks & Balances: close Separation of Duties / Four-Eyes / Approval
+    Matrix / COI gaps (#431)'
+  - a356fdee Fix PROJEXA unable to create Knowledge Base or Wiki pages via API key
+    (#440)
+  - 22325b47 Fix sales invoices silently excluded from PROJEXA revenue reporting (#439)
+  note: periodic checkpoint
+- at: '2026-07-18T19:02:47.316790+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` (no conflicting claim on this area) and registered
+    this session's own claim before starting real work, per Rule 11.
+  - Read the actual current implementation of `src/lib/llm-client.ts`, `src/lib/orchestra-execution-logger.ts`,
+    `src/lib/loops/*`, `src/app/api/internal/loops/run/route.ts`, `src/app/api/help/ask/route.ts`,
+    `src/lib/services/chat-service.ts`, `src/lib/structured-message.ts`, and `src/lib/orchestra-model-resolver.ts`
+    before making any change (gap descriptions were 2026-07 era; codebase has moved
+    since).
+  - '**[Medium] AI Latency** -- confirmed real gap: ~30 call sites of `callLLM`/`callLLMJson`/`callLLMVision`,
+    each manually tracking (or, e.g. the pre-fix `api/help/ask/route.ts`, simply not
+    tracking) its own `Date.now()` before/after. Fixed by instrumenting `callLLM`/`callLLMJson`/`callLLMVision`
+    themselves in `src/lib/llm-client.ts`: every call now measures wall-clock time
+    centrally (through any retries/fallback) and returns it as `LLMResult.durationMs`,
+    with a new `LLM_LATENCY_SLA_MS` (8000ms) constant logged via `console.warn` on
+    breach -- systematic and automatic for every caller, no per-site opt-in required.
+    A breach only warns; it never truncates/fails an already-paid-for call. Updated
+    the internal per-provider dispatch functions'' return types accordingly, and `src/lib/llm-response-cache.ts`''s
+    cache-hit branch to report `durationMs: 0` (no real call made).'
+  - '**[Low] Cache Strategy** -- verified: Anthropic provider is fully wired (`llm-client.ts`''s
+    `callAnthropic`, `orchestra-model-resolver.ts`''s `platformApiKeyFor("anthropic")`)
+    but `ANTHROPIC_API_KEY` is unset, and every real call site (e.g. `prompt-eval-service.ts`)
+    already degrades gracefully (`ServiceError`, no crash) when it''s absent -- this
+    is a genuine, already-handled honest limitation, not a bug. Per the finding''s
+    own recommended approach, this is an **owner-funding decision**, not a code gap
+    -- **no code change made**; documented here instead of taking a unilateral action.
+    Decision needed: fund a live `ANTHROPIC_API_KEY` (unlocks Claude models for org
+    BYO config + the platform''s own prompt-caching path, which today only exercises
+    `callAnthropic`''s cache_control logic when an org supplies its own Anthropic
+    key) or leave as-is.'
+  - '**[Low] AI Cost Optimization** -- confirmed `MODEL_PRICING` (`llm-client.ts`)
+    is still a manual, honest-limitation constant with no live billing API behind
+    it. Added a new recurring audit, `src/lib/loops/model-pricing-audit.ts` (`runModelPricingAudit()`),
+    piggybacked onto the existing daily `/api/internal/loops/run` cron (same non-canonical-loop
+    pattern as `capability-index-freshness-audit.ts` -- not one of the 15 canonical
+    `loop_definitions` rows, so no new `vercel.json` cron entry needed). Flags any
+    `(provider, model)` pair with real, recent (30-day) token usage in `orchestra_executions`
+    whose `costUsd` is still null across every one of its calls -- the concrete, checkable
+    symptom of a missing `MODEL_PRICING` row (a real cost blind spot), since there''s
+    no live billing API to diff against instead.'
+  - '**[Low] AI Context Compression** -- confirmed real gap: `src/app/api/help/ask/route.ts`
+    called `callLLM` directly with none of `chat-service.ts`''s `generateAiReply()`
+    pipeline (no `normalizeForLlm` -- the actual context-compression mechanism in
+    this codebase -- no reply gate, no PII redaction, no `orchestra_executions`/prompt-cache
+    observability at all; confirmed via `HelpWidget.tsx` that the UI renders `answer`
+    as plain text with no structured-message rendering, so nothing there depended
+    on the old shape). Wired in `normalizeForLlm`, `passesReplyGate`, `redactPii`,
+    `recordOrchestraExecution` (with the now-centrally-tracked real `durationMs`),
+    and the prompt-cache `compileStaticPrefix`/`recordPromptCacheMetric` pair -- additive,
+    the widget''s `{ question, currentPath } -> { answer }` contract is unchanged.
+    Also added a try/catch around the LLM call (previously absent), matching chat-service.ts''s
+    own failure-handling posture instead of letting an uncaught exception 500 the
+    route.'
+  - 'Verification: `bunx tsc --noEmit` clean (no new errors introduced; pre-existing
+    `scripts/`/`*.config.ts` errors are unrelated missing @types/node, present before
+    this change). `bun run lint`: 0 errors, 3 pre-existing warnings unrelated to these
+    files. `bun test`: 1421 pass / 0 fail across 103 files (full suite).'
+  remaining_steps:
+  - Owner decision on Cache Strategy finding (fund `ANTHROPIC_API_KEY` or accept the
+    current honest limitation) -- not actionable by an agent, see note above.
+  recent_commits:
+  - 'ee57e56f chore: move PR #420 rescue claim to recently_completed, update rescue-task
+    PROGRESS.md'
+  - b5488136 Merge remote-tracking branch 'origin/main' into pr-420-rescue
+  - '9c6b8293 chore: rescue-task PROGRESS.md tracking for PR #420'
+  - 0f85c896 Correct stale CAPABILITY_COVERAGE.md wiring numbers, wire 2 overlooked
+    banking engine aliases (#426)
+  - '16ff3d0f chore: register + close active claim for PR #430 rescue (#442)'
+  - 8902b86c Close Checks & Balances / Exception Handling & Recovery gaps (#430)
+  - '853fd9f8 chore: register active claim for PR #428 rescue (#441)'
+  - 7f631cf5 Wire business-rule pre-execution gate, calculation cross-verification,
+    and AI-output validation (#428)
+  - 'faf6c142 Checks & Balances: close Separation of Duties / Four-Eyes / Approval
+    Matrix / COI gaps (#431)'
+  - a356fdee Fix PROJEXA unable to create Knowledge Base or Wiki pages via API key
+    (#440)
+  note: periodic checkpoint
+- at: '2026-07-18T19:07:47.663899+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` (no conflicting claim on this area) and registered
+    this session's own claim before starting real work, per Rule 11.
+  - Read the actual current implementation of `src/lib/llm-client.ts`, `src/lib/orchestra-execution-logger.ts`,
+    `src/lib/loops/*`, `src/app/api/internal/loops/run/route.ts`, `src/app/api/help/ask/route.ts`,
+    `src/lib/services/chat-service.ts`, `src/lib/structured-message.ts`, and `src/lib/orchestra-model-resolver.ts`
+    before making any change (gap descriptions were 2026-07 era; codebase has moved
+    since).
+  - '**[Medium] AI Latency** -- confirmed real gap: ~30 call sites of `callLLM`/`callLLMJson`/`callLLMVision`,
+    each manually tracking (or, e.g. the pre-fix `api/help/ask/route.ts`, simply not
+    tracking) its own `Date.now()` before/after. Fixed by instrumenting `callLLM`/`callLLMJson`/`callLLMVision`
+    themselves in `src/lib/llm-client.ts`: every call now measures wall-clock time
+    centrally (through any retries/fallback) and returns it as `LLMResult.durationMs`,
+    with a new `LLM_LATENCY_SLA_MS` (8000ms) constant logged via `console.warn` on
+    breach -- systematic and automatic for every caller, no per-site opt-in required.
+    A breach only warns; it never truncates/fails an already-paid-for call. Updated
+    the internal per-provider dispatch functions'' return types accordingly, and `src/lib/llm-response-cache.ts`''s
+    cache-hit branch to report `durationMs: 0` (no real call made).'
+  - '**[Low] Cache Strategy** -- verified: Anthropic provider is fully wired (`llm-client.ts`''s
+    `callAnthropic`, `orchestra-model-resolver.ts`''s `platformApiKeyFor("anthropic")`)
+    but `ANTHROPIC_API_KEY` is unset, and every real call site (e.g. `prompt-eval-service.ts`)
+    already degrades gracefully (`ServiceError`, no crash) when it''s absent -- this
+    is a genuine, already-handled honest limitation, not a bug. Per the finding''s
+    own recommended approach, this is an **owner-funding decision**, not a code gap
+    -- **no code change made**; documented here instead of taking a unilateral action.
+    Decision needed: fund a live `ANTHROPIC_API_KEY` (unlocks Claude models for org
+    BYO config + the platform''s own prompt-caching path, which today only exercises
+    `callAnthropic`''s cache_control logic when an org supplies its own Anthropic
+    key) or leave as-is.'
+  - '**[Low] AI Cost Optimization** -- confirmed `MODEL_PRICING` (`llm-client.ts`)
+    is still a manual, honest-limitation constant with no live billing API behind
+    it. Added a new recurring audit, `src/lib/loops/model-pricing-audit.ts` (`runModelPricingAudit()`),
+    piggybacked onto the existing daily `/api/internal/loops/run` cron (same non-canonical-loop
+    pattern as `capability-index-freshness-audit.ts` -- not one of the 15 canonical
+    `loop_definitions` rows, so no new `vercel.json` cron entry needed). Flags any
+    `(provider, model)` pair with real, recent (30-day) token usage in `orchestra_executions`
+    whose `costUsd` is still null across every one of its calls -- the concrete, checkable
+    symptom of a missing `MODEL_PRICING` row (a real cost blind spot), since there''s
+    no live billing API to diff against instead.'
+  - '**[Low] AI Context Compression** -- confirmed real gap: `src/app/api/help/ask/route.ts`
+    called `callLLM` directly with none of `chat-service.ts`''s `generateAiReply()`
+    pipeline (no `normalizeForLlm` -- the actual context-compression mechanism in
+    this codebase -- no reply gate, no PII redaction, no `orchestra_executions`/prompt-cache
+    observability at all; confirmed via `HelpWidget.tsx` that the UI renders `answer`
+    as plain text with no structured-message rendering, so nothing there depended
+    on the old shape). Wired in `normalizeForLlm`, `passesReplyGate`, `redactPii`,
+    `recordOrchestraExecution` (with the now-centrally-tracked real `durationMs`),
+    and the prompt-cache `compileStaticPrefix`/`recordPromptCacheMetric` pair -- additive,
+    the widget''s `{ question, currentPath } -> { answer }` contract is unchanged.
+    Also added a try/catch around the LLM call (previously absent), matching chat-service.ts''s
+    own failure-handling posture instead of letting an uncaught exception 500 the
+    route.'
+  - 'Verification: `bunx tsc --noEmit` clean (no new errors introduced; pre-existing
+    `scripts/`/`*.config.ts` errors are unrelated missing @types/node, present before
+    this change). `bun run lint`: 0 errors, 3 pre-existing warnings unrelated to these
+    files. `bun test`: 1421 pass / 0 fail across 103 files (full suite).'
+  remaining_steps:
+  - Owner decision on Cache Strategy finding (fund `ANTHROPIC_API_KEY` or accept the
+    current honest limitation) -- not actionable by an agent, see note above.
+  recent_commits:
+  - ddf3f55f Merge remote-tracking branch 'origin/main' into pr-420-rescue
+  - 'ee57e56f chore: move PR #420 rescue claim to recently_completed, update rescue-task
+    PROGRESS.md'
+  - '8af41f19 chore: register active claim for PR #418 rescue (#443)'
+  - b5488136 Merge remote-tracking branch 'origin/main' into pr-420-rescue
+  - '9c6b8293 chore: rescue-task PROGRESS.md tracking for PR #420'
+  - 0f85c896 Correct stale CAPABILITY_COVERAGE.md wiring numbers, wire 2 overlooked
+    banking engine aliases (#426)
+  - '16ff3d0f chore: register + close active claim for PR #430 rescue (#442)'
+  - 8902b86c Close Checks & Balances / Exception Handling & Recovery gaps (#430)
+  - '853fd9f8 chore: register active claim for PR #428 rescue (#441)'
+  - 7f631cf5 Wire business-rule pre-execution gate, calculation cross-verification,
+    and AI-output validation (#428)
+  note: periodic checkpoint
+- at: '2026-07-18T19:13:02.694574+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no conflicting claim on this PR's file
+    scope.
+  - 'Checked out real PR #420 head branch (worker/task-20260718-055002-ai-architecture--performance---cost-effi).'
+  - 'Merged origin/main into PR branch (twice, main advanced again mid-rescue). Conflicts:
+    PROGRESS.md (kept ours), ai-os/boss/ACTIVE-CLAIMS.yaml (both additive list entries,
+    kept both).'
+  - Confirmed no drizzle/*.sql or src/lib/db/schema.ts changes anywhere in the merged
+    diff -- TIER1.
+  - '`bun install --frozen-lockfile`, `bunx tsc --noEmit` (clean), `bun run lint`
+    (0 errors, 3 pre-existing unrelated warnings), `bun test` (1477 pass / 0 fail
+    across 106 files). No real bugs found -- the PR''s code was already correct.'
+  - 'Root-caused original CI failures instead of guessing: audit-check failed only
+    because no AUDIT comment existed yet (stopped worker never reached that step);
+    Unit Tests failed on a pre-existing documented flake (tenant-isolation.test.ts''s
+    bun mock.module() leak, CI-Linux-order-dependent, self-documented in that file''s
+    own comment) already fixed by an unrelated commit on main before this rescue --
+    confirmed via 0 reproductions across the full local suite post-merge.'
+  - Pushed merged branch to origin.
+  - 'Read the full PR diff myself; posted a structured `AUDIT: PASS` comment (all
+    8 audit-protocol.ts fields).'
+  - 'Watched CI go green on the final pushed commit: all 7 required branch-protection
+    checks passed (Lint, Type Check, Build, audit-check, Guardrail Presence Check,
+    Asset Registry Coverage Check, Unit Tests). Only non-required check to fail: Vercel
+    preview (build-rate-limited, unrelated to code correctness).'
+  - Moved this PR's ACTIVE-CLAIMS.yaml entry from `active:` to `recently_completed:`.
+  - 'Merged PR #420 (squash, `gh pr merge 420 --squash --delete-branch`), merge commit
+    `0debed602b577aa5c391fdb2130f9a066f3814d8`. Manually deleted the remote branch
+    after `--delete-branch` failed on the local-branch step only (another task''s
+    worktree had it checked out).'
+  remaining_steps:
+  - 'None. Task complete: PR #420 merged to main.'
+  recent_commits:
+  - '18a6c850 Worker task-20260718-185244-rescue-pr--420: automated checkpoint commit'
+  - 0f85c896 Correct stale CAPABILITY_COVERAGE.md wiring numbers, wire 2 overlooked
+    banking engine aliases (#426)
+  - '16ff3d0f chore: register + close active claim for PR #430 rescue (#442)'
+  - 8902b86c Close Checks & Balances / Exception Handling & Recovery gaps (#430)
+  - '853fd9f8 chore: register active claim for PR #428 rescue (#441)'
+  - 7f631cf5 Wire business-rule pre-execution gate, calculation cross-verification,
+    and AI-output validation (#428)
+  - 'faf6c142 Checks & Balances: close Separation of Duties / Four-Eyes / Approval
+    Matrix / COI gaps (#431)'
+  - a356fdee Fix PROJEXA unable to create Knowledge Base or Wiki pages via API key
+    (#440)
+  - 22325b47 Fix sales invoices silently excluded from PROJEXA revenue reporting (#439)
+  - 5889d192 Add PROJEXA project creation (was the one missing CRUD path) (#438)
+  note: quality gates passed, pushed branch worker/task-20260718-185244-rescue-pr--420,
+    awaiting review
+- at: '2026-07-18T19:15:24.152987+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '18a6c850 Worker task-20260718-185244-rescue-pr--420: automated checkpoint commit'
+  - 0f85c896 Correct stale CAPABILITY_COVERAGE.md wiring numbers, wire 2 overlooked
+    banking engine aliases (#426)
+  - '16ff3d0f chore: register + close active claim for PR #430 rescue (#442)'
+  - 8902b86c Close Checks & Balances / Exception Handling & Recovery gaps (#430)
+  - '853fd9f8 chore: register active claim for PR #428 rescue (#441)'
+  - 7f631cf5 Wire business-rule pre-execution gate, calculation cross-verification,
+    and AI-output validation (#428)
+  - 'faf6c142 Checks & Balances: close Separation of Duties / Four-Eyes / Approval
+    Matrix / COI gaps (#431)'
+  - a356fdee Fix PROJEXA unable to create Knowledge Base or Wiki pages via API key
+    (#440)
+  - 22325b47 Fix sales invoices silently excluded from PROJEXA revenue reporting (#439)
+  - 5889d192 Add PROJEXA project creation (was the one missing CRUD path) (#438)
+  note: "Superboss rejected: https://github.com/FChecklist/compliance-tracker/pull/445\
+    \ \u2014 see review.json for issues"
+execution_seconds: 1121
+restart_count: 0
+token_usage:
+  input_tokens: 166
+  cache_creation_input_tokens: 106925
+  cache_read_input_tokens: 7514195
+  output_tokens: 25994
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 106925
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 699
+    cache_read_input_tokens: 130187
+    cache_creation_input_tokens: 276
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 276
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T19:30:04.746299+00:00'

@@ -1,0 +1,937 @@
+meta:
+  id: SOFTWARE-CATALOG
+  generated_ts: '2026-07-30T04:17:43.302100+00:00'
+  generated_by: ai-os/scripts/generate_software_catalog.py (re-run this to refresh -- do not hand-edit)
+  purpose: Real, machine-generated inventory of every script/cron job/systemd unit on this server, built for Knowledge
+    Engine Phase 2 (task-20260724-033446) SCOPE item 3. Sourced live from `crontab -l`, a directory listing of scripts/*.py
+    + ai-os/scripts/*.py, and `systemctl --user list-units`/`list-unit-files` -- not hand-typed.
+  related_catalogs_referenced_not_duplicated:
+  - ai-os/FUNCTION_CATALOG.json (app-code function inventory for compliance-tracker/projexa/veda-advisors)
+  - ai-os/DATABASE_CATALOG.json (DB schema inventory)
+  - ai-os/AI_ROSTER_CATALOG.json (AI-role inventory)
+cron_jobs: []
+scripts:
+- path: /opt/veridian/scripts/anthropic_openrouter_proxy.py
+  purpose: 'Minimal local proxy: translates Anthropic Messages API requests (what Claude Code CLI sends via ANTHROPIC_BASE_URL)
+    into OpenRouter''s OpenAI-compatible chat-completions calls, and translates the response back to Anthropic''s
+    Messages format. Lets Claude Code CLI''s real tool-use loop (file edit, bash, git) run against GLM-5.2 via OpenRouter
+    instead of Anthropic''s own models.'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/anthropic_openrouter_proxy.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/anthropic_openrouter_proxy_v2.py
+  purpose: 'v2 (2026-07-20, Owner directive "zero credit wastage"): adds two hard, code-enforced controls on top
+    of the v1 translation proxy. Both are chokepoint controls -- every GLM-5.2 call from every worker on this box
+    passes through this single process, so this is the one place a guarantee is actually possible, not just hoped
+    for via per-task discipline.'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/anthropic_openrouter_proxy_v2.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/auto_phase_continuation.py
+  purpose: auto_phase_continuation.py -- INS-20260724-113032-8032 mechanism 2 (the automatic phase-continuation
+    script).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/auto_phase_continuation.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/automation_rule_engine.py
+  purpose: automation_rule_engine.py -- real trigger->condition->action automation rule builder for the AI-OS *operational*
+    layer (closes engine 9, Automation Engine, of ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml's phase_3_workflow_automation_integration).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/automation_rule_engine.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/backfill_phase_self_report.py
+  purpose: 'backfill_phase_self_report.py -- closes the root cause behind two real, consecutive manual interventions
+    this session (VERIDIAN_ARCHITECTURE_V2 phase_1 / compliance-tracker PR #559, phase_2 / PR #560): a phase''s
+    worker was told (via auto_phase_continuation.py''s own build_prompt()) to update its own phase-plan entry''s
+    status/completed_by_task/evidence fields after merging, but real evidence from tw'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/backfill_phase_self_report.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/batch-import-conversation-log.py
+  purpose: 'Batch-imports queued conversation-log events (UserPromptSubmit / PostToolUse(Bash) / Stop hook payloads,
+    written locally by Claude Code hooks on the laptop, uploaded as one NDJSON file) into the Superboss Register
+    -- inserted directly via sqlite3 (bypassing superboss-register.py''s one-row-per-CLI-invocation design) so a
+    whole session''s worth of hook events sync in ONE remote script run instead of '
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/batch-import-conversation-log.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/chatgpt_audit_guard.py
+  purpose: chatgpt_audit_guard.py -- mechanical write-scope enforcement for the ChatGPT Audit Workspace (INS-20260724-141101-89d8,
+    task-20260724-141323-chatgpt-audit- workspace-infrastructure).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/chatgpt_audit_guard.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/chatgpt_audit_versioning.py
+  purpose: chatgpt_audit_versioning.py -- real, unique, incrementing audit-ID + timestamped filename allocation
+    for the ChatGPT Audit Workspace (INS-20260724-141101-89d8, task-20260724-141323-chatgpt-audit-workspace- infrastructure),
+    SCOPE item 4.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/chatgpt_audit_versioning.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/chatgpt_promptlib_guard.py
+  purpose: chatgpt_promptlib_guard.py -- sandbox write-guard for the VERIDIAN ChatGPT Prompt Library Workspace (task-20260724-141538-chatgpt-prompt-library-infrastructure,
+    instruction INS-20260724-141341-5f67).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/chatgpt_promptlib_guard.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/check_latest_task.py
+  purpose: null
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/check_latest_task.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/check_single_protocol_file.py
+  purpose: 'Real software enforcement of the Owner''s 2026-07-26 consolidation requirement: exactly ONE Owner<->AI
+    protocol file and exactly ONE Owner<->AI lessons/incidents memory file under ai-os/OWNER_DIRECTIVES/, on the
+    server, at all times.'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/check_single_protocol_file.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/context_engine.py
+  purpose: context_engine.py -- the real extension of the Context Engine toward cross-turn conversational memory
+    (closes engine 2, ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml's phase_6_intent_context_planning_learning).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/context_engine.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/cost-reconciliation.py
+  purpose: 'Weekly (or on-demand) reconciliation report. Q6''s "keep it working" check -- run this and read it,
+    don''t just trust the system silently did the right thing. Zero API cost: reads only local logs/state.'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/cost-reconciliation.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/cost-usage-60min.py
+  purpose: 'VERIDIAN-DEV hourly cost/usage check. Zero AI cost -- pure deterministic script (no model call). Pulls,
+    cross-checks, and logs:   - OpenRouter''s real /api/v1/credits balance (total_credits - total_usage)   - compliance.token_usage_ledger:
+    input/output tokens + cost, grouped by     model, for rows created in the last hour (self-heals once the     AI_TEAM_LOG_SECRET
+    Vercel gap is fixed -- currently '
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/cost-usage-60min.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/credit-accountant.py
+  purpose: 'credit-accountant.py -- Owner directive 2026-07-20: hard $1-increment approval gate on metered AI credit
+    spend (OpenRouter/GLM-5.2 -- the real, literally-metered pool that caused the 47-failed-unit RCA earlier this
+    session, NOT the flat-rate Claude Code CLI subscription used to run this very script). "Claude Code CLI subscription
+    becomes the accountant, without Claude Code CLI subscription permiss'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/credit-accountant.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/ddl_authorization_check.py
+  purpose: 'Dispatch-time pre-flight gate closing a real gap found 2026-07-26: the standing rule "Supabase schema
+    changes are tier2-by-definition, always held for human sign-off, never auto-merged" was only enforced at the
+    PR-merge step (task_lifecycle_state_machine.S9_AUDITED/S10b_HELD_FOR_SIGNOFF in PROTOCOL_OWNER_AI.yaml), not
+    before a headless worker takes a live action. task-20260726-071400-migration-dri'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/ddl_authorization_check.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/decision-service.py
+  purpose: 'decision-service.py -- Phase 2 of VERIDIAN 20-ENGINE/10-GATEWAY architecture (task-20260724-115041-phase2-give-policy-engine-preflight-guar),
+    closes_engines: [7] (Decision Engine), generalizing risk-tier.py + ai-decision-explanation.ts into one callable
+    service per that phase''s own objective (see ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml and ai-os/POLICY_DECISION_SCHEMA_2026-07-24.ya'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/decision-service.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/detect_prompt_duplicates.py
+  purpose: detect_prompt_duplicates.py -- duplicate-prompt/duplicate-intent detection for the VERIDIAN ChatGPT Prompt
+    Library (task-20260724-141538-chatgpt-prompt-library-infrastructure, instruction INS-20260724-141341-5f67).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/detect_prompt_duplicates.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/directive_engine.py
+  purpose: DIRECTIVE (merged, generic). Single engine replacing the earlier separate DIRECTIVE-001/DIRECTIVE-002
+    scripts. Reads /opt/veridian/ai-os/DIRECTIVE.yaml live every pass -- both its own config and its priority_queue
+    -- so new tasks can be appended at any time without a restart, and priority ordering lives in the file, not
+    in script logic.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/directive_engine.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/dispatch-tick.py
+  purpose: dispatch-tick.py -- task-20260726-210339 consolidation of supervisor-sweep.sh + queue-dispatcher.py +
+    module-queue-dispatcher.py into one script sharing dispatch_core.py's concurrency gate. Run via cron (see this
+    task's PR body for the proposed schedule -- not added to the live crontab by this task).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/dispatch-tick.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/dispatch_core.py
+  purpose: 'dispatch_core.py -- shared concurrency-gating library for the 3 consolidated dispatch/status scripts
+    (dispatch-tick.py, phase-continuation-tick.py, status-remediation-tick.py). Closes the real root cause of the
+    2026-07-26 OOM-kill incident: 3 independent worker-spawn code paths (supervisor-sweep.sh''s `systemctl start
+    veridian-supervisor@`, queue-dispatcher.py/module-queue-dispatcher.py''s `veridian'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/dispatch_core.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/document_engine.py
+  purpose: 'document_engine.py -- Phase 4 (document_notification_data) of 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml
+    (task task-20260724-133622-phase4-unify-document-pipeline-pdf-gener), closes_engines: [11].'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/document_engine.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/external_ai_state_machine.py
+  purpose: External AI work state machine -- auto-save + resume for chunked work delegated to external AI models
+    (z.ai/others) that never touch this server.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/external_ai_state_machine.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/gap-status.py
+  purpose: Quick X/Y status check for the gap queue, plus anything needing a decision.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/gap-status.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/generate-system-diagram.py
+  purpose: 'generate-system-diagram.py -- TASK 3 (Owner directive 2026-07-20: "make a diagram or tree of the whole
+    system"). Software-generated, not hand-drawn: the diagram''s content lives as structured data below (SUBSYSTEMS/EDGES),
+    and this script renders it to Mermaid -- updating the diagram means editing the data, not redrawing a picture.
+    Run this after any real architecture change (new bridge, new major '
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/generate-system-diagram.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/generate_chatgpt_audit_index.py
+  purpose: generate_chatgpt_audit_index.py -- auto-index generator for the ChatGPT Audit Workspace (INS-20260724-141101-89d8,
+    task-20260724-141323-chatgpt- audit-workspace-infrastructure), SCOPE item 4.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/generate_chatgpt_audit_index.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/generate_chatgpt_audit_request.py
+  purpose: generate_chatgpt_audit_request.py -- manual-bridge request generator for the ChatGPT Audit Workspace
+    (INS-20260724-214122-f0ed, task-20260724-214215-chatgpt-manual-bridge-workflow).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/generate_chatgpt_audit_request.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/generate_chatgpt_promptbatch_request.py
+  purpose: generate_chatgpt_promptbatch_request.py -- manual-bridge request generator for the VERIDIAN ChatGPT Prompt
+    Library (INS-20260724-214122-f0ed, task-20260724-214215-chatgpt-manual-bridge-workflow).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/generate_chatgpt_promptbatch_request.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/generate_module_gap_audit_module_list.py
+  purpose: generate_module_gap_audit_module_list.py -- mechanical module-list generator for the module-scoped ChatGPT/Z.AI
+    gap audit (task-20260725-063204-module-scoped-zai-gap-audit), SCOPE item 1.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/generate_module_gap_audit_module_list.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/generate_prompt_coverage_report.py
+  purpose: generate_prompt_coverage_report.py -- real coverage report for the VERIDIAN ChatGPT Prompt Library (task-20260724-141538-chatgpt-prompt-library-infrastructure,
+    instruction INS-20260724-141341-5f67).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/generate_prompt_coverage_report.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/generate_quick_reference.py
+  purpose: 'TASK 6 (Owner directive 2026-07-20: "make MASTER_INDEX.yaml logical for you or any AI to work... stepwise,
+    exact input/output, properly documented"). Mechanically generates a compact, scannable quick_reference list
+    -- id + path + status + a one-line summary auto-extracted from each registry entry''s own first prose field
+    -- rather than hand-summarizing 41 entries under time pressure (which risks in'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/generate_quick_reference.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/generate_software_catalog.py
+  purpose: 'generate_software_catalog.py -- Knowledge Engine Phase 2 (task-20260724-033446), SCOPE item 3: a real,
+    machine-generated inventory of every script/service/cron job on the server, written to ai-os/SOFTWARE_CATALOG.yaml.'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/generate_software_catalog.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/generate_task_checklist.py
+  purpose: 'generate_task_checklist.py -- Owner directive 2026-07-20: "make a prompt for your self use... which
+    have the list of files, process and instructions that needs to be updated by you or superboss for every task.
+    Make it via script so that software does it."'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/generate_task_checklist.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/generate_wiring_registry.py
+  purpose: 'generate_wiring_registry.py -- Wiring Engine Phase 0 (task-20260725-032718- wiring-engine-phase0-schema-registry),
+    SCOPE item 2: mechanically populates ai-os/WIRING_ENGINE_SCHEMA_2026-07-25.yaml''s entity_record_schema FROM
+    8 real, already-existing data sources -- never hand-authored:'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/generate_wiring_registry.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/health-check-15min.py
+  purpose: 'VERIDIAN-DEV 15-minute health check. Zero AI cost -- pure deterministic script (L0 tier: no model call
+    of any kind). Checks:   - systemd status of every veridian-worker@*/veridian-supervisor@* unit   - staleness
+    of every in_progress task''s checkpoint vs its unit''s state   - Mother Router / AI router registry reachability
+    (row counts, via psql)   - server health (disk, memory, load)   - best-effort'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/health-check-15min.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/import-memory-history.py
+  purpose: 'One-time bulk import: local memory index (MEMORY.md, ~60 entries spanning the full project history)
+    -> server-side Superboss Register work_items. 2026-07-20, per Owner directive: "document all sessions ... so
+    it becomes the real memory."'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/import-memory-history.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/index-logs.py
+  purpose: 'VERIDIAN index-logs: governance item 52 (searchable_indexed_logs). Scans ai-os/logs/*.log and ai-os/logs/*.jsonl
+    and indexes each real (non-blank) line into superboss-register.sqlite''s log_index table + log_index_fts, making
+    them searchable via `superboss-register.py search` alongside instructions/work_items/actions/system_index --
+    reuses that script''s own DB-connection/write-lock/id-generation pr'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/index-logs.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/ingest_chatgpt_audit_response.py
+  purpose: ingest_chatgpt_audit_response.py -- manual-bridge response ingester for the ChatGPT Audit Workspace (INS-20260724-214122-f0ed,
+    task-20260724-214215-chatgpt-manual-bridge-workflow).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/ingest_chatgpt_audit_response.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/ingest_chatgpt_promptbatch_response.py
+  purpose: ingest_chatgpt_promptbatch_response.py -- manual-bridge response ingester for the VERIDIAN ChatGPT Prompt
+    Library (INS-20260724-214122-f0ed, task-20260724-214215-chatgpt-manual-bridge-workflow).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/ingest_chatgpt_promptbatch_response.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/intent_engine.py
+  purpose: intent_engine.py -- the real, non-speculative extension of the Intent Engine (closes engine 1, ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml's
+    phase_6_intent_context_planning_learning).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/intent_engine.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/knowledge_registry_multisource.py
+  purpose: 'knowledge_registry_multisource.py -- Knowledge Engine Phase 2 (task-20260724-033446), SCOPE item 1:
+    extends the knowledge_engine table (built Phase 1, task-20260723-181151) to cover 4 sources file_inventory.py
+    never touches (file_inventory.py is explicitly scoped to ai-os/+scripts/ only, per its own docstring) -- VERCEL,
+    SUPABASE, GITHUB, LOCAL -- plus retags the 9 Phase-1 SERVER rows so every row'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/knowledge_registry_multisource.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/learning_engine.py
+  purpose: learning_engine.py -- the real feedback-consumption extension of the Learning Engine (closes engine 16,
+    ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml's phase_6_intent_context_planning_learning).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/learning_engine.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/master-decompose.py
+  purpose: 'Master role (on-demand, not a standing daemon -- see HETZNER-04 controller entry for why: Claude Code
+    CLI sessions are subscription-plan-authenticated and concurrent-session limits are unverified, so the pilot
+    keeps Master as a triggered one-shot task like every other role in this framework, not a 6th always-running
+    process).'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/master-decompose.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/metadata_reconciliation.py
+  purpose: 'metadata_reconciliation.py -- Phase 5 (task-20260724-135834, phase_5_metadata_knowledge_consolidation),
+    the real, re-runnable mechanism behind ai-os/METADATA_ENGINE_RECONCILIATION_2026-07-24.yaml''s own sync_direction.mechanism:
+    every MASTER_INDEX.yaml registries[] entry''s real, on-disk, single-file path(s) gets a knowledge_engine row
+    tagged registry:<id> -- the enforced back-reference from the mac'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/metadata_reconciliation.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/module_gap_audit_lib.py
+  purpose: module_gap_audit_lib.py -- real module-boundary resolver for the module-scoped ChatGPT/Z.AI gap audit
+    (task-20260725-063204-module-scoped-zai-gap-audit).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/module_gap_audit_lib.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/notification_engine.py
+  purpose: 'notification_engine.py -- Phase 4 (document_notification_data) of 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml
+    (task task-20260724-133622-phase4-unify-document-pipeline-pdf-gener), closes_engines: [12].'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/notification_engine.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/notify-owner.py
+  purpose: Sends a real email to the Owner via the Resend API. Built so the detection scripts that already find
+    problems (health-check-15min.py) can actually tell the Owner, instead of only writing to ai-os/logs/ATTENTION.md
+    (a file nobody actively reads -- see ai-os/logs/ATTENTION.md's repeated identical "1 systemd unit(s) in failed
+    state" entries from 2026-07-19 that never got a human response).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/notify-owner.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/owner_status.py
+  purpose: null
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/owner_status.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/phase-continuation-tick.py
+  purpose: 'phase-continuation-tick.py -- task-20260726-210339 consolidation: refactor of auto_phase_continuation.py
+    (INS-20260724-113032-8032 mechanism 2). Plan-scan, merged-PR cross-check, next-phase selection, and the tier2
+    self-report backfill sweep are UNCHANGED from the original -- see that script''s own extensive docstring (kept
+    below, verbatim) for why each of those exists.'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/phase-continuation-tick.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/plan_generator.py
+  purpose: plan_generator.py -- the real multi-step plan/DAG generation extension of the Planning Engine (closes
+    engine 4, ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml's phase_6_intent_context_planning_learning).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/plan_generator.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/policy_decision.py
+  purpose: 'Shared decision schema for VERIDIAN''s Policy/Rule/Decision Engines (Phase 2 of ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml
+    -- see ai-os/POLICY_DECISION_SCHEMA_2026-07-24.yaml for the full design and the real, read shapes of the 4 gates
+    this generalizes: preflight-guard.py, policy-enforcement-engine.ts, risk-tier.py, ai-decision-explanation.ts).'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/policy_decision.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/preflight-guard.py
+  purpose: Pre-flight guard, run BEFORE the main claude -p invocation in worker-entrypoint.sh. Deployed 2026-07-20
+    per Owner zero-waste directive.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/preflight-guard.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/recover-failed-workers.py
+  purpose: RCA recovery script, 2026-07-20. Converts veridian-worker@ units stuck in systemd's permanent 'failed'
+    state (pre-dating the preflight-guard.py OpenRouter-balance fix) into a clean, accurate 'blocked' state via
+    the NOW- FIXED preflight guard -- so every affected task carries a correct, actionable diagnostic instead of
+    a dead, retry-stormed unit with no clear reason recorded.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/recover-failed-workers.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/regenerate_master_index.py
+  purpose: Wholesale regenerator for /opt/veridian/ai-os/MASTER_INDEX.yaml.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/regenerate_master_index.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/repair_controller.py
+  purpose: Rebuilds ai-os/CONTROLLER.yaml from scratch by scanning the authoritative per-task task.yaml files (each
+    written only by its own worker, never contested) -- safe because the corruption was in the shared aggregate
+    index, not in the individual task records themselves.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/repair_controller.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/resource_governor.py
+  purpose: resource_governor.py -- SERVER RESOURCE GOVERNOR (Owner directive, 2026-07-27). See ai-os/SERVER_RESOURCE_GOVERNOR_2026-07-27.md
+    for the full design doc.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/resource_governor.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/risk-tier.py
+  purpose: Deterministic (non-AI) risk-tier classifier for a task's diff against its base branch. tier1 = server-side
+    Superboss may merge autonomously. tier2 = Superboss may approve but must hold for human sign-off. Classification
+    must stay simple and auditable — do not let the AI reviewer override it; this is the trust boundary, not a suggestion.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/risk-tier.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/sap_mapping_store.py
+  purpose: SAP module/report mapping metadata store. This is the durable, queryable knowledge base z.ai's research
+    fills in -- distinct from the generic external_ai_state_machine.py raw-file safety net (which still receives
+    every chunk verbatim first, so nothing is ever lost even if a chunk fails to parse into this structured schema).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/sap_mapping_store.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/scope-check.py
+  purpose: 'Enforces the Master/Supervisor pilot''s "no collision" rule: every file a worker''s diff touches must
+    belong to the task''s declared module (per file-ownership.yaml) or be explicitly listed in the task''s own files_allowed
+    override. Deterministic, path-glob based -- same trust- boundary posture as risk-tier.py (the AI reviewer cannot
+    talk its way around this, only supervisor-entrypoint.sh''s caller dec'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/scope-check.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/security-check.py
+  purpose: 'VERIDIAN security-check: network/security/permission monitoring, items 21 (ssh_login_anomaly_detection),
+    22 (file_permission_change_tracking) and 24 (security_event_detection) of the 2026-07-23 governance audit.'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/security-check.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/status-remediation-tick.py
+  purpose: 'status-remediation-tick.py -- task-20260726-210339 consolidation of veridian_status_monitor.py + veridian_remediation_dispatcher.py
+    --apply. Same chained relationship the live crontab already ran these two scripts under (`veridian_status_monitor.py
+    && veridian_remediation_dispatcher.py --apply`), now one process instead of two subprocess invocations: scans
+    real status, then classifies + remediates'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/status-remediation-tick.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/superboss-register.py
+  purpose: 'Superboss Register -- three searchable trees, server-side, SQLite+FTS5. Deployed 2026-07-20 per Owner
+    directive: no session starts from zero again.'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/superboss-register.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/sync-controller-back.py
+  purpose: 'Automates SYNC rule #14 from SUPERBOSS_DISPATCH_PROMPT.md: whenever a server task reaches a terminal
+    state, record a summary entry in the master CONTROLLER.yaml (claude-control repo) and push it. Idempotent via
+    task.yaml''s `master_synced_at` marker — never double-records a task.'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/sync-controller-back.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/system-sync.py
+  purpose: 'system-sync.py -- single unified sync/audit mechanism for "one server, one system." Built 2026-07-20
+    per Owner directive covering TASKS 2-6 of the 6-part 2026-07-20 systems-design mandate:   TASK 2: CONSTITUTION.yaml
+    staleness detection   TASK 3/4: integration -- files/registries getting missed, drift between             live
+    server state and git-tracked mirrors   TASK 5: a script referenced FROM '
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/system-sync.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/task-gateway.py
+  purpose: task-gateway.py -- single unified CLI implementing ai-os/STANDING_DIRECTIVE.yaml's v2_task_lifecycle_pipeline
+    (phases 0/1/4/5/7/8/9/11) as real, callable software commands, so no AI agent or router needs to remember/sequence
+    superboss-register.py, veridian-task.py, and postflight_audit_gate.py in the right order manually.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/task-gateway.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/task-template.py
+  purpose: Renders a standardized task dict (TASK ID/MODULE/OBJECTIVE/FILES ALLOWED/ FILES FORBIDDEN/DEPENDENCIES/INPUT/OUTPUT/STEPS/CONSTRAINTS/VALIDATION/
+    DONE CRITERIA -- the Master/Supervisor pilot's standard template) into the prompt text handed to `veridian-task.py
+    create`. The executor is always Claude Code CLI (not a raw patch-only model -- see HETZNER-04 controller entry
+    for why), so the rendered pr
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/task-template.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/test_check_crontab_unauthorized_change.py
+  purpose: Real, executable test for check_crontab_unauthorized_change() (governance item 50). Never touches the
+    real live crontab or the real CRONTAB_APPROVED_SNAPSHOT.txt / OWNER_DECISIONS_NEEDED_2026-07-23.yaml -- everything
+    is a temp file, and crontab_cmd is overridden to a fake command instead of the real `crontab -l`.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/test_check_crontab_unauthorized_change.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/test_tight_task_validation.py
+  purpose: Regression tests for tight_task_validation.py's contradiction detector.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/test_tight_task_validation.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/tight_task_validation.py
+  purpose: 'Faithful Python port of src/lib/task-tightening.ts''s validateTightTask() for the shell-layer dispatch
+    scripts (worker-entrypoint.sh, doc-worker-entrypoint.sh), which have no access to the TS/DB-backed original.
+    Deployed 2026-07-20, closing a real gap found in the "constitution cross-check" audit: the shell fleet was entirely
+    outside this validation.'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/tight_task_validation.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/veridian-task-watchdog.py
+  purpose: VERIDIAN task watchdog -- ai-os/STANDING_DIRECTIVE.yaml v2_watchdog_service. Built 2026-07-23, task-20260723-142643-build-veridian-task-watchdog-service.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/veridian-task-watchdog.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/veridian-task.py
+  purpose: VERIDIAN-DEV AI-OS task/worker manager. Server-side, self-contained state management for async AI workers
+    that survive client disconnects, server reboots, and resume from checkpoints on interruption. See /opt/veridian/README-SERVER.md.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/veridian-task.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/veridian_remediation_dispatcher.py
+  purpose: 'Real, cron-driven remediation dispatcher. Closes the second gap named in this task''s own SPEC: today
+    a human/AI has to happen to notice a rejected/blocked PR and manually dispatch a fix. This reads the real findings
+    scripts/veridian_status_monitor.py already wrote to ai-os/LIVE_STATUS_2026-07-26.yaml (never re-scans -- that
+    would duplicate the monitor''s own gh calls) and, for each one, drafts a re'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/veridian_remediation_dispatcher.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/webhook_receiver.py
+  purpose: webhook_receiver.py -- standalone inbound webhook receiver (closes engine 10, Integration Engine, of
+    ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml's phase_3_workflow_automation_integration).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/webhook_receiver.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/wiring_query.py
+  purpose: 'wiring_query.py -- task-20260727-025248 (knowledge-engine/wiring-registry integration), SCOPE item 4:
+    one query helper answering "what rows exist for X" across BOTH wiring_registry and knowledge_engine in a single
+    sub-second call, backed by each table''s own ALREADY-EXISTING FTS5 index (wiring_registry_fts / knowledge_engine_fts
+    -- neither is new; this module is the first thing that queries both to'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/wiring_query.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/workflow_contract.py
+  purpose: workflow_contract.py -- shared reference implementation of ai-os/WORKFLOW_CONTRACT_SCHEMA_2026-07-24.yaml's
+    workflow_contract_schema (phase_3_workflow_automation_integration, closes engine 8 -- Workflow Engine). scripts/task-gateway.py
+    imports WORKFLOW_PHASES from this module rather than hand-typing phase strings, so both files stay in sync with
+    the one named contract. Same shared-reference-implem
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/workflow_contract.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/scripts/zai_agent_loop.py
+  purpose: z.ai autonomous agent loop -- real tool-calling integration, NOT browser automation. Owner provides ONE
+    task description; z.ai's model (via its real Anthropic-compatible API, https://api.z.ai/api/anthropic) autonomously
+    decides when to call the save_chunk/mark_task_complete tools; THIS script is the only thing that ever touches
+    disk -- it executes the tool calls the model requests and reports resu
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/scripts/zai_agent_loop.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/ai-os/scripts/audit_pipeline_security.py
+  purpose: VERIDIAN Auditor Engine -- Phase 1, security domain deterministic scanner pipeline.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/ai-os/scripts/audit_pipeline_security.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/ai-os/scripts/file_edit_guard.py
+  purpose: 'Modular, reusable integrity gate -- run this after editing ANY tracked YAML/JSON file, not just STANDING_DIRECTIVE.yaml.
+    Mechanically catches the two real mistakes made in this session: (1) a header comment block silently stripped
+    by a raw yaml.safe_dump (2) a top-level key silently lost during an edit Usage: python3 file_edit_guard.py <before_path>
+    <after_path> Exits non-zero and prints FAIL if e'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/ai-os/scripts/file_edit_guard.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/ai-os/scripts/file_inventory.py
+  purpose: Real, exhaustive file inventory of the canonical VERIDIAN system-of-record (ai-os/ + scripts/), using
+    MASTER_INDEX.yaml's own exclusion_rules (prune, not -not-path, per its documented speed reason) so it's fast
+    enough to run on EVERY prompt, not just when something is suspected missing.
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/ai-os/scripts/file_inventory.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/ai-os/scripts/generate_capability_registry_candidates.py
+  purpose: generate_capability_registry_candidates.py -- Phase 0 of VERIDIAN 20-ENGINE/ 10-GATEWAY architecture
+    (task-20260724-053213), Capability Registry Engine schema deliverable (ai-os/CAPABILITY_REGISTRY_SCHEMA_2026-07-24.yaml).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/ai-os/scripts/generate_capability_registry_candidates.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/ai-os/scripts/generate_engines_gateways_inventory.py
+  purpose: generate_engines_gateways_inventory.py -- Phase 0 of VERIDIAN 20-ENGINE/ 10-GATEWAY architecture (task-20260724-053213,
+    instruction INS-20260724-053123-0e5a), SCOPE item 1 + Owner directive ("all registry/catalog data must be produced
+    by scripts, not hand-authored AI prose").
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/ai-os/scripts/generate_engines_gateways_inventory.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/ai-os/scripts/postflight_audit_gate.py
+  purpose: Universal post-completion audit gate -- companion to /opt/veridian/scripts/preflight-guard.py (which
+    gates BEFORE a task starts; this gates the CLAIM that a task is DONE or FAILED).
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/ai-os/scripts/postflight_audit_gate.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/ai-os/scripts/session_bootstrap.py
+  purpose: Mandatory FIRST command of any task on VERIDIAN-DEV, per STANDING_DIRECTIVE.yaml rule_2_no_forgetting.
+    Reads real accumulated history directly from the register DB (not a reactive keyword search) plus the living
+    architecture documents, and prints one consolidated briefing. No task should start without running this first
+    -- it replaces "the assistant remembers to check" with "the assistant cannot p
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/ai-os/scripts/session_bootstrap.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/ai-os/scripts/sync_master_index_registries.py
+  purpose: 'sync_master_index_registries.py -- Phase 5 (metadata_knowledge_consolidation) of 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml
+    (task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg), closes_engines: [14, 15].'
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/ai-os/scripts/sync_master_index_registries.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+- path: /opt/veridian/ai-os/scripts/veridian_self_check.py
+  purpose: 'THE ONE COMMAND. Run this first, always: python3 ai-os/scripts/veridian_self_check.py Combines: (1)
+    session_bootstrap (real register history + living docs), (2) a mechanical compliance check of every real, checkable
+    item in STANDING_DIRECTIVE.yaml, (3) logs its own result into the register (new directive_compliance_runs table
+    -- reuses the existing register DB, does not create a parallel metadata '
+  cron_scheduled: false
+  invocation: python3 /opt/veridian/ai-os/scripts/veridian_self_check.py [args]
+  when_to_use: Not currently scheduled -- run manually/ad-hoc via the invocation command above.
+systemd_units_veridian:
+- unit: veridian-cron-audit-pipeline-security.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: Gitleaks + Trivy + Checkov security scan of compliance-tracker'
+- unit: veridian-cron-cost-usage-60min.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: Hourly OpenRouter/token-ledger cost & usage check'
+- unit: veridian-cron-credit-ledger-prune.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: Prune credit-ledger.sqlite entries older than 30 days'
+- unit: veridian-cron-dispatch-tick.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: Consolidated supervisor-sweep + queue-dispatcher + module-queue-dispatcher
+    (dispatch_core.py-gated, already has its own EMERGENCY_STOP + dedup checks)'
+- unit: veridian-cron-file-inventory.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: Exhaustive file inventory of ai-os/ + scripts/ (path+size+mtime+hash)'
+- unit: veridian-cron-generate-wiring-registry.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: Rebuild WIRING_ENGINE_REGISTRY from 8 catalog sources'
+- unit: veridian-cron-health-check-15min.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: 15-min health check (systemd units, task staleness, disk/mem/load)'
+- unit: veridian-cron-knowledge-registry-multisource.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: Multi-source (Vercel/Supabase/GitHub/local) knowledge_engine sync'
+- unit: veridian-cron-phase-continuation-tick.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: Consolidated auto-phase-continuation (dispatch_core.py-gated)'
+- unit: veridian-cron-security-check.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: SSH login anomaly / file permission drift monitoring'
+- unit: veridian-cron-software-catalog-gen.service
+  load: loaded
+  active: activating
+  sub: start
+  description: 'start VERIDIAN cron-replacement: Regenerate SOFTWARE_CATALOG.yaml from crontab/scripts/systemd units'
+- unit: veridian-cron-status-remediation-tick.service
+  load: loaded
+  active: activating
+  sub: start
+  description: 'start VERIDIAN cron-replacement: Consolidated veridian_status_monitor + veridian_remediation_dispatcher
+    (dispatch_core.py-gated, already has its own EMERGENCY_STOP checks)'
+- unit: veridian-cron-sync-controller-back.service
+  load: loaded
+  active: failed
+  sub: failed
+  description: 'VERIDIAN cron-replacement: Record terminal-state task summaries into master CONTROLLER.yaml'
+- unit: veridian-cron-sync-repos.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: Pull latest commits for all mirrored repos + deploy live scripts'
+- unit: veridian-cron-sync-vercel-env.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: Refresh .env.local for the 3 linked Vercel projects'
+- unit: veridian-cron-sync-verdian-ai-data.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: Full refresh of the verdian-ai Supabase local mirror'
+- unit: veridian-cron-system-sync.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: Mirror drift / constitution staleness / unindexed files / doc-gen / balance-blocked-task
+    resume checks'
+- unit: veridian-cron-veridian-self-check.service
+  load: loaded
+  active: inactive
+  sub: dead
+  description: 'VERIDIAN cron-replacement: STANDING_DIRECTIVE.yaml compliance check'
+- unit: veridian-directive-engine.service
+  load: loaded
+  active: active
+  sub: running
+  description: VERIDIAN directive engine dispatch loop
+- unit: veridian-governor-tick.service
+  load: loaded
+  active: active
+  sub: running
+  description: VERIDIAN resource governor tick loop
+- unit: veridian-supervisor@task-20260730-041205-adopted-master-index-central-entrypoint-fix--rep.service
+  load: loaded
+  active: active
+  sub: running
+  description: VERIDIAN Superboss review for task task-20260730-041205-adopted-master-index-central-entrypoint-fix--rep
+- unit: veridian-worker@task-20260730-040810-build-extend-calculation-track-engines.service
+  load: loaded
+  active: active
+  sub: running
+  description: VERIDIAN AI worker for task task-20260730-040810-build-extend-calculation-track-engines
+- unit: veridian-worker@task-20260730-040813-build-extend-workflow-track-engines.service
+  load: loaded
+  active: active
+  sub: running
+  description: VERIDIAN AI worker for task task-20260730-040813-build-extend-workflow-track-engines
+- unit: app-veridian\x2dsupervisor.slice
+  load: loaded
+  active: active
+  sub: active
+  description: Slice /app/veridian-supervisor
+- unit: app-veridian\x2dworker.slice
+  load: loaded
+  active: active
+  sub: active
+  description: Slice /app/veridian-worker
+- unit: veridian-checkpoint-heartbeat.slice
+  load: loaded
+  active: active
+  sub: active
+  description: Slice /veridian/checkpoint/heartbeat
+- unit: veridian-checkpoint.slice
+  load: loaded
+  active: active
+  sub: active
+  description: Slice /veridian/checkpoint
+- unit: veridian.slice
+  load: loaded
+  active: active
+  sub: active
+  description: Slice /veridian
+- unit: veridian-cron-audit-pipeline-security.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-audit-pipeline-security on its scheduled cadence (jittered -- see the paired .service
+    for why)
+- unit: veridian-cron-cost-usage-60min.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-cost-usage-60min on its scheduled cadence (jittered -- see the paired .service
+    for why)
+- unit: veridian-cron-credit-ledger-prune.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-credit-ledger-prune on its scheduled cadence (jittered -- see the paired .service
+    for why)
+- unit: veridian-cron-dispatch-tick.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-dispatch-tick on its scheduled cadence (jittered -- see the paired .service for
+    why)
+- unit: veridian-cron-file-inventory.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-file-inventory on its scheduled cadence (jittered -- see the paired .service for
+    why)
+- unit: veridian-cron-generate-wiring-registry.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-generate-wiring-registry on its scheduled cadence (jittered -- see the paired .service
+    for why)
+- unit: veridian-cron-health-check-15min.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-health-check-15min on its scheduled cadence (jittered -- see the paired .service
+    for why)
+- unit: veridian-cron-knowledge-registry-multisource.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-knowledge-registry-multisource on its scheduled cadence (jittered -- see the paired
+    .service for why)
+- unit: veridian-cron-phase-continuation-tick.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-phase-continuation-tick on its scheduled cadence (jittered -- see the paired .service
+    for why)
+- unit: veridian-cron-security-check.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-security-check on its scheduled cadence (jittered -- see the paired .service for
+    why)
+- unit: veridian-cron-software-catalog-gen.timer
+  load: loaded
+  active: active
+  sub: running
+  description: Run veridian-cron-software-catalog-gen on its scheduled cadence (jittered -- see the paired .service
+    for why)
+- unit: veridian-cron-status-remediation-tick.timer
+  load: loaded
+  active: active
+  sub: running
+  description: Run veridian-cron-status-remediation-tick on its scheduled cadence (jittered -- see the paired .service
+    for why)
+- unit: veridian-cron-sync-controller-back.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-sync-controller-back on its scheduled cadence (jittered -- see the paired .service
+    for why)
+- unit: veridian-cron-sync-repos.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-sync-repos on its scheduled cadence (jittered -- see the paired .service for why)
+- unit: veridian-cron-sync-vercel-env.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-sync-vercel-env on its scheduled cadence (jittered -- see the paired .service for
+    why)
+- unit: veridian-cron-sync-verdian-ai-data.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-sync-verdian-ai-data on its scheduled cadence (jittered -- see the paired .service
+    for why)
+- unit: veridian-cron-system-sync.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-system-sync on its scheduled cadence (jittered -- see the paired .service for why)
+- unit: veridian-cron-veridian-self-check.timer
+  load: loaded
+  active: active
+  sub: waiting
+  description: Run veridian-cron-veridian-self-check on its scheduled cadence (jittered -- see the paired .service
+    for why)
+systemd_unit_files_installed:
+- app-snap\x2duserd\x2dautostart@autostart.service
+- app-xdg\x2duser\x2ddirs@autostart.service
+- dbus.service
+- dirmngr.service
+- gpg-agent.service
+- keyboxd.service
+- launchpadlib-cache-clean.service
+- pk-debconf-helper.service
+- snapd.session-agent.service
+- ssh-agent.service
+- systemd-exit.service
+- systemd-tmpfiles-clean.service
+- systemd-tmpfiles-setup.service
+- veridian-cron-audit-pipeline-security.service
+- veridian-cron-cost-usage-60min.service
+- veridian-cron-credit-ledger-prune.service
+- veridian-cron-dispatch-tick.service
+- veridian-cron-file-inventory.service
+- veridian-cron-generate-wiring-registry.service
+- veridian-cron-health-check-15min.service
+- veridian-cron-knowledge-registry-multisource.service
+- veridian-cron-phase-continuation-tick.service
+- veridian-cron-security-check.service
+- veridian-cron-software-catalog-gen.service
+- veridian-cron-status-remediation-tick.service
+- veridian-cron-sync-controller-back.service
+- veridian-cron-sync-repos.service
+- veridian-cron-sync-vercel-env.service
+- veridian-cron-sync-verdian-ai-data.service
+- veridian-cron-system-sync.service
+- veridian-cron-veridian-self-check.service
+- veridian-directive-engine.service
+- veridian-docworker@.service
+- veridian-glm-proxy.service
+- veridian-governor-tick.service
+- veridian-supervisor@.service
+- veridian-task-watchdog.service
+- veridian-worker-enduser@.service
+- veridian-worker@.service
+- app.slice
+- background.slice
+- session.slice
+- dbus.socket
+- dirmngr.socket
+- gpg-agent-browser.socket
+- gpg-agent-extra.socket
+- gpg-agent-ssh.socket
+- gpg-agent.socket
+- keyboxd.socket
+- pk-debconf-helper.socket
+- snapd.session-agent.socket
+- basic.target
+- bluetooth.target
+- default.target
+- exit.target
+- graphical-session-pre.target
+- graphical-session.target
+- paths.target
+- printer.target
+- shutdown.target
+- smartcard.target
+- sockets.target
+- sound.target
+- timers.target
+- xdg-desktop-autostart.target
+- launchpadlib-cache-clean.timer
+- systemd-tmpfiles-clean.timer
+- veridian-cron-audit-pipeline-security.timer
+- veridian-cron-cost-usage-60min.timer
+- veridian-cron-credit-ledger-prune.timer
+- veridian-cron-dispatch-tick.timer
+- veridian-cron-file-inventory.timer
+- veridian-cron-generate-wiring-registry.timer
+- veridian-cron-health-check-15min.timer
+- veridian-cron-knowledge-registry-multisource.timer
+- veridian-cron-phase-continuation-tick.timer
+- veridian-cron-security-check.timer
+- veridian-cron-software-catalog-gen.timer
+- veridian-cron-status-remediation-tick.timer
+- veridian-cron-sync-controller-back.timer
+- veridian-cron-sync-repos.timer
+- veridian-cron-sync-vercel-env.timer
+- veridian-cron-sync-verdian-ai-data.timer
+- veridian-cron-system-sync.timer
+- veridian-cron-veridian-self-check.timer
+- veridian-task-watchdog.timer
+coverage_summary:
+  cron_entries_total: 0
+  scripts_total: 85
+  scripts_cron_scheduled: 0
+  scripts_not_scheduled: 85
+  veridian_systemd_units: 46

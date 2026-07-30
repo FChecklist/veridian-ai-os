@@ -1,0 +1,17 @@
+VERIDIAN Review Framework, REVIEW-FRAMEWORK-WAVE4 Track 1b item 1: build a live exchange-rate feed. A prior session validated this exact plan (registered as a claim, then never implemented) -- follow it precisely, do not redesign from scratch.
+
+CONFIRMED PROBLEM: erp-accounting-service.ts's listExchangeRates/createExchangeRate and src/app/api/erp/exchange-rates/** are manual-CRUD only, nothing fetches a real rate. No active UI page lists/manages exchange rates today.
+
+NOTE: hardcoded-currency UI bugs (the other half of this finding) are ALREADY closed by merged PR #370 -- do not re-investigate or re-fix that part.
+
+SCOPE (implement all of this):
+1. New src/lib/exchange-rate-feed-client.ts -- DB-free HTTP client for open.er-api.com (free, no-key, daily-updated rates), mockable per this repo's existing whisper-client.ts convention (read that file first for the pattern).
+2. Extend erp-accounting-service.ts's listExchangeRates/createExchangeRate/getLatestExchangeRate area with refreshLiveExchangeRates(ctx) and refreshLiveExchangeRatesForAllOrgs().
+3. New erp_exchange_rates.source column via an additive migration (default 'manual', new value 'live' for fetched rows). Check `ls drizzle/*.sql | sort -V | tail` immediately before your final commit to confirm no migration-number collision with work merged since this plan was written.
+4. New POST /api/erp/exchange-rates/refresh (on-demand, requireAuth-gated).
+5. New /api/internal/exchange-rate-refresh/run cron entry point (CRON_SECRET-gated, following the EXACT existing vercel.json crons + isAuthorized() pattern already used by every other /api/internal/*/run route -- read 2-3 existing ones first, do not invent a new scheduling mechanism).
+6. One new vercel.json cron line, once-daily (this repo has a documented Vercel Hobby-plan once-daily-per-cron limit, see PR #319).
+
+DO NOT TOUCH (other work is concurrently running against these): src/lib/services/permission-service.ts, any RBAC/role-check logic anywhere, or any General Ledger/Chart of Accounts/Fiscal Year/Journal Entries/Accounts Payable/Accounts Receivable/Banking/Cash Management/Cost Centers/Budgets/Financial Statements/Sales Invoices/Purchase Orders/Purchase Receipts/RFQs/Supplier Quotations/Sales Credit Notes/Inventory route-level permission logic.
+
+Before finishing: run tsc --noEmit, eslint, and the full test suite (bun test) and report real pass/fail numbers, not just "tests pass." Maintain PROGRESS.md as instructed below.

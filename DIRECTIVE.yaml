@@ -1,0 +1,277 @@
+directive_id: DIRECTIVE
+title: "Generic Autonomous Proxy Execution & Resilient Continuity"
+status: ACTIVE
+supersedes: [DIRECTIVE-001, DIRECTIVE-002]
+merge_reason: >-
+  Owner directive 2026-07-28: one generic engine, priority-ordered tasks live
+  in the system (this file + umr_tasks), not hardcoded per-purpose scripts.
+created_for: "Flaky Owner-side SSH/laptop/internet -- work must survive full disconnect."
+
+agent:
+  cli: claude-code-cli
+  model: sonnet-5.0
+  node: VERIDIAN-DEV (167.233.220.35)
+  proxy_mode: OWNER_PROXY_ACTIVATED
+  permissions: OWNER_LEVEL
+
+routing_override:
+  avoid_scripts:
+    - "/opt/veridian/scripts/task-gateway.py start"   # confirmed 2026-07-27: this action reaches
+                                                        # systemctl/veridian-task.py directly, bypassing
+                                                        # resource_governor.py's concurrency cap/emergency-
+                                                        # stop/task_identity-dedup -- do not use this action.
+                                                        # NOTE (Stage 5, 2026-07-29): narrowed from the whole
+                                                        # task-gateway.py file -- `submit` (not `start`) is the
+                                                        # real, valuable check-duplicate/search/query-knowledge/
+                                                        # lookup-capability battery directive_engine.py now
+                                                        # calls before every resource_governor.py --submit (see
+                                                        # directive_engine.py's run_check_duplicate_battery()).
+                                                        # That subcommand was never the broken part and must
+                                                        # keep being used, not avoided.
+  dedup_mechanism: >-
+    Stage 5 (2026-07-29) rewrite -- this used to claim resource_governor.py's
+    submit()-time task_identity match against umr_tasks was "the ONLY dedup
+    layer relied on -- do not build a second one". That claim is now stale:
+    three complementary, non-competing mechanisms exist and are each real and
+    necessary, not redundant with each other:
+      1. resource_governor.py submit()'s exact task_identity match (via
+         superboss-register.py's find_active_umr_by_identity()) -- blocks a
+         SECOND submission of the identical task_identity while the FIRST is
+         still queued/dispatched/running. Cheap, in-process, catches the
+         common concurrent-resubmission case, but blind to (a) a prior
+         attempt that already went terminal with a real PR still open (see
+         resource_governor.py's Stage 4/5 duplicate-PR guard below) and (b)
+         semantically-equivalent-but-differently-worded new work.
+      2. task-gateway.py submit's check-duplicate/search/query-knowledge/
+         lookup-capability battery (cmd_submit, now wired into
+         directive_engine.py's dispatch path via
+         run_check_duplicate_battery() -- Stage 5) -- a real, keyword/
+         semantic-level check across superboss-register.py's instruction and
+         work-item history, catching duplicate INTENT even when task_identity
+         strings differ or the target was never previously tracked as a UMR
+         row at all (e.g. an Owner instruction that never went through the
+         governor).
+      3. A content-hash check on instruction text (superboss-register.py) --
+         catches byte-identical/near-identical instruction text submitted
+         under a different task_identity, independent of both mechanisms
+         above.
+    resource_governor.py's Stage 4/5 governor-level PR-existence guard
+    (find_pr_for_task_identity() + _recorded_new_task_ids_for_identity(), gh
+    pr list against the real worker branch(es) a task_identity's prior
+    dispatches actually created) is a fourth, later-stage layer, checked at
+    actual dispatch time rather than at submission time -- it catches the
+    case none of the above three fully cover: a prior attempt that already
+    produced a real, still-open PR under a DIFFERENT freshly-minted worker
+    branch name (veridian-task.py mints a new branch per dispatch, not one
+    derived from task_identity). These layers check different things at
+    different points in the pipeline (submission-time identity, submission-
+    time semantic intent, submission-time exact text, dispatch-time real PR
+    state) -- do not remove any one of them believing another already covers
+    it, and do not build a FIFTH layer duplicating one of these four without
+    first confirming which of these four, if any, already covers the gap.
+
+server_governance_directives:
+  task_logging:
+    primary_database: /opt/veridian/ai-os/memory/superboss-register.sqlite
+    primary_table: umr_tasks
+    real_schema: >-
+      umr_id (PK), task_identity, ts_submitted, tier (0-4), status, source_trigger,
+      task_kind, unit_name, inputs_json, outputs_json, logs_ref,
+      metric_snapshot_json, ts_dispatched, ts_sigterm, ts_completed, reason,
+      metadata_json. Confirmed live 2026-07-28 -- do not assume different column
+      names (an earlier directive draft assumed task_id/input_source, both wrong).
+    real_status_enum: >-
+      queued, dispatched, running, completed, failed, rejected_duplicate,
+      sigterm_sent, killed. Terminal: completed, failed, rejected_duplicate, killed.
+    action: "Insert into umr_tasks via resource_governor.py --submit. Never write umr_tasks directly."
+  resource_management:
+    active_script: /opt/veridian/scripts/resource_governor.py
+    hard_caps: "99% on CPU, RAM, Disk IO, Network"
+    real_gap_found_and_fixed_2026-07-28: >-
+      Submitting to umr_tasks alone does nothing -- something must actually run
+      `resource_governor.py --tick` to drain the queue. Cron is stopped (2026-07-26
+      OOM incident, not reversed). Fixed by a dedicated persistent tick loop,
+      NOT cron: /opt/veridian/scripts/resource_governor_tick_loop.sh in its own
+      detached screen session (resource_governor_tick). This MUST be alive or
+      every submitted task sits in 'queued' forever.
+  communication:
+    rule: STRICTLY_ENFORCED
+    interval_minutes: 5
+    format: "[TASK_IDENTITY]: <status under 10 words>"
+    log_path: /opt/veridian/ai-os/tasks/directive_status.log
+
+constraints:
+  - ZERO_DUPLICATION: "check VCEL engine registry, report_definitions, and wiring_registry before building anything new"
+  - ZERO_MANUAL_OWNER_LABOR: "do not ask the Owner routine judgment calls; queue anything genuinely risky for review instead of asking or guessing"
+  - MERGE_SAFETY: "tier1+PASS auto-mergeable. tier2 or any FAIL held in PENDING_OWNER_REVIEW.md, never merged unsupervised. This is not negotiable, do_not_ask_owner_for_decisions means don't stall on routine calls, not bypass this gate."
+  - NO_BROWSER_AUTOMATION_COURIER: >-
+      evaluated and declined 2026-07-28 -- real ToS/credential risk that does not
+      reduce with a flaky laptop connection. This engine's server-side resilience
+      IS the actual fix for that problem, not browser automation.
+  - NO_SECOND_EXTERNAL_AI_DB: >-
+      external_ai_state_machine.py + external_ai_state.sqlite already does
+      session/chunk tracking for external-AI-relay work (proven, 12 SAP modules
+      saved through it). Route through it, do not build a parallel one.
+  - CHECK_UMR_BEFORE_STARTING: "resume from real umr_tasks state, never re-run a task_identity already completed"
+  - DO_NOT_STOP: "process the priority_queue below to convergence; halt a single task for review on real failure, do not halt the whole engine"
+  - CLAUDE_CODE_CLI_ONLY_TEMPORARY: >-
+      Owner directive 2026-07-29, UPDATED 2026-07-29 (same day, later in session) from a fixed
+      2026-08-05 expiry to OPEN-ENDED: Claude Code CLI (via the direct VERIDIAN-DEV SSH session,
+      Sonnet 5.0 HIGH effort) is now the DEFAULT model for all AI work system-wide, continuing
+      until an explicit new order from the Owner changes it -- NOT tied to any specific calendar
+      date anymore. This still covers VERIDIAN's own real, live, already-built product-level AI
+      routing (OpenRouter/Groq/Cerebras integrations in compliance-tracker -- see
+      veridian_openrouter_layer1-4_wave45 memory) -- do NOT use openrouter.ai, cerebras.ai, or
+      groq for anything unless/until the Owner explicitly says otherwise. This is still NOT a
+      permanent architecture DELETION -- those integrations are real, working features and must
+      NOT be deleted/ripped out, only not relied upon by default. Explicit carve-out, confirmed
+      with Owner 2026-07-29: the existing Z.ai free-chat-session task queue (zai-sap-reports-queue
+      repo, 6 SAP report tasks) is NOT covered by this restriction and continues running as-is.
+      Do NOT assume this restriction has lapsed just because 2026-08-05 arrives or passes -- it
+      now only ends on an explicit new Owner instruction, not a date. Re-check for that explicit
+      instruction before ever routing real work through openrouter/cerebras/groq again.
+
+execution_policy:
+  connectivity_patience_seconds: 300  # standing rule: wait this long on any SSH
+                                       # fluctuation before retrying/fixing anything;
+                                       # Owner's own power/internet is known-flaky
+  poll_queue_file_seconds: 60
+  heartbeat_seconds: 300
+
+status_inquiry_protocol:
+  trigger: "Owner submits 'DIRECTIVE status'"
+  action: >-
+    Do NOT execute or modify any task. Run:
+    SELECT umr_id, task_identity, status, tier FROM umr_tasks
+    WHERE task_identity LIKE 'PHASE-%' OR task_identity LIKE 'PR%'
+    ORDER BY ts_submitted;
+    Output a clean formatted table.
+
+integration_instructions:
+  - cross_reference_wiring_registry_before_creating_new_modules
+  - use_terminology_register_to_name_all_new_fields
+  - do_not_assume_auto_deploy: "PR merge alone does not sync to /opt/veridian/scripts/ -- run deploy-live-scripts.sh after any merge to a script this engine depends on"
+
+real_implementation_notes:
+  - "3 engine components must all be alive or nothing runs: this master loop, resource_governor_tick, and the systemd worker units veridian-task.py create actually spawns."
+  - "A task's task_identity must stay stable across sessions -- it is the only thing preventing a resumed session from double-submitting already in-flight work."
+  - "priority is an explicit field, not insertion order -- but priority alone does NOT express dependency order. Real bug hit and fixed 2026-07-28: the first merged-engine version submitted all 6 SAP phases simultaneously despite their real linear dependency (PHASE-2 needs PHASE-1's classification output). Fixed with an explicit depends_on: [task_identity, ...] field -- a task is not submitted until every listed dependency shows real status 'completed'. Use depends_on on any future task that genuinely needs another task's output first; priority alone is only a tie-breaker among tasks that are already independently eligible to run."
+
+# ---------------------------------------------------------------------------
+# PRIORITY QUEUE -- the live, editable task list. Append new tasks anywhere;
+# the running engine re-reads this file every 60s and sorts by `priority`
+# (lower number = higher priority) among anything not yet submitted/in-flight.
+# task_identity must be globally unique. Existing in-flight task_identities
+# below are real, already-submitted umr_tasks rows (2026-07-28) -- kept
+# unchanged so resuming this file does not double-submit them.
+# ---------------------------------------------------------------------------
+priority_queue:
+  - task_identity: PHASE-1-CLASSIFY
+    priority: 1
+    tier: 1
+    repo: compliance-tracker
+    title: "Classify 87 SAP reports into engine_track"
+    prompt: >
+      Classify all 87 rows in sap_mapping.sqlite's sap_reports table into a new
+      engine_track column (calculation | workflow | hybrid). Calculation = pure
+      function, deterministic input->output, no state. Workflow = has
+      state/transitions/SLAs. Add the column if missing, populate every row from
+      real calculation_logic content, do not guess.
+
+  - task_identity: PHASE-2-CROSSREF
+    priority: 2
+    tier: 1
+    repo: compliance-tracker
+    depends_on: [PHASE-1-CLASSIFY]
+    title: "Cross-reference SAP reports vs existing engines (non-duplication)"
+    prompt: >
+      For every sap_reports row, cross-reference against the VCEL calculation-
+      engine registry (confirm its real storage location, do not assume a path),
+      report_definitions, and wiring_registry. Record REUSE_EXISTING(id) /
+      EXTEND_EXISTING(id) / BUILD_NEW in veridian_mapping_status with real
+      findings in veridian_existing_equivalent / veridian_gap_notes.
+
+  - task_identity: PHASE-3-BUILD-CALC
+    priority: 3
+    tier: 2
+    repo: compliance-tracker
+    depends_on: [PHASE-2-CROSSREF]
+    title: "Build/extend calculation-track engines"
+    prompt: >
+      Build/extend only calculation-track engines marked BUILD_NEW or
+      EXTEND_EXISTING from PHASE-2-CROSSREF. Register every new/extended engine
+      in wiring_registry immediately on creation, not batched.
+
+  - task_identity: PHASE-4-BUILD-WORKFLOW
+    priority: 4
+    tier: 2
+    repo: compliance-tracker
+    depends_on: [PHASE-2-CROSSREF]
+    title: "Build/extend workflow-track engines"
+    prompt: >
+      Build/extend only workflow-track engines marked BUILD_NEW or
+      EXTEND_EXISTING from PHASE-2-CROSSREF. Same wiring_registry rule as
+      PHASE-3-BUILD-CALC. These are state machines, not calculation functions --
+      do not force the wrong shape.
+
+  - task_identity: PHASE-5-WIRE-REPORTS
+    priority: 5
+    tier: 2
+    repo: compliance-tracker
+    depends_on: [PHASE-3-BUILD-CALC, PHASE-4-BUILD-WORKFLOW]
+    title: "Wire built engines into report_definitions"
+    prompt: >
+      Wire every engine built or reused in PHASE-3/PHASE-4 into report_definitions
+      so it is reachable by the existing Reports & Analysis Engine dispatcher. No
+      bespoke routes.
+
+  - task_identity: PHASE-6-VERIFY-UI
+    priority: 6
+    tier: 2
+    repo: compliance-tracker
+    depends_on: [PHASE-5-WIRE-REPORTS]
+    title: "Verify wired reports render through the generic renderer"
+    prompt: >
+      For every report_definition wired in PHASE-5, confirm it renders through
+      the existing generic report renderer. Document real renderer gaps rather
+      than building bespoke pages.
+
+  - task_identity: PR617-REVIEW
+    priority: 1
+    tier: 1
+    repo: compliance-tracker
+    title: "Fix PR #617 real AUDIT:FAIL reason"
+    prompt: >
+      PR #617 (Permits/Drawings/Documents) has mergeable=true but last audit
+      says FAIL. Read the full audit comment, fix the real reason, re-adopt,
+      re-sweep. Do not merge until it passes; tier2/FAIL stays open for review.
+
+  - task_identity: PR618-REVIEW
+    priority: 1
+    tier: 1
+    repo: compliance-tracker
+    title: "Fix PR #618 real AUDIT:FAIL reason"
+    prompt: >
+      PR #618 (phase_8 prompt translation/localization/marketplace) has
+      mergeable=unknown, last audit says FAIL. Read the full audit comment, fix
+      the real reason, re-adopt, re-sweep. tier2/FAIL stays open for review.
+
+  - task_identity: PR58-CONFLICT
+    priority: 1
+    tier: 1
+    repo: projexa
+    title: "Resolve fresh conflict on PR #58"
+    prompt: >
+      PR #58 (Work Progress Report) shows CONFLICTING as of 2026-07-28. Fetch
+      fresh main, resolve the real conflict (verify by reading the actual diff,
+      do not assume it is PROGRESS.md again), push, re-adopt, re-sweep.
+
+  - task_identity: PR610-CONFLICT
+    priority: 1
+    tier: 1
+    repo: compliance-tracker
+    title: "Resolve fresh conflict on PR #610"
+    prompt: >
+      PR #610 (Sales Pipeline dashboard) shows CONFLICTING as of 2026-07-28.
+      Fetch fresh main, resolve the real conflict (verify by reading the actual
+      diff), push, re-adopt, re-sweep.

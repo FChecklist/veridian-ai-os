@@ -1,0 +1,20 @@
+TASK: V2-3 -- Verify-and-close Fixed Assets + Change Orders (already shipped)
+
+### V2-3 — Verify-and-close Fixed Assets + Change Orders (already shipped) [D3/D4]
+- READY: yes
+- SOFTWARE TEAM LEVEL: L1 Code Worker (verification + tests, not a build)
+- TASK ID: V2-3-VERIFY-WAVEB-SHIPPED
+- MODULE: compliance-tracker (+ projexa)
+- OBJECTIVE: Confirm the already-shipped Fixed Assets (CRUD+approval+validation) and Change Orders (write path + e-signature auto-transition) surfaces meet the CSV's "Critical" correctness bar; add any missing edge-case test; re-score the rows to No-Gap. NOT a re-build.
+- READ FIRST: §1.1 live-code paths; `erp-fixed-assets-service.test.ts`; `construction-change-order-service.ts`; the CSV rows #43/#44/#59.
+- WHAT TO BUILD: Targeted correctness tests (approval-flow state machine, business-rule validation, e-signature transition) if not already covered; a short evidence note in `ai-os/` citing the routes/pages that close each row.
+- CONSTRAINTS: Additive tests + docs only; no schema. Register claim.
+- DONE CRITERIA: Edge-case tests green; evidence note written; rows re-scored; PR open.
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

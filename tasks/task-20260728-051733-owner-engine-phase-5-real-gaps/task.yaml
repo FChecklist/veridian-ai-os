@@ -1,0 +1,638 @@
+id: task-20260728-051733-owner-engine-phase-5-real-gaps
+title: OWNER_ENGINE Phase 5 real gaps
+status: blocked
+repo: compliance-tracker
+branch: task-20260728-051733-owner-engine-phase-5-real-gaps
+workspace: /opt/veridian/ai-os/tasks/task-20260728-051733-owner-engine-phase-5-real-gaps/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-051733-owner-engine-phase-5-real-gaps
+service: veridian-worker@task-20260728-051733-owner-engine-phase-5-real-gaps.service
+created_at: '2026-07-28T05:17:35.067305+00:00'
+last_checkpoint_at: '2026-07-28T06:05:01.483328+00:00'
+completed_steps: &id002
+- Read AGENTS.md/CONSTITUTION.yaml/ACTIVE-CLAIMS.yaml governance chain, registered
+  claim in ai-os/boss/ACTIVE-CLAIMS.yaml (commit 0b99c670, pushed)
+- Read phase_5_browser_execution_tiers scope from claude-control's VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml
+- 'Verified SPEC''s cited PROJEXA prior art (src/lib/offline/work-progress-queue.ts,
+  PR #54) does NOT exist anywhere in this repo''s history -- `git log --all --diff-filter=A
+  --name-only` zero matches, `gh pr view 54` is the unrelated VERI Reward engine.
+  Built sync-engine.ts fresh instead of adapting a nonexistent file.'
+- 'Real NPU inference: src/lib/browser-execution/npu-engine.ts -- reuses transformers-engine.ts''s
+  exact model (Xenova/all-MiniLM-L6-v2) via @huggingface/transformers'' real `device:
+  "webnn-npu"` execution provider (confirmed real in devices.d.ts''s DEVICE_TYPES),
+  gated by tier-orchestrator''s new shouldAttemptNpu'
+- 'Real Built-in AI inference: src/lib/browser-execution/builtin-ai-engine.ts -- real
+  window.LanguageModel / window.ai.languageModel call path, gated by tier-orchestrator''s
+  new shouldAttemptBuiltinAi'
+- 'tier-orchestrator.ts: added shouldAttemptNpu/shouldAttemptBuiltinAi gates (same
+  pattern as existing shouldAttemptWebLlm) + tests in tier-orchestrator.test.ts'
+- 'Cross-tier storage layer: src/lib/browser-execution/cross-tier-storage.ts -- real
+  OPFS backend, real Cache API backend, IndexedDB backend that reuses (not replaces)
+  model-cache.ts''s IndexedDbModelCache; priority-ordered put/get/delete with real
+  fallback chain'
+- 'Browser-sync engine: src/lib/browser-execution/sync-engine.ts -- OfflineQueue with
+  real same-entity coalescing (the "two queued offline changes to the same record"
+  scenario), resolveConflict() for remote (server-side) conflicts, syncQueue() push
+  pass, pullDeltaSync() delta sync, SyncMutex for concurrent-sync serialization'
+- Full test suites for all 4 new files + orchestrator additions (npu-engine.test.ts,
+  builtin-ai-engine.test.ts, cross-tier-storage.test.ts, sync-engine.test.ts)
+- '`npx tsc --noEmit` clean (NODE_OPTIONS=--max-old-space-size=8192 needed -- repo-wide
+  tsc is memory-heavy under this server''s shared load)'
+- '`bun test src/lib/browser-execution` -- 108 pass, 0 fail'
+- Registered litert-spike as a real entry (`litert_spike_browser_execution_prior_art`)
+  in this repo's own ai-os/MASTER_INDEX.yaml `registries:` list (canonical_path_repo
+  per that file's own header -- no cross-repo write needed) + regenerated the stale
+  `quick_reference` block via ai-os/scripts/generate_quick_reference.py per that block's
+  own protocol. `grep -q litert-spike ai-os/MASTER_INDEX.yaml` passes (phase_5's own
+  success criterion).
+- 'ACTIVE-CLAIMS.yaml entry updated with STATUS UPDATE (implementation complete, PR
+  opened) -- left in `active:` (not moved to `recently_completed:`) since the PR is
+  not yet merged, per that file''s own protocol #3'
+- 'PR opened: https://github.com/FChecklist/compliance-tracker/pull/616 -- all real
+  CI checks pass (Lint, Type Check, Build, Unit Tests, E2E Tests, Analyze, Guardrail
+  Presence, Secret Scanning, Security Pattern, Terminology Guardrail, Doc Cross-Reference/Quarantine/Sentinel,
+  Metadata Index Coverage, Asset Registry Coverage). `audit-check` correctly still
+  fails (awaiting the mandatory human/auditor "AUDIT: PASS/FAIL" comment -- exactly
+  the fresh supervisor audit this task''s own EXPECTED_OUTPUT requires, not bypassed).
+  `Vercel` failed on an unrelated deployment rate-limit, not a code issue.'
+remaining_steps: &id003
+- 'PR #616 needs a fresh supervisor audit before merge (this task does not self-merge
+  per EXPECTED_OUTPUT)'
+- 'Once merged: move ai-os/boss/ACTIVE-CLAIMS.yaml entry from `active:` to `recently_completed:`'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T05:17:37.000364+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'c594540e Merge pull request #606 from FChecklist/worker/task-20260727-153104-re-audit-reporting-module-end-user-for-1'
+  - 'ebb099fd audit: reporting_module_end_user re-verification -- final clean rebuild,
+    no longer touches module-chain files (round 5 audit found those belonged to already-merged
+    PR 609)'
+  - '77250fd6 Merge pull request #602 from FChecklist/worker/task-20260727-153025-re-audit-owner-engine--phases-4-5-8-9--f'
+  - 'bafe07fa fix: rebuild PROGRESS.md on current verified-correct main (round 5)
+    -- previous round used a stale intermediate snapshot missing task-153107 section'
+  - 'aac6e04f fix: rebuild PROGRESS.md cleanly from restored main history plus this
+    task own section only'
+  - '61b74cd5 Merge pull request #609 from FChecklist/feat/projexa-full-module-chain-api'
+  - d45f5f94 Merge remote-tracking branch 'origin/main' into feat/projexa-full-module-chain-api
+  - '74632493 fix: mockTree spreads real capability-tree-service exports, preventing
+    sibling test regression from mock.module override'
+  - '41a73a7a Merge pull request #603 from FChecklist/worker/task-20260727-153107-re-audit-projexa-erp-e2e-for-100pct-comp'
+  - '37b0345e fix: remove duplicate PROGRESS.md header line from reconstruction'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-28T05:22:38.387271+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'c594540e Merge pull request #606 from FChecklist/worker/task-20260727-153104-re-audit-reporting-module-end-user-for-1'
+  - 'ebb099fd audit: reporting_module_end_user re-verification -- final clean rebuild,
+    no longer touches module-chain files (round 5 audit found those belonged to already-merged
+    PR 609)'
+  - '77250fd6 Merge pull request #602 from FChecklist/worker/task-20260727-153025-re-audit-owner-engine--phases-4-5-8-9--f'
+  - 'bafe07fa fix: rebuild PROGRESS.md on current verified-correct main (round 5)
+    -- previous round used a stale intermediate snapshot missing task-153107 section'
+  - 'aac6e04f fix: rebuild PROGRESS.md cleanly from restored main history plus this
+    task own section only'
+  - '61b74cd5 Merge pull request #609 from FChecklist/feat/projexa-full-module-chain-api'
+  - d45f5f94 Merge remote-tracking branch 'origin/main' into feat/projexa-full-module-chain-api
+  - '74632493 fix: mockTree spreads real capability-tree-service exports, preventing
+    sibling test regression from mock.module override'
+  - '41a73a7a Merge pull request #603 from FChecklist/worker/task-20260727-153107-re-audit-projexa-erp-e2e-for-100pct-comp'
+  - '37b0345e fix: remove duplicate PROGRESS.md header line from reconstruction'
+  note: periodic checkpoint
+- at: '2026-07-28T05:27:40.203484+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/browser-execution/tier-orchestrator.test.ts
+  - src/lib/browser-execution/tier-orchestrator.ts
+  - src/lib/browser-execution/builtin-ai-engine.test.ts
+  - src/lib/browser-execution/builtin-ai-engine.ts
+  - src/lib/browser-execution/cross-tier-storage.test.ts
+  - src/lib/browser-execution/cross-tier-storage.ts
+  - src/lib/browser-execution/npu-engine.test.ts
+  - src/lib/browser-execution/npu-engine.ts
+  - src/lib/browser-execution/sync-engine.test.ts
+  - src/lib/browser-execution/sync-engine.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '0b99c670 ai-os: register active-claim for OWNER_ENGINE phase_5 real gap closure'
+  - 'c594540e Merge pull request #606 from FChecklist/worker/task-20260727-153104-re-audit-reporting-module-end-user-for-1'
+  - 'ebb099fd audit: reporting_module_end_user re-verification -- final clean rebuild,
+    no longer touches module-chain files (round 5 audit found those belonged to already-merged
+    PR 609)'
+  - '77250fd6 Merge pull request #602 from FChecklist/worker/task-20260727-153025-re-audit-owner-engine--phases-4-5-8-9--f'
+  - 'bafe07fa fix: rebuild PROGRESS.md on current verified-correct main (round 5)
+    -- previous round used a stale intermediate snapshot missing task-153107 section'
+  - 'aac6e04f fix: rebuild PROGRESS.md cleanly from restored main history plus this
+    task own section only'
+  - '61b74cd5 Merge pull request #609 from FChecklist/feat/projexa-full-module-chain-api'
+  - d45f5f94 Merge remote-tracking branch 'origin/main' into feat/projexa-full-module-chain-api
+  - '74632493 fix: mockTree spreads real capability-tree-service exports, preventing
+    sibling test regression from mock.module override'
+  - '41a73a7a Merge pull request #603 from FChecklist/worker/task-20260727-153107-re-audit-projexa-erp-e2e-for-100pct-comp'
+  note: periodic checkpoint
+- at: '2026-07-28T05:35:44.394650+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/browser-execution/tier-orchestrator.test.ts
+  - src/lib/browser-execution/tier-orchestrator.ts
+  - src/lib/browser-execution/builtin-ai-engine.test.ts
+  - src/lib/browser-execution/builtin-ai-engine.ts
+  - src/lib/browser-execution/cross-tier-storage.test.ts
+  - src/lib/browser-execution/cross-tier-storage.ts
+  - src/lib/browser-execution/npu-engine.test.ts
+  - src/lib/browser-execution/npu-engine.ts
+  - src/lib/browser-execution/sync-engine.test.ts
+  - src/lib/browser-execution/sync-engine.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '0b99c670 ai-os: register active-claim for OWNER_ENGINE phase_5 real gap closure'
+  - 'c594540e Merge pull request #606 from FChecklist/worker/task-20260727-153104-re-audit-reporting-module-end-user-for-1'
+  - 'ebb099fd audit: reporting_module_end_user re-verification -- final clean rebuild,
+    no longer touches module-chain files (round 5 audit found those belonged to already-merged
+    PR 609)'
+  - '77250fd6 Merge pull request #602 from FChecklist/worker/task-20260727-153025-re-audit-owner-engine--phases-4-5-8-9--f'
+  - 'bafe07fa fix: rebuild PROGRESS.md on current verified-correct main (round 5)
+    -- previous round used a stale intermediate snapshot missing task-153107 section'
+  - 'aac6e04f fix: rebuild PROGRESS.md cleanly from restored main history plus this
+    task own section only'
+  - '61b74cd5 Merge pull request #609 from FChecklist/feat/projexa-full-module-chain-api'
+  - d45f5f94 Merge remote-tracking branch 'origin/main' into feat/projexa-full-module-chain-api
+  - '74632493 fix: mockTree spreads real capability-tree-service exports, preventing
+    sibling test regression from mock.module override'
+  - '41a73a7a Merge pull request #603 from FChecklist/worker/task-20260727-153107-re-audit-projexa-erp-e2e-for-100pct-comp'
+  note: periodic checkpoint
+- at: '2026-07-28T05:40:46.080927+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/MASTER_INDEX.yaml
+  completed_steps:
+  - Read AGENTS.md/CONSTITUTION.yaml/ACTIVE-CLAIMS.yaml governance chain, registered
+    claim in ai-os/boss/ACTIVE-CLAIMS.yaml (commit 0b99c670, pushed)
+  - Read phase_5_browser_execution_tiers scope from claude-control's VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml
+  - 'Verified SPEC''s cited PROJEXA prior art (src/lib/offline/work-progress-queue.ts,
+    PR #54) does NOT exist anywhere in this repo''s history -- `git log --all --diff-filter=A
+    --name-only` zero matches, `gh pr view 54` is the unrelated VERI Reward engine.
+    Built sync-engine.ts fresh instead of adapting a nonexistent file.'
+  - 'Real NPU inference: src/lib/browser-execution/npu-engine.ts -- reuses transformers-engine.ts''s
+    exact model (Xenova/all-MiniLM-L6-v2) via @huggingface/transformers'' real `device:
+    "webnn-npu"` execution provider (confirmed real in devices.d.ts''s DEVICE_TYPES),
+    gated by tier-orchestrator''s new shouldAttemptNpu'
+  - 'Real Built-in AI inference: src/lib/browser-execution/builtin-ai-engine.ts --
+    real window.LanguageModel / window.ai.languageModel call path, gated by tier-orchestrator''s
+    new shouldAttemptBuiltinAi'
+  - 'tier-orchestrator.ts: added shouldAttemptNpu/shouldAttemptBuiltinAi gates (same
+    pattern as existing shouldAttemptWebLlm) + tests in tier-orchestrator.test.ts'
+  - 'Cross-tier storage layer: src/lib/browser-execution/cross-tier-storage.ts --
+    real OPFS backend, real Cache API backend, IndexedDB backend that reuses (not
+    replaces) model-cache.ts''s IndexedDbModelCache; priority-ordered put/get/delete
+    with real fallback chain'
+  - 'Browser-sync engine: src/lib/browser-execution/sync-engine.ts -- OfflineQueue
+    with real same-entity coalescing (the "two queued offline changes to the same
+    record" scenario), resolveConflict() for remote (server-side) conflicts, syncQueue()
+    push pass, pullDeltaSync() delta sync, SyncMutex for concurrent-sync serialization'
+  - Full test suites for all 4 new files + orchestrator additions (npu-engine.test.ts,
+    builtin-ai-engine.test.ts, cross-tier-storage.test.ts, sync-engine.test.ts)
+  - '`npx tsc --noEmit` clean (NODE_OPTIONS=--max-old-space-size=8192 needed -- repo-wide
+    tsc is memory-heavy under this server''s shared load)'
+  - '`bun test src/lib/browser-execution` -- 108 pass, 0 fail'
+  remaining_steps:
+  - Register litert-spike as a real entry in ai-os/MASTER_INDEX.yaml -- this repo's
+    own copy IS the canonical repo copy per that file's own `canonical_path_repo`
+    header field, so this is in-repo, not cross-repo (no claude-control write access
+    needed)
+  - Move ACTIVE-CLAIMS.yaml entry from `active:` to `recently_completed:`
+  - Open PR (does not merge itself -- needs fresh supervisor audit per EXPECTED_OUTPUT)
+  recent_commits:
+  - 'd5921707 phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine'
+  - '0b99c670 ai-os: register active-claim for OWNER_ENGINE phase_5 real gap closure'
+  - 'c594540e Merge pull request #606 from FChecklist/worker/task-20260727-153104-re-audit-reporting-module-end-user-for-1'
+  - 'ebb099fd audit: reporting_module_end_user re-verification -- final clean rebuild,
+    no longer touches module-chain files (round 5 audit found those belonged to already-merged
+    PR 609)'
+  - '77250fd6 Merge pull request #602 from FChecklist/worker/task-20260727-153025-re-audit-owner-engine--phases-4-5-8-9--f'
+  - 'bafe07fa fix: rebuild PROGRESS.md on current verified-correct main (round 5)
+    -- previous round used a stale intermediate snapshot missing task-153107 section'
+  - 'aac6e04f fix: rebuild PROGRESS.md cleanly from restored main history plus this
+    task own section only'
+  - '61b74cd5 Merge pull request #609 from FChecklist/feat/projexa-full-module-chain-api'
+  - d45f5f94 Merge remote-tracking branch 'origin/main' into feat/projexa-full-module-chain-api
+  - '74632493 fix: mockTree spreads real capability-tree-service exports, preventing
+    sibling test regression from mock.module override'
+  note: periodic checkpoint
+- at: '2026-07-28T05:45:48.420656+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read AGENTS.md/CONSTITUTION.yaml/ACTIVE-CLAIMS.yaml governance chain, registered
+    claim in ai-os/boss/ACTIVE-CLAIMS.yaml (commit 0b99c670, pushed)
+  - Read phase_5_browser_execution_tiers scope from claude-control's VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml
+  - 'Verified SPEC''s cited PROJEXA prior art (src/lib/offline/work-progress-queue.ts,
+    PR #54) does NOT exist anywhere in this repo''s history -- `git log --all --diff-filter=A
+    --name-only` zero matches, `gh pr view 54` is the unrelated VERI Reward engine.
+    Built sync-engine.ts fresh instead of adapting a nonexistent file.'
+  - 'Real NPU inference: src/lib/browser-execution/npu-engine.ts -- reuses transformers-engine.ts''s
+    exact model (Xenova/all-MiniLM-L6-v2) via @huggingface/transformers'' real `device:
+    "webnn-npu"` execution provider (confirmed real in devices.d.ts''s DEVICE_TYPES),
+    gated by tier-orchestrator''s new shouldAttemptNpu'
+  - 'Real Built-in AI inference: src/lib/browser-execution/builtin-ai-engine.ts --
+    real window.LanguageModel / window.ai.languageModel call path, gated by tier-orchestrator''s
+    new shouldAttemptBuiltinAi'
+  - 'tier-orchestrator.ts: added shouldAttemptNpu/shouldAttemptBuiltinAi gates (same
+    pattern as existing shouldAttemptWebLlm) + tests in tier-orchestrator.test.ts'
+  - 'Cross-tier storage layer: src/lib/browser-execution/cross-tier-storage.ts --
+    real OPFS backend, real Cache API backend, IndexedDB backend that reuses (not
+    replaces) model-cache.ts''s IndexedDbModelCache; priority-ordered put/get/delete
+    with real fallback chain'
+  - 'Browser-sync engine: src/lib/browser-execution/sync-engine.ts -- OfflineQueue
+    with real same-entity coalescing (the "two queued offline changes to the same
+    record" scenario), resolveConflict() for remote (server-side) conflicts, syncQueue()
+    push pass, pullDeltaSync() delta sync, SyncMutex for concurrent-sync serialization'
+  - Full test suites for all 4 new files + orchestrator additions (npu-engine.test.ts,
+    builtin-ai-engine.test.ts, cross-tier-storage.test.ts, sync-engine.test.ts)
+  - '`npx tsc --noEmit` clean (NODE_OPTIONS=--max-old-space-size=8192 needed -- repo-wide
+    tsc is memory-heavy under this server''s shared load)'
+  - '`bun test src/lib/browser-execution` -- 108 pass, 0 fail'
+  - Registered litert-spike as a real entry (`litert_spike_browser_execution_prior_art`)
+    in this repo's own ai-os/MASTER_INDEX.yaml `registries:` list (canonical_path_repo
+    per that file's own header -- no cross-repo write needed) + regenerated the stale
+    `quick_reference` block via ai-os/scripts/generate_quick_reference.py per that
+    block's own protocol. `grep -q litert-spike ai-os/MASTER_INDEX.yaml` passes (phase_5's
+    own success criterion).
+  - 'ACTIVE-CLAIMS.yaml entry updated with STATUS UPDATE (implementation complete,
+    PR opened) -- left in `active:` (not moved to `recently_completed:`) since the
+    PR is not yet merged, per that file''s own protocol #3'
+  remaining_steps:
+  - PR needs a fresh supervisor audit before merge (this task does not self-merge
+    per EXPECTED_OUTPUT)
+  - 'Once merged: move ai-os/boss/ACTIVE-CLAIMS.yaml entry from `active:` to `recently_completed:`'
+  recent_commits:
+  - '8f0e1dc1 ai-os: register litert-spike in MASTER_INDEX.yaml, close 4th phase_5
+    gap'
+  - 'd5921707 phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine'
+  - '0b99c670 ai-os: register active-claim for OWNER_ENGINE phase_5 real gap closure'
+  - 'c594540e Merge pull request #606 from FChecklist/worker/task-20260727-153104-re-audit-reporting-module-end-user-for-1'
+  - 'ebb099fd audit: reporting_module_end_user re-verification -- final clean rebuild,
+    no longer touches module-chain files (round 5 audit found those belonged to already-merged
+    PR 609)'
+  - '77250fd6 Merge pull request #602 from FChecklist/worker/task-20260727-153025-re-audit-owner-engine--phases-4-5-8-9--f'
+  - 'bafe07fa fix: rebuild PROGRESS.md on current verified-correct main (round 5)
+    -- previous round used a stale intermediate snapshot missing task-153107 section'
+  - 'aac6e04f fix: rebuild PROGRESS.md cleanly from restored main history plus this
+    task own section only'
+  - '61b74cd5 Merge pull request #609 from FChecklist/feat/projexa-full-module-chain-api'
+  - d45f5f94 Merge remote-tracking branch 'origin/main' into feat/projexa-full-module-chain-api
+  note: periodic checkpoint
+- at: '2026-07-28T05:51:00.870209+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read AGENTS.md/CONSTITUTION.yaml/ACTIVE-CLAIMS.yaml governance chain, registered
+    claim in ai-os/boss/ACTIVE-CLAIMS.yaml (commit 0b99c670, pushed)
+  - Read phase_5_browser_execution_tiers scope from claude-control's VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml
+  - 'Verified SPEC''s cited PROJEXA prior art (src/lib/offline/work-progress-queue.ts,
+    PR #54) does NOT exist anywhere in this repo''s history -- `git log --all --diff-filter=A
+    --name-only` zero matches, `gh pr view 54` is the unrelated VERI Reward engine.
+    Built sync-engine.ts fresh instead of adapting a nonexistent file.'
+  - 'Real NPU inference: src/lib/browser-execution/npu-engine.ts -- reuses transformers-engine.ts''s
+    exact model (Xenova/all-MiniLM-L6-v2) via @huggingface/transformers'' real `device:
+    "webnn-npu"` execution provider (confirmed real in devices.d.ts''s DEVICE_TYPES),
+    gated by tier-orchestrator''s new shouldAttemptNpu'
+  - 'Real Built-in AI inference: src/lib/browser-execution/builtin-ai-engine.ts --
+    real window.LanguageModel / window.ai.languageModel call path, gated by tier-orchestrator''s
+    new shouldAttemptBuiltinAi'
+  - 'tier-orchestrator.ts: added shouldAttemptNpu/shouldAttemptBuiltinAi gates (same
+    pattern as existing shouldAttemptWebLlm) + tests in tier-orchestrator.test.ts'
+  - 'Cross-tier storage layer: src/lib/browser-execution/cross-tier-storage.ts --
+    real OPFS backend, real Cache API backend, IndexedDB backend that reuses (not
+    replaces) model-cache.ts''s IndexedDbModelCache; priority-ordered put/get/delete
+    with real fallback chain'
+  - 'Browser-sync engine: src/lib/browser-execution/sync-engine.ts -- OfflineQueue
+    with real same-entity coalescing (the "two queued offline changes to the same
+    record" scenario), resolveConflict() for remote (server-side) conflicts, syncQueue()
+    push pass, pullDeltaSync() delta sync, SyncMutex for concurrent-sync serialization'
+  - Full test suites for all 4 new files + orchestrator additions (npu-engine.test.ts,
+    builtin-ai-engine.test.ts, cross-tier-storage.test.ts, sync-engine.test.ts)
+  - '`npx tsc --noEmit` clean (NODE_OPTIONS=--max-old-space-size=8192 needed -- repo-wide
+    tsc is memory-heavy under this server''s shared load)'
+  - '`bun test src/lib/browser-execution` -- 108 pass, 0 fail'
+  - Registered litert-spike as a real entry (`litert_spike_browser_execution_prior_art`)
+    in this repo's own ai-os/MASTER_INDEX.yaml `registries:` list (canonical_path_repo
+    per that file's own header -- no cross-repo write needed) + regenerated the stale
+    `quick_reference` block via ai-os/scripts/generate_quick_reference.py per that
+    block's own protocol. `grep -q litert-spike ai-os/MASTER_INDEX.yaml` passes (phase_5's
+    own success criterion).
+  - 'ACTIVE-CLAIMS.yaml entry updated with STATUS UPDATE (implementation complete,
+    PR opened) -- left in `active:` (not moved to `recently_completed:`) since the
+    PR is not yet merged, per that file''s own protocol #3'
+  - 'PR opened: https://github.com/FChecklist/compliance-tracker/pull/616 -- all real
+    CI checks pass (Lint, Type Check, Build, Unit Tests, E2E Tests, Analyze, Guardrail
+    Presence, Secret Scanning, Security Pattern, Terminology Guardrail, Doc Cross-Reference/Quarantine/Sentinel,
+    Metadata Index Coverage, Asset Registry Coverage). `audit-check` correctly still
+    fails (awaiting the mandatory human/auditor "AUDIT: PASS/FAIL" comment -- exactly
+    the fresh supervisor audit this task''s own EXPECTED_OUTPUT requires, not bypassed).
+    `Vercel` failed on an unrelated deployment rate-limit, not a code issue.'
+  remaining_steps:
+  - 'PR #616 needs a fresh supervisor audit before merge (this task does not self-merge
+    per EXPECTED_OUTPUT)'
+  - 'Once merged: move ai-os/boss/ACTIVE-CLAIMS.yaml entry from `active:` to `recently_completed:`'
+  recent_commits:
+  - '08e324c8 docs: record PR #616 and CI results in PROGRESS.md'
+  - '8f0e1dc1 ai-os: register litert-spike in MASTER_INDEX.yaml, close 4th phase_5
+    gap'
+  - 'd5921707 phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine'
+  - '0b99c670 ai-os: register active-claim for OWNER_ENGINE phase_5 real gap closure'
+  - 'c594540e Merge pull request #606 from FChecklist/worker/task-20260727-153104-re-audit-reporting-module-end-user-for-1'
+  - 'ebb099fd audit: reporting_module_end_user re-verification -- final clean rebuild,
+    no longer touches module-chain files (round 5 audit found those belonged to already-merged
+    PR 609)'
+  - '77250fd6 Merge pull request #602 from FChecklist/worker/task-20260727-153025-re-audit-owner-engine--phases-4-5-8-9--f'
+  - 'bafe07fa fix: rebuild PROGRESS.md on current verified-correct main (round 5)
+    -- previous round used a stale intermediate snapshot missing task-153107 section'
+  - 'aac6e04f fix: rebuild PROGRESS.md cleanly from restored main history plus this
+    task own section only'
+  - '61b74cd5 Merge pull request #609 from FChecklist/feat/projexa-full-module-chain-api'
+  note: periodic checkpoint
+- at: '2026-07-28T05:57:24.300844+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read AGENTS.md/CONSTITUTION.yaml/ACTIVE-CLAIMS.yaml governance chain, registered
+    claim in ai-os/boss/ACTIVE-CLAIMS.yaml (commit 0b99c670, pushed)
+  - Read phase_5_browser_execution_tiers scope from claude-control's VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml
+  - 'Verified SPEC''s cited PROJEXA prior art (src/lib/offline/work-progress-queue.ts,
+    PR #54) does NOT exist anywhere in this repo''s history -- `git log --all --diff-filter=A
+    --name-only` zero matches, `gh pr view 54` is the unrelated VERI Reward engine.
+    Built sync-engine.ts fresh instead of adapting a nonexistent file.'
+  - 'Real NPU inference: src/lib/browser-execution/npu-engine.ts -- reuses transformers-engine.ts''s
+    exact model (Xenova/all-MiniLM-L6-v2) via @huggingface/transformers'' real `device:
+    "webnn-npu"` execution provider (confirmed real in devices.d.ts''s DEVICE_TYPES),
+    gated by tier-orchestrator''s new shouldAttemptNpu'
+  - 'Real Built-in AI inference: src/lib/browser-execution/builtin-ai-engine.ts --
+    real window.LanguageModel / window.ai.languageModel call path, gated by tier-orchestrator''s
+    new shouldAttemptBuiltinAi'
+  - 'tier-orchestrator.ts: added shouldAttemptNpu/shouldAttemptBuiltinAi gates (same
+    pattern as existing shouldAttemptWebLlm) + tests in tier-orchestrator.test.ts'
+  - 'Cross-tier storage layer: src/lib/browser-execution/cross-tier-storage.ts --
+    real OPFS backend, real Cache API backend, IndexedDB backend that reuses (not
+    replaces) model-cache.ts''s IndexedDbModelCache; priority-ordered put/get/delete
+    with real fallback chain'
+  - 'Browser-sync engine: src/lib/browser-execution/sync-engine.ts -- OfflineQueue
+    with real same-entity coalescing (the "two queued offline changes to the same
+    record" scenario), resolveConflict() for remote (server-side) conflicts, syncQueue()
+    push pass, pullDeltaSync() delta sync, SyncMutex for concurrent-sync serialization'
+  - Full test suites for all 4 new files + orchestrator additions (npu-engine.test.ts,
+    builtin-ai-engine.test.ts, cross-tier-storage.test.ts, sync-engine.test.ts)
+  - '`npx tsc --noEmit` clean (NODE_OPTIONS=--max-old-space-size=8192 needed -- repo-wide
+    tsc is memory-heavy under this server''s shared load)'
+  - '`bun test src/lib/browser-execution` -- 108 pass, 0 fail'
+  - Registered litert-spike as a real entry (`litert_spike_browser_execution_prior_art`)
+    in this repo's own ai-os/MASTER_INDEX.yaml `registries:` list (canonical_path_repo
+    per that file's own header -- no cross-repo write needed) + regenerated the stale
+    `quick_reference` block via ai-os/scripts/generate_quick_reference.py per that
+    block's own protocol. `grep -q litert-spike ai-os/MASTER_INDEX.yaml` passes (phase_5's
+    own success criterion).
+  - 'ACTIVE-CLAIMS.yaml entry updated with STATUS UPDATE (implementation complete,
+    PR opened) -- left in `active:` (not moved to `recently_completed:`) since the
+    PR is not yet merged, per that file''s own protocol #3'
+  - 'PR opened: https://github.com/FChecklist/compliance-tracker/pull/616 -- all real
+    CI checks pass (Lint, Type Check, Build, Unit Tests, E2E Tests, Analyze, Guardrail
+    Presence, Secret Scanning, Security Pattern, Terminology Guardrail, Doc Cross-Reference/Quarantine/Sentinel,
+    Metadata Index Coverage, Asset Registry Coverage). `audit-check` correctly still
+    fails (awaiting the mandatory human/auditor "AUDIT: PASS/FAIL" comment -- exactly
+    the fresh supervisor audit this task''s own EXPECTED_OUTPUT requires, not bypassed).
+    `Vercel` failed on an unrelated deployment rate-limit, not a code issue.'
+  remaining_steps:
+  - 'PR #616 needs a fresh supervisor audit before merge (this task does not self-merge
+    per EXPECTED_OUTPUT)'
+  - 'Once merged: move ai-os/boss/ACTIVE-CLAIMS.yaml entry from `active:` to `recently_completed:`'
+  recent_commits:
+  - '08e324c8 docs: record PR #616 and CI results in PROGRESS.md'
+  - '8f0e1dc1 ai-os: register litert-spike in MASTER_INDEX.yaml, close 4th phase_5
+    gap'
+  - 'd5921707 phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine'
+  - '0b99c670 ai-os: register active-claim for OWNER_ENGINE phase_5 real gap closure'
+  - 'c594540e Merge pull request #606 from FChecklist/worker/task-20260727-153104-re-audit-reporting-module-end-user-for-1'
+  - 'ebb099fd audit: reporting_module_end_user re-verification -- final clean rebuild,
+    no longer touches module-chain files (round 5 audit found those belonged to already-merged
+    PR 609)'
+  - '77250fd6 Merge pull request #602 from FChecklist/worker/task-20260727-153025-re-audit-owner-engine--phases-4-5-8-9--f'
+  - 'bafe07fa fix: rebuild PROGRESS.md on current verified-correct main (round 5)
+    -- previous round used a stale intermediate snapshot missing task-153107 section'
+  - 'aac6e04f fix: rebuild PROGRESS.md cleanly from restored main history plus this
+    task own section only'
+  - '61b74cd5 Merge pull request #609 from FChecklist/feat/projexa-full-module-chain-api'
+  note: periodic checkpoint
+- at: '2026-07-28T06:03:14.810260+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read AGENTS.md/CONSTITUTION.yaml/ACTIVE-CLAIMS.yaml governance chain, registered
+    claim in ai-os/boss/ACTIVE-CLAIMS.yaml (commit 0b99c670, pushed)
+  - Read phase_5_browser_execution_tiers scope from claude-control's VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml
+  - 'Verified SPEC''s cited PROJEXA prior art (src/lib/offline/work-progress-queue.ts,
+    PR #54) does NOT exist anywhere in this repo''s history -- `git log --all --diff-filter=A
+    --name-only` zero matches, `gh pr view 54` is the unrelated VERI Reward engine.
+    Built sync-engine.ts fresh instead of adapting a nonexistent file.'
+  - 'Real NPU inference: src/lib/browser-execution/npu-engine.ts -- reuses transformers-engine.ts''s
+    exact model (Xenova/all-MiniLM-L6-v2) via @huggingface/transformers'' real `device:
+    "webnn-npu"` execution provider (confirmed real in devices.d.ts''s DEVICE_TYPES),
+    gated by tier-orchestrator''s new shouldAttemptNpu'
+  - 'Real Built-in AI inference: src/lib/browser-execution/builtin-ai-engine.ts --
+    real window.LanguageModel / window.ai.languageModel call path, gated by tier-orchestrator''s
+    new shouldAttemptBuiltinAi'
+  - 'tier-orchestrator.ts: added shouldAttemptNpu/shouldAttemptBuiltinAi gates (same
+    pattern as existing shouldAttemptWebLlm) + tests in tier-orchestrator.test.ts'
+  - 'Cross-tier storage layer: src/lib/browser-execution/cross-tier-storage.ts --
+    real OPFS backend, real Cache API backend, IndexedDB backend that reuses (not
+    replaces) model-cache.ts''s IndexedDbModelCache; priority-ordered put/get/delete
+    with real fallback chain'
+  - 'Browser-sync engine: src/lib/browser-execution/sync-engine.ts -- OfflineQueue
+    with real same-entity coalescing (the "two queued offline changes to the same
+    record" scenario), resolveConflict() for remote (server-side) conflicts, syncQueue()
+    push pass, pullDeltaSync() delta sync, SyncMutex for concurrent-sync serialization'
+  - Full test suites for all 4 new files + orchestrator additions (npu-engine.test.ts,
+    builtin-ai-engine.test.ts, cross-tier-storage.test.ts, sync-engine.test.ts)
+  - '`npx tsc --noEmit` clean (NODE_OPTIONS=--max-old-space-size=8192 needed -- repo-wide
+    tsc is memory-heavy under this server''s shared load)'
+  - '`bun test src/lib/browser-execution` -- 108 pass, 0 fail'
+  - Registered litert-spike as a real entry (`litert_spike_browser_execution_prior_art`)
+    in this repo's own ai-os/MASTER_INDEX.yaml `registries:` list (canonical_path_repo
+    per that file's own header -- no cross-repo write needed) + regenerated the stale
+    `quick_reference` block via ai-os/scripts/generate_quick_reference.py per that
+    block's own protocol. `grep -q litert-spike ai-os/MASTER_INDEX.yaml` passes (phase_5's
+    own success criterion).
+  - 'ACTIVE-CLAIMS.yaml entry updated with STATUS UPDATE (implementation complete,
+    PR opened) -- left in `active:` (not moved to `recently_completed:`) since the
+    PR is not yet merged, per that file''s own protocol #3'
+  - 'PR opened: https://github.com/FChecklist/compliance-tracker/pull/616 -- all real
+    CI checks pass (Lint, Type Check, Build, Unit Tests, E2E Tests, Analyze, Guardrail
+    Presence, Secret Scanning, Security Pattern, Terminology Guardrail, Doc Cross-Reference/Quarantine/Sentinel,
+    Metadata Index Coverage, Asset Registry Coverage). `audit-check` correctly still
+    fails (awaiting the mandatory human/auditor "AUDIT: PASS/FAIL" comment -- exactly
+    the fresh supervisor audit this task''s own EXPECTED_OUTPUT requires, not bypassed).
+    `Vercel` failed on an unrelated deployment rate-limit, not a code issue.'
+  remaining_steps:
+  - 'PR #616 needs a fresh supervisor audit before merge (this task does not self-merge
+    per EXPECTED_OUTPUT)'
+  - 'Once merged: move ai-os/boss/ACTIVE-CLAIMS.yaml entry from `active:` to `recently_completed:`'
+  recent_commits:
+  - '08e324c8 docs: record PR #616 and CI results in PROGRESS.md'
+  - '8f0e1dc1 ai-os: register litert-spike in MASTER_INDEX.yaml, close 4th phase_5
+    gap'
+  - 'd5921707 phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine'
+  - '0b99c670 ai-os: register active-claim for OWNER_ENGINE phase_5 real gap closure'
+  - 'c594540e Merge pull request #606 from FChecklist/worker/task-20260727-153104-re-audit-reporting-module-end-user-for-1'
+  - 'ebb099fd audit: reporting_module_end_user re-verification -- final clean rebuild,
+    no longer touches module-chain files (round 5 audit found those belonged to already-merged
+    PR 609)'
+  - '77250fd6 Merge pull request #602 from FChecklist/worker/task-20260727-153025-re-audit-owner-engine--phases-4-5-8-9--f'
+  - 'bafe07fa fix: rebuild PROGRESS.md on current verified-correct main (round 5)
+    -- previous round used a stale intermediate snapshot missing task-153107 section'
+  - 'aac6e04f fix: rebuild PROGRESS.md cleanly from restored main history plus this
+    task own section only'
+  - '61b74cd5 Merge pull request #609 from FChecklist/feat/projexa-full-module-chain-api'
+  note: periodic checkpoint
+- at: '2026-07-28T06:04:54.787240+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read AGENTS.md/CONSTITUTION.yaml/ACTIVE-CLAIMS.yaml governance chain, registered
+    claim in ai-os/boss/ACTIVE-CLAIMS.yaml (commit 0b99c670, pushed)
+  - Read phase_5_browser_execution_tiers scope from claude-control's VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml
+  - 'Verified SPEC''s cited PROJEXA prior art (src/lib/offline/work-progress-queue.ts,
+    PR #54) does NOT exist anywhere in this repo''s history -- `git log --all --diff-filter=A
+    --name-only` zero matches, `gh pr view 54` is the unrelated VERI Reward engine.
+    Built sync-engine.ts fresh instead of adapting a nonexistent file.'
+  - 'Real NPU inference: src/lib/browser-execution/npu-engine.ts -- reuses transformers-engine.ts''s
+    exact model (Xenova/all-MiniLM-L6-v2) via @huggingface/transformers'' real `device:
+    "webnn-npu"` execution provider (confirmed real in devices.d.ts''s DEVICE_TYPES),
+    gated by tier-orchestrator''s new shouldAttemptNpu'
+  - 'Real Built-in AI inference: src/lib/browser-execution/builtin-ai-engine.ts --
+    real window.LanguageModel / window.ai.languageModel call path, gated by tier-orchestrator''s
+    new shouldAttemptBuiltinAi'
+  - 'tier-orchestrator.ts: added shouldAttemptNpu/shouldAttemptBuiltinAi gates (same
+    pattern as existing shouldAttemptWebLlm) + tests in tier-orchestrator.test.ts'
+  - 'Cross-tier storage layer: src/lib/browser-execution/cross-tier-storage.ts --
+    real OPFS backend, real Cache API backend, IndexedDB backend that reuses (not
+    replaces) model-cache.ts''s IndexedDbModelCache; priority-ordered put/get/delete
+    with real fallback chain'
+  - 'Browser-sync engine: src/lib/browser-execution/sync-engine.ts -- OfflineQueue
+    with real same-entity coalescing (the "two queued offline changes to the same
+    record" scenario), resolveConflict() for remote (server-side) conflicts, syncQueue()
+    push pass, pullDeltaSync() delta sync, SyncMutex for concurrent-sync serialization'
+  - Full test suites for all 4 new files + orchestrator additions (npu-engine.test.ts,
+    builtin-ai-engine.test.ts, cross-tier-storage.test.ts, sync-engine.test.ts)
+  - '`npx tsc --noEmit` clean (NODE_OPTIONS=--max-old-space-size=8192 needed -- repo-wide
+    tsc is memory-heavy under this server''s shared load)'
+  - '`bun test src/lib/browser-execution` -- 108 pass, 0 fail'
+  - Registered litert-spike as a real entry (`litert_spike_browser_execution_prior_art`)
+    in this repo's own ai-os/MASTER_INDEX.yaml `registries:` list (canonical_path_repo
+    per that file's own header -- no cross-repo write needed) + regenerated the stale
+    `quick_reference` block via ai-os/scripts/generate_quick_reference.py per that
+    block's own protocol. `grep -q litert-spike ai-os/MASTER_INDEX.yaml` passes (phase_5's
+    own success criterion).
+  - 'ACTIVE-CLAIMS.yaml entry updated with STATUS UPDATE (implementation complete,
+    PR opened) -- left in `active:` (not moved to `recently_completed:`) since the
+    PR is not yet merged, per that file''s own protocol #3'
+  - 'PR opened: https://github.com/FChecklist/compliance-tracker/pull/616 -- all real
+    CI checks pass (Lint, Type Check, Build, Unit Tests, E2E Tests, Analyze, Guardrail
+    Presence, Secret Scanning, Security Pattern, Terminology Guardrail, Doc Cross-Reference/Quarantine/Sentinel,
+    Metadata Index Coverage, Asset Registry Coverage). `audit-check` correctly still
+    fails (awaiting the mandatory human/auditor "AUDIT: PASS/FAIL" comment -- exactly
+    the fresh supervisor audit this task''s own EXPECTED_OUTPUT requires, not bypassed).
+    `Vercel` failed on an unrelated deployment rate-limit, not a code issue.'
+  remaining_steps:
+  - 'PR #616 needs a fresh supervisor audit before merge (this task does not self-merge
+    per EXPECTED_OUTPUT)'
+  - 'Once merged: move ai-os/boss/ACTIVE-CLAIMS.yaml entry from `active:` to `recently_completed:`'
+  recent_commits:
+  - '08e324c8 docs: record PR #616 and CI results in PROGRESS.md'
+  - '8f0e1dc1 ai-os: register litert-spike in MASTER_INDEX.yaml, close 4th phase_5
+    gap'
+  - 'd5921707 phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine'
+  - '0b99c670 ai-os: register active-claim for OWNER_ENGINE phase_5 real gap closure'
+  - 'c594540e Merge pull request #606 from FChecklist/worker/task-20260727-153104-re-audit-reporting-module-end-user-for-1'
+  - 'ebb099fd audit: reporting_module_end_user re-verification -- final clean rebuild,
+    no longer touches module-chain files (round 5 audit found those belonged to already-merged
+    PR 609)'
+  - '77250fd6 Merge pull request #602 from FChecklist/worker/task-20260727-153025-re-audit-owner-engine--phases-4-5-8-9--f'
+  - 'bafe07fa fix: rebuild PROGRESS.md on current verified-correct main (round 5)
+    -- previous round used a stale intermediate snapshot missing task-153107 section'
+  - 'aac6e04f fix: rebuild PROGRESS.md cleanly from restored main history plus this
+    task own section only'
+  - '61b74cd5 Merge pull request #609 from FChecklist/feat/projexa-full-module-chain-api'
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-28T06:05:01.483328+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '08e324c8 docs: record PR #616 and CI results in PROGRESS.md'
+  - '8f0e1dc1 ai-os: register litert-spike in MASTER_INDEX.yaml, close 4th phase_5
+    gap'
+  - 'd5921707 phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine'
+  - '0b99c670 ai-os: register active-claim for OWNER_ENGINE phase_5 real gap closure'
+  - 'c594540e Merge pull request #606 from FChecklist/worker/task-20260727-153104-re-audit-reporting-module-end-user-for-1'
+  - 'ebb099fd audit: reporting_module_end_user re-verification -- final clean rebuild,
+    no longer touches module-chain files (round 5 audit found those belonged to already-merged
+    PR 609)'
+  - '77250fd6 Merge pull request #602 from FChecklist/worker/task-20260727-153025-re-audit-owner-engine--phases-4-5-8-9--f'
+  - 'bafe07fa fix: rebuild PROGRESS.md on current verified-correct main (round 5)
+    -- previous round used a stale intermediate snapshot missing task-153107 section'
+  - 'aac6e04f fix: rebuild PROGRESS.md cleanly from restored main history plus this
+    task own section only'
+  - '61b74cd5 Merge pull request #609 from FChecklist/feat/projexa-full-module-chain-api'
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 2, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+execution_seconds: 1900
+restart_count: 1
+token_usage:
+  input_tokens: 248
+  cache_creation_input_tokens: 180255
+  cache_read_input_tokens: 17235839
+  output_tokens: 87352
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 180255
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 687
+    cache_read_input_tokens: 203547
+    cache_creation_input_tokens: 392
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 392
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:26.514956+00:00'

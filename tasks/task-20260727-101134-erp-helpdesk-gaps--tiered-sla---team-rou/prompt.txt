@@ -1,0 +1,32 @@
+## OBJECTIVE
+Close 3 real, code-verified Helpdesk gaps in compliance-tracker, found by a Phase 0 investigation on 2026-07-27 (Owner directive DEEP_ERP_FUNCTIONALITY_COMPLETION_VIA_ODOO_ERPNEXT_REFERENCE). This is NOT a "build Helpdesk from scratch" task -- compliance-tracker's Helpdesk already EXCEEDS Odoo's stock feature set in some respects (ITIL problem management, AI ticket intelligence, voice-to-ticket intake). These are narrow, real gaps confirmed absent by direct code inspection, specifically where Odoo's stock app is more mature (SLA policy/routing maturity).
+
+## KNOWN_CONTEXT
+Verified real state as of 2026-07-27, do not re-derive or re-verify from scratch (spot-check only):
+- Tickets: full lifecycle, priority, category, SLA deadline, assignee, requester (schema.ts:5206-5230), reusing `conversations`/`messages`/`conversationGuestAccess` for both internal and external guest replies (this IS the customer-portal mechanism today -- guests reply via share-link tokens, schema.ts:5192-5203 Wave 39 rationale).
+- CSAT/NPS (`ticketSatisfactionSurveys`), field-service dispatch, installed-product/warranty tracking already exist.
+- ITIL Problem Management (`problemRecords`+`problemTickets`, schema.ts:5277-5292) already exceeds Odoo's stock Helpdesk app.
+- AI ticket intelligence (`ticketIntelligenceItems`/`ticketIntelligenceActionItems`, ticket-intelligence-service.ts) already exceeds stock Odoo.
+- Knowledge base (`knowledgeBasePages`, hierarchical/versioned/slugs) and voice-to-ticket intake (`voice-ticket-service.ts`) already exist.
+- SLA breach detection cron already exists (`ticket-service.ts:135-153`) -- but today it works off a single manually-supplied `slaDeadline` timestamp set at ticket creation (`ticket-service.ts:71`, `input.slaHours`), not a policy table.
+- REUSE, do not rebuild: the existing `conversations`/`messages`/`conversationGuestAccess`/`conversationShareLinks` infrastructure is the real foundation tickets are built on -- any new Helpdesk work extends this shared layer, never builds a second one.
+- A real scoped external-API-token pattern already exists for other domains (`requireAuthOrApiKey()` + `validateApiKey()`, src/lib/supabase/auth-guard.ts + api-key-auth.ts) -- reuse this if any new endpoint needs non-browser-caller access (e.g. an email-ingestion webhook likely needs its own auth shape, not this one -- your call, but check this pattern first before inventing new auth).
+
+## SCOPE
+1. **Tiered, policy-based SLA + team routing**: confirmed absent (grepped `slaPolic`/`sla_polic`/`escalationRule`/`businessHours` across schema.ts, zero matches). Build: an SLA-policy table (by team/priority/category, with business-hours-aware countdown), an escalation-rule table (chain of assignees/teams on breach), and a team/queue concept for `tickets.assigneeId` (currently a single free-form field with no team/queue routing). Wire ticket creation to resolve its SLA deadline from the matching policy instead of the current manually-supplied `input.slaHours`, preserving backward compatibility for tickets that still pass an explicit override.
+2. **Email-to-ticket ingestion**: not confirmed to exist either way -- verify first (a parallel pattern exists for email generally, `emailIntelligenceItems` schema.ts:9954, which promotes to `tasks`, but nothing was found promoting an inbound email specifically into a `tickets` row -- confirm this with a real grep/read before building, then build a real inbound-email-to-ticket path if genuinely absent, reusing whatever email-ingestion infrastructure `emailIntelligenceItems` already has rather than building a second one).
+3. **Public self-service portal**: verify first whether `knowledgeBasePages` has any internal/external-published flag, and whether a customer can browse KB or self-raise a ticket without a staff-issued guest link today (not verified at the UI layer per the Phase 0 investigation). If genuinely absent, build a minimal real self-service surface: a public KB browse view (respecting the internal/external flag you add if none exists) and a "raise a ticket" form usable without a pre-issued guest link (still real -- creates a genuine guest-scoped conversation/ticket via the existing conversationGuestAccess mechanism, not a new parallel one).
+
+## SUCCESS_CRITERIA
+- All 3 features have real schema + service + route + tests.
+- A real test proving: a ticket created against a matching SLA policy gets the policy's deadline (not the old manual-only path); the email-to-ticket path (if built) correctly creates a ticket from a real inbound-email-shaped payload; the self-service portal (if built) lets an anonymous/unauthenticated caller browse published KB pages and raise a ticket without a pre-issued token.
+- `npx tsc --noEmit` clean. `get_advisors(security)` shows zero new findings -- pay particular attention to the self-service portal, since it is explicitly a new unauthenticated-caller surface.
+
+## EXPECTED_OUTPUT
+A real PR against compliance-tracker through the normal task-gateway dispatch pipeline (AGENTS.md Rule 6/7(c) -- structured audit-verdict comment required before merge, no direct push to main).
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Items 2 and 3 are explicitly verify-first -- if either turns out to already exist, say so plainly in PROGRESS.md and skip building a duplicate rather than building it anyway. The self-service portal is a new unauthenticated-caller attack surface -- treat its input validation and rate-limiting with the same rigor as any other public-facing form in this repo (check how existing guest-facing forms like conversationGuestAccess handle this for precedent).
+
+## COMPLEXITY_TIER
+judgment

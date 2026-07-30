@@ -1,0 +1,20 @@
+VERIDIAN Review Framework gap-closure: AI Cost Governance & FinOps / Cost Monitoring & Forecasting.
+This covers 4 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] AI Cost Governance & FinOps: Cost anomaly detection (a single tenant/role spiking spend)
+  Gap: Only static-threshold alerting exists; no true spend-anomaly (spike-relative-to-baseline) detection
+  Recommended approach: Simple ratio-based deviation check first (cheap, explainable), escalate to statistical methods only if needed
+- [Medium] AI Cost Governance & FinOps: Forecasted AI spend vs actual tracked monthly
+  Gap: No forecasted-vs-actual AI spend tracking
+  Recommended approach: Simple linear run-rate projection first, refine only if inaccurate in practice
+- [Medium] AI Cost Governance & FinOps: FinOps dashboard reconciles engineering cost claims against Finance's ledger
+  Gap: No second, independent 'engineering cost claim' exists to reconcile the Finance ledger against
+  Recommended approach: Defer unless spend scale or an audit requirement justifies building a second independent estimate
+- [Low] AI Cost Governance & FinOps: Unused/idle AI capacity (provisioned but not consumed) identified
+  Gap: Unused/idle AI capacity is not identified anywhere
+  Recommended approach: Simple quarterly query, not worth dedicated tooling at current scale
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

@@ -1,0 +1,267 @@
+id: task-20260718-051002-ai-architecture--domain-accuracy---quali
+title: 'AI Architecture: Domain Accuracy & Quality'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-051002-ai-architecture--domain-accuracy---quali
+workspace: /opt/veridian/ai-os/tasks/task-20260718-051002-ai-architecture--domain-accuracy---quali/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-051002-ai-architecture--domain-accuracy---quali
+service: veridian-worker@task-20260718-051002-ai-architecture--domain-accuracy---quali.service
+created_at: '2026-07-18T05:10:03.126901+00:00'
+last_checkpoint_at: '2026-07-18T05:28:51.899671+00:00'
+completed_steps: &id002
+- Read governance docs (ACTIVE-CLAIMS.yaml, CONSTITUTION.yaml, AGENTS.md, CLAUDE.md)
+  and registered claim in ACTIVE-CLAIMS.yaml (commit `75f15f5a`, pushed)
+- Investigated all 4 findings against current code (see notes above)
+- Add `hasGroundingData()` to `policy-enforcement-engine.ts` (deterministic, zero-false-positive
+  grounding presence check) + 3 unit tests
+- Wire `enforcePolicy()` + `hasGroundingData()` into `report-engine-service.ts::runAiRecipe()`
+- Wire `enforcePolicy()` into `ai-report-builder-service.ts::proposeReportFromUpload()`
+  (text-extraction path only -- vision/image path intentionally not gated, documented
+  inline why)
+- 'report-engine-service.ts/ai-report-builder-service.ts: no new test file added for
+  the wiring itself -- both files'' own established convention (see report-engine-service.test.ts''s
+  header) is DB/network-touching functions are deliberately left untested; the new
+  deterministic logic (`hasGroundingData`) is fully covered where it''s actually pure,
+  in policy-enforcement-engine.test.ts'
+- 'Extend `promptfooconfig.yaml`: reports (`reports.ai_recipe_system`, `reports.ai_builder_system`)
+  + capability-audit contract eval (`capability-audit-contract`, built from the real
+  git-tracked `buildAuditPrompt()` output -- the `ai_team.chief_audit_officer` persona
+  text itself is DB-managed and not in git, documented honestly in the config''s own
+  header); switched provider to the real platform default (`openai/gpt-oss-120b` via
+  Groq) since `OPENAI_API_KEY` isn''t provisioned anywhere in this repo''s secrets
+  (confirmed via whisper-client.ts''s/embeddings.ts''s own header comments) -- the
+  original `openai:gpt-4o-mini` provider could never have run in CI'
+- Add `.github/workflows/ai-prompt-evals.yml` (path-filtered on prompt-bearing files,
+  runs on PRs, uses `GROQ_API_KEY`, mirrors browser-ux-test.yml's real-secrets precedent)
+- 'Add CONSTITUTION.yaml entries: new `DMP-02A` (embeddings.ts/whisper-client.ts as
+  approved capability-tree/policy-gate exceptions, additive-only) + updated `GP-08`
+  mechanism/gap to reflect the new `hasGroundingData()` gate + amendment_log entry'
+- Add "Software-first, AI second" research-direction card to `src/app/page.tsx` (now
+  first of 5 cards; heading/comment counts updated to match)
+- 'Verification: `bunx tsc --noEmit` clean; `bun run lint` 0 errors (same 3 pre-existing
+  warnings in unrelated files as before this change); `bun test` full suite -- **1391
+  pass, 0 fail** (was 1388 before this change -- the +3 are the new `hasGroundingData`
+  tests); governance checks all pass (`check-metadata-index-coverage.mjs`, `check-doc-cross-references.mjs`,
+  `check-guardrail-presence.mjs` 88/88 markers, `check-asset-registry-coverage.mjs`,
+  `check-doc-quarantine-banner.mjs`)'
+- 'promptfooconfig.yaml validated as syntactically-correct YAML directly (js-yaml).
+  Known environment limitation, not a regression: a live `promptfoo validate`/`eval`
+  run in this sandbox fails on a pre-existing `ajv`/`ajv-formats` module-resolution
+  mismatch under `bun install`''s node_modules layout, unrelated to this change''s
+  YAML content (reproduces identically via both `bunx` and `npx` against the file
+  as it stood before this PR''s edits too) -- not something in scope for this finding
+  to fix, and CI''s own `bun install --frozen-lockfile` step may resolve differently
+  than this ad hoc reinstall did.'
+- 'Opened PR: https://github.com/FChecklist/compliance-tracker/pull/417 (not self-merged,
+  per Rule 6/Rule 7(c) -- left for the supervising session''s audit)'
+remaining_steps: &id003
+- 'None outstanding on the code side. Update ACTIVE-CLAIMS.yaml claim -> recently_completed
+  once PR #417 merges (this session does not merge its own PR -- Rule 6/7(c))'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T05:10:03.697156+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  note: worker started (resume=0)
+- at: '2026-07-18T05:15:03.892934+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs + registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - 'Studied existing patterns: whisper-client.ts (mockable HTTP client),'
+  - 1. src/lib/exchange-rate-feed-client.ts -- DB-free open.er-api.com client
+  - 1b. src/lib/exchange-rate-feed-client.test.ts -- mocked-fetch unit tests
+  - '2. erp-accounting-service.ts: refreshLiveExchangeRates(ctx) +'
+  - '3. erp_exchange_rates.source column: schema.ts + additive migration'
+  - 4. POST /api/erp/exchange-rates/refresh (requireAuth-gated)
+  - 5. /api/internal/exchange-rate-refresh/run (CRON_SECRET-gated, same
+  - '6. vercel.json: one once-daily cron line (30 9 * * *)'
+  - 'Verify: `tsc --noEmit` -- 0 errors. `bun run lint` -- 0 errors, 3'
+  remaining_steps:
+  - None -- task complete. Not yet committed/pushed/PR'd (repo has no
+  recent_commits:
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:20:04.099913+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/policy-enforcement-engine.test.ts
+  - src/lib/policy-enforcement-engine.ts
+  - src/lib/services/ai-report-builder-service.ts
+  - src/lib/services/report-engine-service.ts
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS.yaml, CONSTITUTION.yaml, AGENTS.md, CLAUDE.md)
+    and registered claim in ACTIVE-CLAIMS.yaml (commit `75f15f5a`, pushed)
+  - Investigated all 4 findings against current code (see notes above)
+  remaining_steps:
+  - Add `hasGroundingData()` to `policy-enforcement-engine.ts` (deterministic, zero-false-positive
+    grounding presence check) + unit tests
+  - Wire `enforcePolicy()` + `hasGroundingData()` into `report-engine-service.ts::runAiRecipe()`
+  - Wire `enforcePolicy()` into `ai-report-builder-service.ts::proposeReportFromUpload()`
+    (text-extraction path)
+  - Add report-engine-service.test.ts coverage for the new gate
+  - 'Extend `promptfooconfig.yaml`: reports (`reports.ai_recipe_system`, `reports.ai_builder_system`)
+    + capability-audit contract eval; switch provider to the real platform default
+    (`openai/gpt-oss-120b` via Groq) since `OPENAI_API_KEY` isn''t provisioned anywhere
+    in this repo''s secrets'
+  - Add `.github/workflows/ai-prompt-evals.yml` (path-filtered on prompt-bearing files,
+    runs on PRs, uses `GROQ_API_KEY`)
+  - Add CONSTITUTION.yaml entries documenting embeddings.ts/whisper-client.ts as approved
+    capability-tree/policy-gate exceptions
+  - Add "Software-first cognition" research-direction card to `src/app/page.tsx`
+  - Run `bun test`, `bunx tsc --noEmit`, lint on all changed files
+  - Update ACTIVE-CLAIMS.yaml claim -> recently_completed on merge readiness
+  - Open PR (not self-merged, per Rule 6/Rule 7(c) -- left for the supervising session's
+    audit)
+  recent_commits:
+  - '75f15f5a Register active claim: AI Architecture / Domain Accuracy & Quality gap-closure'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:25:04.268508+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/CONSTITUTION.yaml
+  - promptfooconfig.yaml
+  - src/app/page.tsx
+  - src/lib/policy-enforcement-engine.test.ts
+  - src/lib/policy-enforcement-engine.ts
+  - src/lib/services/ai-report-builder-service.ts
+  - src/lib/services/report-engine-service.ts
+  - .github/workflows/ai-prompt-evals.yml
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS.yaml, CONSTITUTION.yaml, AGENTS.md, CLAUDE.md)
+    and registered claim in ACTIVE-CLAIMS.yaml (commit `75f15f5a`, pushed)
+  - Investigated all 4 findings against current code (see notes above)
+  remaining_steps:
+  - Add `hasGroundingData()` to `policy-enforcement-engine.ts` (deterministic, zero-false-positive
+    grounding presence check) + unit tests
+  - Wire `enforcePolicy()` + `hasGroundingData()` into `report-engine-service.ts::runAiRecipe()`
+  - Wire `enforcePolicy()` into `ai-report-builder-service.ts::proposeReportFromUpload()`
+    (text-extraction path)
+  - Add report-engine-service.test.ts coverage for the new gate
+  - 'Extend `promptfooconfig.yaml`: reports (`reports.ai_recipe_system`, `reports.ai_builder_system`)
+    + capability-audit contract eval; switch provider to the real platform default
+    (`openai/gpt-oss-120b` via Groq) since `OPENAI_API_KEY` isn''t provisioned anywhere
+    in this repo''s secrets'
+  - Add `.github/workflows/ai-prompt-evals.yml` (path-filtered on prompt-bearing files,
+    runs on PRs, uses `GROQ_API_KEY`)
+  - Add CONSTITUTION.yaml entries documenting embeddings.ts/whisper-client.ts as approved
+    capability-tree/policy-gate exceptions
+  - Add "Software-first cognition" research-direction card to `src/app/page.tsx`
+  - Run `bun test`, `bunx tsc --noEmit`, lint on all changed files
+  - Update ACTIVE-CLAIMS.yaml claim -> recently_completed on merge readiness
+  - Open PR (not self-merged, per Rule 6/Rule 7(c) -- left for the supervising session's
+    audit)
+  recent_commits:
+  - '75f15f5a Register active claim: AI Architecture / Domain Accuracy & Quality gap-closure'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:28:51.899671+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'fde3b231 Note PR #417 in PROGRESS.md'
+  - b0dc8bf2 Close AI Architecture / Domain Accuracy & Quality review-framework findings
+  - '75f15f5a Register active claim: AI Architecture / Domain Accuracy & Quality gap-closure'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  note: worker finished, no changes to commit
+execution_seconds: 1128
+restart_count: 0
+token_usage:
+  input_tokens: 256
+  cache_creation_input_tokens: 211422
+  cache_read_input_tokens: 21215493
+  output_tokens: 82446
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 211422
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 678
+    cache_read_input_tokens: 234852
+    cache_creation_input_tokens: 108
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 108
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T05:30:03.067352+00:00'

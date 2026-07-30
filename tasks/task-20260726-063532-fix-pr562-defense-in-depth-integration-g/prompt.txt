@@ -1,0 +1,33 @@
+## OBJECTIVE
+Fix the real, correct AUDIT: FAIL findings on compliance-tracker PR #562 (branch worker/task-20260726-043023-phase4-defense-in-depth-prompt-security, phase_4_defense_in_depth_security_quality of ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml). The review (verdict: reject, tier2) is genuine and correct, not a false positive -- read the full findings below and address every one for real.
+
+## KNOWN_CONTEXT
+Verbatim from the real review.json produced by the audit:
+The new src/lib/prompt-security/ module (Layers 1-4, Quality Engine, Red Team Engine) is internally consistent, well-tested, and its tool-evaluation/deferral reasoning is unusually honest, but it is architecturally unsound as a "defense-in-depth" deliverable:
+1. It duplicates two already-existing, already-production-wired security modules -- src/lib/policy-enforcement-engine.ts's enforcePolicy() (already does deterministic prompt-injection/jailbreak regex detection at a real pre-call gate) and src/lib/pii-redaction.ts's redactPii() (already does more comprehensive PII scrubbing including India-specific GSTIN/PAN/IFSC/Aadhaar formats relevant to this compliance platform) -- without referencing, reusing, or reconciling with either. Grep confirms zero cross-reference from the new module to either existing file.
+2. Worse: grep across src/app/ confirms runDefenseInDepth() and the rest of this module are called from nowhere in the actual application. The one real LLM call site in this repo (src/app/api/help/ask/route.ts) already uses enforcePolicy()/redactPii()/passesReplyGate() and is untouched by this PR. So this PR ships a parallel, disconnected prompt-security library that protects zero production traffic -- the opposite of "defense in depth."
+3. The Layer 3/4 Llama Guard calls silently fail open on any network/API error (catch blocks default inputGuard/outputGuard to permissive "safe"), which directly contradicts the module's own docstring claim of "no silent guardrail bypass, matching AGENTS.md Rule 9" -- this needs explicit logging/alerting if it is ever wired in for real.
+4. PROGRESS.md's prior-art review never mentions reading policy-enforcement-engine.ts, pii-redaction.ts, or ai-reply-gate.ts, despite these being the closest existing precedent -- phase_2's own PROGRESS.md explicitly enumerated the prior art it read; this phase's diligence step missed the most relevant existing modules.
+
+None of this is a merge-blocking correctness bug in isolation (the new code is tested and behaves as documented for its own contained logic) -- the problem is architectural: duplication instead of integration, and zero real wiring.
+
+## SCOPE
+1. Read src/lib/policy-enforcement-engine.ts's enforcePolicy() and src/lib/pii-redaction.ts's redactPii() and src/lib/ai-reply-gate.ts fully before changing anything -- these are the real existing prior art this phase's own diligence step missed.
+2. Decide, and justify in PROGRESS.md, one of: (a) extend/reuse enforcePolicy()/redactPii() directly for Layer 1/Layer 4 instead of the new module's own divergent regex/PII lists (preferred -- this repo's own standing rule is "use existing engines, don't duplicate"), or (b) if a genuinely separate detection surface is intentional, explicitly reconcile the two threat-pattern lists and PII patterns so they cannot silently drift out of sync, and add the missing India-specific GSTIN/PAN/IFSC/Aadhaar coverage to Layer 4 so it is not a regression versus the existing redactPii().
+3. Wire runDefenseInDepth() (or whatever the reconciled module ends up being called) into at least one real call site -- src/app/api/help/ask/route.ts is the existing real LLM call site already using enforcePolicy()/redactPii()/passesReplyGate(); integrate there so this phase's deliverable actually protects real production traffic, not zero.
+4. Fix the Layer 3/4 silent fail-open bug: on a Llama Guard network/API error, either throw (matching AGENTS.md Rule 9's own no-silent-guardrail-bypass discipline, which this module's own docstring already claims to follow) or fail closed with explicit logging/alerting -- pick whichever matches how enforcePolicy() itself already handles its own failure mode, for consistency.
+5. Update tests to cover the new integration and the corrected fail-closed/logged behavior.
+
+## SUCCESS_CRITERIA
+- `grep -rn "prompt-security" src/app/api/help/ask/route.ts` returns at least one real match (module is actually wired into a real call site, not zero).
+- `grep -rln "policy-enforcement-engine\|pii-redaction" src/lib/prompt-security/` returns at least one file (new module cross-references the existing modules instead of silently duplicating them).
+- `bun test src/lib/prompt-security/` exits 0 (all existing + updated tests pass, including new tests for the corrected fail-closed/logged Layer 3/4 error behavior).
+
+## EXPECTED_OUTPUT
+Push the fix directly to the EXISTING branch worker/task-20260726-043023-phase4-defense-in-depth-prompt-security in FChecklist/compliance-tracker (updating the existing open PR #562 in place -- do NOT open a new PR or use a different branch name, since that already caused a real supervisor branch-matching failure once this session on a different PR). Update PROGRESS.md with the real prior-art review and the integration decision made.
+
+## CONSTRAINTS
+Tier2 (touches src/lib -- security-relevant + drizzle history from the same PR). Do not merge yourself; this needs a fresh audit pass. Push to the branch named above specifically, not a new one.
+
+## COMPLEXITY_TIER
+judgment

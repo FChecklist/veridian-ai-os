@@ -1,0 +1,46 @@
+## OBJECTIVE
+TASK REQUIRING AI JUDGMENT: close 3 items from ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml. Targets:
+- item_number: 10, requirement: warning_severity_level, current_status: PARTIAL
+- item_number: 11, requirement: veridian_built_login_logging, current_status: PARTIAL
+- item_number: 52, requirement: searchable_indexed_logs, current_status: PARTIAL
+
+## SCOPE
+ITEM_10 OUTPUT:
+- FUNCTION: modify scripts/health-check-15min.py's anomaly-collection logic to emit a distinct "warnings" list separate from "anomalies", threshold lower than anomaly (e.g. disk>=75% is warning, disk>=90% stays anomaly per existing threshold)
+- OUTPUT: health-15min.jsonl gains a "warnings" key (list of str), parallel to existing "anomalies" key
+
+ITEM_11 OUTPUT:
+- FUNCTION: log_login(user: str, source_ip: str, method: str) in scripts/superboss-register.py
+  INPUT: linux username, source IP, auth method ("publickey"|"password")
+  OUTPUT: INSERT into actions table, utm_source="login", utm_content=source_ip, utm_term=method
+- CALL_SITE: a PAM/SSH hook OR parse-on-interval from /var/log/auth.log via scripts/security-check.py (already built Phase 5) -- reuse security-check.py's existing auth.log parsing, add a call to log_login() for each real successful login line found, do not build a second auth.log parser
+
+ITEM_52 OUTPUT:
+- SCRIPT: scripts/index-logs.py (new)
+  INPUT: none (scans ai-os/logs/*.log, ai-os/logs/*.jsonl)
+  OUTPUT: for each log line matching a real event (not blank/whitespace), one row into a new sqlite FTS5 table `log_index` in superboss-register.sqlite (columns: log_file TEXT, line_no INTEGER, ts TEXT, content TEXT) -- reuse the exact same FTS5 CREATE VIRTUAL TABLE + AFTER INSERT trigger pattern already used for instructions/actions/system_index in scripts/superboss-register.py (read that file's existing patterns, copy the convention exactly, do not invent a new one)
+  CRON_ENTRY: */30 * * * * /opt/veridian/scripts/run-logged.sh "index-logs" /usr/bin/python3 /opt/veridian/scripts/index-logs.py >> /opt/veridian/ai-os/logs/index-logs-cron.log 2>&1
+  IDEMPOTENT: track last-indexed line per file via a state file, same pattern as scripts/superboss-register.py's index-transcript command (already built today, read it for the exact pattern)
+
+## KNOWN_CONTEXT
+zero_duplication_check_performed: true
+security_check_py: EXISTS (built Phase 5, task-20260723-120458), already parses /var/log/auth.log for new-source-IP detection -- extend it, do not build a second parser
+index_transcript_command: EXISTS in scripts/superboss-register.py (built earlier today) -- exact precedent for idempotent per-file line-tracking + FTS5 population, copy this pattern for index-logs.py
+db_concurrency_constraint: sequential writes only to superboss-register.sqlite; this phase's own log_index table population must not run concurrently with other phases' writes -- check for other active veridian-worker@ units before starting heavy write loops, brief backoff if found
+
+## SUCCESS_CRITERIA
+TEST_10: one real health-check run produces a non-empty OR explicitly-empty-but-present "warnings" key (distinguish from anomalies key)
+TEST_11: one real login event (from existing auth.log data, historical is fine) produces a real log_login() row, cite the actual row
+TEST_52: `python3 scripts/superboss-register.py search "<any real word known to appear in an existing log file>"` returns a result from the new log_index table -- run this exact command and cite its real output
+
+## EXPECTED_OUTPUT
+COMMIT: scripts/health-check-15min.py diff, scripts/superboss-register.py diff (log_login + log_index table), scripts/security-check.py diff (call log_login), scripts/index-logs.py (new file)
+UPDATE_FILE: ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml items [10, 11, 52] -> DONE with evidence
+CHECKPOINT: status=pending_review, real evidence in note
+NEXT_PHASE: after commit+push+checkpoint, run BOTH in order: (1) veridian-task.py create for Phase 10 with a real named next target (3-5 concrete items, same exact-I/O precision as this document) (2) systemctl --user start veridian-worker@<new-id>.service -- both commands required, this is a hard requirement of this task's own completion, not optional
+
+## CONSTRAINTS
+EVIDENCE_REQUIRED: every DONE status change cites file:line, commit hash, or real command output (not a description of what output would look like)
+
+## COMPLEXITY_TIER
+judgment

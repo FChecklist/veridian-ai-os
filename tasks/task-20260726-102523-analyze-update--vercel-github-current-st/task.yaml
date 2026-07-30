@@ -1,0 +1,189 @@
+id: task-20260726-102523-analyze-update--vercel-github-current-st
+title: 'Analyze+update: Vercel+GitHub current state census (no new builds)'
+status: superseded
+repo: claude-control
+branch: worker/task-20260726-102523-analyze-update--vercel-github-current-st
+workspace: /opt/veridian/ai-os/tasks/task-20260726-102523-analyze-update--vercel-github-current-st/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-102523-analyze-update--vercel-github-current-st
+service: veridian-worker@task-20260726-102523-analyze-update--vercel-github-current-st.service
+created_at: '2026-07-26T10:25:24.339207+00:00'
+last_checkpoint_at: '2026-07-26T10:42:29.146979+00:00'
+completed_steps: &id002
+- Confirmed SYSTEM_MAP.yaml / MASTER_ARCHITECTURE_2026-07-22.yaml (registries.system_map_2026_07_22
+- 'Vercel census (team meet-track-s-projects, via `vercel` CLI + `curl` to `/v2/teams`,
+  live token):'
+- 'GitHub census (all 7 FChecklist repos, via `gh api`/`gh repo`/`gh pr`, not memory):
+  default branch,'
+- Fresh `gh api repos/.../pulls/<n>` (not `gh pr view --json`, which silently truncated
+  long string
+- 'Wrote the full census as a new registries[] entry (id: vercel_github_state_census_2026_07_26)
+  in'
+- Committed and pushed ai-os/MASTER_INDEX.yaml change to a new branch; opened PR against
+  claude-control.
+remaining_steps: &id003
+- None -- task complete. PR left open for review/merge by the user (not merged by
+  this task, per
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T10:25:26.100873+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '581e042 Merge pull request #84 from FChecklist/recovered-lifecycle-fix-e6c7049'
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T10:30:27.246609+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '581e042 Merge pull request #84 from FChecklist/recovered-lifecycle-fix-e6c7049'
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  note: periodic checkpoint
+- at: '2026-07-26T10:35:28.389664+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/MASTER_INDEX.yaml
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '581e042 Merge pull request #84 from FChecklist/recovered-lifecycle-fix-e6c7049'
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  note: periodic checkpoint
+- at: '2026-07-26T10:37:36.115113+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Confirmed SYSTEM_MAP.yaml / MASTER_ARCHITECTURE_2026-07-22.yaml (registries.system_map_2026_07_22
+  - 'Vercel census (team meet-track-s-projects, via `vercel` CLI + `curl` to `/v2/teams`,
+    live token):'
+  - 'GitHub census (all 7 FChecklist repos, via `gh api`/`gh repo`/`gh pr`, not memory):
+    default branch,'
+  - Fresh `gh api repos/.../pulls/<n>` (not `gh pr view --json`, which silently truncated
+    long string
+  - 'Wrote the full census as a new registries[] entry (id: vercel_github_state_census_2026_07_26)
+    in'
+  - Committed and pushed ai-os/MASTER_INDEX.yaml change to a new branch; opened PR
+    against claude-control.
+  remaining_steps:
+  - None -- task complete. PR left open for review/merge by the user (not merged by
+    this task, per
+  recent_commits:
+  - 81db632 Add real Vercel+GitHub state census to MASTER_INDEX.yaml registries[]
+  - '581e042 Merge pull request #84 from FChecklist/recovered-lifecycle-fix-e6c7049'
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  note: quality gates passed, pushed branch worker/task-20260726-102523-analyze-update--vercel-github-current-st,
+    awaiting review
+- at: '2026-07-26T10:42:29.146979+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 81db632 Add real Vercel+GitHub state census to MASTER_INDEX.yaml registries[]
+  - '581e042 Merge pull request #84 from FChecklist/recovered-lifecycle-fix-e6c7049'
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  note: "tier1, Superboss-approved, but the merge itself FAILED (gh pr view confirms\
+    \ state=OPEN, mergedAt=; see supervisor.log) \u2014 needs manual attention, NOT\
+    \ actually merged: https://github.com/FChecklist/claude-control/pull/85"
+execution_seconds: 729
+restart_count: 0
+token_usage:
+  input_tokens: 132
+  cache_creation_input_tokens: 109304
+  cache_read_input_tokens: 5414290
+  output_tokens: 39863
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 109304
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 480
+    cache_read_input_tokens: 131607
+    cache_creation_input_tokens: 1381
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1381
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T11:00:09.610887+00:00'
+duplicate_of: task-20260726-115417-resolve-pr85-merge-conflict--vercel-gith
+superseded_reason: 'Real output is PR #85, already merged 2026-07-26T12:00:54Z under
+  the resolve-pr85-merge-conflict task. The stale note claiming the merge failed was
+  from an earlier PR view before this repo-wide merge actually completed.'
+superseded_at: '2026-07-27T05:07:41.458063+00:00'

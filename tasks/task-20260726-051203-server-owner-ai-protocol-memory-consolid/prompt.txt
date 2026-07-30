@@ -1,0 +1,35 @@
+## OBJECTIVE
+Consolidate every Owner<->AI protocol/directive/rule file under ai-os/OWNER_DIRECTIVES/ (and any equivalent scattered elsewhere in ai-os/) into exactly ONE protocol file and exactly ONE lessons/incidents memory file on the server, mirroring a consolidation already done locally (reference content below), plus a real software mechanism that keeps it that way going forward -- not a one-time manual cleanup.
+
+## KNOWN_CONTEXT
+- The Owner explicitly required: one protocol file, one memory file, on both the laptop (already done) and the server, zero repetition/duplication/confusion, and "a system, software, predictable" -- not just a process description. This task is the server-side half.
+- The real files currently under /opt/veridian/ai-os/OWNER_DIRECTIVES/ as of this task's start (verify the real current list yourself, this may have grown): OWNER_ENGINE_MANDATORY_GATE_2026-07-25.txt, BROWSER_NATIVE_END_USER_ARCHITECTURE_2026-07-25.txt, STANDING_OPERATING_PROTOCOL_2026-07-26.yaml, OWNER_ASSISTANT_RUNBOOK_2026-07-26.yaml, TASK_LIFECYCLE_STATE_MACHINE_2026-07-26.yaml, CHATGPT_AUDIT_AND_PROMPT_LIBRARY_WORKSPACE_2026-07-24.txt, WIRING_ENGINE_SOFTWARE_2026-07-24.txt.
+- CRITICAL SAFETY CHECK before deleting or renaming ANY of these: BROWSER_NATIVE_END_USER_ARCHITECTURE_2026-07-25.txt is cited by exact path as evidence in already-merged content (compliance-tracker PR #74's phase_2/phase_5 scope text in ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml). Before deleting or moving ANY file in OWNER_DIRECTIVES/, grep the ENTIRE real ai-os/ tree (both /opt/veridian/ai-os/ and /opt/veridian/repos/claude-control/ai-os/) plus any merged PR bodies you can check via `gh` for the exact filename -- if a real, live citation exists anywhere, that file's exact path must be preserved (do not delete/rename it), even though its content also gets folded into the new single files for readability. Document every such exception explicitly rather than silently keeping extra files.
+- The two new canonical files should have this real structure (adapt/extend based on what you find in the real OWNER_DIRECTIVES/ files -- this is a floor, not a ceiling; if real content exists that doesn't fit these categories, add real sections for it rather than dropping it):
+  - PROTOCOL file: execution location rule, OWNER_ENGINE gate, communication channels (machine-language internal / English Owner-facing), traceability (Chat Post ID + register-first discipline), completion discipline, 7-step per-phase workflow, quality bars, software-execution-only rule, System=Server+Supabase+Vercel+GitHub definition, self-correction enforcement rules.
+  - MEMORY file: real dated incidents/lessons (task dispatch gotchas, false-success-reporting incidents, stale-claim incidents, coordination gaps) -- pull real content from whatever the current OWNER_DIRECTIVES/ files and ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml actually contain, do not invent incidents not evidenced in real files.
+- "A system, not just a process" means real software enforcement: build scripts/check_single_protocol_file.py that greps ai-os/OWNER_DIRECTIVES/ (and wherever else protocol-like files could appear) for more than one file matching a real, defined "this is a protocol/rules document" signature, and exits non-zero with a clear real error naming the duplicates if more than one exists. Wire it into a real, existing check path (e.g. as a real check inside the pre-flight guard used before task dispatch, or a real cron entry alongside the existing ones, following the Owner-approval-citation pattern already used for every other crontab addition this session) so the invariant is actually enforced automatically, not just documented.
+
+## SCOPE
+1. Enumerate the real current files under ai-os/OWNER_DIRECTIVES/ and any other real Owner<->AI protocol/rule content you find elsewhere in ai-os/ (check ai-os/AI_ENGINEERING_POLICY.yaml and ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml for real protocol-relevant content too, cite what you find).
+2. Run the real citation-safety check from KNOWN_CONTEXT for every file before considering deletion.
+3. Write ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml (the one protocol file) with real, deduplicated content from every source file that is safe to fold in.
+4. Write ai-os/OWNER_DIRECTIVES/MEMORY_OWNER_AI.yaml (the one lessons file) with real, deduplicated content.
+5. Delete every source file that is safe to delete (no live citation found). For any file kept due to a real citation, add an explicit real note in its own header stating it is superseded by PROTOCOL_OWNER_AI.yaml/MEMORY_OWNER_AI.yaml going forward and is retained only as a citation target.
+6. Build scripts/check_single_protocol_file.py per KNOWN_CONTEXT, wire it into a real, existing check path, and test it for real (confirm it currently reports exactly 1 protocol file + 1 memory file, and confirm it would correctly fail if a second one existed -- create then delete a real temp duplicate to prove this).
+7. Register both new files via superboss-register.py register-knowledge, and update ai-os/MASTER_INDEX.yaml (registries.owner_ai_protocol) to point at the two canonical files.
+
+## SUCCESS_CRITERIA
+- `find /opt/veridian/ai-os/OWNER_DIRECTIVES/ -maxdepth 1 -type f | wc -l` real count matches exactly: 2 (the new canonical files) plus however many were genuinely retained for real, documented citation-safety reasons (state that exact number and list the files in your final checkpoint).
+- `python3 scripts/check_single_protocol_file.py` exits 0 against the real post-consolidation state.
+- A real test run proves the checker correctly exits non-zero when a second protocol-like file is present (create a real temp duplicate, run the checker, confirm non-zero exit and a clear error naming it, then delete the temp file).
+- `python3 -c "import yaml; yaml.safe_load(open('ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml'))"` and the same for MEMORY_OWNER_AI.yaml both exit 0 (valid YAML, actually parses -- do not just trust that Write succeeded).
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on claude-control) with the two canonical files, the real checker script wired into a real check path, real test evidence for both the pass and fail case of the checker, the MASTER_INDEX registration, and a final checkpoint listing exactly which OWNER_DIRECTIVES files were deleted, which were kept and why (real citation evidence, not assumption), and the real final file count.
+
+## CONSTRAINTS
+Never delete a file with a real, confirmed live citation elsewhere in the system -- keep it in place with a superseded-by note instead. Never claim the consolidation is complete without actually running yaml.safe_load on both new files and getting a real, clean parse.
+
+## COMPLEXITY_TIER
+judgment

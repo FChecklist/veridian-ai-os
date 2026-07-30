@@ -1,0 +1,259 @@
+id: task-20260726-210339-consolidate-6-dispatch-status-scripts-in
+title: Consolidate 6 dispatch/status scripts into 3 with shared concurrency lock (redispatch,
+  crontab was stale)
+status: not_needed
+repo: claude-control
+branch: worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in
+workspace: /opt/veridian/ai-os/tasks/task-20260726-210339-consolidate-6-dispatch-status-scripts-in/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-210339-consolidate-6-dispatch-status-scripts-in
+service: veridian-worker@task-20260726-210339-consolidate-6-dispatch-status-scripts-in.service
+created_at: '2026-07-26T21:03:40.536119+00:00'
+last_checkpoint_at: '2026-07-26T21:35:08.311156+00:00'
+completed_steps: &id002
+- Read all 6 real scripts in full (supervisor-sweep.sh, queue-dispatcher.py,
+- 'Read supporting context: gap_queue.yaml (dispatch_paused=true,'
+- 'scripts/dispatch_core.py -- new shared library: acquire_dispatch_lock()'
+- 'scripts/superboss-register.py: added ''dispatch_event'' to'
+- scripts/dispatch-tick.py -- consolidation of supervisor-sweep.sh +
+remaining_steps: &id003
+- scripts/phase-continuation-tick.py (refactor of auto_phase_continuation.py,
+- scripts/status-remediation-tick.py (merge of veridian_status_monitor.py +
+- Rename the 6 original scripts with .superseded-by-consolidation-2026-07-27
+- Regression/integration tests (real concurrency test for the shared lock,
+- Final PROGRESS.md pass, PR (not merged by this task)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T21:03:42.234391+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 'e2c9f1c RCA task-20260726-171957 "periodic checkpoint" stall: cap Node build/lint
+    memory in quality-gate.sh to prevent OOM-kill loops'
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T21:08:43.486673+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/module-queue-dispatcher.py
+  - scripts/queue-dispatcher.py
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 'e2c9f1c RCA task-20260726-171957 "periodic checkpoint" stall: cap Node build/lint
+    memory in quality-gate.sh to prevent OOM-kill loops'
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  note: periodic checkpoint
+- at: '2026-07-26T21:13:44.698932+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/superboss-register.py
+  - scripts/dispatch_core.py
+  - scripts/module-queue-dispatcher.py
+  - scripts/queue-dispatcher.py
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 'e2c9f1c RCA task-20260726-171957 "periodic checkpoint" stall: cap Node build/lint
+    memory in quality-gate.sh to prevent OOM-kill loops'
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  note: periodic checkpoint
+- at: '2026-07-26T21:18:45.942027+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read all 6 real scripts in full (supervisor-sweep.sh, queue-dispatcher.py,
+  - 'Read supporting context: gap_queue.yaml (dispatch_paused=true,'
+  - 'scripts/dispatch_core.py -- new shared library: acquire_dispatch_lock()'
+  - 'scripts/superboss-register.py: added ''dispatch_event'' to'
+  - scripts/dispatch-tick.py -- consolidation of supervisor-sweep.sh +
+  remaining_steps:
+  - scripts/phase-continuation-tick.py (refactor of auto_phase_continuation.py,
+  - scripts/status-remediation-tick.py (merge of veridian_status_monitor.py +
+  - Rename the 6 original scripts with .superseded-by-consolidation-2026-07-27
+  - Regression/integration tests (real concurrency test for the shared lock,
+  - Final PROGRESS.md pass, PR (not merged by this task)
+  recent_commits:
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 'e2c9f1c RCA task-20260726-171957 "periodic checkpoint" stall: cap Node build/lint
+    memory in quality-gate.sh to prevent OOM-kill loops'
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  note: periodic checkpoint
+- at: '2026-07-26T21:23:47.305176+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read all 6 real scripts in full (supervisor-sweep.sh, queue-dispatcher.py,
+  - 'Read supporting context: gap_queue.yaml (dispatch_paused=true,'
+  - 'scripts/dispatch_core.py -- new shared library: acquire_dispatch_lock()'
+  - 'scripts/superboss-register.py: added ''dispatch_event'' to'
+  - scripts/dispatch-tick.py -- consolidation of supervisor-sweep.sh +
+  remaining_steps:
+  - scripts/phase-continuation-tick.py (refactor of auto_phase_continuation.py,
+  - scripts/status-remediation-tick.py (merge of veridian_status_monitor.py +
+  - Rename the 6 original scripts with .superseded-by-consolidation-2026-07-27
+  - Regression/integration tests (real concurrency test for the shared lock,
+  - Final PROGRESS.md pass, PR (not merged by this task)
+  recent_commits:
+  - c8a746d Add phase-continuation-tick.py (refactor of auto_phase_continuation.py)
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 'e2c9f1c RCA task-20260726-171957 "periodic checkpoint" stall: cap Node build/lint
+    memory in quality-gate.sh to prevent OOM-kill loops'
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-26T21:28:48.607343+00:00'
+  status: in_progress
+  files_modified:
+  - tests/_dispatch_consolidation_fixtures.py
+  - tests/test_dispatch_core.py
+  - tests/test_dispatch_tick.py
+  completed_steps:
+  - Read all 6 real scripts in full (supervisor-sweep.sh, queue-dispatcher.py,
+  - 'Read supporting context: gap_queue.yaml (dispatch_paused=true,'
+  - 'scripts/dispatch_core.py -- new shared library: acquire_dispatch_lock()'
+  - 'scripts/superboss-register.py: added ''dispatch_event'' to'
+  - scripts/dispatch-tick.py -- consolidation of supervisor-sweep.sh +
+  remaining_steps:
+  - scripts/phase-continuation-tick.py (refactor of auto_phase_continuation.py,
+  - scripts/status-remediation-tick.py (merge of veridian_status_monitor.py +
+  - Rename the 6 original scripts with .superseded-by-consolidation-2026-07-27
+  - Regression/integration tests (real concurrency test for the shared lock,
+  - Final PROGRESS.md pass, PR (not merged by this task)
+  recent_commits:
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  - c8a746d Add phase-continuation-tick.py (refactor of auto_phase_continuation.py)
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 'e2c9f1c RCA task-20260726-171957 "periodic checkpoint" stall: cap Node build/lint
+    memory in quality-gate.sh to prevent OOM-kill loops'
+  note: periodic checkpoint
+- at: '2026-07-26T21:30:41.834486+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read all 6 real scripts in full (supervisor-sweep.sh, queue-dispatcher.py,
+  - 'Read supporting context: gap_queue.yaml (dispatch_paused=true,'
+  - 'scripts/dispatch_core.py -- new shared library: acquire_dispatch_lock()'
+  - 'scripts/superboss-register.py: added ''dispatch_event'' to'
+  - scripts/dispatch-tick.py -- consolidation of supervisor-sweep.sh +
+  remaining_steps:
+  - scripts/phase-continuation-tick.py (refactor of auto_phase_continuation.py,
+  - scripts/status-remediation-tick.py (merge of veridian_status_monitor.py +
+  - Rename the 6 original scripts with .superseded-by-consolidation-2026-07-27
+  - Regression/integration tests (real concurrency test for the shared lock,
+  - Final PROGRESS.md pass, PR (not merged by this task)
+  recent_commits:
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  - c8a746d Add phase-continuation-tick.py (refactor of auto_phase_continuation.py)
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  note: quality gates passed, pushed branch worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in,
+    awaiting review
+- at: '2026-07-26T21:35:08.311156+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  - c8a746d Add phase-continuation-tick.py (refactor of auto_phase_continuation.py)
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  note: "Superboss rejected: https://github.com/FChecklist/claude-control/pull/101\
+    \ \u2014 see review.json for issues"
+execution_seconds: 1619
+restart_count: 0
+token_usage:
+  input_tokens: 194
+  cache_creation_input_tokens: 293128
+  cache_read_input_tokens: 19020483
+  output_tokens: 160710
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 293128
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 513
+    cache_read_input_tokens: 316428
+    cache_creation_input_tokens: 384
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 384
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+closed_at: '2026-07-27T06:23:02.602796+00:00'
+closed_reason: 'Owner directive 2026-07-27: remaining blocked backlog items declared
+  not needed -- deliberately not fixed, not redispatched. Real workspace/branch left
+  intact (not deleted) in case reopened later.'

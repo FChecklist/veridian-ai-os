@@ -1,0 +1,25 @@
+## OBJECTIVE
+Redispatch the real subset of the 218-task 7-day audit (ai-os/TASK_COMPLETION_AUDIT_2026-07-26.json) whose real, verified failure cause was one of three specific bugs that are now genuinely fixed on master as of today (branch-resolution fix PR 84, credit-accountant propose integration, crontab-approval re-sync) -- branch-mismatch (no PR found), approved-but-merge-failed, and crontab-drift pre-flight rejections. These tasks should now succeed cleanly since their root blocker no longer exists in the live pipeline.
+
+## KNOWN_CONTEXT
+Read ai-os/TASK_COMPLETION_AUDIT_2026-07-26.json (the real, already-merged 7-day completion audit) and re-derive the exact task_id list matching real_verified_status in NO_PR_FOUND or OPEN_NOT_DONE whose real last checkpoint note (read each task own ai-os/tasks/ID/task.yaml checkpoints[-1].note) matches one of: could not resolve a real PR (branch-mismatch), merge itself FAILED (post-approval merge failure), crontab_unauthorized_change (crontab drift) -- this session own live bucketing pass just before this dispatch found 6+5+3=14 real tasks matching these three patterns. Do not hardcode a specific list from this prompt -- re-derive it live against the real, current audit JSON and task.yaml files.
+
+## SCOPE
+1. For each of the approximately 14 real matching tasks, read its original ai-os/tasks/ID/prompt.txt (the exact real dispatch prompt originally used).
+2. Before redispatching, do a real, quick relevance check: grep or read whether the task real stated deliverable already exists on the current default branch of its target repo -- skip redispatch for any task whose real objective is already satisfied, and record why.
+3. For every task whose objective is confirmed still real and unmet, resubmit its exact original prompt text via scripts/task-gateway.py submit and start (same repo, same prompt content) -- do not alter the original prompt substance, only redispatch it now that the blocking bug is fixed.
+4. Track real outcomes: for each task, record whether it was skipped (already satisfied, with evidence), redispatched (with its new real task_id), or could not be redispatched (missing or corrupted original prompt.txt, noted honestly).
+5. Write a real, dated report to ai-os/TIER1_REDISPATCH_REPORT_2026-07-26.md listing every task real outcome.
+
+## SUCCESS_CRITERIA
+- python3 -c "t=open('ai-os/TIER1_REDISPATCH_REPORT_2026-07-26.md').read(); assert t.count('REDISPATCHED')+t.count('SKIPPED_ALREADY_SATISFIED')+t.count('COULD_NOT_REDISPATCH')>0; print('OK')" exits 0 with a real, non-zero total across the three outcome labels, matching the number of tasks actually processed, with zero silent omissions.
+- python3 scripts/task-gateway.py status --task-id NEWID (for each real newly-redispatched task_id recorded in the report) returns a real, verifiable status.
+
+## EXPECTED_OUTPUT
+A real PR against claude-control with the report. The redispatched tasks themselves run as separate, real, independent worker tasks -- this task own job is to trigger them and report, not to do their work itself.
+
+## CONSTRAINTS
+Skip any task whose real objective is confirmed already satisfied on the current default branch -- redispatching that one would be pure duplication. Do not alter the substance of any original prompt when redispatching it. Do not merge yourself.
+
+## COMPLEXITY_TIER
+integrative

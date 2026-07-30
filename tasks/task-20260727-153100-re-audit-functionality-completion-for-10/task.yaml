@@ -1,0 +1,1031 @@
+id: task-20260727-153100-re-audit-functionality-completion-for-10
+title: Re-audit functionality_completion for 100pct completion
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260727-153100-re-audit-functionality-completion-for-10
+workspace: /opt/veridian/ai-os/tasks/task-20260727-153100-re-audit-functionality-completion-for-10/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-153100-re-audit-functionality-completion-for-10
+service: veridian-worker@task-20260727-153100-re-audit-functionality-completion-for-10.service
+created_at: '2026-07-27T15:31:01.927578+00:00'
+last_checkpoint_at: '2026-07-28T14:15:04.723684+00:00'
+completed_steps: &id002
+- Read prompt.txt (found at task_dir root, not workspace) -- confirmed full SPEC/SCOPE/SUCCESS_CRITERIA
+- Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+  to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim)
+- 'Fetched PR #591/#592/#593 full bodies (checklists) + audit-verdict comments --
+  all three real `AUDIT: PASS` / `Verdict: pass` from FChecklist'
+- Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule 7(d)
+  doc requirement not fulfilled) -- flagged as secondary finding in the report
+- Confirmed worker branch was a clean ancestor of origin/main; created `audit/functionality-completion-reaudit-20260727`
+  off origin/main (5adeb4cb) for testing + the deliverable
+- 'Dispatched 3 parallel Explore agents (one per PR) to verify every claimed item
+  against real current main code, file:line evidence -- all 3 returned: #591 all-VERIFIED;
+  #592 VERIFIED with 2 cosmetic description inaccuracies (migration 0264->0265 typo,
+  "both routes" overstatement -- only 1 creation route exists and it does work); #593
+  VERIFIED with 1 cosmetic path inaccuracy (goals/raters routes actually live under
+  performance-reviews/, not hr/reviews/ as described)'
+- '`npx tsc --noEmit` (NODE_OPTIONS=--max-old-space-size=8192, needed due to repo
+  size): clean, exit 0 (ran twice, reproduced)'
+- '`bun test src/lib/services src/app/api`: 1057 pass / 1 fail -- the 1 failure is
+  a pre-existing, unrelated flaky 5s timeout in prompt-governance-gates.test.ts (AI-model-lifecycle
+  governance module, not touched by these 3 PRs)'
+- 'Targeted combined run of exactly the 3 PRs'' own test files: 97/97 pass, 172 expect()
+  calls, 10 files'
+- Wrote ai-os/audits/functionality_completion_reaudit_2026-07-27.md (structured per-PR
+  sections, cross-cutting test/tsc results, secondary Rule 7(d) finding, overall verdict
+  table)
+- 'Committed report only (PROGRESS.md deliberately excluded from this commit/PR per
+  report-only constraint), pushed `audit/functionality-completion-reaudit-20260727`,
+  opened PR: https://github.com/FChecklist/compliance-tracker/pull/625'
+remaining_steps: &id003
+- None. Task complete.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T15:31:03.956141+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  - '581d29f3 merge: resolve conflicts with main + renumber migration 0265->0267 (0264-0266
+    now taken by Helpdesk/PM-gaps/HR-gaps)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T15:36:05.445099+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  - '581d29f3 merge: resolve conflicts with main + renumber migration 0265->0267 (0264-0266
+    now taken by Helpdesk/PM-gaps/HR-gaps)'
+  note: periodic checkpoint
+- at: '2026-07-27T15:41:55.366689+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  - '581d29f3 merge: resolve conflicts with main + renumber migration 0265->0267 (0264-0266
+    now taken by Helpdesk/PM-gaps/HR-gaps)'
+  note: periodic checkpoint
+- at: '2026-07-27T15:56:40.588435+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  - '581d29f3 merge: resolve conflicts with main + renumber migration 0265->0267 (0264-0266
+    now taken by Helpdesk/PM-gaps/HR-gaps)'
+  note: periodic checkpoint
+- at: '2026-07-27T16:11:21.469312+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim --
+    SPEC's "do not modify any file outside ai-os/audits/" takes precedence over the
+    general claim-registration norm for this report-only task)
+  - 'Fetched PR #591/#592/#593 bodies + full audit-verdict comments (all three: `AUDIT:
+    PASS` / `Verdict: pass` from FChecklist)'
+  - Cross-referenced ai-os/boss/ACTIVE-CLAIMS.yaml for the 3 original tasks' own claimed-scope
+    entries (fuller detail than the truncated PR bodies)
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- noting as secondary finding
+  - '`bun install` (node_modules were absent), launched `tsc --noEmit` (prior session''s
+    own PR body disclosed this OOMs in-sandbox; confirmed same OOM at default heap,
+    retrying with raised --max-old-space-size)'
+  - Dispatched 3 parallel Explore agents (one per PR) to verify claimed items against
+    real current main code, file:line evidence
+  remaining_steps:
+  - Collect the 3 agents' findings
+  - Run `bun test src/lib/services src/app/api` and record pass/fail counts
+  - Resolve tsc --noEmit clean/not-clean (retry with more heap if still OOM)
+  - Write ai-os/audits/functionality_completion_reaudit_2026-07-27.md
+  - Create branch off main, commit report only, push, open PR
+  recent_commits:
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  - '581d29f3 merge: resolve conflicts with main + renumber migration 0265->0267 (0264-0266
+    now taken by Helpdesk/PM-gaps/HR-gaps)'
+  note: periodic checkpoint
+- at: '2026-07-27T17:00:10.010078+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim --
+    SPEC's "do not modify any file outside ai-os/audits/" takes precedence over the
+    general claim-registration norm for this report-only task)
+  - 'Fetched PR #591/#592/#593 bodies + full audit-verdict comments (all three: `AUDIT:
+    PASS` / `Verdict: pass` from FChecklist)'
+  - Cross-referenced ai-os/boss/ACTIVE-CLAIMS.yaml for the 3 original tasks' own claimed-scope
+    entries (fuller detail than the truncated PR bodies)
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- noting as secondary finding
+  - '`bun install` (node_modules were absent), launched `tsc --noEmit` (prior session''s
+    own PR body disclosed this OOMs in-sandbox; confirmed same OOM at default heap,
+    retrying with raised --max-old-space-size)'
+  - Dispatched 3 parallel Explore agents (one per PR) to verify claimed items against
+    real current main code, file:line evidence
+  remaining_steps:
+  - Collect the 3 agents' findings
+  - Run `bun test src/lib/services src/app/api` and record pass/fail counts
+  - Resolve tsc --noEmit clean/not-clean (retry with more heap if still OOM)
+  - Write ai-os/audits/functionality_completion_reaudit_2026-07-27.md
+  - Create branch off main, commit report only, push, open PR
+  recent_commits:
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  - '581d29f3 merge: resolve conflicts with main + renumber migration 0265->0267 (0264-0266
+    now taken by Helpdesk/PM-gaps/HR-gaps)'
+  note: periodic checkpoint
+- at: '2026-07-27T17:55:25.647926+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim --
+    SPEC's "do not modify any file outside ai-os/audits/" takes precedence over the
+    general claim-registration norm for this report-only task)
+  - 'Fetched PR #591/#592/#593 bodies + full audit-verdict comments (all three: `AUDIT:
+    PASS` / `Verdict: pass` from FChecklist)'
+  - Cross-referenced ai-os/boss/ACTIVE-CLAIMS.yaml for the 3 original tasks' own claimed-scope
+    entries (fuller detail than the truncated PR bodies)
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- noting as secondary finding
+  - '`bun install` (node_modules were absent), launched `tsc --noEmit` (prior session''s
+    own PR body disclosed this OOMs in-sandbox; confirmed same OOM at default heap,
+    retrying with raised --max-old-space-size)'
+  - Dispatched 3 parallel Explore agents (one per PR) to verify claimed items against
+    real current main code, file:line evidence
+  remaining_steps:
+  - Collect the 3 agents' findings
+  - Run `bun test src/lib/services src/app/api` and record pass/fail counts
+  - Resolve tsc --noEmit clean/not-clean (retry with more heap if still OOM)
+  - Write ai-os/audits/functionality_completion_reaudit_2026-07-27.md
+  - Create branch off main, commit report only, push, open PR
+  recent_commits:
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  - '581d29f3 merge: resolve conflicts with main + renumber migration 0265->0267 (0264-0266
+    now taken by Helpdesk/PM-gaps/HR-gaps)'
+  note: periodic checkpoint
+- at: '2026-07-27T19:53:52.132339+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim --
+    SPEC's "do not modify any file outside ai-os/audits/" takes precedence over the
+    general claim-registration norm for this report-only task)
+  - 'Fetched PR #591/#592/#593 bodies + full audit-verdict comments (all three: `AUDIT:
+    PASS` / `Verdict: pass` from FChecklist)'
+  - Cross-referenced ai-os/boss/ACTIVE-CLAIMS.yaml for the 3 original tasks' own claimed-scope
+    entries (fuller detail than the truncated PR bodies)
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- noting as secondary finding
+  - '`bun install` (node_modules were absent), launched `tsc --noEmit` (prior session''s
+    own PR body disclosed this OOMs in-sandbox; confirmed same OOM at default heap,
+    retrying with raised --max-old-space-size)'
+  - Dispatched 3 parallel Explore agents (one per PR) to verify claimed items against
+    real current main code, file:line evidence
+  remaining_steps:
+  - Collect the 3 agents' findings
+  - Run `bun test src/lib/services src/app/api` and record pass/fail counts
+  - Resolve tsc --noEmit clean/not-clean (retry with more heap if still OOM)
+  - Write ai-os/audits/functionality_completion_reaudit_2026-07-27.md
+  - Create branch off main, commit report only, push, open PR
+  recent_commits:
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  - '581d29f3 merge: resolve conflicts with main + renumber migration 0265->0267 (0264-0266
+    now taken by Helpdesk/PM-gaps/HR-gaps)'
+  note: periodic checkpoint
+- at: '2026-07-28T00:27:12.151290+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim --
+    SPEC's "do not modify any file outside ai-os/audits/" takes precedence over the
+    general claim-registration norm for this report-only task)
+  - 'Fetched PR #591/#592/#593 bodies + full audit-verdict comments (all three: `AUDIT:
+    PASS` / `Verdict: pass` from FChecklist)'
+  - Cross-referenced ai-os/boss/ACTIVE-CLAIMS.yaml for the 3 original tasks' own claimed-scope
+    entries (fuller detail than the truncated PR bodies)
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- noting as secondary finding
+  - '`bun install` (node_modules were absent), launched `tsc --noEmit` (prior session''s
+    own PR body disclosed this OOMs in-sandbox; confirmed same OOM at default heap,
+    retrying with raised --max-old-space-size)'
+  - Dispatched 3 parallel Explore agents (one per PR) to verify claimed items against
+    real current main code, file:line evidence
+  remaining_steps:
+  - Collect the 3 agents' findings
+  - Run `bun test src/lib/services src/app/api` and record pass/fail counts
+  - Resolve tsc --noEmit clean/not-clean (retry with more heap if still OOM)
+  - Write ai-os/audits/functionality_completion_reaudit_2026-07-27.md
+  - Create branch off main, commit report only, push, open PR
+  recent_commits:
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  - '581d29f3 merge: resolve conflicts with main + renumber migration 0265->0267 (0264-0266
+    now taken by Helpdesk/PM-gaps/HR-gaps)'
+  note: periodic checkpoint
+- at: '2026-07-28T11:01:23.190987+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim --
+    SPEC's "do not modify any file outside ai-os/audits/" takes precedence over the
+    general claim-registration norm for this report-only task)
+  - 'Fetched PR #591/#592/#593 bodies + full audit-verdict comments (all three: `AUDIT:
+    PASS` / `Verdict: pass` from FChecklist)'
+  - Cross-referenced ai-os/boss/ACTIVE-CLAIMS.yaml for the 3 original tasks' own claimed-scope
+    entries (fuller detail than the truncated PR bodies)
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- noting as secondary finding
+  - '`bun install` (node_modules were absent), launched `tsc --noEmit` (prior session''s
+    own PR body disclosed this OOMs in-sandbox; confirmed same OOM at default heap,
+    retrying with raised --max-old-space-size)'
+  - Dispatched 3 parallel Explore agents (one per PR) to verify claimed items against
+    real current main code, file:line evidence
+  remaining_steps:
+  - Collect the 3 agents' findings
+  - Run `bun test src/lib/services src/app/api` and record pass/fail counts
+  - Resolve tsc --noEmit clean/not-clean (retry with more heap if still OOM)
+  - Write ai-os/audits/functionality_completion_reaudit_2026-07-27.md
+  - Create branch off main, commit report only, push, open PR
+  recent_commits:
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  - '581d29f3 merge: resolve conflicts with main + renumber migration 0265->0267 (0264-0266
+    now taken by Helpdesk/PM-gaps/HR-gaps)'
+  note: worker started (resume=1, lifetime invocation 2/20, pre-flight passed)
+- at: '2026-07-28T11:07:43.456166+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim --
+    SPEC's "do not modify any file outside ai-os/audits/" takes precedence over the
+    general claim-registration norm for this report-only task)
+  - 'Fetched PR #591/#592/#593 bodies + full audit-verdict comments (all three: `AUDIT:
+    PASS` / `Verdict: pass` from FChecklist)'
+  - Cross-referenced ai-os/boss/ACTIVE-CLAIMS.yaml for the 3 original tasks' own claimed-scope
+    entries (fuller detail than the truncated PR bodies)
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- noting as secondary finding
+  - '`bun install` (node_modules were absent), launched `tsc --noEmit` (prior session''s
+    own PR body disclosed this OOMs in-sandbox; confirmed same OOM at default heap,
+    retrying with raised --max-old-space-size)'
+  - Dispatched 3 parallel Explore agents (one per PR) to verify claimed items against
+    real current main code, file:line evidence
+  remaining_steps:
+  - Collect the 3 agents' findings
+  - Run `bun test src/lib/services src/app/api` and record pass/fail counts
+  - Resolve tsc --noEmit clean/not-clean (retry with more heap if still OOM)
+  - Write ai-os/audits/functionality_completion_reaudit_2026-07-27.md
+  - Create branch off main, commit report only, push, open PR
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-28T11:26:20.362642+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim --
+    SPEC's "do not modify any file outside ai-os/audits/" takes precedence over the
+    general claim-registration norm for this report-only task)
+  - 'Fetched PR #591/#592/#593 bodies + full audit-verdict comments (all three: `AUDIT:
+    PASS` / `Verdict: pass` from FChecklist)'
+  - Cross-referenced ai-os/boss/ACTIVE-CLAIMS.yaml for the 3 original tasks' own claimed-scope
+    entries (fuller detail than the truncated PR bodies)
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- noting as secondary finding
+  - '`bun install` (node_modules were absent), launched `tsc --noEmit` (prior session''s
+    own PR body disclosed this OOMs in-sandbox; confirmed same OOM at default heap,
+    retrying with raised --max-old-space-size)'
+  - Dispatched 3 parallel Explore agents (one per PR) to verify claimed items against
+    real current main code, file:line evidence
+  remaining_steps:
+  - Collect the 3 agents' findings
+  - Run `bun test src/lib/services src/app/api` and record pass/fail counts
+  - Resolve tsc --noEmit clean/not-clean (retry with more heap if still OOM)
+  - Write ai-os/audits/functionality_completion_reaudit_2026-07-27.md
+  - Create branch off main, commit report only, push, open PR
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-28T11:47:22.793394+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim --
+    SPEC's "do not modify any file outside ai-os/audits/" takes precedence over the
+    general claim-registration norm for this report-only task)
+  - 'Fetched PR #591/#592/#593 bodies + full audit-verdict comments (all three: `AUDIT:
+    PASS` / `Verdict: pass` from FChecklist)'
+  - Cross-referenced ai-os/boss/ACTIVE-CLAIMS.yaml for the 3 original tasks' own claimed-scope
+    entries (fuller detail than the truncated PR bodies)
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- noting as secondary finding
+  - '`bun install` (node_modules were absent), launched `tsc --noEmit` (prior session''s
+    own PR body disclosed this OOMs in-sandbox; confirmed same OOM at default heap,
+    retrying with raised --max-old-space-size)'
+  - Dispatched 3 parallel Explore agents (one per PR) to verify claimed items against
+    real current main code, file:line evidence
+  remaining_steps:
+  - Collect the 3 agents' findings
+  - Run `bun test src/lib/services src/app/api` and record pass/fail counts
+  - Resolve tsc --noEmit clean/not-clean (retry with more heap if still OOM)
+  - Write ai-os/audits/functionality_completion_reaudit_2026-07-27.md
+  - Create branch off main, commit report only, push, open PR
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-28T12:00:55.231444+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim --
+    SPEC's "do not modify any file outside ai-os/audits/" takes precedence over the
+    general claim-registration norm for this report-only task)
+  - 'Fetched PR #591/#592/#593 bodies + full audit-verdict comments (all three: `AUDIT:
+    PASS` / `Verdict: pass` from FChecklist)'
+  - Cross-referenced ai-os/boss/ACTIVE-CLAIMS.yaml for the 3 original tasks' own claimed-scope
+    entries (fuller detail than the truncated PR bodies)
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- noting as secondary finding
+  - '`bun install` (node_modules were absent), launched `tsc --noEmit` (prior session''s
+    own PR body disclosed this OOMs in-sandbox; confirmed same OOM at default heap,
+    retrying with raised --max-old-space-size)'
+  - Dispatched 3 parallel Explore agents (one per PR) to verify claimed items against
+    real current main code, file:line evidence
+  remaining_steps:
+  - Collect the 3 agents' findings
+  - Run `bun test src/lib/services src/app/api` and record pass/fail counts
+  - Resolve tsc --noEmit clean/not-clean (retry with more heap if still OOM)
+  - Write ai-os/audits/functionality_completion_reaudit_2026-07-27.md
+  - Create branch off main, commit report only, push, open PR
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-28T12:36:30.569864+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim --
+    SPEC's "do not modify any file outside ai-os/audits/" takes precedence over the
+    general claim-registration norm for this report-only task)
+  - 'Fetched PR #591/#592/#593 bodies + full audit-verdict comments (all three: `AUDIT:
+    PASS` / `Verdict: pass` from FChecklist)'
+  - Cross-referenced ai-os/boss/ACTIVE-CLAIMS.yaml for the 3 original tasks' own claimed-scope
+    entries (fuller detail than the truncated PR bodies)
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- noting as secondary finding
+  - '`bun install` (node_modules were absent), launched `tsc --noEmit` (prior session''s
+    own PR body disclosed this OOMs in-sandbox; confirmed same OOM at default heap,
+    retrying with raised --max-old-space-size)'
+  - Dispatched 3 parallel Explore agents (one per PR) to verify claimed items against
+    real current main code, file:line evidence
+  remaining_steps:
+  - Collect the 3 agents' findings
+  - Run `bun test src/lib/services src/app/api` and record pass/fail counts
+  - Resolve tsc --noEmit clean/not-clean (retry with more heap if still OOM)
+  - Write ai-os/audits/functionality_completion_reaudit_2026-07-27.md
+  - Create branch off main, commit report only, push, open PR
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-28T13:03:00.675793+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim --
+    SPEC's "do not modify any file outside ai-os/audits/" takes precedence over the
+    general claim-registration norm for this report-only task)
+  - 'Fetched PR #591/#592/#593 bodies + full audit-verdict comments (all three: `AUDIT:
+    PASS` / `Verdict: pass` from FChecklist)'
+  - Cross-referenced ai-os/boss/ACTIVE-CLAIMS.yaml for the 3 original tasks' own claimed-scope
+    entries (fuller detail than the truncated PR bodies)
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- noting as secondary finding
+  - '`bun install` (node_modules were absent), launched `tsc --noEmit` (prior session''s
+    own PR body disclosed this OOMs in-sandbox; confirmed same OOM at default heap,
+    retrying with raised --max-old-space-size)'
+  - Dispatched 3 parallel Explore agents (one per PR) to verify claimed items against
+    real current main code, file:line evidence
+  remaining_steps:
+  - Collect the 3 agents' findings
+  - Run `bun test src/lib/services src/app/api` and record pass/fail counts
+  - Resolve tsc --noEmit clean/not-clean (retry with more heap if still OOM)
+  - Write ai-os/audits/functionality_completion_reaudit_2026-07-27.md
+  - Create branch off main, commit report only, push, open PR
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-28T13:34:52.354944+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim --
+    SPEC's "do not modify any file outside ai-os/audits/" takes precedence over the
+    general claim-registration norm for this report-only task)
+  - 'Fetched PR #591/#592/#593 bodies + full audit-verdict comments (all three: `AUDIT:
+    PASS` / `Verdict: pass` from FChecklist)'
+  - Cross-referenced ai-os/boss/ACTIVE-CLAIMS.yaml for the 3 original tasks' own claimed-scope
+    entries (fuller detail than the truncated PR bodies)
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- noting as secondary finding
+  - '`bun install` (node_modules were absent), launched `tsc --noEmit` (prior session''s
+    own PR body disclosed this OOMs in-sandbox; confirmed same OOM at default heap,
+    retrying with raised --max-old-space-size)'
+  - Dispatched 3 parallel Explore agents (one per PR) to verify claimed items against
+    real current main code, file:line evidence
+  remaining_steps:
+  - Collect the 3 agents' findings
+  - Run `bun test src/lib/services src/app/api` and record pass/fail counts
+  - Resolve tsc --noEmit clean/not-clean (retry with more heap if still OOM)
+  - Write ai-os/audits/functionality_completion_reaudit_2026-07-27.md
+  - Create branch off main, commit report only, push, open PR
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-28T14:00:01.547496+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read prompt.txt (found at task_dir root, not workspace) -- confirmed full SPEC/SCOPE/SUCCESS_CRITERIA
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim)
+  - 'Fetched PR #591/#592/#593 full bodies (checklists) + audit-verdict comments --
+    all three real `AUDIT: PASS` / `Verdict: pass` from FChecklist'
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- flagged as secondary finding in the report
+  - Confirmed worker branch was a clean ancestor of origin/main; created `audit/functionality-completion-reaudit-20260727`
+    off origin/main (5adeb4cb) for testing + the deliverable
+  - 'Dispatched 3 parallel Explore agents (one per PR) to verify every claimed item
+    against real current main code, file:line evidence -- all 3 returned: #591 all-VERIFIED;
+    #592 VERIFIED with 2 cosmetic description inaccuracies (migration 0264->0265 typo,
+    "both routes" overstatement -- only 1 creation route exists and it does work);
+    #593 VERIFIED with 1 cosmetic path inaccuracy (goals/raters routes actually live
+    under performance-reviews/, not hr/reviews/ as described)'
+  - '`npx tsc --noEmit` (NODE_OPTIONS=--max-old-space-size=8192, needed due to repo
+    size): clean, exit 0 (ran twice, reproduced)'
+  - '`bun test src/lib/services src/app/api`: 1057 pass / 1 fail -- the 1 failure
+    is a pre-existing, unrelated flaky 5s timeout in prompt-governance-gates.test.ts
+    (AI-model-lifecycle governance module, not touched by these 3 PRs)'
+  - 'Targeted combined run of exactly the 3 PRs'' own test files: 97/97 pass, 172
+    expect() calls, 10 files'
+  - Wrote ai-os/audits/functionality_completion_reaudit_2026-07-27.md (structured
+    per-PR sections, cross-cutting test/tsc results, secondary Rule 7(d) finding,
+    overall verdict table)
+  - 'Committed report only (PROGRESS.md deliberately excluded from this commit/PR
+    per report-only constraint), pushed `audit/functionality-completion-reaudit-20260727`,
+    opened PR: https://github.com/FChecklist/compliance-tracker/pull/625'
+  remaining_steps:
+  - None. Task complete.
+  recent_commits:
+  - '6825b222 chore: finalize PROGRESS.md for functionality-completion re-audit task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: periodic checkpoint
+- at: '2026-07-28T14:03:21.906269+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read prompt.txt (found at task_dir root, not workspace) -- confirmed full SPEC/SCOPE/SUCCESS_CRITERIA
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim)
+  - 'Fetched PR #591/#592/#593 full bodies (checklists) + audit-verdict comments --
+    all three real `AUDIT: PASS` / `Verdict: pass` from FChecklist'
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- flagged as secondary finding in the report
+  - Confirmed worker branch was a clean ancestor of origin/main; created `audit/functionality-completion-reaudit-20260727`
+    off origin/main (5adeb4cb) for testing + the deliverable
+  - 'Dispatched 3 parallel Explore agents (one per PR) to verify every claimed item
+    against real current main code, file:line evidence -- all 3 returned: #591 all-VERIFIED;
+    #592 VERIFIED with 2 cosmetic description inaccuracies (migration 0264->0265 typo,
+    "both routes" overstatement -- only 1 creation route exists and it does work);
+    #593 VERIFIED with 1 cosmetic path inaccuracy (goals/raters routes actually live
+    under performance-reviews/, not hr/reviews/ as described)'
+  - '`npx tsc --noEmit` (NODE_OPTIONS=--max-old-space-size=8192, needed due to repo
+    size): clean, exit 0 (ran twice, reproduced)'
+  - '`bun test src/lib/services src/app/api`: 1057 pass / 1 fail -- the 1 failure
+    is a pre-existing, unrelated flaky 5s timeout in prompt-governance-gates.test.ts
+    (AI-model-lifecycle governance module, not touched by these 3 PRs)'
+  - 'Targeted combined run of exactly the 3 PRs'' own test files: 97/97 pass, 172
+    expect() calls, 10 files'
+  - Wrote ai-os/audits/functionality_completion_reaudit_2026-07-27.md (structured
+    per-PR sections, cross-cutting test/tsc results, secondary Rule 7(d) finding,
+    overall verdict table)
+  - 'Committed report only (PROGRESS.md deliberately excluded from this commit/PR
+    per report-only constraint), pushed `audit/functionality-completion-reaudit-20260727`,
+    opened PR: https://github.com/FChecklist/compliance-tracker/pull/625'
+  remaining_steps:
+  - None. Task complete.
+  recent_commits:
+  - '6825b222 chore: finalize PROGRESS.md for functionality-completion re-audit task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: periodic checkpoint
+- at: '2026-07-28T14:05:07.170110+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read prompt.txt (found at task_dir root, not workspace) -- confirmed full SPEC/SCOPE/SUCCESS_CRITERIA
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim)
+  - 'Fetched PR #591/#592/#593 full bodies (checklists) + audit-verdict comments --
+    all three real `AUDIT: PASS` / `Verdict: pass` from FChecklist'
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- flagged as secondary finding in the report
+  - Confirmed worker branch was a clean ancestor of origin/main; created `audit/functionality-completion-reaudit-20260727`
+    off origin/main (5adeb4cb) for testing + the deliverable
+  - 'Dispatched 3 parallel Explore agents (one per PR) to verify every claimed item
+    against real current main code, file:line evidence -- all 3 returned: #591 all-VERIFIED;
+    #592 VERIFIED with 2 cosmetic description inaccuracies (migration 0264->0265 typo,
+    "both routes" overstatement -- only 1 creation route exists and it does work);
+    #593 VERIFIED with 1 cosmetic path inaccuracy (goals/raters routes actually live
+    under performance-reviews/, not hr/reviews/ as described)'
+  - '`npx tsc --noEmit` (NODE_OPTIONS=--max-old-space-size=8192, needed due to repo
+    size): clean, exit 0 (ran twice, reproduced)'
+  - '`bun test src/lib/services src/app/api`: 1057 pass / 1 fail -- the 1 failure
+    is a pre-existing, unrelated flaky 5s timeout in prompt-governance-gates.test.ts
+    (AI-model-lifecycle governance module, not touched by these 3 PRs)'
+  - 'Targeted combined run of exactly the 3 PRs'' own test files: 97/97 pass, 172
+    expect() calls, 10 files'
+  - Wrote ai-os/audits/functionality_completion_reaudit_2026-07-27.md (structured
+    per-PR sections, cross-cutting test/tsc results, secondary Rule 7(d) finding,
+    overall verdict table)
+  - 'Committed report only (PROGRESS.md deliberately excluded from this commit/PR
+    per report-only constraint), pushed `audit/functionality-completion-reaudit-20260727`,
+    opened PR: https://github.com/FChecklist/compliance-tracker/pull/625'
+  remaining_steps:
+  - None. Task complete.
+  recent_commits:
+  - '6825b222 chore: finalize PROGRESS.md for functionality-completion re-audit task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: periodic checkpoint
+- at: '2026-07-28T14:08:23.967418+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read prompt.txt (found at task_dir root, not workspace) -- confirmed full SPEC/SCOPE/SUCCESS_CRITERIA
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim)
+  - 'Fetched PR #591/#592/#593 full bodies (checklists) + audit-verdict comments --
+    all three real `AUDIT: PASS` / `Verdict: pass` from FChecklist'
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- flagged as secondary finding in the report
+  - Confirmed worker branch was a clean ancestor of origin/main; created `audit/functionality-completion-reaudit-20260727`
+    off origin/main (5adeb4cb) for testing + the deliverable
+  - 'Dispatched 3 parallel Explore agents (one per PR) to verify every claimed item
+    against real current main code, file:line evidence -- all 3 returned: #591 all-VERIFIED;
+    #592 VERIFIED with 2 cosmetic description inaccuracies (migration 0264->0265 typo,
+    "both routes" overstatement -- only 1 creation route exists and it does work);
+    #593 VERIFIED with 1 cosmetic path inaccuracy (goals/raters routes actually live
+    under performance-reviews/, not hr/reviews/ as described)'
+  - '`npx tsc --noEmit` (NODE_OPTIONS=--max-old-space-size=8192, needed due to repo
+    size): clean, exit 0 (ran twice, reproduced)'
+  - '`bun test src/lib/services src/app/api`: 1057 pass / 1 fail -- the 1 failure
+    is a pre-existing, unrelated flaky 5s timeout in prompt-governance-gates.test.ts
+    (AI-model-lifecycle governance module, not touched by these 3 PRs)'
+  - 'Targeted combined run of exactly the 3 PRs'' own test files: 97/97 pass, 172
+    expect() calls, 10 files'
+  - Wrote ai-os/audits/functionality_completion_reaudit_2026-07-27.md (structured
+    per-PR sections, cross-cutting test/tsc results, secondary Rule 7(d) finding,
+    overall verdict table)
+  - 'Committed report only (PROGRESS.md deliberately excluded from this commit/PR
+    per report-only constraint), pushed `audit/functionality-completion-reaudit-20260727`,
+    opened PR: https://github.com/FChecklist/compliance-tracker/pull/625'
+  remaining_steps:
+  - None. Task complete.
+  recent_commits:
+  - '6825b222 chore: finalize PROGRESS.md for functionality-completion re-audit task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: periodic checkpoint
+- at: '2026-07-28T14:10:24.245635+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read prompt.txt (found at task_dir root, not workspace) -- confirmed full SPEC/SCOPE/SUCCESS_CRITERIA
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim)
+  - 'Fetched PR #591/#592/#593 full bodies (checklists) + audit-verdict comments --
+    all three real `AUDIT: PASS` / `Verdict: pass` from FChecklist'
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- flagged as secondary finding in the report
+  - Confirmed worker branch was a clean ancestor of origin/main; created `audit/functionality-completion-reaudit-20260727`
+    off origin/main (5adeb4cb) for testing + the deliverable
+  - 'Dispatched 3 parallel Explore agents (one per PR) to verify every claimed item
+    against real current main code, file:line evidence -- all 3 returned: #591 all-VERIFIED;
+    #592 VERIFIED with 2 cosmetic description inaccuracies (migration 0264->0265 typo,
+    "both routes" overstatement -- only 1 creation route exists and it does work);
+    #593 VERIFIED with 1 cosmetic path inaccuracy (goals/raters routes actually live
+    under performance-reviews/, not hr/reviews/ as described)'
+  - '`npx tsc --noEmit` (NODE_OPTIONS=--max-old-space-size=8192, needed due to repo
+    size): clean, exit 0 (ran twice, reproduced)'
+  - '`bun test src/lib/services src/app/api`: 1057 pass / 1 fail -- the 1 failure
+    is a pre-existing, unrelated flaky 5s timeout in prompt-governance-gates.test.ts
+    (AI-model-lifecycle governance module, not touched by these 3 PRs)'
+  - 'Targeted combined run of exactly the 3 PRs'' own test files: 97/97 pass, 172
+    expect() calls, 10 files'
+  - Wrote ai-os/audits/functionality_completion_reaudit_2026-07-27.md (structured
+    per-PR sections, cross-cutting test/tsc results, secondary Rule 7(d) finding,
+    overall verdict table)
+  - 'Committed report only (PROGRESS.md deliberately excluded from this commit/PR
+    per report-only constraint), pushed `audit/functionality-completion-reaudit-20260727`,
+    opened PR: https://github.com/FChecklist/compliance-tracker/pull/625'
+  remaining_steps:
+  - None. Task complete.
+  recent_commits:
+  - '6825b222 chore: finalize PROGRESS.md for functionality-completion re-audit task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: periodic checkpoint
+- at: '2026-07-28T14:13:25.835248+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read prompt.txt (found at task_dir root, not workspace) -- confirmed full SPEC/SCOPE/SUCCESS_CRITERIA
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim)
+  - 'Fetched PR #591/#592/#593 full bodies (checklists) + audit-verdict comments --
+    all three real `AUDIT: PASS` / `Verdict: pass` from FChecklist'
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- flagged as secondary finding in the report
+  - Confirmed worker branch was a clean ancestor of origin/main; created `audit/functionality-completion-reaudit-20260727`
+    off origin/main (5adeb4cb) for testing + the deliverable
+  - 'Dispatched 3 parallel Explore agents (one per PR) to verify every claimed item
+    against real current main code, file:line evidence -- all 3 returned: #591 all-VERIFIED;
+    #592 VERIFIED with 2 cosmetic description inaccuracies (migration 0264->0265 typo,
+    "both routes" overstatement -- only 1 creation route exists and it does work);
+    #593 VERIFIED with 1 cosmetic path inaccuracy (goals/raters routes actually live
+    under performance-reviews/, not hr/reviews/ as described)'
+  - '`npx tsc --noEmit` (NODE_OPTIONS=--max-old-space-size=8192, needed due to repo
+    size): clean, exit 0 (ran twice, reproduced)'
+  - '`bun test src/lib/services src/app/api`: 1057 pass / 1 fail -- the 1 failure
+    is a pre-existing, unrelated flaky 5s timeout in prompt-governance-gates.test.ts
+    (AI-model-lifecycle governance module, not touched by these 3 PRs)'
+  - 'Targeted combined run of exactly the 3 PRs'' own test files: 97/97 pass, 172
+    expect() calls, 10 files'
+  - Wrote ai-os/audits/functionality_completion_reaudit_2026-07-27.md (structured
+    per-PR sections, cross-cutting test/tsc results, secondary Rule 7(d) finding,
+    overall verdict table)
+  - 'Committed report only (PROGRESS.md deliberately excluded from this commit/PR
+    per report-only constraint), pushed `audit/functionality-completion-reaudit-20260727`,
+    opened PR: https://github.com/FChecklist/compliance-tracker/pull/625'
+  remaining_steps:
+  - None. Task complete.
+  recent_commits:
+  - '6825b222 chore: finalize PROGRESS.md for functionality-completion re-audit task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: periodic checkpoint
+- at: '2026-07-28T14:15:02.693299+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read prompt.txt (found at task_dir root, not workspace) -- confirmed full SPEC/SCOPE/SUCCESS_CRITERIA
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no collision; task is report-only, edit confined
+    to ai-os/audits/ per SPEC constraint, so did NOT register a new active claim)
+  - 'Fetched PR #591/#592/#593 full bodies (checklists) + audit-verdict comments --
+    all three real `AUDIT: PASS` / `Verdict: pass` from FChecklist'
+  - Confirmed ai-os/boss/COMPLETED.yaml has NO entries for these 3 PRs/tasks (Rule
+    7(d) doc requirement not fulfilled) -- flagged as secondary finding in the report
+  - Confirmed worker branch was a clean ancestor of origin/main; created `audit/functionality-completion-reaudit-20260727`
+    off origin/main (5adeb4cb) for testing + the deliverable
+  - 'Dispatched 3 parallel Explore agents (one per PR) to verify every claimed item
+    against real current main code, file:line evidence -- all 3 returned: #591 all-VERIFIED;
+    #592 VERIFIED with 2 cosmetic description inaccuracies (migration 0264->0265 typo,
+    "both routes" overstatement -- only 1 creation route exists and it does work);
+    #593 VERIFIED with 1 cosmetic path inaccuracy (goals/raters routes actually live
+    under performance-reviews/, not hr/reviews/ as described)'
+  - '`npx tsc --noEmit` (NODE_OPTIONS=--max-old-space-size=8192, needed due to repo
+    size): clean, exit 0 (ran twice, reproduced)'
+  - '`bun test src/lib/services src/app/api`: 1057 pass / 1 fail -- the 1 failure
+    is a pre-existing, unrelated flaky 5s timeout in prompt-governance-gates.test.ts
+    (AI-model-lifecycle governance module, not touched by these 3 PRs)'
+  - 'Targeted combined run of exactly the 3 PRs'' own test files: 97/97 pass, 172
+    expect() calls, 10 files'
+  - Wrote ai-os/audits/functionality_completion_reaudit_2026-07-27.md (structured
+    per-PR sections, cross-cutting test/tsc results, secondary Rule 7(d) finding,
+    overall verdict table)
+  - 'Committed report only (PROGRESS.md deliberately excluded from this commit/PR
+    per report-only constraint), pushed `audit/functionality-completion-reaudit-20260727`,
+    opened PR: https://github.com/FChecklist/compliance-tracker/pull/625'
+  remaining_steps:
+  - None. Task complete.
+  recent_commits:
+  - '6825b222 chore: finalize PROGRESS.md for functionality-completion re-audit task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-28T14:15:04.723684+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '6825b222 chore: finalize PROGRESS.md for functionality-completion re-audit task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 2, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+execution_seconds: 10682
+restart_count: 2
+token_usage:
+  input_tokens: 16
+  cache_creation_input_tokens: 18631
+  cache_read_input_tokens: 341274
+  output_tokens: 4291
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 18631
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 390
+    cache_read_input_tokens: 47717
+    cache_creation_input_tokens: 405
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 405
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:26.093424+00:00'

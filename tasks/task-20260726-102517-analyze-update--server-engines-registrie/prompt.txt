@@ -1,0 +1,26 @@
+## OBJECTIVE
+Produce a real, current, comprehensive analysis of everything already built on VERIDIAN-DEV (167.233.220.35) -- every engine, script, policy, registry, and metadata file -- and UPDATE the existing tracking files (MASTER_INDEX.yaml, the 20-Engine/10-Gateway phase plan, knowledge_engine) to reflect real current state. Do not build any new engine, script, or registry -- this task is analysis and update of what already exists only.
+
+## KNOWN_CONTEXT
+Read ai-os/MASTER_INDEX.yaml (97 registries, machine-readable entrypoint) and ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml (the real 20-engine inventory, phases 0-5 marked complete, phase 6+ not yet dispatched, and an explicit unresolved gap: the 10-gateway canonical list was never named/confirmed by the Owner) in full first. Also run `python3 scripts/metadata_reconciliation.py report` (already run once earlier this session, confirmed live and working -- 97 registries, 90 with real file hits, 10 new rows found) to get the current real reconciliation state. Real, new work landed or in-flight THIS session that is NOT yet reflected as its own registries[] entry in MASTER_INDEX.yaml: a branch-resolution + HOLD_FOR_OWNER_SIGNOFF fix in scripts/supervisor-entrypoint.sh/veridian-task.py/tight_task_validation.py (claude-control PR #84, still open, not yet merged), an interactive-session write-gate (ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet, claude-control PR #80, 3 rounds in, still open), a DDL pre-flight authorization gate (scripts/ddl_authorization_check.py, claude-control PR #79, content approved, merge blocked on the branch-resolution bug PR #84 will fix), and an OWNER_ENGINE-to-task-gateway integration (scripts/prompt_gateway/gateway.py's new dispatch mode, claude-control PR #82, round 2 in progress). None of these are duplicates of existing engines -- they are real, new additive scripts/fixes to the existing pipeline -- but MASTER_INDEX.yaml's registries[] section does not yet have entries for them.
+
+## SCOPE
+1. For every one of the 20 engines in the phase plan's engine_inventory, re-verify (live grep/file-existence check, not memory) that the exists_as paths are still real and current, and note any that have changed since 2026-07-24.
+2. Check real current status of phases 2, 3, 4, 5 in the phase plan (the document shows depends_on graphs but this task should confirm via git log/PR history in claude-control and compliance-tracker whether each phase's real objective was actually completed, not just assume the "phase_0_through_phase_5_complete" status line is still accurate).
+3. Add proper registries[] entries to MASTER_INDEX.yaml for the four real, new pieces of work listed in KNOWN_CONTEXT (using the existing entry schema: id/type/path/scope/status/query_command) -- for any not yet merged, mark status accordingly (e.g. "PR open, pending review") rather than claiming done.
+4. Do not build a new engine or a new registry file -- only update the existing MASTER_INDEX.yaml and phase-plan files with real, current findings.
+5. Produce a real, honest gap list: which of the 20 engines still have no real prior art beyond what's already documented, which phases are genuinely stalled, and whether the write-gate/DDL-gate/OWNER_ENGINE-integration work done this session should be considered part of Phase 2 (policy_rule_decision_unification) rather than separate, disconnected additions -- this specific question (should today's new gates be folded into Phase 2's unification objective) is the single most important judgment call this task should make and document clearly, with real reasoning, not just describe the tension.
+
+## SUCCESS_CRITERIA
+- `python3 -c "import yaml; d=yaml.safe_load(open('ai-os/MASTER_INDEX.yaml')); print(len(d['registries']))"` shows a real, increased registry count including the four new entries.
+- `python3 scripts/metadata_reconciliation.py report` run again after the update shows the new registries' paths correctly reconciled (real file hits, not "no path field").
+- A real, dated section is added to MASTER_INDEX.yaml or a linked doc listing every engine's current real coverage status as of this task's run date, cross-referenced against the 2026-07-24 inventory.
+
+## EXPECTED_OUTPUT
+A real PR against claude-control (or wherever MASTER_INDEX.yaml canonically lives per its own registration) updating MASTER_INDEX.yaml and the phase-plan file with the real current-state findings above. No new scripts, no new engines.
+
+## CONSTRAINTS
+Do not build any new engine, gateway, or parallel registry system. Do not merge yourself.
+
+## COMPLEXITY_TIER
+judgment

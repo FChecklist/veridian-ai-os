@@ -1,0 +1,334 @@
+id: task-20260726-101817-fix-tier1-merge-not-executed-bug---regis
+title: Fix tier1 merge-not-executed bug + register orphan recovery PR84 for real audit
+status: completed
+repo: claude-control
+branch: worker/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis
+workspace: /opt/veridian/ai-os/tasks/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis
+service: veridian-worker@task-20260726-101817-fix-tier1-merge-not-executed-bug---regis.service
+created_at: '2026-07-26T10:18:18.479012+00:00'
+last_checkpoint_at: '2026-07-26T10:43:00.058749+00:00'
+completed_steps: &id002
+- 'Merged origin/master into this branch (picks up already-merged PR #84, which added
+  scripts/supervisor-entrypoint.sh, scripts/veridian-task.py, tests/hold_for_signoff_test.py,
+  tests/veridian_task_branch_resolution_test.py to the repo)'
+- 'Gap 1 fix: PR-URL-RESOLUTION-GUARD block in supervisor-entrypoint.sh (both /opt/veridian/scripts/
+  live copy and repo copy) -- checkpoints blocked + exits before any gh pr call can
+  see an empty PR_URL'
+- Added merge-decision-input logging (VERDICT/TIER/SCOPE_OK/HOLD_FOR_OWNER_SIGNOFF/PR_URL)
+  at the top of the decision block
+- 'Gap 2 fix: `veridian-task.py adopt` command -- registers an existing branch/PR
+  as a real task_dir/task.yaml (status=pending_review, no review.json), with detached-HEAD
+  fallback when the branch is already checked out in another worktree'
+- Made supervisor-sweep.sh testable (VERIDIAN_TASKS_DIR/VERIDIAN_SWEEP_LOG_DIR overrides,
+  default behavior unchanged) and added it to the repo (was previously untracked)
+- 'Regression tests added: tests/supervisor_pr_url_guard_test.sh, tests/test_veridian_task_adopt.py,
+  tests/supervisor_sweep_discovery_test.sh, tests/test_merge_execution.py (pytest
+  wrapper so `-k merge_execution` matches)'
+- 'Full suite green: `pytest tests/ -k "merge_execution or task_adopt"` = 5 passed;
+  full `pytest tests/` = 23 passed; all tests/*.sh scripts pass individually'
+- Committed + pushed (cdbf6d7) to worker/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis
+- 'Registered PR #84 for real: ran `python3 scripts/veridian-task.py adopt --title
+  "Adopt recovered-lifecycle-fix PR84 for retroactive audit" --repo claude-control
+  --branch recovered-lifecycle-fix-e6c7049 --pr-url https://github.com/FChecklist/claude-control/pull/84`
+  directly against production /opt/veridian/ai-os (the script''s AI_OS/REPOS constants
+  are hardcoded absolute paths, so running it from this workspace copy operates on
+  the real tracking system -- no need to deploy anything to /opt/veridian/scripts
+  first). Result: task_dir task-20260726-103756-adopted-adopt-recovered-lifecycle-fix-pr84-for-r,
+  status=pending_review, no review.json. Confirmed via `ls /opt/veridian/ai-os/tasks/
+  | grep -i recovered` (2 dirs: the original confused verify-task, and this new clean
+  adopt entry).'
+- crontab already runs `*/15 * * * * .../supervisor-sweep.sh` -- will pick up the
+  adopted task automatically within 15 minutes; deliberately did NOT hand-trigger
+  the sweep/supervisor myself (would spend real review-call cost and duplicates what
+  cron already does; the task_dir existing is the actual deliverable, per SUCCESS_CRITERIA)
+- 'Since PR #84''s branch is already merged, its real PR is CLOSED -- the eventual
+  sweep-triggered review will see an empty diff (nothing left to review vs master),
+  `gh pr create`/`gh pr list` (open-only) will both fail to resolve a PR, and thanks
+  to the gap-1 fix this correctly checkpoints blocked with a clear diagnostic rather
+  than doing anything further -- the honest, safe outcome for retroactively auditing
+  an already-merged PR through this pipeline'
+- 'Opened PR: https://github.com/FChecklist/claude-control/pull/87 (not merged, per
+  constraints)'
+remaining_steps: &id003
+- 'None -- task complete. PR #87 open, awaiting normal review/audit cycle.'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T10:18:20.187616+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T10:23:21.668428+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  note: periodic checkpoint
+- at: '2026-07-26T10:28:22.779646+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  note: periodic checkpoint
+- at: '2026-07-26T10:33:23.881473+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/supervisor-entrypoint.sh
+  completed_steps:
+  - Read supervisor-entrypoint.sh in full, traced VERDICT/TIER/SCOPE_OK -> merge path
+  - 'Root-caused gap (1): empty-PR_URL gh-fallback-to-current-branch bug, live-reproduced
+    via PR #84''s accidental merge'
+  - 'Confirmed PR #78/#79 were both `reject` verdicts (spec''s premise about them
+    was inaccurate); documented real evidence instead'
+  remaining_steps:
+  - Read supervisor-sweep.sh discovery loop + veridian-task.py cmd_create/cmd_checkpoint
+  - Implement gap (1) fix in /opt/veridian/scripts/supervisor-entrypoint.sh (+ decision-point
+    logging)
+  - Implement `veridian-task.py adopt` command (gap 2)
+  - 'Register PR #84 via `adopt` so supervisor-sweep picks it up for retroactive audit'
+  - 'Regression tests: tests/supervisor_merge_pr_url_resolution_test.sh (or similar),
+    tests/test_veridian_task_adopt.py'
+  - Run success-criteria commands
+  - Commit + push, open PR (do not merge)
+  recent_commits:
+  - '581e042 Merge pull request #84 from FChecklist/recovered-lifecycle-fix-e6c7049'
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  note: periodic checkpoint
+- at: '2026-07-26T10:38:25.131553+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Merged origin/master into this branch (picks up already-merged PR #84, which
+    added scripts/supervisor-entrypoint.sh, scripts/veridian-task.py, tests/hold_for_signoff_test.py,
+    tests/veridian_task_branch_resolution_test.py to the repo)'
+  - 'Gap 1 fix: PR-URL-RESOLUTION-GUARD block in supervisor-entrypoint.sh (both /opt/veridian/scripts/
+    live copy and repo copy) -- checkpoints blocked + exits before any gh pr call
+    can see an empty PR_URL'
+  - Added merge-decision-input logging (VERDICT/TIER/SCOPE_OK/HOLD_FOR_OWNER_SIGNOFF/PR_URL)
+    at the top of the decision block
+  - 'Gap 2 fix: `veridian-task.py adopt` command -- registers an existing branch/PR
+    as a real task_dir/task.yaml (status=pending_review, no review.json), with detached-HEAD
+    fallback when the branch is already checked out in another worktree'
+  - Made supervisor-sweep.sh testable (VERIDIAN_TASKS_DIR/VERIDIAN_SWEEP_LOG_DIR overrides,
+    default behavior unchanged) and added it to the repo (was previously untracked)
+  - 'Regression tests added: tests/supervisor_pr_url_guard_test.sh, tests/test_veridian_task_adopt.py,
+    tests/supervisor_sweep_discovery_test.sh, tests/test_merge_execution.py (pytest
+    wrapper so `-k merge_execution` matches)'
+  - 'Full suite green: `pytest tests/ -k "merge_execution or task_adopt"` = 5 passed;
+    full `pytest tests/` = 23 passed; all tests/*.sh scripts pass individually'
+  remaining_steps:
+  - 'Register PR #84 for real via `adopt` (note: PR #84 is now already MERGED -- see
+    diagnosis -- so this becomes a retroactive registration; supervisor-sweep will
+    attempt review and, thanks to the gap-1 fix, safely report "could not resolve
+    PR" rather than do anything further, since there is no new diff left to review
+    post-merge)'
+  - Deploy repo's updated veridian-task.py to /opt/veridian/scripts/ before invoking
+    adopt for real (so the live registration uses the real adopt command, not a hand-run
+    one-off)
+  - Commit + push, open PR (do not merge) with honest gap-1 diagnosis in the PR body
+  recent_commits:
+  - 'cdbf6d7 Fix tier1 merge-not-executed bug: empty PR_URL silently fell back to
+    gh''s current-branch resolution, which for-real merged claude-control PR #84 (2026-07-26)
+    via a completely unrelated task''s own approve+tier1 review.'
+  - '581e042 Merge pull request #84 from FChecklist/recovered-lifecycle-fix-e6c7049'
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  note: periodic checkpoint
+- at: '2026-07-26T10:39:53.169556+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Merged origin/master into this branch (picks up already-merged PR #84, which
+    added scripts/supervisor-entrypoint.sh, scripts/veridian-task.py, tests/hold_for_signoff_test.py,
+    tests/veridian_task_branch_resolution_test.py to the repo)'
+  - 'Gap 1 fix: PR-URL-RESOLUTION-GUARD block in supervisor-entrypoint.sh (both /opt/veridian/scripts/
+    live copy and repo copy) -- checkpoints blocked + exits before any gh pr call
+    can see an empty PR_URL'
+  - Added merge-decision-input logging (VERDICT/TIER/SCOPE_OK/HOLD_FOR_OWNER_SIGNOFF/PR_URL)
+    at the top of the decision block
+  - 'Gap 2 fix: `veridian-task.py adopt` command -- registers an existing branch/PR
+    as a real task_dir/task.yaml (status=pending_review, no review.json), with detached-HEAD
+    fallback when the branch is already checked out in another worktree'
+  - Made supervisor-sweep.sh testable (VERIDIAN_TASKS_DIR/VERIDIAN_SWEEP_LOG_DIR overrides,
+    default behavior unchanged) and added it to the repo (was previously untracked)
+  - 'Regression tests added: tests/supervisor_pr_url_guard_test.sh, tests/test_veridian_task_adopt.py,
+    tests/supervisor_sweep_discovery_test.sh, tests/test_merge_execution.py (pytest
+    wrapper so `-k merge_execution` matches)'
+  - 'Full suite green: `pytest tests/ -k "merge_execution or task_adopt"` = 5 passed;
+    full `pytest tests/` = 23 passed; all tests/*.sh scripts pass individually'
+  - Committed + pushed (cdbf6d7) to worker/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis
+  - 'Registered PR #84 for real: ran `python3 scripts/veridian-task.py adopt --title
+    "Adopt recovered-lifecycle-fix PR84 for retroactive audit" --repo claude-control
+    --branch recovered-lifecycle-fix-e6c7049 --pr-url https://github.com/FChecklist/claude-control/pull/84`
+    directly against production /opt/veridian/ai-os (the script''s AI_OS/REPOS constants
+    are hardcoded absolute paths, so running it from this workspace copy operates
+    on the real tracking system -- no need to deploy anything to /opt/veridian/scripts
+    first). Result: task_dir task-20260726-103756-adopted-adopt-recovered-lifecycle-fix-pr84-for-r,
+    status=pending_review, no review.json. Confirmed via `ls /opt/veridian/ai-os/tasks/
+    | grep -i recovered` (2 dirs: the original confused verify-task, and this new
+    clean adopt entry).'
+  - crontab already runs `*/15 * * * * .../supervisor-sweep.sh` -- will pick up the
+    adopted task automatically within 15 minutes; deliberately did NOT hand-trigger
+    the sweep/supervisor myself (would spend real review-call cost and duplicates
+    what cron already does; the task_dir existing is the actual deliverable, per SUCCESS_CRITERIA)
+  - 'Since PR #84''s branch is already merged, its real PR is CLOSED -- the eventual
+    sweep-triggered review will see an empty diff (nothing left to review vs master),
+    `gh pr create`/`gh pr list` (open-only) will both fail to resolve a PR, and thanks
+    to the gap-1 fix this correctly checkpoints blocked with a clear diagnostic rather
+    than doing anything further -- the honest, safe outcome for retroactively auditing
+    an already-merged PR through this pipeline'
+  - 'Opened PR: https://github.com/FChecklist/claude-control/pull/87 (not merged,
+    per constraints)'
+  remaining_steps:
+  - 'None -- task complete. PR #87 open, awaiting normal review/audit cycle.'
+  recent_commits:
+  - 'cdbf6d7 Fix tier1 merge-not-executed bug: empty PR_URL silently fell back to
+    gh''s current-branch resolution, which for-real merged claude-control PR #84 (2026-07-26)
+    via a completely unrelated task''s own approve+tier1 review.'
+  - '581e042 Merge pull request #84 from FChecklist/recovered-lifecycle-fix-e6c7049'
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  note: quality gates passed, pushed branch worker/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis,
+    awaiting review
+- at: '2026-07-26T10:43:00.058749+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'cdbf6d7 Fix tier1 merge-not-executed bug: empty PR_URL silently fell back to
+    gh''s current-branch resolution, which for-real merged claude-control PR #84 (2026-07-26)
+    via a completely unrelated task''s own approve+tier1 review.'
+  - '581e042 Merge pull request #84 from FChecklist/recovered-lifecycle-fix-e6c7049'
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/87'
+execution_seconds: 1292
+restart_count: 0
+token_usage:
+  input_tokens: 170
+  cache_creation_input_tokens: 203075
+  cache_read_input_tokens: 12669287
+  output_tokens: 90355
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 203075
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 518
+    cache_read_input_tokens: 225868
+    cache_creation_input_tokens: 891
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 891
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T11:00:09.579645+00:00'

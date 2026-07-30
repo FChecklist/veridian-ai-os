@@ -1,0 +1,20 @@
+VERIDIAN Review Framework gap-closure: Checks & Balances / Audit Trail & Immutable Logging.
+This covers 4 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] Complete Audit Trail
+  Gap: Coverage depends on every write path remembering to call logActivity(); no DB-level trigger enforces it universally, so silent gaps are possible in any write path that omits the call
+  Recommended approach: Add DB-level triggers on the highest-risk tables (financial, compliance, user/role) as a backstop to the application-level convention.
+- [High] Immutable Activity Logs
+  Gap: No database-level immutability guarantee exists -- a code bug or a direct DB session with sufficient privilege could alter or delete audit history with nothing physically preventing it
+  Recommended approach: REVOKE UPDATE, DELETE ON compliance.audit_logs FROM app_runtime (and any other application role); route corrections through an explicit compensating-entry pattern instead of in-place edits.
+- [Medium] Complete Audit Trail
+  Gap: Coverage depends on every write path remembering to call logActivity(); no DB-level trigger enforces it universally, so silent gaps are possible in any write path that omits the call
+  Recommended approach: Add DB-level triggers on the highest-risk tables (financial, compliance, user/role) as a backstop to the application-level convention.
+- [High] Immutable Activity Logs
+  Gap: No database-level immutability guarantee exists -- a code bug or a direct DB session with sufficient privilege could alter or delete audit history with nothing physically preventing it
+  Recommended approach: REVOKE UPDATE, DELETE ON compliance.audit_logs FROM app_runtime (and any other application role); route corrections through an explicit compensating-entry pattern instead of in-place edits.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

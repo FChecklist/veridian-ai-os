@@ -1,0 +1,28 @@
+## OBJECTIVE
+Build a real, interactive Sales Pipeline dashboard in compliance-tracker's CRM module, matching an Owner-supplied mockup exactly, including cross-filtering (clicking a pipeline-stage bar filters the entire dashboard to that stage).
+
+## KNOWN_CONTEXT
+Real mockup spec, do not invent a different layout: 6 KPI tiles across the top (Sales Value, Hold %, Lost %, Success %, Health %, Regret %) plus 2 filter dropdowns. Two side-by-side bar charts: "Sales Lead Performance Overview" (count of value by salesperson name) and "Pipeline Status Overview" (count by stage: Awarded, Lost, Hold, Pitched, Lead, Regret, Estimation, Follow up). Below that, a "Monthly Revenue Trend Analysis" line chart with 3 series (Target, Achieved, Shortfall) across months, plus a matching KPI table with the same 3 rows and a Total column. A right-side panel, "Project Value Status Analysis", lists individual deals with their current status label and value, scrollable. Confirmed real interaction requirement from a second screenshot showing the drilled-down state: clicking any Pipeline Status bar (e.g. "Awarded") filters ALL of the above -- KPI tiles, both charts, and the table all recompute against only that status's deals, and the page heading changes to reflect the active filter (e.g. "Sales Pipeline Awarded"). Check compliance-tracker's existing CRM opportunity/deal schema (likely already has a stage/status field, given CRM leads/opportunities already exist per this codebase) before adding new fields -- the gap is almost certainly the dashboard/aggregation/interaction layer, not the underlying data model.
+
+## SCOPE
+1. Confirm the real existing CRM opportunity schema's status/stage field values map to the 8 statuses required above (Awarded/Lost/Hold/Pitched/Lead/Regret/Estimation/Follow up) -- if the existing enum uses different labels, either extend it for real (don't silently rename existing data) or build a clean mapping layer, and document which approach you took and why in your PR description.
+2. Build the real KPI computations: Sales Value (sum), Hold/Lost/Success/Health/Regret percentages (define Health % and Success % precisely based on this codebase's existing win-probability/health-scoring logic if one already exists -- check `orchestra_executions`/opportunity win-probability scoring mentioned in this codebase's AI Orchestra work before inventing a new definition).
+3. Build the 2 bar charts, the trend line chart + KPI table, and the deal-list panel, all real-data-driven.
+4. Implement the cross-filter interaction: selecting a pipeline-status bar filters every other element on the page to that status, with a visible way to clear the filter back to "All".
+
+## SUCCESS_CRITERIA
+- A real test proving the KPI aggregations (Sales Value, stage percentages) compute correctly against a realistic seeded set of opportunities across multiple stages.
+- A real test/story proving the cross-filter interaction: selecting a status updates the KPI tiles and chart data to only that status's subset.
+- Verify by actually running:
+`npx tsc --noEmit`
+`bun test` (scoped to new dashboard files)
+`grep -rn "Sales Pipeline" src/` (confirm the real screen/route exists)
+
+## EXPECTED_OUTPUT
+A real PR on a new branch in the compliance-tracker repo. Requires a fresh supervisor audit before merge; do not merge yourself.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not modify existing CRM lead/opportunity creation flows -- this task only adds the dashboard/reporting layer on top of existing data.
+
+## COMPLEXITY_TIER
+judgment

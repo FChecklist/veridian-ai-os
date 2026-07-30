@@ -1,0 +1,27 @@
+## OBJECTIVE
+Fix a real, audit-confirmed correctness gap on PR #596 ("Hierarchical BoQ breakdown-%, interim-billing/valuation/retention, Excel BoQ importer", branch `worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown`) before it can go to Owner sign-off. Read the full audit verdict first: `gh api repos/FChecklist/compliance-tracker/issues/596/comments --jq '.[-1].body' | fold -w 150` (one very long "Evidence Recorded" line -- do not trust a truncated terminal view).
+
+## KNOWN_CONTEXT
+Real, audit-confirmed findings, do not re-derive. The hierarchical BoQ breakdown-% work and Excel importer are already confirmed solid by the audit (`computeHierarchicalAmount`, circular/missing-parent detection, topological batch insert, RLS, requireAuth() tenant-scoping) -- do NOT touch those, only the valuation/interim-billing piece:
+1. **Zero-tax invoices (the real correctness bug)**: `construction-valuation-service.ts`'s `generateInterimBill()` builds invoice line items (billable BoQ lines plus a negative retention-holdback line) that never set `taxTemplateId`, and `erp-invoicing-service.ts`'s `computeInvoiceTotals()` only applies tax when a line explicitly carries a `taxTemplateId` -- there is no company/customer-level fallback. `GenerateInterimBillInput` doesn't even expose a field to supply one. Result: every interim/RA bill generated through this new feature silently posts with zero GST/tax by default -- a real, undisclosed correctness gap for a GST-compliance platform. Not caught by the existing pure-function unit tests (which don't assert on tax fields), and not flagged anywhere in PROGRESS.md.
+2. **Retention modeled as a taxable-value reducer, not a holdback**: retention is currently applied as a negative invoice line (`rate: -retentionAmount`), which reduces the invoice's TAXABLE VALUE rather than being a proper payment-term holdback on the invoice total. Once tax is wired in (item 1), this will also understate GST collected by the retention percentage -- fix both together, they compound.
+3. **Minor, non-blocking, matches an existing pattern elsewhere** (only fix if trivial, not the priority): interim bill numbering uses `max(billNumber)+1` read-then-insert with no unique constraint on `(projectId, billNumber)` -- a real but pre-existing race-condition class already present in `erpSalesInvoices.invoiceNumber` too, not a new regression introduced by this PR.
+
+## SCOPE
+1. Add a real `taxTemplateId` (or equivalent field name matching this codebase's existing invoice-line convention -- check `erp-invoicing-service.ts`'s real schema) to `GenerateInterimBillInput`, and wire `generateInterimBill()` to resolve a real tax template -- either require the caller to supply one explicitly, or resolve a real company/customer-level default tax template if this codebase has that concept elsewhere (check `erp-invoicing-service.ts` and related company/customer settings for a real existing pattern before inventing one). Do not silently default to zero tax.
+2. Model retention as a real payment-term holdback rather than a taxable-value-reducing negative line -- check how this codebase's existing invoice schema represents payment terms/holdbacks (if a real pattern exists) and reuse it; if none exists, this is a real, narrow schema/logic addition, keep it scoped to interim-bill retention specifically.
+3. Explicitly document both the original gap and the fix in PROGRESS.md, per this task's own disclosure discipline -- the audit specifically flagged that the original PR did NOT disclose the zero-tax gap even though it disclosed other known limitations (migration-not-applied, get_advisors gap) in the same document.
+
+## SUCCESS_CRITERIA
+- A real test proving: `generateInterimBill()` with a real tax template produces an invoice whose tax amount is correctly computed on the taxable (post-retention-holdback) value, not zero.
+- A real test proving: retention no longer reduces the taxable subtotal -- the GST/tax computed matches what it would be without retention, with the holdback applied separately.
+- `npx tsc --noEmit` clean, `bun test` passing.
+
+## EXPECTED_OUTPUT
+Push the fix to the SAME branch (`worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown`, PR #596 already open) -- do not open a new PR. Requires a fresh supervisor audit before it can go to Owner sign-off (this PR is tier2 per the original audit); do not merge it yourself even after a PASS verdict.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. This task's SCOPE section above is a hard limit -- treat any temptation to modify the breakdown-percentage calculation or the spreadsheet-import logic as out of bounds for this pass, since neither needs changes.
+
+## COMPLEXITY_TIER
+judgment

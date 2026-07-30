@@ -1,0 +1,801 @@
+id: task-20260719-034948-migrate-projexa-to-consume-veridian-ui-k
+title: Migrate PROJEXA to consume veridian-ui-kit
+status: blocked
+repo: projexa
+branch: worker/task-20260719-034948-migrate-projexa-to-consume-veridian-ui-k
+workspace: /opt/veridian/ai-os/tasks/task-20260719-034948-migrate-projexa-to-consume-veridian-ui-k/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260719-034948-migrate-projexa-to-consume-veridian-ui-k
+service: veridian-worker@task-20260719-034948-migrate-projexa-to-consume-veridian-ui-k.service
+created_at: '2026-07-19T03:49:49.951003+00:00'
+last_checkpoint_at: '2026-07-19T04:31:44.291102+00:00'
+completed_steps: &id002
+- Registered claim in compliance-tracker's ai-os/boss/ACTIVE-CLAIMS.yaml (the cross-repo
+  shared registry -- projexa itself has no ai-os/boss dir), via compliance-tracker#473
+  (merged). No collisions found.
+- 'Read compliance-tracker PR #471 (merged) diff in full -- the proven precedent.'
+- 'Checked out veridian-ui-kit at v0.2.2 (v0.2.0 + 2 upstream bugfixes compliance-tracker
+  found: AppShellFrame h-screen clipping, AppSidebar duplicate-key) and read every
+  file under src/shell/, src/composer/, src/panel/, src/context/, plus README.md,
+  in full.'
+- 'Read PROJEXA''s own real current implementation in full (layout.tsx, AppSidebar.tsx,
+  AppTopbar.tsx, VeriComposer.tsx, VeriChatPanel.tsx, veri-chat-context.tsx, dashboard/page.tsx,
+  sidebar-context.tsx, SettingsClient.tsx, api/organization/route.ts) and confirmed
+  via grep: no search mechanism, no notifications system anywhere in the codebase.'
+- Bumped package.json to @fchecklist/veridian-ui-kit v0.2.2 (matching compliance-tracker's
+  own final pin), bun install clean.
+- veri-chat-context.tsx rewritten as a thin wrapper around createVeriChatContext()
+  -- activeQueryId/openQuery kept as PROJEXA's own layered state (not the factory's
+  activeTaskId/openTask, which has an incompatible composerMode side-effect PROJEXA's
+  query flow never had); discussMessages/appendDiscussMessage layered the same way.
+  openConversation/setComposerMode/closeThread all wrapped to keep both state slices
+  in sync exactly as the original single-context version did.
+- AppSidebar.tsx rewritten to use the shared AppSidebar for the generic shell/style,
+  with PROJEXA's real 10 nav sections (Overview/Execution/Field/Design/Resources/Sales/GRC/Finance/HR/Intelligence)
+  converted to NavSection/NavItem data. ProjectSwitcher kept as a real sibling above
+  the shared component (disclosed reorder -- no slot for it between logo/nav in the
+  shared component). Mobile Sheet trigger kept fully decoupled from desktop collapsed
+  state (unlike compliance-tracker's own coupled pattern) so a mobile user can never
+  get stranded; now auto-closes via a pathname effect since it's mounted once, not
+  per-page.
+- 'New src/components/PageHeading.tsx + swept all 41 page.tsx files: removed per-page
+  `<AppTopbar title="X"/>` (AppHeader is now a single global mount, not per-page),
+  replaced with `<PageHeading title="X"/>` inside each page''s own `<main>`. Dashboard
+  (home route) drops the heading entirely since HomeGreeting already provides one.'
+- 'AppTopbar.tsx rewritten to wrap the shared AppHeader, mounted once from layout.tsx:
+  real user-menu (Supabase signOut, matching SettingsClient.tsx''s own pattern, real
+  email from /api/organization), real org contextLabel, real working right-panel-toggle
+  (new panelCollapsed state in layout.tsx), real MobileSidebarTrigger relocated into
+  extraActions (same header placement as before). searchSlot/notificationSlot explicitly
+  passed `false` (not omitted) to suppress AppHeader''s own decorative-dead-button
+  fallback, since PROJEXA has neither a real search mechanism nor a notifications
+  system.'
+- theme-toggle.tsx restyled for the new light header (was styled for the old dark
+  bg-px-ink bar).
+- VeriChatPanel.tsx rewritten to use the shared PanelShell for its outer chrome/tabs
+  only (overview/queries/chats/todo); all real list/thread rendering (QueryList/ChatList/TodoPanel/QueryThread/ConvoThread/Overview)
+  kept local, unchanged.
+- 'VeriComposer.tsx: investigated adopting the shared VeriComposer, found a real,
+  confirmed blocker (its onDispatch requires non-empty free text before a completed
+  chain is sendable; PROJEXA''s real dispatch is deterministic codeReference+fixedInputs
+  with zero required text) -- kept local per this task''s "report the blocker" instruction,
+  documented in the file''s own header comment. Types still flow from the shared package
+  transitively.'
+- src/app/(app)/layout.tsx rewritten to use AppShellFrame (sidebar/header/composer/panel/homeRoute="/dashboard")
+  in place of the hand-rolled flex/ResizablePanelGroup layout.
+- Simplified away sidebar-context.tsx (Context+Provider) once this migration left
+  it with exactly one real consumer -- replaced with plain useState in layout.tsx's
+  ShellBody.
+- 'bunx tsc --noEmit: 0 errors. bun run lint: 0 errors (1 pre-existing unrelated warning
+  in ui/data-table.tsx). bun run build: succeeds, every route compiles. bun test:
+  this repo has zero test files / no test script defined in package.json (pre-existing,
+  confirmed via grep -- not introduced by this change); `bun test` exits 1 with "0
+  test files matching" rather than a real failure.'
+- Confirmed this repo's own ci.yml only defines Lint/Type Check/Build jobs (no Unit
+  Tests/E2E Tests jobs exist) and this repo has no GitHub branch protection configured
+  (403 on the branches/main/protection API, matching compliance-tracker's ACTIVE-CLAIMS.yaml
+  note that projexa has "no CI/branch-protection in that repo").
+- 'Pushed branch, opened FChecklist/projexa PR #42'
+- 'Posted AUDIT: PASS comment'
+- 'Watched CI: Lint, Type Check, Build, Vercel preview deploy all green'
+- 'Self-merged PR #42 (TIER1 -- no schema/migration touched), squash, branch deleted'
+- 'Moved ACTIVE-CLAIMS.yaml entry to recently_completed via compliance-tracker PR
+  #474 (merged)'
+remaining_steps: &id003
+- None -- task complete. Final report delivered to Owner in this session's closing
+  message.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-19T03:49:50.947006+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  - a5129dd Remove confirmed-dead status-badge and compliance-chart components
+  - 'a22efc4 Merge pull request #33 from FChecklist/fix/kb-wiki-honest-disclosure'
+  note: worker started (resume=0)
+- at: '2026-07-19T03:54:51.259154+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  - a5129dd Remove confirmed-dead status-badge and compliance-chart components
+  - 'a22efc4 Merge pull request #33 from FChecklist/fix/kb-wiki-honest-disclosure'
+  note: periodic checkpoint
+- at: '2026-07-19T03:59:51.553225+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  - a5129dd Remove confirmed-dead status-badge and compliance-chart components
+  - 'a22efc4 Merge pull request #33 from FChecklist/fix/kb-wiki-honest-disclosure'
+  note: periodic checkpoint
+- at: '2026-07-19T04:04:51.858955+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (the
+    cross-repo shared registry -- projexa itself has no ai-os/boss dir), via a small
+    PR (compliance-tracker#473, merged) since that repo''s main is protected. Checked
+    for collisions: none scoped to projexa''s own shell files.'
+  - 'Read compliance-tracker PR #471 (merged) diff in full -- the proven precedent:
+    AppShellFrame wraps AppShell.tsx''s veriChatV2Enabled branch; AppSidebar/AppHeader
+    wrap the shared shell components with real data via props; VeriComposer stayed
+    LOCAL (not swapped) because of a real, confirmed feature conflict (VCEL calculator
+    structured inputs / FDE fallback / chain-picker search have no representation
+    in the shared VeriComposer''s props); VeriChatPanel adopted PanelShell for its
+    outer chrome/tabs only, kept all real list/thread rendering local; found+fixed
+    2 real upstream bugs (h-screen clipping, sidebar key collision) as v0.2.1/v0.2.2.'
+  - Checked out veridian-ui-kit at v0.2.2 (v0.2.0 + the 2 upstream bugfixes above)
+    and read every file under src/shell/, src/composer/, src/panel/, src/context/,
+    plus README.md, in full.
+  - 'Read PROJEXA''s own real current implementation in full: src/app/(app)/layout.tsx,
+    AppSidebar.tsx, AppTopbar.tsx, VeriComposer.tsx, VeriChatPanel.tsx, veri-chat-context.tsx,
+    dashboard/page.tsx, sidebar-context.tsx, SettingsClient.tsx (sign-out pattern),
+    api/organization/route.ts.'
+  - 'Confirmed via grep: PROJEXA has NO search mechanism anywhere (no SearchTrigger/command-palette
+    wired to real data) and NO notifications system (no /api/notifications route,
+    no notification concept in the codebase at all) -- both genuine gaps, to be honestly
+    omitted from AppHeader rather than faked.'
+  - Confirmed PROJEXA's AppTopbar is currently rendered PER-PAGE (not once from layout.tsx,
+    unlike compliance-tracker) -- migrating to AppShellFrame's single `header` slot
+    requires restructuring per-page titles into a small title-registration mechanism
+    instead of each page rendering its own header bar.
+  - Confirmed PROJEXA's VeriComposer dispatch model (deterministic codeReference+fixedInputs,
+    sent once a chain completes, no free-text required) is incompatible with the shared
+    VeriComposer's `onDispatch(path, text)` contract (which requires non-empty text
+    before enabling send) -- same class of real conflict compliance-tracker found,
+    so VeriComposer stays local per this task's own "report the blocker, don't paper
+    over it" instruction.
+  remaining_steps:
+  - Bump package.json to @fchecklist/veridian-ui-kit v0.2.2 (matching compliance-tracker's
+    own final pin, for the same 2 bugfixes), bun install
+  - Rewrite veri-chat-context.tsx as a thin wrapper around createVeriChatContext(),
+    layering PROJEXA's real discussMessages/appendDiscussMessage state (not in the
+    shared factory) on top, aliasing activeQueryId/openQuery to the factory's activeTaskId/openTask
+    equivalents
+  - Rewrite AppSidebar.tsx to use the shared AppSidebar, passing PROJEXA's real 10
+    nav sections (Overview/Execution/Field/Design/Resources/Sales/GRC/Finance/HR/Intelligence)
+    as data
+  - 'Design + build a page-title mechanism to replace per-page `<AppTopbar title="X"/>`
+    now that the header moves to a single AppShellFrame-level mount (likely: drop
+    the sticky-header title, move each page''s title into its own content area --
+    disclosed simplification)'
+  - 'Rewrite AppTopbar.tsx to wrap the shared AppHeader, mounted once from layout.tsx:
+    wire real user-menu (Supabase signOut, matching SettingsClient.tsx''s pattern)
+    + real org context label (/api/organization) + a real right-panel-toggle (new
+    panelCollapsed state, since AppShellFrame has no built-in one); omit searchSlot/notificationSlot
+    (no real backend for either)'
+  - Rewrite VeriChatPanel.tsx to use the shared PanelShell for its outer chrome/tabs
+    only (queries/chats/todo/overview), keep all real list/thread rendering (QueryList/ChatList/TodoPanel/QueryThread/ConvoThread/Overview)
+    local
+  - Replace src/app/(app)/layout.tsx's hand-rolled flex/ResizablePanelGroup with AppShellFrame
+    (sidebar/header/composer/panel/homeRoute="/dashboard")
+  - Run bunx tsc --noEmit, bun run lint, bun test -- all clean
+  - 'Push, open PR, post AUDIT: PASS comment, wait for CI (Lint/Type Check/Build/Unit
+    Tests/E2E Tests required; Vercel non-required/rate-limited)'
+  - Self-merge (squash, delete branch) if TIER1 + CI green
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed (separate small PR against
+    compliance-tracker)
+  - 'Final report: PR number, CI result, merged status, honest AppHeader slot-by-slot
+    functionality list (search/notifications/user-menu/panel-toggle: what''s real
+    vs honestly omitted)'
+  recent_commits:
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  - a5129dd Remove confirmed-dead status-badge and compliance-chart components
+  - 'a22efc4 Merge pull request #33 from FChecklist/fix/kb-wiki-honest-disclosure'
+  note: periodic checkpoint
+- at: '2026-07-19T04:09:52.164105+00:00'
+  status: in_progress
+  files_modified:
+  - bun.lock
+  - package.json
+  - src/components/AppSidebar.tsx
+  - src/components/veri-chat/veri-chat-context.tsx
+  - PROGRESS.md
+  completed_steps:
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (the
+    cross-repo shared registry -- projexa itself has no ai-os/boss dir), via a small
+    PR (compliance-tracker#473, merged) since that repo''s main is protected. Checked
+    for collisions: none scoped to projexa''s own shell files.'
+  - 'Read compliance-tracker PR #471 (merged) diff in full -- the proven precedent:
+    AppShellFrame wraps AppShell.tsx''s veriChatV2Enabled branch; AppSidebar/AppHeader
+    wrap the shared shell components with real data via props; VeriComposer stayed
+    LOCAL (not swapped) because of a real, confirmed feature conflict (VCEL calculator
+    structured inputs / FDE fallback / chain-picker search have no representation
+    in the shared VeriComposer''s props); VeriChatPanel adopted PanelShell for its
+    outer chrome/tabs only, kept all real list/thread rendering local; found+fixed
+    2 real upstream bugs (h-screen clipping, sidebar key collision) as v0.2.1/v0.2.2.'
+  - Checked out veridian-ui-kit at v0.2.2 (v0.2.0 + the 2 upstream bugfixes above)
+    and read every file under src/shell/, src/composer/, src/panel/, src/context/,
+    plus README.md, in full.
+  - 'Read PROJEXA''s own real current implementation in full: src/app/(app)/layout.tsx,
+    AppSidebar.tsx, AppTopbar.tsx, VeriComposer.tsx, VeriChatPanel.tsx, veri-chat-context.tsx,
+    dashboard/page.tsx, sidebar-context.tsx, SettingsClient.tsx (sign-out pattern),
+    api/organization/route.ts.'
+  - 'Confirmed via grep: PROJEXA has NO search mechanism anywhere (no SearchTrigger/command-palette
+    wired to real data) and NO notifications system (no /api/notifications route,
+    no notification concept in the codebase at all) -- both genuine gaps, to be honestly
+    omitted from AppHeader rather than faked.'
+  - Confirmed PROJEXA's AppTopbar is currently rendered PER-PAGE (not once from layout.tsx,
+    unlike compliance-tracker) -- migrating to AppShellFrame's single `header` slot
+    requires restructuring per-page titles into a small title-registration mechanism
+    instead of each page rendering its own header bar.
+  - Confirmed PROJEXA's VeriComposer dispatch model (deterministic codeReference+fixedInputs,
+    sent once a chain completes, no free-text required) is incompatible with the shared
+    VeriComposer's `onDispatch(path, text)` contract (which requires non-empty text
+    before enabling send) -- same class of real conflict compliance-tracker found,
+    so VeriComposer stays local per this task's own "report the blocker, don't paper
+    over it" instruction.
+  remaining_steps:
+  - Bump package.json to @fchecklist/veridian-ui-kit v0.2.2 (matching compliance-tracker's
+    own final pin, for the same 2 bugfixes), bun install
+  - Rewrite veri-chat-context.tsx as a thin wrapper around createVeriChatContext(),
+    layering PROJEXA's real discussMessages/appendDiscussMessage state (not in the
+    shared factory) on top, aliasing activeQueryId/openQuery to the factory's activeTaskId/openTask
+    equivalents
+  - Rewrite AppSidebar.tsx to use the shared AppSidebar, passing PROJEXA's real 10
+    nav sections (Overview/Execution/Field/Design/Resources/Sales/GRC/Finance/HR/Intelligence)
+    as data
+  - 'Design + build a page-title mechanism to replace per-page `<AppTopbar title="X"/>`
+    now that the header moves to a single AppShellFrame-level mount (likely: drop
+    the sticky-header title, move each page''s title into its own content area --
+    disclosed simplification)'
+  - 'Rewrite AppTopbar.tsx to wrap the shared AppHeader, mounted once from layout.tsx:
+    wire real user-menu (Supabase signOut, matching SettingsClient.tsx''s pattern)
+    + real org context label (/api/organization) + a real right-panel-toggle (new
+    panelCollapsed state, since AppShellFrame has no built-in one); omit searchSlot/notificationSlot
+    (no real backend for either)'
+  - Rewrite VeriChatPanel.tsx to use the shared PanelShell for its outer chrome/tabs
+    only (queries/chats/todo/overview), keep all real list/thread rendering (QueryList/ChatList/TodoPanel/QueryThread/ConvoThread/Overview)
+    local
+  - Replace src/app/(app)/layout.tsx's hand-rolled flex/ResizablePanelGroup with AppShellFrame
+    (sidebar/header/composer/panel/homeRoute="/dashboard")
+  - Run bunx tsc --noEmit, bun run lint, bun test -- all clean
+  - 'Push, open PR, post AUDIT: PASS comment, wait for CI (Lint/Type Check/Build/Unit
+    Tests/E2E Tests required; Vercel non-required/rate-limited)'
+  - Self-merge (squash, delete branch) if TIER1 + CI green
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed (separate small PR against
+    compliance-tracker)
+  - 'Final report: PR number, CI result, merged status, honest AppHeader slot-by-slot
+    functionality list (search/notifications/user-menu/panel-toggle: what''s real
+    vs honestly omitted)'
+  recent_commits:
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  - a5129dd Remove confirmed-dead status-badge and compliance-chart components
+  - 'a22efc4 Merge pull request #33 from FChecklist/fix/kb-wiki-honest-disclosure'
+  note: periodic checkpoint
+- at: '2026-07-19T04:14:52.489733+00:00'
+  status: in_progress
+  files_modified:
+  - bun.lock
+  - package.json
+  - src/app/(app)/accounting/page.tsx
+  - src/app/(app)/budgets/page.tsx
+  - src/app/(app)/change-orders/page.tsx
+  - src/app/(app)/copilot/page.tsx
+  - src/app/(app)/customers/[id]/page.tsx
+  - src/app/(app)/customers/page.tsx
+  - src/app/(app)/dashboard/page.tsx
+  - src/app/(app)/documents/page.tsx
+  - src/app/(app)/employees/page.tsx
+  - src/app/(app)/expenses/page.tsx
+  - src/app/(app)/ffe/page.tsx
+  - src/app/(app)/floor-plans/[id]/page.tsx
+  - src/app/(app)/floor-plans/[id]/walkthrough/page.tsx
+  - src/app/(app)/floor-plans/page.tsx
+  - src/app/(app)/grc/page.tsx
+  - src/app/(app)/hr/page.tsx
+  - src/app/(app)/inventory/page.tsx
+  - src/app/(app)/invoices/page.tsx
+  - src/app/(app)/knowledge-base/page.tsx
+  - src/app/(app)/kpis/page.tsx
+  - src/app/(app)/labour/page.tsx
+  - src/app/(app)/layout.tsx
+  - src/app/(app)/materials/page.tsx
+  - src/app/(app)/meetings/page.tsx
+  - src/app/(app)/mood-boards/page.tsx
+  - src/app/(app)/payroll/page.tsx
+  - src/app/(app)/permits/page.tsx
+  - src/app/(app)/procurement/page.tsx
+  - src/app/(app)/punch-list/page.tsx
+  - src/app/(app)/purchase-orders/page.tsx
+  - src/app/(app)/quotations/page.tsx
+  - src/app/(app)/recruitment/page.tsx
+  - src/app/(app)/reports/page.tsx
+  - src/app/(app)/rfis/page.tsx
+  - src/app/(app)/sales-orders/page.tsx
+  - src/app/(app)/sales/leads/page.tsx
+  - src/app/(app)/sales/opportunities/page.tsx
+  - src/app/(app)/sales/page.tsx
+  - src/app/(app)/schedule/page.tsx
+  - src/app/(app)/scope/page.tsx
+  - src/app/(app)/settings/page.tsx
+  - src/app/(app)/site-diary/page.tsx
+  - src/app/(app)/submittals/page.tsx
+  - src/app/(app)/vendors/page.tsx
+  - src/app/(app)/wiki/page.tsx
+  - src/app/(app)/work-progress/page.tsx
+  - src/components/AppSidebar.tsx
+  - src/components/AppTopbar.tsx
+  - src/components/theme-toggle.tsx
+  - src/components/veri-chat/VeriChatPanel.tsx
+  - src/components/veri-chat/VeriComposer.tsx
+  - src/components/veri-chat/veri-chat-context.tsx
+  - PROGRESS.md
+  - src/components/PageHeading.tsx
+  completed_steps:
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (the
+    cross-repo shared registry -- projexa itself has no ai-os/boss dir), via a small
+    PR (compliance-tracker#473, merged) since that repo''s main is protected. Checked
+    for collisions: none scoped to projexa''s own shell files.'
+  - 'Read compliance-tracker PR #471 (merged) diff in full -- the proven precedent:
+    AppShellFrame wraps AppShell.tsx''s veriChatV2Enabled branch; AppSidebar/AppHeader
+    wrap the shared shell components with real data via props; VeriComposer stayed
+    LOCAL (not swapped) because of a real, confirmed feature conflict (VCEL calculator
+    structured inputs / FDE fallback / chain-picker search have no representation
+    in the shared VeriComposer''s props); VeriChatPanel adopted PanelShell for its
+    outer chrome/tabs only, kept all real list/thread rendering local; found+fixed
+    2 real upstream bugs (h-screen clipping, sidebar key collision) as v0.2.1/v0.2.2.'
+  - Checked out veridian-ui-kit at v0.2.2 (v0.2.0 + the 2 upstream bugfixes above)
+    and read every file under src/shell/, src/composer/, src/panel/, src/context/,
+    plus README.md, in full.
+  - 'Read PROJEXA''s own real current implementation in full: src/app/(app)/layout.tsx,
+    AppSidebar.tsx, AppTopbar.tsx, VeriComposer.tsx, VeriChatPanel.tsx, veri-chat-context.tsx,
+    dashboard/page.tsx, sidebar-context.tsx, SettingsClient.tsx (sign-out pattern),
+    api/organization/route.ts.'
+  - 'Confirmed via grep: PROJEXA has NO search mechanism anywhere (no SearchTrigger/command-palette
+    wired to real data) and NO notifications system (no /api/notifications route,
+    no notification concept in the codebase at all) -- both genuine gaps, to be honestly
+    omitted from AppHeader rather than faked.'
+  - Confirmed PROJEXA's AppTopbar is currently rendered PER-PAGE (not once from layout.tsx,
+    unlike compliance-tracker) -- migrating to AppShellFrame's single `header` slot
+    requires restructuring per-page titles into a small title-registration mechanism
+    instead of each page rendering its own header bar.
+  - Confirmed PROJEXA's VeriComposer dispatch model (deterministic codeReference+fixedInputs,
+    sent once a chain completes, no free-text required) is incompatible with the shared
+    VeriComposer's `onDispatch(path, text)` contract (which requires non-empty text
+    before enabling send) -- same class of real conflict compliance-tracker found,
+    so VeriComposer stays local per this task's own "report the blocker, don't paper
+    over it" instruction.
+  remaining_steps:
+  - Bump package.json to @fchecklist/veridian-ui-kit v0.2.2 (matching compliance-tracker's
+    own final pin, for the same 2 bugfixes), bun install
+  - Rewrite veri-chat-context.tsx as a thin wrapper around createVeriChatContext(),
+    layering PROJEXA's real discussMessages/appendDiscussMessage state (not in the
+    shared factory) on top, aliasing activeQueryId/openQuery to the factory's activeTaskId/openTask
+    equivalents
+  - Rewrite AppSidebar.tsx to use the shared AppSidebar, passing PROJEXA's real 10
+    nav sections (Overview/Execution/Field/Design/Resources/Sales/GRC/Finance/HR/Intelligence)
+    as data
+  - 'Design + build a page-title mechanism to replace per-page `<AppTopbar title="X"/>`
+    now that the header moves to a single AppShellFrame-level mount (likely: drop
+    the sticky-header title, move each page''s title into its own content area --
+    disclosed simplification)'
+  - 'Rewrite AppTopbar.tsx to wrap the shared AppHeader, mounted once from layout.tsx:
+    wire real user-menu (Supabase signOut, matching SettingsClient.tsx''s pattern)
+    + real org context label (/api/organization) + a real right-panel-toggle (new
+    panelCollapsed state, since AppShellFrame has no built-in one); omit searchSlot/notificationSlot
+    (no real backend for either)'
+  - Rewrite VeriChatPanel.tsx to use the shared PanelShell for its outer chrome/tabs
+    only (queries/chats/todo/overview), keep all real list/thread rendering (QueryList/ChatList/TodoPanel/QueryThread/ConvoThread/Overview)
+    local
+  - Replace src/app/(app)/layout.tsx's hand-rolled flex/ResizablePanelGroup with AppShellFrame
+    (sidebar/header/composer/panel/homeRoute="/dashboard")
+  - Run bunx tsc --noEmit, bun run lint, bun test -- all clean
+  - 'Push, open PR, post AUDIT: PASS comment, wait for CI (Lint/Type Check/Build/Unit
+    Tests/E2E Tests required; Vercel non-required/rate-limited)'
+  - Self-merge (squash, delete branch) if TIER1 + CI green
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed (separate small PR against
+    compliance-tracker)
+  - 'Final report: PR number, CI result, merged status, honest AppHeader slot-by-slot
+    functionality list (search/notifications/user-menu/panel-toggle: what''s real
+    vs honestly omitted)'
+  recent_commits:
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  - a5129dd Remove confirmed-dead status-badge and compliance-chart components
+  - 'a22efc4 Merge pull request #33 from FChecklist/fix/kb-wiki-honest-disclosure'
+  note: periodic checkpoint
+- at: '2026-07-19T04:19:52.813960+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in compliance-tracker's ai-os/boss/ACTIVE-CLAIMS.yaml (the cross-repo
+    shared registry -- projexa itself has no ai-os/boss dir), via compliance-tracker#473
+    (merged). No collisions found.
+  - 'Read compliance-tracker PR #471 (merged) diff in full -- the proven precedent.'
+  - 'Checked out veridian-ui-kit at v0.2.2 (v0.2.0 + 2 upstream bugfixes compliance-tracker
+    found: AppShellFrame h-screen clipping, AppSidebar duplicate-key) and read every
+    file under src/shell/, src/composer/, src/panel/, src/context/, plus README.md,
+    in full.'
+  - 'Read PROJEXA''s own real current implementation in full (layout.tsx, AppSidebar.tsx,
+    AppTopbar.tsx, VeriComposer.tsx, VeriChatPanel.tsx, veri-chat-context.tsx, dashboard/page.tsx,
+    sidebar-context.tsx, SettingsClient.tsx, api/organization/route.ts) and confirmed
+    via grep: no search mechanism, no notifications system anywhere in the codebase.'
+  - Bumped package.json to @fchecklist/veridian-ui-kit v0.2.2 (matching compliance-tracker's
+    own final pin), bun install clean.
+  - veri-chat-context.tsx rewritten as a thin wrapper around createVeriChatContext()
+    -- activeQueryId/openQuery kept as PROJEXA's own layered state (not the factory's
+    activeTaskId/openTask, which has an incompatible composerMode side-effect PROJEXA's
+    query flow never had); discussMessages/appendDiscussMessage layered the same way.
+    openConversation/setComposerMode/closeThread all wrapped to keep both state slices
+    in sync exactly as the original single-context version did.
+  - AppSidebar.tsx rewritten to use the shared AppSidebar for the generic shell/style,
+    with PROJEXA's real 10 nav sections (Overview/Execution/Field/Design/Resources/Sales/GRC/Finance/HR/Intelligence)
+    converted to NavSection/NavItem data. ProjectSwitcher kept as a real sibling above
+    the shared component (disclosed reorder -- no slot for it between logo/nav in
+    the shared component). Mobile Sheet trigger kept fully decoupled from desktop
+    collapsed state (unlike compliance-tracker's own coupled pattern) so a mobile
+    user can never get stranded; now auto-closes via a pathname effect since it's
+    mounted once, not per-page.
+  - 'New src/components/PageHeading.tsx + swept all 41 page.tsx files: removed per-page
+    `<AppTopbar title="X"/>` (AppHeader is now a single global mount, not per-page),
+    replaced with `<PageHeading title="X"/>` inside each page''s own `<main>`. Dashboard
+    (home route) drops the heading entirely since HomeGreeting already provides one.'
+  - 'AppTopbar.tsx rewritten to wrap the shared AppHeader, mounted once from layout.tsx:
+    real user-menu (Supabase signOut, matching SettingsClient.tsx''s own pattern,
+    real email from /api/organization), real org contextLabel, real working right-panel-toggle
+    (new panelCollapsed state in layout.tsx), real MobileSidebarTrigger relocated
+    into extraActions (same header placement as before). searchSlot/notificationSlot
+    explicitly passed `false` (not omitted) to suppress AppHeader''s own decorative-dead-button
+    fallback, since PROJEXA has neither a real search mechanism nor a notifications
+    system.'
+  - theme-toggle.tsx restyled for the new light header (was styled for the old dark
+    bg-px-ink bar).
+  - VeriChatPanel.tsx rewritten to use the shared PanelShell for its outer chrome/tabs
+    only (overview/queries/chats/todo); all real list/thread rendering (QueryList/ChatList/TodoPanel/QueryThread/ConvoThread/Overview)
+    kept local, unchanged.
+  - 'VeriComposer.tsx: investigated adopting the shared VeriComposer, found a real,
+    confirmed blocker (its onDispatch requires non-empty free text before a completed
+    chain is sendable; PROJEXA''s real dispatch is deterministic codeReference+fixedInputs
+    with zero required text) -- kept local per this task''s "report the blocker" instruction,
+    documented in the file''s own header comment. Types still flow from the shared
+    package transitively.'
+  - src/app/(app)/layout.tsx rewritten to use AppShellFrame (sidebar/header/composer/panel/homeRoute="/dashboard")
+    in place of the hand-rolled flex/ResizablePanelGroup layout.
+  - Simplified away sidebar-context.tsx (Context+Provider) once this migration left
+    it with exactly one real consumer -- replaced with plain useState in layout.tsx's
+    ShellBody.
+  - 'bunx tsc --noEmit: 0 errors. bun run lint: 0 errors (1 pre-existing unrelated
+    warning in ui/data-table.tsx). bun run build: succeeds, every route compiles.
+    bun test: this repo has zero test files / no test script defined in package.json
+    (pre-existing, confirmed via grep -- not introduced by this change); `bun test`
+    exits 1 with "0 test files matching" rather than a real failure.'
+  - Confirmed this repo's own ci.yml only defines Lint/Type Check/Build jobs (no Unit
+    Tests/E2E Tests jobs exist) and this repo has no GitHub branch protection configured
+    (403 on the branches/main/protection API, matching compliance-tracker's ACTIVE-CLAIMS.yaml
+    note that projexa has "no CI/branch-protection in that repo").
+  remaining_steps:
+  - Push branch, open PR
+  - 'Post AUDIT: PASS comment'
+  - Watch this repo's real CI (Lint/Type Check/Build) to green
+  - Self-merge (TIER1 -- no schema/migration touched) once green
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed (separate small PR against
+    compliance-tracker)
+  - 'Final report to Owner: PR number, CI result, merged status, honest AppHeader
+    slot-by-slot functionality list (search/notifications/user-menu/panel-toggle:
+    what''s real vs honestly omitted)'
+  recent_commits:
+  - 9043c2b Migrate to veridian-ui-kit's real shell/composer/panel/header components
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  - a5129dd Remove confirmed-dead status-badge and compliance-chart components
+  note: periodic checkpoint
+- at: '2026-07-19T04:24:53.130751+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in compliance-tracker's ai-os/boss/ACTIVE-CLAIMS.yaml (the cross-repo
+    shared registry -- projexa itself has no ai-os/boss dir), via compliance-tracker#473
+    (merged). No collisions found.
+  - 'Read compliance-tracker PR #471 (merged) diff in full -- the proven precedent.'
+  - 'Checked out veridian-ui-kit at v0.2.2 (v0.2.0 + 2 upstream bugfixes compliance-tracker
+    found: AppShellFrame h-screen clipping, AppSidebar duplicate-key) and read every
+    file under src/shell/, src/composer/, src/panel/, src/context/, plus README.md,
+    in full.'
+  - 'Read PROJEXA''s own real current implementation in full (layout.tsx, AppSidebar.tsx,
+    AppTopbar.tsx, VeriComposer.tsx, VeriChatPanel.tsx, veri-chat-context.tsx, dashboard/page.tsx,
+    sidebar-context.tsx, SettingsClient.tsx, api/organization/route.ts) and confirmed
+    via grep: no search mechanism, no notifications system anywhere in the codebase.'
+  - Bumped package.json to @fchecklist/veridian-ui-kit v0.2.2 (matching compliance-tracker's
+    own final pin), bun install clean.
+  - veri-chat-context.tsx rewritten as a thin wrapper around createVeriChatContext()
+    -- activeQueryId/openQuery kept as PROJEXA's own layered state (not the factory's
+    activeTaskId/openTask, which has an incompatible composerMode side-effect PROJEXA's
+    query flow never had); discussMessages/appendDiscussMessage layered the same way.
+    openConversation/setComposerMode/closeThread all wrapped to keep both state slices
+    in sync exactly as the original single-context version did.
+  - AppSidebar.tsx rewritten to use the shared AppSidebar for the generic shell/style,
+    with PROJEXA's real 10 nav sections (Overview/Execution/Field/Design/Resources/Sales/GRC/Finance/HR/Intelligence)
+    converted to NavSection/NavItem data. ProjectSwitcher kept as a real sibling above
+    the shared component (disclosed reorder -- no slot for it between logo/nav in
+    the shared component). Mobile Sheet trigger kept fully decoupled from desktop
+    collapsed state (unlike compliance-tracker's own coupled pattern) so a mobile
+    user can never get stranded; now auto-closes via a pathname effect since it's
+    mounted once, not per-page.
+  - 'New src/components/PageHeading.tsx + swept all 41 page.tsx files: removed per-page
+    `<AppTopbar title="X"/>` (AppHeader is now a single global mount, not per-page),
+    replaced with `<PageHeading title="X"/>` inside each page''s own `<main>`. Dashboard
+    (home route) drops the heading entirely since HomeGreeting already provides one.'
+  - 'AppTopbar.tsx rewritten to wrap the shared AppHeader, mounted once from layout.tsx:
+    real user-menu (Supabase signOut, matching SettingsClient.tsx''s own pattern,
+    real email from /api/organization), real org contextLabel, real working right-panel-toggle
+    (new panelCollapsed state in layout.tsx), real MobileSidebarTrigger relocated
+    into extraActions (same header placement as before). searchSlot/notificationSlot
+    explicitly passed `false` (not omitted) to suppress AppHeader''s own decorative-dead-button
+    fallback, since PROJEXA has neither a real search mechanism nor a notifications
+    system.'
+  - theme-toggle.tsx restyled for the new light header (was styled for the old dark
+    bg-px-ink bar).
+  - VeriChatPanel.tsx rewritten to use the shared PanelShell for its outer chrome/tabs
+    only (overview/queries/chats/todo); all real list/thread rendering (QueryList/ChatList/TodoPanel/QueryThread/ConvoThread/Overview)
+    kept local, unchanged.
+  - 'VeriComposer.tsx: investigated adopting the shared VeriComposer, found a real,
+    confirmed blocker (its onDispatch requires non-empty free text before a completed
+    chain is sendable; PROJEXA''s real dispatch is deterministic codeReference+fixedInputs
+    with zero required text) -- kept local per this task''s "report the blocker" instruction,
+    documented in the file''s own header comment. Types still flow from the shared
+    package transitively.'
+  - src/app/(app)/layout.tsx rewritten to use AppShellFrame (sidebar/header/composer/panel/homeRoute="/dashboard")
+    in place of the hand-rolled flex/ResizablePanelGroup layout.
+  - Simplified away sidebar-context.tsx (Context+Provider) once this migration left
+    it with exactly one real consumer -- replaced with plain useState in layout.tsx's
+    ShellBody.
+  - 'bunx tsc --noEmit: 0 errors. bun run lint: 0 errors (1 pre-existing unrelated
+    warning in ui/data-table.tsx). bun run build: succeeds, every route compiles.
+    bun test: this repo has zero test files / no test script defined in package.json
+    (pre-existing, confirmed via grep -- not introduced by this change); `bun test`
+    exits 1 with "0 test files matching" rather than a real failure.'
+  - Confirmed this repo's own ci.yml only defines Lint/Type Check/Build jobs (no Unit
+    Tests/E2E Tests jobs exist) and this repo has no GitHub branch protection configured
+    (403 on the branches/main/protection API, matching compliance-tracker's ACTIVE-CLAIMS.yaml
+    note that projexa has "no CI/branch-protection in that repo").
+  remaining_steps:
+  - Push branch, open PR
+  - 'Post AUDIT: PASS comment'
+  - Watch this repo's real CI (Lint/Type Check/Build) to green
+  - Self-merge (TIER1 -- no schema/migration touched) once green
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed (separate small PR against
+    compliance-tracker)
+  - 'Final report to Owner: PR number, CI result, merged status, honest AppHeader
+    slot-by-slot functionality list (search/notifications/user-menu/panel-toggle:
+    what''s real vs honestly omitted)'
+  recent_commits:
+  - 9043c2b Migrate to veridian-ui-kit's real shell/composer/panel/header components
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  - a5129dd Remove confirmed-dead status-badge and compliance-chart components
+  note: periodic checkpoint
+- at: '2026-07-19T04:28:15.017458+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Registered claim in compliance-tracker's ai-os/boss/ACTIVE-CLAIMS.yaml (the cross-repo
+    shared registry -- projexa itself has no ai-os/boss dir), via compliance-tracker#473
+    (merged). No collisions found.
+  - 'Read compliance-tracker PR #471 (merged) diff in full -- the proven precedent.'
+  - 'Checked out veridian-ui-kit at v0.2.2 (v0.2.0 + 2 upstream bugfixes compliance-tracker
+    found: AppShellFrame h-screen clipping, AppSidebar duplicate-key) and read every
+    file under src/shell/, src/composer/, src/panel/, src/context/, plus README.md,
+    in full.'
+  - 'Read PROJEXA''s own real current implementation in full (layout.tsx, AppSidebar.tsx,
+    AppTopbar.tsx, VeriComposer.tsx, VeriChatPanel.tsx, veri-chat-context.tsx, dashboard/page.tsx,
+    sidebar-context.tsx, SettingsClient.tsx, api/organization/route.ts) and confirmed
+    via grep: no search mechanism, no notifications system anywhere in the codebase.'
+  - Bumped package.json to @fchecklist/veridian-ui-kit v0.2.2 (matching compliance-tracker's
+    own final pin), bun install clean.
+  - veri-chat-context.tsx rewritten as a thin wrapper around createVeriChatContext()
+    -- activeQueryId/openQuery kept as PROJEXA's own layered state (not the factory's
+    activeTaskId/openTask, which has an incompatible composerMode side-effect PROJEXA's
+    query flow never had); discussMessages/appendDiscussMessage layered the same way.
+    openConversation/setComposerMode/closeThread all wrapped to keep both state slices
+    in sync exactly as the original single-context version did.
+  - AppSidebar.tsx rewritten to use the shared AppSidebar for the generic shell/style,
+    with PROJEXA's real 10 nav sections (Overview/Execution/Field/Design/Resources/Sales/GRC/Finance/HR/Intelligence)
+    converted to NavSection/NavItem data. ProjectSwitcher kept as a real sibling above
+    the shared component (disclosed reorder -- no slot for it between logo/nav in
+    the shared component). Mobile Sheet trigger kept fully decoupled from desktop
+    collapsed state (unlike compliance-tracker's own coupled pattern) so a mobile
+    user can never get stranded; now auto-closes via a pathname effect since it's
+    mounted once, not per-page.
+  - 'New src/components/PageHeading.tsx + swept all 41 page.tsx files: removed per-page
+    `<AppTopbar title="X"/>` (AppHeader is now a single global mount, not per-page),
+    replaced with `<PageHeading title="X"/>` inside each page''s own `<main>`. Dashboard
+    (home route) drops the heading entirely since HomeGreeting already provides one.'
+  - 'AppTopbar.tsx rewritten to wrap the shared AppHeader, mounted once from layout.tsx:
+    real user-menu (Supabase signOut, matching SettingsClient.tsx''s own pattern,
+    real email from /api/organization), real org contextLabel, real working right-panel-toggle
+    (new panelCollapsed state in layout.tsx), real MobileSidebarTrigger relocated
+    into extraActions (same header placement as before). searchSlot/notificationSlot
+    explicitly passed `false` (not omitted) to suppress AppHeader''s own decorative-dead-button
+    fallback, since PROJEXA has neither a real search mechanism nor a notifications
+    system.'
+  - theme-toggle.tsx restyled for the new light header (was styled for the old dark
+    bg-px-ink bar).
+  - VeriChatPanel.tsx rewritten to use the shared PanelShell for its outer chrome/tabs
+    only (overview/queries/chats/todo); all real list/thread rendering (QueryList/ChatList/TodoPanel/QueryThread/ConvoThread/Overview)
+    kept local, unchanged.
+  - 'VeriComposer.tsx: investigated adopting the shared VeriComposer, found a real,
+    confirmed blocker (its onDispatch requires non-empty free text before a completed
+    chain is sendable; PROJEXA''s real dispatch is deterministic codeReference+fixedInputs
+    with zero required text) -- kept local per this task''s "report the blocker" instruction,
+    documented in the file''s own header comment. Types still flow from the shared
+    package transitively.'
+  - src/app/(app)/layout.tsx rewritten to use AppShellFrame (sidebar/header/composer/panel/homeRoute="/dashboard")
+    in place of the hand-rolled flex/ResizablePanelGroup layout.
+  - Simplified away sidebar-context.tsx (Context+Provider) once this migration left
+    it with exactly one real consumer -- replaced with plain useState in layout.tsx's
+    ShellBody.
+  - 'bunx tsc --noEmit: 0 errors. bun run lint: 0 errors (1 pre-existing unrelated
+    warning in ui/data-table.tsx). bun run build: succeeds, every route compiles.
+    bun test: this repo has zero test files / no test script defined in package.json
+    (pre-existing, confirmed via grep -- not introduced by this change); `bun test`
+    exits 1 with "0 test files matching" rather than a real failure.'
+  - Confirmed this repo's own ci.yml only defines Lint/Type Check/Build jobs (no Unit
+    Tests/E2E Tests jobs exist) and this repo has no GitHub branch protection configured
+    (403 on the branches/main/protection API, matching compliance-tracker's ACTIVE-CLAIMS.yaml
+    note that projexa has "no CI/branch-protection in that repo").
+  - 'Pushed branch, opened FChecklist/projexa PR #42'
+  - 'Posted AUDIT: PASS comment'
+  - 'Watched CI: Lint, Type Check, Build, Vercel preview deploy all green'
+  - 'Self-merged PR #42 (TIER1 -- no schema/migration touched), squash, branch deleted'
+  - 'Moved ACTIVE-CLAIMS.yaml entry to recently_completed via compliance-tracker PR
+    #474 (merged)'
+  remaining_steps:
+  - None -- task complete. Final report delivered to Owner in this session's closing
+    message.
+  recent_commits:
+  - 'bf0b2ad Worker task-20260719-034948-migrate-projexa-to-consume-veridian-ui-k:
+    automated checkpoint commit'
+  - 9043c2b Migrate to veridian-ui-kit's real shell/composer/panel/header components
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  note: quality gates passed, pushed branch worker/task-20260719-034948-migrate-projexa-to-consume-veridian-ui-k,
+    awaiting review
+- at: '2026-07-19T04:31:44.291102+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'bf0b2ad Worker task-20260719-034948-migrate-projexa-to-consume-veridian-ui-k:
+    automated checkpoint commit'
+  - 9043c2b Migrate to veridian-ui-kit's real shell/composer/panel/header components
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  note: "Superboss rejected: https://github.com/FChecklist/projexa/pull/43 \u2014\
+    \ see review.json for issues"
+execution_seconds: 2273
+restart_count: 0
+token_usage:
+  input_tokens: 446
+  cache_creation_input_tokens: 338318
+  cache_read_input_tokens: 49866510
+  output_tokens: 134295
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 338318
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 877
+    cache_read_input_tokens: 361423
+    cache_creation_input_tokens: 433
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 433
+    type: message
+  speed: standard
+master_synced_at: '2026-07-19T05:00:05.087099+00:00'

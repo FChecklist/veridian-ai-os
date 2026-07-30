@@ -1,0 +1,30 @@
+## OBJECTIVE
+Close 4 real, audit-confirmed gaps in OWNER_ENGINE Phase 5 (browser execution tiers): real NPU inference, real Built-in-AI inference, a general cross-engine storage layer, and a browser-sync engine.
+
+## KNOWN_CONTEXT
+Real, independently-audited finding (ai-os/audits/owner_engine_reaudit_2026-07-27.md, already merged to main), do not re-derive: `src/lib/browser-execution/tier-detection.ts`'s `detectNpuTier()` and `detectBuiltinAiTier()` are feature-DETECTION only (`navigator.ml` / `window.ai` presence checks) -- neither actually runs inference. `model-cache.ts` is real but explicitly scoped as per-engine weight caching only, not the general "OPFS + IndexedDB + Cache API" cross-tier storage the phase plan requires. Zero code anywhere implements the browser-sync engine (server sync with conflict resolution, offline queuing, delta sync). The phase's own authoritative scope document is `ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml` (`phase_5_browser_execution_tiers`) in the separate `claude-control` repo at `/opt/veridian/repos/claude-control` on this same server -- read it directly (read-only, it's a sibling repo, not this task's own repo) for the exact gap-item names (`engine-browser-npu`, `engine-browser-builtin-ai`, `engine-browser-storage`, `engine-browser-sync`) and their real acceptance criteria before implementing.
+
+## SCOPE
+1. Real NPU inference: wire an actual WebNN inference call path in `tier-detection.ts`/`tier-orchestrator.ts` for at least one real, small model operation (check what models/operations this codebase's browser-execution tier already targets via `webllm-engine.ts` before choosing a task -- reuse an existing model choice rather than introducing a new one).
+2. Real Built-in-AI inference: wire an actual `window.ai`/`window.LanguageModel` call path for at least one real operation, gated correctly behind the existing feature-detection.
+3. General cross-tier storage: a real storage abstraction over OPFS + Cache API (IndexedDB already exists via `model-cache.ts` for the per-engine case) -- reuse `model-cache.ts`'s existing per-engine cache as one backend this new layer can sit alongside, do not replace it.
+4. Browser-sync engine: real server-sync with conflict resolution, offline queuing, delta sync -- check PROJEXA's existing PWA offline work-progress queue (`src/lib/offline/work-progress-queue.ts`, PR #54) for an existing, proven queuing/sync-mutex pattern to reuse rather than building a new one from scratch.
+5. Register `litert-spike` as a real entry in `ai-os/MASTER_INDEX.yaml` (claude-control repo) -- the phase plan's own explicit mandated first step, never done. This may require write access to the sibling claude-control repo -- if you cannot write there from this task's own worktree, document the exact real entry that needs adding and flag it as a cross-repo follow-up rather than skipping it silently.
+
+## SUCCESS_CRITERIA
+- A real test proving NPU inference actually executes (not just detects) when `navigator.ml` is present, with a real mocked/stubbed WebNN backend if a real device isn't available in CI.
+- A real test proving Built-in-AI inference actually executes when `window.ai` is present.
+- A real test proving the cross-tier storage layer persists and retrieves data via a real OPFS/Cache API call (or a real, documented jsdom/happy-dom polyfill if this test environment lacks real browser storage APIs).
+- A real test proving the sync engine handles a real conflict scenario (two queued offline changes to the same record) correctly.
+- Verify by actually running:
+`npx tsc --noEmit`
+`bun test src/lib/browser-execution`
+
+## EXPECTED_OUTPUT
+A real PR on a new branch in the compliance-tracker repo. Requires a fresh supervisor audit before merge; do not merge yourself.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not modify the existing, already-audited-complete Phase 4 (defense-in-depth) or Phase 9 (gateway wiring) code.
+
+## COMPLEXITY_TIER
+judgment

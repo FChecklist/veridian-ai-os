@@ -1,0 +1,288 @@
+id: task-20260726-180527-rca-task-20260726-171926-remove-anthropi
+title: rca-task-20260726-171926-remove-anthropic-api-key-dead-code-path
+status: superseded
+repo: claude-control
+branch: master
+workspace: /opt/veridian/ai-os/tasks/task-20260726-180527-rca-task-20260726-171926-remove-anthropi/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-180527-rca-task-20260726-171926-remove-anthropi
+service: veridian-worker@task-20260726-180527-rca-task-20260726-171926-remove-anthropi.service
+created_at: '2026-07-26T18:05:29.100776+00:00'
+last_checkpoint_at: '2026-07-26T18:52:16.261451+00:00'
+completed_steps: &id002
+- Read task-20260726-171926-remove-anthropic-api-key-dead-code-path's task.yaml, worker.log,
+  systemd.log
+- 'Ruled out the original task''s own code as the root cause: its `claude -p` main'
+- 'Found the real root cause via `journalctl --user -u veridian-worker@task-20260726-171926...`:'
+- 'Traced why this produces the exact watchdog signature "periodic checkpoint":'
+- Real fix (confirmed already applied, independently, by the concurrent sibling
+- Registered (independently, per this task's own success criteria) the
+remaining_steps: &id003
+- None -- root cause identified, fix confirmed live, known_fixes row confirmed
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T18:05:40.543009+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T18:10:59.861500+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  note: periodic checkpoint
+- at: '2026-07-26T18:17:25.675230+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  note: periodic checkpoint
+- at: '2026-07-26T18:23:01.294953+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  note: periodic checkpoint
+- at: '2026-07-26T18:31:51.863321+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  note: periodic checkpoint
+- at: '2026-07-26T18:37:04.583992+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  note: periodic checkpoint
+- at: '2026-07-26T18:51:00.622796+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read task-20260726-171926-remove-anthropic-api-key-dead-code-path's task.yaml,
+    worker.log, systemd.log
+  - 'Ruled out the original task''s own code as the root cause: its `claude -p` main'
+  - 'Found the real root cause via `journalctl --user -u veridian-worker@task-20260726-171926...`:'
+  - 'Traced why this produces the exact watchdog signature "periodic checkpoint":'
+  - Real fix (confirmed already applied, independently, by the concurrent sibling
+  - Registered (independently, per this task's own success criteria) the
+  remaining_steps:
+  - None -- root cause identified, fix confirmed live, known_fixes row confirmed
+  recent_commits:
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  note: periodic checkpoint
+- at: '2026-07-26T18:51:24.575346+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read task-20260726-171926-remove-anthropic-api-key-dead-code-path's task.yaml,
+    worker.log, systemd.log
+  - 'Ruled out the original task''s own code as the root cause: its `claude -p` main'
+  - 'Found the real root cause via `journalctl --user -u veridian-worker@task-20260726-171926...`:'
+  - 'Traced why this produces the exact watchdog signature "periodic checkpoint":'
+  - Real fix (confirmed already applied, independently, by the concurrent sibling
+  - Registered (independently, per this task's own success criteria) the
+  remaining_steps:
+  - None -- root cause identified, fix confirmed live, known_fixes row confirmed
+  recent_commits:
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  note: 'ROOT CAUSE (confirmed via journalctl, not a guess): task-20260726-171926''s
+    worker was killed by the kernel OOM killer mid quality-gate (''A process of this
+    unit has been killed by the OOM killer'' / ''Failed with result oom-kill'' at
+    18:10:58) -- host was at 14.6/15Gi RAM, swap 4.0/4.0Gi, 15+ concurrent veridian-worker
+    units. worker-entrypoint.sh''s 5-min heartbeat always writes note=''periodic checkpoint''
+    regardless of real progress, so an abrupt OOM-kill freezes task.yaml on that generic
+    note, which the watchdog uses as its stall signature -- identical fleet-wide for
+    any abnormal kill, causing repeated duplicate RCA dispatches (3 for this task
+    alone, plus a sibling RCA task-20260726-175957 hitting the same signature via
+    a different original task). The original task''s own lint bug (require() import)
+    is real but unrelated to the stall -- its main claude invocation actually succeeded
+    (PR #578 opened). FIX: systemd MemoryHigh=2G/MemoryMax=3G/MemorySwapMax=1G added
+    to /home/rajat/.config/systemd/user/veridian-worker@.service (verified live, applied
+    independently by sibling RCA task-20260726-175957, same root cause -- left in
+    place rather than re-editing) contains OOM blast radius to one unit''s cgroup
+    instead of the kernel picking an arbitrary fleet-wide victim. KNOWN_FIXES ROW
+    (this task''s own contribution, run directly): python3 scripts/superboss-register.py
+    log-fix --signature ''periodic checkpoint'' --fix-action ''restart_unit'' -> {signature:
+    periodic checkpoint, fix_action: restart_unit, success_count: 2}. See PROGRESS.md
+    for full detail.'
+- at: '2026-07-26T18:51:42.946520+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read task-20260726-171926-remove-anthropic-api-key-dead-code-path's task.yaml,
+    worker.log, systemd.log
+  - 'Ruled out the original task''s own code as the root cause: its `claude -p` main'
+  - 'Found the real root cause via `journalctl --user -u veridian-worker@task-20260726-171926...`:'
+  - 'Traced why this produces the exact watchdog signature "periodic checkpoint":'
+  - Real fix (confirmed already applied, independently, by the concurrent sibling
+  - Registered (independently, per this task's own success criteria) the
+  remaining_steps:
+  - None -- root cause identified, fix confirmed live, known_fixes row confirmed
+  recent_commits:
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  note: worker finished, no changes to commit and zero commits ahead of master --
+    genuine no-op, routing through pending_review (not completed directly) so the
+    state-machine invariant holds and the supervisor gets the final say
+- at: '2026-07-26T18:52:16.261451+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  note: "supervisor could not resolve a real PR for branch 'master' (gh pr create\
+    \ failed, no existing open PR found for it) \u2014 refusing to proceed rather\
+    \ than risk operating on an unrelated PR via gh's empty-argument fallback. See\
+    \ supervisor.log."
+execution_seconds: 2762
+restart_count: 0
+token_usage:
+  input_tokens: 60
+  cache_creation_input_tokens: 103225
+  cache_read_input_tokens: 2583614
+  output_tokens: 41475
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 103225
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 779
+    cache_read_input_tokens: 125618
+    cache_creation_input_tokens: 1291
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1291
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-26T19:00:52.491711+00:00'
+duplicate_of: task-20260726-181517-rca-task-20260726-171926-remove-anthropi
+superseded_reason: Collapsed by plan_backlog_completion.py dedup 2026-07-27 -- same
+  underlying issue as task-20260726-181517-rca-task-20260726-171926-remove-anthropi
+  (5 total attempts in chain).
+superseded_at: '2026-07-27T03:38:36.793237+00:00'

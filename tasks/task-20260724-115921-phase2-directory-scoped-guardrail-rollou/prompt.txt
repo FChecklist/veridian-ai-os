@@ -1,0 +1,37 @@
+## OBJECTIVE
+Directory-scoped guardrail rollout (manual runs, not yet CI-blocking)
+
+## SCOPE
+- Run ai-os/TERMINOLOGY_GUARDRAIL_2026-07-24.py across compliance-tracker directories in priority order, each a separate sub-phase with its own findings report committed to ai-os/guardrail-findings/<directory-slug>-2026-MM-DD.json: 1) src/lib/services/*.ts (AI prompt/drafting/report-builder services -- highest signal, confirmed this phase via communication-drafting-service.ts's 1 real finding), 2) src/lib/*.ts top-level (orchestration/prompt-adjacent libs -- confirmed this phase via orchestra-mock-data.ts's 29 real findings), 3) src/app/api/**/*.ts (AI-orchestration routes, e.g. src/app/api/ai/orchestrate/route.ts), 4) src/db/seed.ts + any src/**/*.test.ts fixtures (lowest priority -- these intentionally use example data for local dev/test, so Phase 2 classifies rather than immediately flags: seed/test fixture findings default into the Phase 3 exemption file, not a required fix).
+- For each directory, produce a findings-count baseline (mirrors this task's own 36-finding/3-file smoke test) -- this baseline is Phase 4's 'migration debt' starting number.
+
+## KNOWN_CONTEXT
+This is phase_2_directory_scoped_rollout of ai-os/TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml, part of the VERIDIAN Terminology Standardization -- Phased Rollout Plan initiative. Read that file in
+full before starting -- this OBJECTIVE/SCOPE text is copied verbatim from its own phases[] entry for
+phase_2_directory_scoped_rollout, not invented here. Its depends_on phase(s) are confirmed done via real merged PR(s) for task(s):
+task-20260724-070131-veridian-terminology-standardization-pha. This task was auto-dispatched by scripts/auto_phase_continuation.py per instruction
+INS-20260724-113032-8032, which exists specifically because this same initiative's phased dispatch had
+previously stalled after an earlier phase with nothing to continue it automatically -- do not stop after
+this phase either without updating the plan file per EXPECTED_OUTPUT below, so the next cron tick can find
+real next-phase work if one exists.
+
+## SUCCESS_CRITERIA
+- `python3 scripts/superboss-register.py query-knowledge "phase_2_directory_scoped_rollout" --tag domain:veridian-terminology-standardization-phased-rollout` returns at least one registered row for this phase's real deliverable once you register it (same convention this plan file's own `registration:` block or prior phases already use).
+- `grep -A3 "id: phase_2_directory_scoped_rollout" ai-os/TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml` shows this phase's own status updated away from its current not-done value (e.g. to `status: done`), committed as part of this task's real diff -- not hand-edited prose, produced by whatever script/process you use to close this phase out.
+
+## EXPECTED_OUTPUT
+Real, committed and pushed code (PR on claude-control) implementing this phase's scope above. Update
+ai-os/TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml's own phases[] entry for phase_2_directory_scoped_rollout in place (same status/status_detail or
+evidence convention the plan file's already-done phases use) to record what shipped and real evidence, so
+a future run of auto_phase_continuation.py can correctly detect this phase as done and move on to whatever
+depends on it.
+
+## CONSTRAINTS
+Do not re-build or re-litigate anything already marked done in an earlier phase of this same plan file.
+Do not duplicate an existing engine/mechanism -- search first, per this session's standing no-duplication
+rule (see TERMINOLOGY_STANDARDIZATION_PHASE_PLAN_2026-07-24.yaml's own inventory/precedent notes if present). Any crontab change needs an approved
+entry in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml plus a matching ai-os/CRONTAB_APPROVED_SNAPSHOT.txt
+update, per the Owner's existing blanket approval -- do not add cron entries without that citation.
+
+## COMPLEXITY_TIER
+judgment

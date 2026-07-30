@@ -1,0 +1,134 @@
+id: task-20260724-183102-fix-terminology-phase4-gitlink-issue
+title: fix-terminology-phase4-gitlink-issue
+status: blocked
+repo: claude-control
+branch: worker/task-20260724-183102-fix-terminology-phase4-gitlink-issue
+workspace: /opt/veridian/ai-os/tasks/task-20260724-183102-fix-terminology-phase4-gitlink-issue/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260724-183102-fix-terminology-phase4-gitlink-issue
+service: veridian-worker@task-20260724-183102-fix-terminology-phase4-gitlink-issue.service
+created_at: '2026-07-24T18:31:02.834785+00:00'
+last_checkpoint_at: '2026-07-24T18:36:30.266314+00:00'
+completed_steps: &id002
+- Read review.json rejection text for PR48 (dangling gitlink `compliance-tracker-work`,
+  mode 160000, commit dd159cc1406cb816760c11e8386141e112c3b245)
+- 'Confirmed the gitlink commit dd159cc1406cb816760c11e8386141e112c3b245 already exists
+  on `phase4/terminology-hardcoded-example-migration` in the compliance-tracker repo,
+  and is already tracked by compliance-tracker PR #553 (real files: migrated hardcoded
+  examples in communication-drafting-service.ts / crm-accounts-service.ts, regenerated
+  terminology-guardrail-exemptions.yaml) -- no new compliance-tracker PR needed to
+  be opened, #553 already mirrors the Phase 3 / PR #552 pattern'
+- Checked out worker/task-20260724-143013-phase4-migrate-existing-hardcoded-exampl
+  branch in a scratch clone, ran `git rm --cached compliance-tracker-work`, committed
+  (54290ac), pushed to origin
+- 'Updated claude-control PR #48 body (via REST API PATCH, gh pr edit hit an unrelated
+  GraphQL Projects-classic error) to reference compliance-tracker PR #553 instead
+  of the gitlink'
+- 'Verified: `git ls-files -s | grep 160000` returns nothing on the fixed branch;
+  `git show HEAD --stat` shows a real deletion of the gitlink entry; compliance-tracker
+  PR #553 confirmed OPEN with real file changes'
+remaining_steps: &id003
+- 'None -- task complete. compliance-tracker PR #553 merge is tracked separately (not
+  blocking, per PR #48 body test plan).'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-24T18:31:04.551475+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 735949f Auto-sync 1 server task(s) to master controller
+  - 6ac29b3 Auto-sync 1 server task(s) to master controller
+  - 3cf09c2 Auto-sync 1 server task(s) to master controller
+  - 3b5958b Auto-sync 1 server task(s) to master controller
+  - 12e63dd Auto-sync 1 server task(s) to master controller
+  - 3c2fd75 Auto-sync 1 server task(s) to master controller
+  - 8425fe0 Auto-sync 1 server task(s) to master controller
+  - 8779605 Auto-sync 5 server task(s) to master controller
+  - '2a01f42 Merge pull request #44 from FChecklist/worker/task-20260724-135839-phase4-architecture-judgment-domains-dep'
+  - '8d18f64 Merge pull request #46 from FChecklist/worker/task-20260724-141323-chatgpt-audit-workspace-infrastructure'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-24T18:33:56.426589+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read review.json rejection text for PR48 (dangling gitlink `compliance-tracker-work`,
+    mode 160000, commit dd159cc1406cb816760c11e8386141e112c3b245)
+  - 'Confirmed the gitlink commit dd159cc1406cb816760c11e8386141e112c3b245 already
+    exists on `phase4/terminology-hardcoded-example-migration` in the compliance-tracker
+    repo, and is already tracked by compliance-tracker PR #553 (real files: migrated
+    hardcoded examples in communication-drafting-service.ts / crm-accounts-service.ts,
+    regenerated terminology-guardrail-exemptions.yaml) -- no new compliance-tracker
+    PR needed to be opened, #553 already mirrors the Phase 3 / PR #552 pattern'
+  - Checked out worker/task-20260724-143013-phase4-migrate-existing-hardcoded-exampl
+    branch in a scratch clone, ran `git rm --cached compliance-tracker-work`, committed
+    (54290ac), pushed to origin
+  - 'Updated claude-control PR #48 body (via REST API PATCH, gh pr edit hit an unrelated
+    GraphQL Projects-classic error) to reference compliance-tracker PR #553 instead
+    of the gitlink'
+  - 'Verified: `git ls-files -s | grep 160000` returns nothing on the fixed branch;
+    `git show HEAD --stat` shows a real deletion of the gitlink entry; compliance-tracker
+    PR #553 confirmed OPEN with real file changes'
+  remaining_steps:
+  - 'None -- task complete. compliance-tracker PR #553 merge is tracked separately
+    (not blocking, per PR #48 body test plan).'
+  recent_commits:
+  - 735949f Auto-sync 1 server task(s) to master controller
+  - 6ac29b3 Auto-sync 1 server task(s) to master controller
+  - 3cf09c2 Auto-sync 1 server task(s) to master controller
+  - 3b5958b Auto-sync 1 server task(s) to master controller
+  - 12e63dd Auto-sync 1 server task(s) to master controller
+  - 3c2fd75 Auto-sync 1 server task(s) to master controller
+  - 8425fe0 Auto-sync 1 server task(s) to master controller
+  - 8779605 Auto-sync 5 server task(s) to master controller
+  - '2a01f42 Merge pull request #44 from FChecklist/worker/task-20260724-135839-phase4-architecture-judgment-domains-dep'
+  - '8d18f64 Merge pull request #46 from FChecklist/worker/task-20260724-141323-chatgpt-audit-workspace-infrastructure'
+  note: worker finished, no changes to commit and zero commits ahead of master --
+    genuine no-op, routing through pending_review (not completed directly) so the
+    state-machine invariant holds and the supervisor gets the final say
+- at: '2026-07-24T18:36:30.266314+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 735949f Auto-sync 1 server task(s) to master controller
+  - 6ac29b3 Auto-sync 1 server task(s) to master controller
+  - 3cf09c2 Auto-sync 1 server task(s) to master controller
+  - 3b5958b Auto-sync 1 server task(s) to master controller
+  - 12e63dd Auto-sync 1 server task(s) to master controller
+  - 3c2fd75 Auto-sync 1 server task(s) to master controller
+  - 8425fe0 Auto-sync 1 server task(s) to master controller
+  - 8779605 Auto-sync 5 server task(s) to master controller
+  - '2a01f42 Merge pull request #44 from FChecklist/worker/task-20260724-135839-phase4-architecture-judgment-domains-dep'
+  - '8d18f64 Merge pull request #46 from FChecklist/worker/task-20260724-141323-chatgpt-audit-workspace-infrastructure'
+  note: "tier1, Superboss-approved, but the merge itself FAILED (gh pr view confirms\
+    \ state=, mergedAt=; see supervisor.log) \u2014 needs manual attention, NOT actually\
+    \ merged: "
+execution_seconds: 171
+restart_count: 0
+token_usage:
+  input_tokens: 64
+  cache_creation_input_tokens: 32037
+  cache_read_input_tokens: 1459143
+  output_tokens: 10297
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 32037
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 535
+    cache_read_input_tokens: 55102
+    cache_creation_input_tokens: 619
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 619
+    type: message
+  speed: standard
+master_synced_at: '2026-07-24T19:00:09.477086+00:00'

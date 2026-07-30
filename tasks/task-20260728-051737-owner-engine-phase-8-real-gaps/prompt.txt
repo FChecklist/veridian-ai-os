@@ -1,0 +1,28 @@
+## OBJECTIVE
+Close the 5 remaining, real, audit-confirmed unbuilt gap items in OWNER_ENGINE Phase 8 (DSPy/AI-learning distribution engines): prompt translation, prompt localization, prompt marketplace, prompt export, prompt import.
+
+## KNOWN_CONTEXT
+Real, independently-audited finding (ai-os/audits/owner_engine_reaudit_2026-07-27.md, already merged to main), do not re-derive: PR #589 built 2 of 7 Phase 8 gap items for real (`engine-dspy-integration` -- a genuine, justified reject decision, and `engine-ai-learning` -- a real extension to `capability-learning-service.ts`). The other 5 -- `engine-prompt-translation`, `engine-prompt-localization`, `engine-prompt-marketplace`, `engine-prompt-export`, `engine-prompt-import` -- are entirely unbuilt; export is only incidentally, partially covered by an unrelated pre-existing script (PR #561), not real Phase 8 work. The phase's own authoritative scope document is `ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml` (`phase_8_dspy_learning_distribution_engines`) in the sibling `claude-control` repo at `/opt/veridian/repos/claude-control` on this server -- read it directly (read-only) for the exact acceptance criteria of each of these 5 items before implementing. This codebase already has a real Prompt Operating System (`src/lib/prompt-os-resolver.ts` + `src/lib/orchestra-execution-logger.ts`, Wave 22/23) -- reuse it as the foundation for translation/localization/export/import rather than building a parallel prompt-management layer.
+
+## SCOPE
+1. Prompt translation: real translation of a stored prompt's text into another language, using this codebase's existing AI-model-calling infrastructure (check `orchestra-execution-logger.ts`'s own model-call pattern), persisted so it doesn't re-translate on every request.
+2. Prompt localization: distinct from raw translation -- real locale-aware formatting/adaptation (date/number formats, culturally-appropriate phrasing) layered on top of translation, not a duplicate of it.
+3. Prompt marketplace: a real, minimal browse/list surface for sharing prompts across orgs (or within an org, check this codebase's existing multi-tenant model for what "marketplace" scope is realistic here) -- a real schema table + API routes + a real screen, not a stub page.
+4. Prompt export: a real, complete export path (distinct from PR #561's partial, unrelated script) -- check what PR #561 actually covers first so this doesn't duplicate it, then build the real remaining gap.
+5. Prompt import: the real counterpart to export -- validated ingestion of an exported prompt bundle back into this system.
+Keep scope for each item genuinely minimal-but-real -- a working end-to-end path for one real use case each, not a fully-featured product.
+
+## SUCCESS_CRITERIA
+- A real test per item proving its core function works end-to-end (translate a real prompt, localize a real prompt, list a real marketplace entry, export then re-import a real prompt round-trip).
+- Verify by actually running:
+`npx tsc --noEmit`
+`bun test` (scoped to touched files)
+
+## EXPECTED_OUTPUT
+A real PR on a new branch in the compliance-tracker repo. Requires a fresh supervisor audit before merge; do not merge yourself.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not build a parallel prompt-management system alongside the existing prompt-os-resolver.ts -- extend it.
+
+## COMPLEXITY_TIER
+judgment

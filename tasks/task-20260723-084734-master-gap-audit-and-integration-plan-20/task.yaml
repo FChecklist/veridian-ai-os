@@ -1,0 +1,283 @@
+id: task-20260723-084734-master-gap-audit-and-integration-plan-20
+title: master-gap-audit-and-integration-plan-2026-07-23
+status: completed
+repo: claude-control
+branch: worker/task-20260723-084734-master-gap-audit-and-integration-plan-20
+workspace: /opt/veridian/ai-os/tasks/task-20260723-084734-master-gap-audit-and-integration-plan-20/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260723-084734-master-gap-audit-and-integration-plan-20
+service: veridian-worker@task-20260723-084734-master-gap-audit-and-integration-plan-20.service
+created_at: '2026-07-23T08:47:35.080385+00:00'
+last_checkpoint_at: '2026-07-23T09:10:21.754391+00:00'
+completed_steps: &id002
+- All 4 sources located, read, and cross-referenced (audit198, GOVERNANCE_AUDIT_RESULT,
+  EXECUTION_RULES_AUDIT, gap_queue.yaml)
+- Ran the real audit198 mechanism; found + worked around 2 real tooling breakages
+  (path-drift bug, missing CONSTITUTION.yaml) without editing live files (ai-os/ is
+  not under git)
+- Root-caused all 21 non-completed gap_queue items to a single 2026-07-20 OpenRouter
+  credit-exhaustion event, not real duplicate/human review as their labels implied
+- 3 parallel agents independently verified all 21 open gap_queue items + full 7-repo
+  integration readiness against live code (not guessed)
+- 'Found 1 new critical active incident: superboss-register.sqlite corrupted again
+  this morning after already being repaired once today'
+- 'Found 1 new critical repo finding: veda-advisors is NOT actually isolated -- shares
+  compliance-tracker''s live Supabase project + has an active cross-write + is in
+  SENTINEL governance scope'
+- Wrote `ai-os/MASTER_GAP_AUDIT_2026-07-23.yaml` (consolidated, deduplicated, every
+  verdict cited)
+- Wrote `ai-os/REPO_CONSOLIDATION_PLAN_2026-07-23.md` (stepwise, honestly sized)
+- Committed + pushed
+- Checkpointed status=pending_review
+- Sent notify-owner.py email with headline numbers
+remaining_steps: &id003
+- Owner review of MASTER_GAP_AUDIT_2026-07-23.yaml + REPO_CONSOLIDATION_PLAN_2026-07-23.md
+- 'Owner decision: release gap_queue dispatch_paused (13 genuinely-open items ready
+  to redispatch once released)'
+- 'Follow-up task: repair superboss-register.sqlite (2nd corruption today) -- urgent,
+  blocks other work'
+- 'Follow-up task: veda-advisors real isolation cutover (Phase 2 of the plan doc)'
+- 'Follow-up task: audit198 tool repair (path-drift + CONSTITUTION.yaml)'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-23T08:47:38.330750+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - faa0738 Auto-sync 2 server task(s) to master controller
+  - d772246 Auto-sync 1 server task(s) to master controller
+  - 92a3bb0 Auto-sync 1 server task(s) to master controller
+  - 930bc8b Auto-sync 1 server task(s) to master controller
+  - 0071874 Auto-sync 1 server task(s) to master controller
+  - e5ef01b Auto-sync 2 server task(s) to master controller
+  - 1c99cba Auto-sync 1 server task(s) to master controller
+  - 5ebc644 Auto-sync 6 server task(s) to master controller
+  - c4db205 Auto-sync 16 server task(s) to master controller
+  - 4ce41c8 Auto-sync 15 server task(s) to master controller
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-23T08:52:39.414469+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - faa0738 Auto-sync 2 server task(s) to master controller
+  - d772246 Auto-sync 1 server task(s) to master controller
+  - 92a3bb0 Auto-sync 1 server task(s) to master controller
+  - 930bc8b Auto-sync 1 server task(s) to master controller
+  - 0071874 Auto-sync 1 server task(s) to master controller
+  - e5ef01b Auto-sync 2 server task(s) to master controller
+  - 1c99cba Auto-sync 1 server task(s) to master controller
+  - 5ebc644 Auto-sync 6 server task(s) to master controller
+  - c4db205 Auto-sync 16 server task(s) to master controller
+  - 4ce41c8 Auto-sync 15 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-23T08:57:42.788267+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - faa0738 Auto-sync 2 server task(s) to master controller
+  - d772246 Auto-sync 1 server task(s) to master controller
+  - 92a3bb0 Auto-sync 1 server task(s) to master controller
+  - 930bc8b Auto-sync 1 server task(s) to master controller
+  - 0071874 Auto-sync 1 server task(s) to master controller
+  - e5ef01b Auto-sync 2 server task(s) to master controller
+  - 1c99cba Auto-sync 1 server task(s) to master controller
+  - 5ebc644 Auto-sync 6 server task(s) to master controller
+  - c4db205 Auto-sync 16 server task(s) to master controller
+  - 4ce41c8 Auto-sync 15 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-23T09:02:43.979826+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Located all 4 input sources on live server / task branches:'
+  - 'Real finding: audit198 mechanism exists but was broken two ways when re-run today:'
+  - 'Root-cause finding on gap_queue.yaml: ALL 21 non-completed items failed for the
+    SAME reason -- OpenRouter credit exhaustion ($40.07/$40.00) on 2026-07-20T05:00-05:51
+    UTC, hard-blocked by pre-flight from 11:24 UTC, queue paused by Owner at 12:16
+    UTC same day. The "skipped_possible_duplicate" (10 items) / "stuck_needs_human"
+    (11 items) labels are dispatcher retry-count heuristics (retry=1 vs retry=3),
+    NOT real duplicate-detection or human-judgment outcomes -- confirmed via task.yaml
+    checkpoint notes for 3 sample items. So none of the 21 got real AI investigation;
+    true status must be independently verified against live code.'
+  - 'Dispatched 3 parallel background agents:'
+  remaining_steps:
+  - Collect results from 3 background agents
+  - Collect fresh audit198 re-run results (background task b1g32lxry)
+  - Check item-29 fix task (task-045924) for the "5 scripts fixed" citation to back
+    KNOWN_CONTEXT claim
+  - Write consolidated `ai-os/MASTER_GAP_AUDIT_2026-07-23.yaml` (dedup all 4 sources)
+  - Write stepwise repo-consolidation plan document
+  - Commit + push both documents (this repo has no ai-os/ dir tracked -- confirm correct
+    commit target/location)
+  - Checkpoint status=pending_review with real summary numbers
+  - Send notify-owner.py email (simple English) with headline numbers + doc paths
+  recent_commits:
+  - faa0738 Auto-sync 2 server task(s) to master controller
+  - d772246 Auto-sync 1 server task(s) to master controller
+  - 92a3bb0 Auto-sync 1 server task(s) to master controller
+  - 930bc8b Auto-sync 1 server task(s) to master controller
+  - 0071874 Auto-sync 1 server task(s) to master controller
+  - e5ef01b Auto-sync 2 server task(s) to master controller
+  - 1c99cba Auto-sync 1 server task(s) to master controller
+  - 5ebc644 Auto-sync 6 server task(s) to master controller
+  - c4db205 Auto-sync 16 server task(s) to master controller
+  - 4ce41c8 Auto-sync 15 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-23T09:07:45.035603+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Located all 4 input sources on live server / task branches:'
+  - 'Real finding: audit198 mechanism exists but was broken two ways when re-run today:'
+  - 'Root-cause finding on gap_queue.yaml: ALL 21 non-completed items failed for the
+    SAME reason -- OpenRouter credit exhaustion ($40.07/$40.00) on 2026-07-20T05:00-05:51
+    UTC, hard-blocked by pre-flight from 11:24 UTC, queue paused by Owner at 12:16
+    UTC same day. The "skipped_possible_duplicate" (10 items) / "stuck_needs_human"
+    (11 items) labels are dispatcher retry-count heuristics (retry=1 vs retry=3),
+    NOT real duplicate-detection or human-judgment outcomes -- confirmed via task.yaml
+    checkpoint notes for 3 sample items. So none of the 21 got real AI investigation;
+    true status must be independently verified against live code.'
+  - 'Dispatched 3 parallel background agents:'
+  - 'CRITICAL NEW FINDING (not in any prior audit): `ai-os/memory/superboss-register.sqlite`
+    -- repaired earlier today per KNOWN_CONTEXT (phase2 task, ~07:20-07:30 UTC) --
+    has corrupted AGAIN, with a DIFFERENT signature (page-reuse: "2nd reference to
+    page 368/363/123"), confirmed by health-check-15min.py''s own PRAGMA integrity_check
+    failing continuously from 07:30 through the latest run at 09:00:01 UTC today (`ai-os/logs/ATTENTION.md`,
+    7 consecutive HIGH PRIORITY entries). `sqlite3` CLI is not installed on this box
+    so I could not independently re-verify, but the cron''s own real check is unambiguous
+    and repeated. This directly qualifies/updates the KNOWN_CONTEXT "fully repaired
+    with zero data loss" claim -- that was true of the 07:30 fix, but the DB is broken
+    again right now. Confirmed checkpoint/task.yaml writes do NOT depend on this DB
+    (`veridian-task.py cmd_checkpoint` writes directly to task.yaml), so this task''s
+    own checkpointing is unaffected. This will be reported as the top headline item
+    in the consolidated audit and owner email -- not fixed by this task (out of scope;
+    needs its own repair task like the 07:30 one).'
+  remaining_steps:
+  - Collect results from 3 background agents
+  - Collect fresh audit198 re-run results (background task b1g32lxry)
+  - Check item-29 fix task (task-045924) for the "5 scripts fixed" citation to back
+    KNOWN_CONTEXT claim
+  - Write consolidated `ai-os/MASTER_GAP_AUDIT_2026-07-23.yaml` (dedup all 4 sources)
+  - Write stepwise repo-consolidation plan document
+  - Commit + push both documents (this repo has no ai-os/ dir tracked -- confirm correct
+    commit target/location)
+  - Checkpoint status=pending_review with real summary numbers
+  - Send notify-owner.py email (simple English) with headline numbers + doc paths
+  recent_commits:
+  - '7232ca0 Progress: located audit sources, ran audit198 fresh, root-caused gap_queue
+    failures, found active sqlite corruption recurrence'
+  - faa0738 Auto-sync 2 server task(s) to master controller
+  - d772246 Auto-sync 1 server task(s) to master controller
+  - 92a3bb0 Auto-sync 1 server task(s) to master controller
+  - 930bc8b Auto-sync 1 server task(s) to master controller
+  - 0071874 Auto-sync 1 server task(s) to master controller
+  - e5ef01b Auto-sync 2 server task(s) to master controller
+  - 1c99cba Auto-sync 1 server task(s) to master controller
+  - 5ebc644 Auto-sync 6 server task(s) to master controller
+  - c4db205 Auto-sync 16 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-23T09:10:08.421680+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - All 4 sources located, read, and cross-referenced (audit198, GOVERNANCE_AUDIT_RESULT,
+    EXECUTION_RULES_AUDIT, gap_queue.yaml)
+  - Ran the real audit198 mechanism; found + worked around 2 real tooling breakages
+    (path-drift bug, missing CONSTITUTION.yaml) without editing live files (ai-os/
+    is not under git)
+  - Root-caused all 21 non-completed gap_queue items to a single 2026-07-20 OpenRouter
+    credit-exhaustion event, not real duplicate/human review as their labels implied
+  - 3 parallel agents independently verified all 21 open gap_queue items + full 7-repo
+    integration readiness against live code (not guessed)
+  - 'Found 1 new critical active incident: superboss-register.sqlite corrupted again
+    this morning after already being repaired once today'
+  - 'Found 1 new critical repo finding: veda-advisors is NOT actually isolated --
+    shares compliance-tracker''s live Supabase project + has an active cross-write
+    + is in SENTINEL governance scope'
+  - Wrote `ai-os/MASTER_GAP_AUDIT_2026-07-23.yaml` (consolidated, deduplicated, every
+    verdict cited)
+  - Wrote `ai-os/REPO_CONSOLIDATION_PLAN_2026-07-23.md` (stepwise, honestly sized)
+  - Committed + pushed
+  - Checkpointed status=pending_review
+  - Sent notify-owner.py email with headline numbers
+  remaining_steps:
+  - Owner review of MASTER_GAP_AUDIT_2026-07-23.yaml + REPO_CONSOLIDATION_PLAN_2026-07-23.md
+  - 'Owner decision: release gap_queue dispatch_paused (13 genuinely-open items ready
+    to redispatch once released)'
+  - 'Follow-up task: repair superboss-register.sqlite (2nd corruption today) -- urgent,
+    blocks other work'
+  - 'Follow-up task: veda-advisors real isolation cutover (Phase 2 of the plan doc)'
+  - 'Follow-up task: audit198 tool repair (path-drift + CONSTITUTION.yaml)'
+  recent_commits:
+  - 0512b3d Add consolidated master gap audit + repo consolidation plan
+  - '7232ca0 Progress: located audit sources, ran audit198 fresh, root-caused gap_queue
+    failures, found active sqlite corruption recurrence'
+  - faa0738 Auto-sync 2 server task(s) to master controller
+  - d772246 Auto-sync 1 server task(s) to master controller
+  - 92a3bb0 Auto-sync 1 server task(s) to master controller
+  - 930bc8b Auto-sync 1 server task(s) to master controller
+  - 0071874 Auto-sync 1 server task(s) to master controller
+  - e5ef01b Auto-sync 2 server task(s) to master controller
+  - 1c99cba Auto-sync 1 server task(s) to master controller
+  - 5ebc644 Auto-sync 6 server task(s) to master controller
+  note: 'Consolidated MASTER_GAP_AUDIT_2026-07-23.yaml + REPO_CONSOLIDATION_PLAN_2026-07-23.md
+    written and pushed. Real totals: 187-259 open items across 4 sources (198-checklist=176
+    open, governance=30 open, execution-rules=40 open, gap_queue=13 genuinely open
+    of 25). 2 new critical findings: active sqlite corruption recurrence, veda-advisors
+    not actually isolated (shares live Supabase project with compliance-tracker).'
+- at: '2026-07-23T09:10:21.754391+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 0512b3d Add consolidated master gap audit + repo consolidation plan
+  - '7232ca0 Progress: located audit sources, ran audit198 fresh, root-caused gap_queue
+    failures, found active sqlite corruption recurrence'
+  - faa0738 Auto-sync 2 server task(s) to master controller
+  - d772246 Auto-sync 1 server task(s) to master controller
+  - 92a3bb0 Auto-sync 1 server task(s) to master controller
+  - 930bc8b Auto-sync 1 server task(s) to master controller
+  - 0071874 Auto-sync 1 server task(s) to master controller
+  - e5ef01b Auto-sync 2 server task(s) to master controller
+  - 1c99cba Auto-sync 1 server task(s) to master controller
+  - 5ebc644 Auto-sync 6 server task(s) to master controller
+  note: worker finished, no changes to commit
+execution_seconds: 1363
+restart_count: 0
+token_usage:
+  input_tokens: 16
+  cache_creation_input_tokens: 33836
+  cache_read_input_tokens: 1623502
+  output_tokens: 21204
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 33836
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 428
+    cache_read_input_tokens: 216669
+    cache_creation_input_tokens: 3733
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 3733
+    type: message
+  speed: standard
+master_synced_at: '2026-07-23T09:30:08.274651+00:00'

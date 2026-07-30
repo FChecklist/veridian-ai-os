@@ -1,0 +1,20 @@
+TASK: V2-21 -- E-invoicing per-line GstRt fix + IRP format scaffolding
+
+### V2-21 — E-invoicing per-line GstRt fix + IRP format scaffolding [C12]
+- READY: yes (GstRt half); GSP-sandbox half blocked on Owner-provisioned creds
+- SOFTWARE TEAM LEVEL: L3 Feature Worker
+- TASK ID: V2-21-EINVOICING-GSTRT
+- MODULE: compliance-tracker
+- OBJECTIVE: Fix the per-line GstRt tracking gap in code; add the UAE/India e-invoice format scaffolding behind the country-config (ties to V2-1). Closes CSV row #70's code half; the GSP-sandbox live-test half stays deferred on Owner-provisioned creds (record in V2-6).
+- READ FIRST: the e-invoice service; `erp_invoice_lines` GstRt field; V2-1's country-config.
+- WHAT TO BUILD: per-line GstRt fix + format scaffolding + tests; the live-IRP-sandbox test is a separate gated task.
+- CONSTRAINTS: No live IRP call without sandbox creds. Tier2 if schema. Register claim.
+- DONE CRITERIA: GstRt fix + scaffolding + tests; deferred half recorded; row partly re-scored; PR open.
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

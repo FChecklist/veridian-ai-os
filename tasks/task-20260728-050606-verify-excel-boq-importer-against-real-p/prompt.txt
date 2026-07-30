@@ -1,0 +1,26 @@
+## OBJECTIVE
+Verify PROJEXA/compliance-tracker's Excel BoQ importer (`construction-boq-import-service.ts`, built in PR #596) correctly parses a real prospect-supplied BoQ file, and fix any real parsing gaps found.
+
+## KNOWN_CONTEXT
+A real prospect BoQ Excel file exists at `/opt/veridian/ai-os/PROSPECT_GAP_BACKLOG_2026-07-28.md`'s referenced source (160 rows, Category -> Task -> Sub-Task -> Breakdown% -> Rate -> Amount hierarchy, e.g. a category header row like "PARTITION AND LINING" followed by numbered task rows like "1.01" with multi-line descriptions containing embedded location annotations like "Location :Veterinary Clinic", each followed by unlabeled sub-task rows for Frame/Gypsum Board/Rockwool/Taping/Sanding with their own breakdown percentages). The real column headers are: Sl No, Category, Dwg Code, Description (Task), Sub Task, QTY, UNIT, Breakdown %, RATE, AMOUNT. This structure matches `computeHierarchicalAmount()`'s existing parent-child model closely -- the importer itself may already handle it correctly; this task is verification-first, not an assumed rebuild.
+
+## SCOPE
+1. Obtain a real test fixture matching this exact structure (recreate the key structural patterns -- category header rows with no Sl No, numbered task rows, unlabeled sub-task rows, multi-line descriptions with embedded location text -- as a real .xlsx test fixture, not just a description).
+2. Run the real importer against this fixture and record the actual result.
+3. If it fails or mis-parses any of the structural quirks (category header rows, multi-line descriptions, unlabeled sub-task rows), fix `construction-boq-import-service.ts` for real.
+4. If it already handles the file correctly, say so explicitly in PROGRESS.md with the real test proving it, and make no other changes.
+
+## SUCCESS_CRITERIA
+- A real test using the reconstructed fixture proving the importer correctly builds the hierarchy (category headers recognized, multi-line descriptions preserved, sub-task rows correctly attached to their parent task row with the right breakdown percentages).
+- Verify by actually running:
+`npx tsc --noEmit`
+`bun test src/lib/services/construction-boq-import-service.test.ts`
+
+## EXPECTED_OUTPUT
+Two possible real outcomes, both acceptable: (1) the importer fails or mis-parses the fixture -- open a real PR on a new branch containing the fix and the new test. (2) the importer correctly parses the fixture with zero code changes -- do not open a PR; instead write the passing test plus a clear PROGRESS.md note stating the importer was verified correct against the real prospect file structure, with the real test file committed directly for future reference via `git commit` to this task's own branch (no PR required for a verification-only outcome with no production code change).
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not modify `computeHierarchicalAmount()`'s core calculation logic -- this task is scoped to the import/parsing layer only.
+
+## COMPLEXITY_TIER
+judgment

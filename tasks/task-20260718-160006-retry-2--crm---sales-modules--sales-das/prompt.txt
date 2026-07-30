@@ -1,0 +1,53 @@
+VERIDIAN Review Framework gap-closure: CRM & Sales Modules / Sales Dashboard.
+This covers 15 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Critical] Sales Dashboard: Data Model Completeness & Referential Integrity
+  Gap: No dashboard-specific data model exists (nor would one strictly be needed -- it would read from crm_leads/crm_opportunities)
+  Recommended approach: Build a Sales Dashboard page that reads getSalesPipelineOverview() + crm_opportunities aggregates
+- [Critical] Sales Dashboard: CRUD & Approval Workflow Correctness
+  Gap: No CRUD/workflow applicable -- a dashboard is read-only by nature, but even the read surface doesn't exist in-app
+  Recommended approach: Build the dashboard page
+- [High] Sales Dashboard: Business Rule & Validation Accuracy
+  Gap: N/A -- no business rules to validate for a non-existent dashboard
+  Recommended approach: N/A until built
+- [Critical] Sales Dashboard: Multi-Tenant / Multi-Project Isolation
+  Gap: N/A -- would inherit orgId scoping from crm_leads/crm_opportunities once built
+  Recommended approach: Scope by orgId from day one
+- [Critical] Sales Dashboard: Reporting & Export Accuracy
+  Gap: This IS fundamentally a reporting/export gap -- the underlying metrics (getSalesPipelineOverview) exist but have no dashboard or export surface
+  Recommended approach: Build the dashboard as the primary consumer of getSalesPipelineOverview()
+- [Critical] Sales Dashboard: AI Copilot / Worker Agent Integration Depth
+  Gap: No AI-generated dashboard insights/narrative summary exist for sales performance
+  Recommended approach: Once built, add an AI-generated weekly pipeline summary similar to other module's AI recommendation patterns
+- [High] Sales Dashboard: Audit Trail & Change History
+  Gap: N/A -- a dashboard is a read view; underlying audit trail (crm_stage_history) gap already noted under Leads/Opportunities
+  Recommended approach: N/A
+- [Critical] Sales Dashboard: Access Control / Role-Based Permissions
+  Gap: N/A -- would need role-based dashboard scoping (rep sees own pipeline, manager sees team) once built
+  Recommended approach: Design role-scoped views (rep/manager/admin) into the dashboard from the start
+- [Critical] Sales Dashboard: Search, Filter & Bulk Operations
+  Gap: N/A -- no dashboard to filter
+  Recommended approach: Add date-range/owner/product filters to the dashboard
+- [High] Sales Dashboard: Error Handling & Data Validation Messaging
+  Gap: N/A -- no dashboard to error-handle
+  Recommended approach: N/A until built
+- [High] Sales Dashboard: Cross-Module Integration Consistency
+  Gap: A real Sales Dashboard would need to merge CRM (crm-service.ts) + Sales Engine (sales-engine-service.ts commission liability) + VERI Reward referral-conversion data -- none of that cross-module rollup exists today
+  Recommended approach: Build a true cross-module Sales Dashboard blending both sources
+- [Critical] Sales Dashboard: Notification & Alert Trigger Correctness
+  Gap: N/A -- no dashboard-level alerting (e.g. 'pipeline down 20% week over week') exists
+  Recommended approach: Add trend-based alerting once the dashboard exists
+- [Critical] Sales Dashboard: Documentation & In-App Help Coverage
+  Gap: No documentation for a non-existent page
+  Recommended approach: Document once built
+- [Critical] Sales Dashboard: Data Import/Export Template Fidelity
+  Gap: No export capability for a non-existent dashboard
+  Recommended approach: Add CSV/PDF export once built
+- [High] Sales Dashboard: Localization Readiness (multi-currency / multi-language fields)
+  Gap: N/A -- would inherit Opportunities' single-currency limitation
+  Recommended approach: Address after Opportunities gains multi-currency support
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

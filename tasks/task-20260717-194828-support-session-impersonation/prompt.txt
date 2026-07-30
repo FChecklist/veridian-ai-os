@@ -1,0 +1,14 @@
+VERIDIAN Review Framework, REVIEW-FRAMEWORK-WAVE4 Track 1b item 2: build a real, audited act-on-behalf-of-customer support-session capability (time-limited, fully logged, visible to the impersonated org) -- none exists today. A prior session validated this exact plan (registered as a claim, then never implemented) -- follow it precisely, do not redesign from scratch.
+
+CONFIRMED: zero "act on behalf", "impersonat", or "support session" concept exists anywhere in this codebase currently. Read src/lib/supabase/auth-guard.ts's veridian_admin role/ROLE_RANK, withTenantContext's org-scoped GUC mechanism, and src/lib/audit.ts's logActivity()/auditLogs table (the existing generic per-write audit trail, already consumed by src/app/(app)/audit/page.tsx + GET /api/audit/route.ts) before writing any code.
+
+SCOPE (implement all of this):
+1. New support_sessions table: initiated_by_user_id, target_org_id, target_user_id, reason, sha256 token_hash, 1-hour expires_at, ended_at/ended_reason, denormalized initiated_by_name/target_user_name (so the target org never needs a cross-org join to see who accessed them).
+2. 2 new nullable columns on the EXISTING audit_logs table: support_session_id, acting_on_behalf_of_user_id. Do NOT create a second logging table -- audit_logs/logActivity() is the real mechanism to extend. (Note: `activityLog`, singular/different casing, is an unrelated "AI Team dispatch wrapper" table -- read both schemas first to confirm which is which before touching anything.)
+3. New src/lib/services/support-session-service.ts (start/end/token-validate), reusing hashSHA256 from src/lib/api-keys.ts (same hashing convention as apiKeys.keyHash -- do not invent a new algorithm).
+4. Extend src/lib/audit.ts's logActivity() with an optional supportSession param -- backward-compatible, every existing call site must remain untouched/working.
+5. New routes: POST /api/support-sessions/start, POST /api/support-sessions/[id]/end, GET /api/support-sessions/whoami-target (proves active-session context threads through to a real read + a real audit-marked log row), GET /api/support-sessions/on-my-org (a target org's own admin can query support sessions run against their org -- RLS-scoped by target_org_id = compliance.current_org_id(), same 2-policy app_runtime/service_role_bypass shape every other tenant table in this schema uses -- read 2-3 existing tenant tables' RLS policies first for the exact pattern).
+
+DO NOT TOUCH: src/lib/services/permission-service.ts, or any ERP module route (General Ledger, Accounts Payable, Fixed Assets, Sales Orders, etc. -- those are other tracks' territory). This is a new, standalone capability only.
+
+Before finishing: run tsc --noEmit, eslint, and the full test suite (bun test) and report real pass/fail numbers. Maintain PROGRESS.md as instructed below.

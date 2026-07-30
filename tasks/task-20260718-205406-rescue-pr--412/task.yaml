@@ -1,0 +1,456 @@
+id: task-20260718-205406-rescue-pr--412
+title: 'Rescue PR #412'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-205406-rescue-pr--412
+workspace: /opt/veridian/ai-os/tasks/task-20260718-205406-rescue-pr--412/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-205406-rescue-pr--412
+service: veridian-worker@task-20260718-205406-rescue-pr--412.service
+created_at: '2026-07-18T20:54:07.234224+00:00'
+last_checkpoint_at: '2026-07-18T21:23:08.311600+00:00'
+completed_steps: &id002
+- 'Read ACTIVE-CLAIMS.yaml -- no conflicting active claim for PR #412; found a `recently_completed`
+  entry describing the original build (confirmed it touches drizzle/schema.ts -> TIER2)'
+- 'Checked out real PR #412 head branch (worker/task-20260717-194828-support-session-impersonation)
+  as local `pr-412-rescue`'
+- 'Registered active claim for this rescue in ai-os/boss/ACTIVE-CLAIMS.yaml -- opened
+  as its own PR #450, audited, CI green, merged'
+- Merged origin/main into pr-412-rescue (twice -- main advanced again mid-rescue)
+  -- conflicts in PROGRESS.md (kept ours), ai-os/boss/ACTIVE-CLAIMS.yaml (kept both
+  sides' distinct entries), src/lib/db/schema.ts (auto-merged cleanly, no markers)
+- 'Found real migration-number collision: drizzle/0224_support_sessions.sql collided
+  with two migrations already merged to main in the interim (0224_crm_accounts_contacts_actor_columns_no_fk.sql,
+  0224_erp_exchange_rates_source.sql). Renamed to drizzle/0225_support_sessions.sql
+  (no internal filename self-references to update).'
+- 'Found real Asset Registry Coverage Check failure: new `support_sessions` table
+  wasn''t registered/exempted. Added it to ai-os/registry/asset-registry-coverage.yaml''s
+  `exempted` list (internal auth/security-infrastructure state with a security-sensitive
+  token_hash column, same class as the existing user_active_sessions/api_keys exemptions).'
+- Verified both scripts pass locally (check-migration-collision.mjs, check-asset-registry-coverage.mjs)
+- 'Ran full local verification: bunx tsc --noEmit (0 errors), bun run lint (0 errors,
+  3 pre-existing unrelated warnings), bun test (1535 pass / 0 fail across 115 files)'
+- Pushed rebased branch to worker/task-20260717-194828-support-session-impersonation
+- 'Read the PR''s full diff (all 11 changed files) and posted a structured AUDIT:
+  PASS comment with all 8 required fields on PR #412'
+- 'Re-triggered audit-check jobs (both PR #450''s and PR #412''s had run before the
+  audit comment landed)'
+- 'Confirmed full CI green on the final rebased commit (0451bf05): all required checks
+  pass (Lint/Type Check/Unit Tests/Build/E2E/CodeQL/Sentinel governance checks/Asset
+  Registry Coverage/Migration Collision/audit-check). Only the non-required Vercel
+  preview is pending/rate-limited.'
+- 'Classified tier: TIER2 (touches drizzle/0225_support_sessions.sql and src/lib/db/schema.ts)
+  -- did NOT self-merge, per task instructions'
+- Moved this session's ACTIVE-CLAIMS.yaml entry from active to recently_completed
+remaining_steps: &id003
+- 'None -- rescue complete. PR #412 is TIER2, CI green, audited (AUDIT: PASS posted),
+  awaiting Owner sign-off to merge.'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T20:54:08.256388+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  - 097ae295 Add proactive AI cost-ceiling alerts and default free-tier spend cap
+    (#422)
+  - 'dce4fb23 AI Architecture: locale-aware AI responses + PDF/Word/PowerPoint/email
+    extraction (#418)'
+  - 0debed60 AI Architecture / Performance & Cost Efficiency gap-closure (4 findings)
+    (#420)
+  - '8af41f19 chore: register active claim for PR #418 rescue (#443)'
+  note: worker started (resume=0)
+- at: '2026-07-18T20:59:08.711499+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/CONSTITUTION.yaml
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - docs/analysis/cost-estimate-5org-50user.md
+  - docs/master/CAPABILITY_COVERAGE.md
+  - drizzle/0224_crm_accounts_contacts_actor_columns_no_fk.sql
+  - drizzle/0224_erp_exchange_rates_source.sql
+  - scripts/check-migration-collision.mjs
+  - scripts/veridian-full-load-test.ts
+  - src/app/(app)/approvals/page.tsx
+  - src/app/(app)/capability-registry/page.tsx
+  - src/app/api/ai/team/controls-health/route.ts
+  - src/app/api/approval-workflows/steps/[id]/decide/route.ts
+  - src/app/api/approvals/[id]/route.ts
+  - src/app/api/capability-registry/coverage/route.ts
+  - src/app/api/documents/extract/route.ts
+  - src/app/api/documents/route.ts
+  - src/app/api/erp/buying/goods-receipts/[id]/landed-costs/route.ts
+  - src/app/api/erp/buying/goods-receipts/[id]/putaway/route.ts
+  - src/app/api/erp/buying/goods-receipts/[id]/submit/route.ts
+  - src/app/api/erp/buying/goods-receipts/items/[itemId]/putaway/route.ts
+  - src/app/api/erp/buying/goods-receipts/route.ts
+  - src/app/api/erp/buying/purchase-orders/route.ts
+  - src/app/api/erp/cash-accounts/route.ts
+  - src/app/api/erp/cash-vouchers/route.ts
+  - src/app/api/erp/cost-centers/route.ts
+  - src/app/api/erp/exchange-rates/refresh/route.ts
+  - src/app/api/erp/inventory/abc-classification/route.ts
+  - src/app/api/erp/inventory/cycle-count-lines/[id]/count/route.ts
+  - src/app/api/erp/inventory/cycle-count-plans/route.ts
+  - src/app/api/erp/inventory/issues/route.ts
+  - src/app/api/erp/inventory/receipts/route.ts
+  - src/app/api/erp/inventory/reorder-levels/route.ts
+  - src/app/api/erp/procurement/quotations/route.ts
+  - src/app/api/erp/procurement/rfqs/[id]/send/route.ts
+  - src/app/api/erp/procurement/rfqs/route.ts
+  - src/app/api/erp/purchase-credit-notes/[id]/submit/route.ts
+  - src/app/api/erp/purchase-credit-notes/route.ts
+  - src/app/api/erp/returns/purchase/[id]/credit-note/route.ts
+  - src/app/api/erp/returns/sales/[id]/credit-note/route.ts
+  - src/app/api/erp/sales-credit-notes/[id]/submit/route.ts
+  - src/app/api/erp/sales-credit-notes/route.ts
+  - src/app/api/erp/sales-invoices/[id]/e-invoice/route.ts
+  - src/app/api/erp/sales-invoices/[id]/submit/route.ts
+  - src/app/api/erp/sales-invoices/route.ts
+  - src/app/api/help/ask/route.ts
+  - src/app/api/internal/cost-anomalies/run/route.ts
+  - src/app/api/internal/exchange-rate-refresh/run/route.ts
+  - src/app/api/internal/idle-ai-capacity/run/route.ts
+  - src/app/api/internal/loops/run/route.ts
+  - src/app/api/internal/metric-alerts/run/route.ts
+  - src/app/api/knowledge-base/pages/route.ts
+  - src/app/api/pms/wiki/route.ts
+  - src/app/api/v1/projexa/knowledge-base/route.ts
+  - src/app/api/v1/projexa/products/route.ts
+  - src/app/api/v1/projexa/projects/route.ts
+  - src/app/api/v1/projexa/sales-invoices/route.ts
+  - src/app/api/v1/projexa/wiki/route.ts
+  - src/components/AppShell.tsx
+  - src/components/DocumentUploadSection.tsx
+  - src/components/OrgLimitsSection.tsx
+  - src/components/home/ApprovalMatrixSection.tsx
+  - src/lib/ai-response-locale.test.ts
+  - src/lib/ai-response-locale.ts
+  - src/lib/business-rule-validator.test.ts
+  - src/lib/business-rule-validator.ts
+  - src/lib/calculation-cross-verification.test.ts
+  - src/lib/calculation-cross-verification.ts
+  - src/lib/controls-health-audit.ts
+  - src/lib/cost-guard.test.ts
+  - src/lib/cost-guard.ts
+  - src/lib/db/schema.ts
+  - src/lib/exchange-rate-feed-client.test.ts
+  - src/lib/exchange-rate-feed-client.ts
+  - src/lib/guardrail-registrations.test.ts
+  - src/lib/guardrail-registrations.ts
+  - src/lib/high-impact-action-detector.test.ts
+  - src/lib/high-impact-action-detector.ts
+  - src/lib/llm-client.ts
+  - src/lib/llm-response-cache.ts
+  - src/lib/loops/model-pricing-audit.ts
+  - src/lib/officecli-client.test.ts
+  - src/lib/officecli-client.ts
+  - src/lib/prompt-os-resolver.ts
+  - src/lib/services/access-review-service.ts
+  - src/lib/services/approval-workflow-service.test.ts
+  - src/lib/services/approval-workflow-service.ts
+  - src/lib/services/capability-backfill-service.test.ts
+  - src/lib/services/capability-backfill-service.ts
+  - src/lib/services/capability-tree-service.ts
+  - src/lib/services/chat-service.ts
+  - src/lib/services/compliance-service.ts
+  - src/lib/services/construction-boq-service.ts
+  - src/lib/services/construction-dashboard-service.ts
+  - src/lib/services/construction-field-workflow-service.ts
+  - src/lib/services/cost-anomaly-service.test.ts
+  - src/lib/services/cost-anomaly-service.ts
+  - src/lib/services/document-extraction-service.test.ts
+  - src/lib/services/document-extraction-service.ts
+  - src/lib/services/erp-accounting-service.ts
+  - src/lib/services/erp-contract-service.ts
+  - src/lib/services/erp-fixed-assets-service.ts
+  - src/lib/services/erp-invoicing-service.ts
+  - src/lib/services/erp-returns-service.ts
+  - src/lib/services/erp-selling-service.ts
+  - src/lib/services/exception-taxonomy.test.ts
+  - src/lib/services/exception-taxonomy.ts
+  - src/lib/services/hr-service.ts
+  - src/lib/services/idle-ai-capacity-service.test.ts
+  - src/lib/services/idle-ai-capacity-service.ts
+  - src/lib/services/knowledge-base-service.ts
+  - src/lib/services/org-provisioning-service.test.ts
+  - src/lib/services/org-provisioning-service.ts
+  - src/lib/services/permission-service.test.ts
+  - src/lib/services/permission-service.ts
+  - src/lib/services/pms-wiki-service.ts
+  - src/lib/services/task-service.ts
+  - src/lib/services/tenant-isolation.test.ts
+  - src/lib/services/token-usage-service.ts
+  - src/lib/services/workspace-memory-service.ts
+  - src/lib/spend-forecast.test.ts
+  - src/lib/spend-forecast.ts
+  - src/lib/task-execution-engine.ts
+  - vercel.json
+  completed_steps:
+  - Read auth-guard.ts (veridian_admin / ROLE_RANK), tenant-scoped.ts
+  - Confirmed zero pre-existing support-session/impersonation concept
+  - Confirmed audit_logs vs activity_log are distinct tables.
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml.
+  - 'schema.ts: added supportSessions table (initiatedByUserId/Name,'
+  - "drizzle/0224_support_sessions.sql \u2014 table + FORCE RLS 2-policy"
+  - 'src/lib/services/support-session-service.ts: startSupportSession/'
+  - Extended src/lib/audit.ts's logActivity() with an optional
+  - 'Routes: POST /api/support-sessions/start (veridian_admin only),'
+  - "src/lib/services/support-session-service.test.ts \u2014 pure-helper unit"
+  - Ran tsc --noEmit (0 errors), eslint (0 errors, 3 pre-existing
+  - Moved ai-os/boss/ACTIVE-CLAIMS.yaml entry to recently_completed.
+  remaining_steps:
+  - Open the PR (branch worker/task-20260717-194828-support-session-impersonation).
+  - Live DB migration (drizzle/0224_support_sessions.sql) needs to be
+  recent_commits:
+  - '05037c8d Worker task-20260717-194828-support-session-impersonation: automated
+    checkpoint commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  note: periodic checkpoint
+- at: '2026-07-18T21:04:09.084318+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ACTIVE-CLAIMS.yaml -- no conflicting active claim for PR #412; found a `recently_completed`
+    entry describing the original build (confirms it touches drizzle/schema.ts ->
+    TIER2)'
+  - 'Checked out real PR #412 head branch (worker/task-20260717-194828-support-session-impersonation)
+    as local `pr-412-rescue`'
+  - Registered active claim for this rescue in ai-os/boss/ACTIVE-CLAIMS.yaml
+  remaining_steps:
+  - Merge origin/main into pr-412-rescue, resolve conflicts
+  - Check for drizzle migration renumbering need
+  - Run bun install / tsc / lint / test locally
+  - 'Investigate CI failures: audit-check, Asset Registry Coverage Check'
+  - Push fixed branch
+  - Post structured AUDIT comment
+  - Wait for CI green
+  - Classify TIER (expect TIER2 due to schema.ts/drizzle changes) -- if TIER2, stop
+    and report, do not merge
+  recent_commits:
+  - '4f45c454 chore: register active claim for PR #412 rescue'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  - 097ae295 Add proactive AI cost-ceiling alerts and default free-tier spend cap
+    (#422)
+  - 'dce4fb23 AI Architecture: locale-aware AI responses + PDF/Word/PowerPoint/email
+    extraction (#418)'
+  - 0debed60 AI Architecture / Performance & Cost Efficiency gap-closure (4 findings)
+    (#420)
+  note: periodic checkpoint
+- at: '2026-07-18T21:09:09.414666+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read auth-guard.ts (veridian_admin / ROLE_RANK), tenant-scoped.ts
+  - Confirmed zero pre-existing support-session/impersonation concept
+  - Confirmed audit_logs vs activity_log are distinct tables.
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml.
+  - 'schema.ts: added supportSessions table (initiatedByUserId/Name,'
+  - "drizzle/0224_support_sessions.sql \u2014 table + FORCE RLS 2-policy"
+  - 'src/lib/services/support-session-service.ts: startSupportSession/'
+  - Extended src/lib/audit.ts's logActivity() with an optional
+  - 'Routes: POST /api/support-sessions/start (veridian_admin only),'
+  - "src/lib/services/support-session-service.test.ts \u2014 pure-helper unit"
+  - Ran tsc --noEmit (0 errors), eslint (0 errors, 3 pre-existing
+  - Moved ai-os/boss/ACTIVE-CLAIMS.yaml entry to recently_completed.
+  remaining_steps:
+  - Open the PR (branch worker/task-20260717-194828-support-session-impersonation).
+  - Live DB migration (drizzle/0224_support_sessions.sql) needs to be
+  recent_commits:
+  - 0451bf05 Merge remote-tracking branch 'origin/main' into pr-412-rescue
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - 'd4b3b7da fix: renumber support_sessions migration to 0225, register asset exemption'
+  - afd4161a Merge remote-tracking branch 'origin/main' into pr-412-rescue
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  note: periodic checkpoint
+- at: '2026-07-18T21:14:09.698644+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ACTIVE-CLAIMS.yaml -- no conflicting active claim for PR #412; found a `recently_completed`
+    entry describing the original build (confirmed it touches drizzle/schema.ts ->
+    TIER2)'
+  - 'Checked out real PR #412 head branch (worker/task-20260717-194828-support-session-impersonation)
+    as local `pr-412-rescue`'
+  - 'Registered active claim for this rescue in ai-os/boss/ACTIVE-CLAIMS.yaml -- opened
+    as its own PR #450, audited, CI green, merged'
+  - Merged origin/main into pr-412-rescue (twice -- main advanced again mid-rescue)
+    -- conflicts in PROGRESS.md (kept ours), ai-os/boss/ACTIVE-CLAIMS.yaml (kept both
+    sides' distinct entries), src/lib/db/schema.ts (auto-merged cleanly, no markers)
+  - 'Found real migration-number collision: drizzle/0224_support_sessions.sql collided
+    with two migrations already merged to main in the interim (0224_crm_accounts_contacts_actor_columns_no_fk.sql,
+    0224_erp_exchange_rates_source.sql). Renamed to drizzle/0225_support_sessions.sql
+    (no internal filename self-references to update).'
+  - 'Found real Asset Registry Coverage Check failure: new `support_sessions` table
+    wasn''t registered/exempted. Added it to ai-os/registry/asset-registry-coverage.yaml''s
+    `exempted` list (internal auth/security-infrastructure state with a security-sensitive
+    token_hash column, same class as the existing user_active_sessions/api_keys exemptions).'
+  - Verified both scripts pass locally (check-migration-collision.mjs, check-asset-registry-coverage.mjs)
+  - 'Ran full local verification: bunx tsc --noEmit (0 errors), bun run lint (0 errors,
+    3 pre-existing unrelated warnings), bun test (1535 pass / 0 fail across 115 files)'
+  - Pushed rebased branch to worker/task-20260717-194828-support-session-impersonation
+  - 'Read the PR''s full diff (all 11 changed files) and posted a structured AUDIT:
+    PASS comment with all 8 required fields on PR #412'
+  - 'Re-triggered audit-check jobs (both PR #450''s and PR #412''s had run before
+    the audit comment landed)'
+  - 'Confirmed full CI green on the final rebased commit (0451bf05): all required
+    checks pass (Lint/Type Check/Unit Tests/Build/E2E/CodeQL/Sentinel governance checks/Asset
+    Registry Coverage/Migration Collision/audit-check). Only the non-required Vercel
+    preview is pending/rate-limited.'
+  - 'Classified tier: TIER2 (touches drizzle/0225_support_sessions.sql and src/lib/db/schema.ts)
+    -- did NOT self-merge, per task instructions'
+  - Moved this session's ACTIVE-CLAIMS.yaml entry from active to recently_completed
+  remaining_steps:
+  - 'None -- rescue complete. PR #412 is TIER2, CI green, audited (AUDIT: PASS posted),
+    awaiting Owner sign-off to merge.'
+  recent_commits:
+  - 'e71016f0 PROGRESS.md: rescue PR #412 complete'
+  - 22c82e40 Merge remote-tracking branch 'origin/main' into worker/task-20260718-205406-rescue-pr--412
+  - 'e9283c6b PROGRESS.md: PR #412 rescue in progress -- rebased, migration renumbered,
+    audited'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '4f45c454 chore: register active claim for PR #412 rescue'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  note: periodic checkpoint
+- at: '2026-07-18T21:19:10.026351+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ACTIVE-CLAIMS.yaml -- no conflicting active claim for PR #412; found a `recently_completed`
+    entry describing the original build (confirmed it touches drizzle/schema.ts ->
+    TIER2)'
+  - 'Checked out real PR #412 head branch (worker/task-20260717-194828-support-session-impersonation)
+    as local `pr-412-rescue`'
+  - 'Registered active claim for this rescue in ai-os/boss/ACTIVE-CLAIMS.yaml -- opened
+    as its own PR #450, audited, CI green, merged'
+  - Merged origin/main into pr-412-rescue (twice -- main advanced again mid-rescue)
+    -- conflicts in PROGRESS.md (kept ours), ai-os/boss/ACTIVE-CLAIMS.yaml (kept both
+    sides' distinct entries), src/lib/db/schema.ts (auto-merged cleanly, no markers)
+  - 'Found real migration-number collision: drizzle/0224_support_sessions.sql collided
+    with two migrations already merged to main in the interim (0224_crm_accounts_contacts_actor_columns_no_fk.sql,
+    0224_erp_exchange_rates_source.sql). Renamed to drizzle/0225_support_sessions.sql
+    (no internal filename self-references to update).'
+  - 'Found real Asset Registry Coverage Check failure: new `support_sessions` table
+    wasn''t registered/exempted. Added it to ai-os/registry/asset-registry-coverage.yaml''s
+    `exempted` list (internal auth/security-infrastructure state with a security-sensitive
+    token_hash column, same class as the existing user_active_sessions/api_keys exemptions).'
+  - Verified both scripts pass locally (check-migration-collision.mjs, check-asset-registry-coverage.mjs)
+  - 'Ran full local verification: bunx tsc --noEmit (0 errors), bun run lint (0 errors,
+    3 pre-existing unrelated warnings), bun test (1535 pass / 0 fail across 115 files)'
+  - Pushed rebased branch to worker/task-20260717-194828-support-session-impersonation
+  - 'Read the PR''s full diff (all 11 changed files) and posted a structured AUDIT:
+    PASS comment with all 8 required fields on PR #412'
+  - 'Re-triggered audit-check jobs (both PR #450''s and PR #412''s had run before
+    the audit comment landed)'
+  - 'Confirmed full CI green on the final rebased commit (0451bf05): all required
+    checks pass (Lint/Type Check/Unit Tests/Build/E2E/CodeQL/Sentinel governance checks/Asset
+    Registry Coverage/Migration Collision/audit-check). Only the non-required Vercel
+    preview is pending/rate-limited.'
+  - 'Classified tier: TIER2 (touches drizzle/0225_support_sessions.sql and src/lib/db/schema.ts)
+    -- did NOT self-merge, per task instructions'
+  - Moved this session's ACTIVE-CLAIMS.yaml entry from active to recently_completed
+  remaining_steps:
+  - 'None -- rescue complete. PR #412 is TIER2, CI green, audited (AUDIT: PASS posted),
+    awaiting Owner sign-off to merge.'
+  recent_commits:
+  - 9b2a3767 Merge remote-tracking branch 'origin/main' into worker/task-20260718-205406-rescue-pr--412
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e71016f0 PROGRESS.md: rescue PR #412 complete'
+  - 22c82e40 Merge remote-tracking branch 'origin/main' into worker/task-20260718-205406-rescue-pr--412
+  - 'e9283c6b PROGRESS.md: PR #412 rescue in progress -- rebased, migration renumbered,
+    audited'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '4f45c454 chore: register active claim for PR #412 rescue'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  note: periodic checkpoint
+- at: '2026-07-18T21:23:08.311600+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 9b2a3767 Merge remote-tracking branch 'origin/main' into worker/task-20260718-205406-rescue-pr--412
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e71016f0 PROGRESS.md: rescue PR #412 complete'
+  - 22c82e40 Merge remote-tracking branch 'origin/main' into worker/task-20260718-205406-rescue-pr--412
+  - 'e9283c6b PROGRESS.md: PR #412 rescue in progress -- rebased, migration renumbered,
+    audited'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '4f45c454 chore: register active claim for PR #412 rescue'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  note: worker finished, no changes to commit
+execution_seconds: 1739
+restart_count: 0
+token_usage:
+  input_tokens: 338
+  cache_creation_input_tokens: 152565
+  cache_read_input_tokens: 19779966
+  output_tokens: 40947
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 152565
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 880
+    cache_read_input_tokens: 175746
+    cache_creation_input_tokens: 357
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 357
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T21:30:05.363733+00:00'

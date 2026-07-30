@@ -1,0 +1,47 @@
+VERIDIAN Review Framework gap-closure: CRM & Sales Modules / Leads.
+This covers 13 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Low] Leads: Data Model Completeness & Referential Integrity
+  Gap: No hard FK from crm_leads.companyId/convertedClientId to erp_companies/clients
+  Recommended approach: Add DB-level FK or a periodic orphan-check job for companyId/convertedClientId
+- [Medium] Leads: Business Rule & Validation Accuracy
+  Gap: No server-side state-machine validation of lead status transitions
+  Recommended approach: Add server-side transition validation mirroring recruitment's VALID_STAGE_TRANSITIONS pattern
+- [Low] Leads: Multi-Tenant / Multi-Project Isolation
+  Gap: None identified at table/RLS level
+  Recommended approach: Periodically re-run get_advisors(security) after schema changes to confirm RLS stays intact
+- [High] Leads: Reporting & Export Accuracy
+  Gap: No leads-specific report or CSV export in the UI
+  Recommended approach: Add a leads export action (CSV) and register a report_definitions entry for lead source/funnel
+- [Low] Leads: AI Copilot / Worker Agent Integration Depth
+  Gap: AI scoring not automatic / triggered manually per lead
+  Recommended approach: Add a scheduled worker-agent job to auto-score new/stale leads, matching the internal/* cron pattern used elsewhere
+- [Medium] Leads: Audit Trail & Change History
+  Gap: Stage-history audit trail unverified in live usage
+  Recommended approach: Verify createLead()/updateLeadStatus() actually write crm_stage_history in a real (non-seed) flow; force RLS on crm_stage_history to match sibling tables
+- [High] Leads: Search, Filter & Bulk Operations
+  Gap: No search, filter, or bulk operations UI for leads
+  Recommended approach: Add search/filter query params to GET /api/crm/leads and a filter bar + bulk-select checkboxes to the UI
+- [Medium] Leads: Error Handling & Data Validation Messaging
+  Gap: Generic error messages, no field-level validation feedback
+  Recommended approach: Adopt field-level validation error rendering (e.g. Zod issues) consistent with newer modules
+- [Low] Leads: Cross-Module Integration Consistency
+  Gap: No bridge from leads to VERI Reward or Sales Engine
+  Recommended approach: Wire convertLeadToClient() to optionally award VERI Reward points and/or trigger a commission accrual when the lead came from a tracked referral
+- [High] Leads: Notification & Alert Trigger Correctness
+  Gap: No notifications triggered for lead events
+  Recommended approach: Add notification triggers for new-lead-assigned and nextActionDate-overdue, extending notificationTypeEnum
+- [Critical] Leads: Documentation & In-App Help Coverage
+  Gap: No in-app help/documentation for Leads
+  Recommended approach: Add a short contextual help panel or link into the existing Knowledge Base module for the lead lifecycle
+- [Critical] Leads: Data Import/Export Template Fidelity
+  Gap: No bulk import/export template for leads
+  Recommended approach: Build a CSV import endpoint + template following the existing compliance/import pattern
+- [High] Leads: Localization Readiness (multi-currency / multi-language fields)
+  Gap: No localization fields on leads
+  Recommended approach: Confirm CRM UI strings are covered by the platform i18n pass; no schema change needed for leads itself
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

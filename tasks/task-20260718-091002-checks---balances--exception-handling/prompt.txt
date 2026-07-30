@@ -1,0 +1,32 @@
+VERIDIAN Review Framework gap-closure: Checks & Balances / Exception Handling & Recovery.
+This covers 8 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Low] Human Override & Approval
+  Gap: Each module implements its own confirmation/authorization independently -- no single unified generic override gate spans every module (HAB-02's own stated gap)
+  Recommended approach: Consolidate into a single middleware-level check rather than per-route opt-in.
+- [Medium] Exception Handling Framework
+  Gap: Error handling is real per-service-function but there is no single named 'Exception Handling Framework' with a documented taxonomy (retryable vs terminal, business vs system exception)
+  Recommended approach: Document and enforce a shared exception taxonomy across services, building on the existing ServiceError pattern.
+- [High] Automatic Rollback & Recovery
+  Gap: Automatic Rollback & Recovery (undoing a multi-step business process after a downstream failure) does not exist
+  Recommended approach: Identify the highest-value multi-step flows (financial postings, GST filing) and add compensating-action logic for those first.
+- [Medium] Continuous Internal Controls Monitoring
+  Gap: Continuous Internal Controls Monitoring exists only at the code-change (L1) layer; ongoing runtime controls monitoring (L2-L7) is designed but not scheduled/built
+  Recommended approach: Build the L3 Rolling Health Audit (30-60min) first as the smallest next increment, per CONSTITUTION.yaml's own gap note.
+- [Low] Human Override & Approval
+  Gap: Each module implements its own confirmation/authorization independently -- no single unified generic override gate spans every module (HAB-02's own stated gap)
+  Recommended approach: Consolidate into a single middleware-level check rather than per-route opt-in.
+- [Medium] Exception Handling Framework
+  Gap: Error handling is real per-service-function but there is no single named 'Exception Handling Framework' with a documented taxonomy (retryable vs terminal, business vs system exception)
+  Recommended approach: Document and enforce a shared exception taxonomy across services, building on the existing ServiceError pattern.
+- [High] Automatic Rollback & Recovery
+  Gap: Automatic Rollback & Recovery (undoing a multi-step business process after a downstream failure) does not exist
+  Recommended approach: Identify the highest-value multi-step flows (financial postings, GST filing) and add compensating-action logic for those first.
+- [Medium] Continuous Internal Controls Monitoring
+  Gap: Continuous Internal Controls Monitoring exists only at the code-change (L1) layer; ongoing runtime controls monitoring (L2-L7) is designed but not scheduled/built
+  Recommended approach: Build the L3 Rolling Health Audit (30-60min) first as the smallest next increment, per CONSTITUTION.yaml's own gap note.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

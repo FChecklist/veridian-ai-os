@@ -1,0 +1,40 @@
+# Safe-edit backup/pre-edit files (accumulate constantly in this tree; not real history)
+*.bak
+*.bak-*
+*.bak.*
+*.pre-*
+*.superseded*
+*.CORRUPTED-*
+*.rebuild-*
+
+# Logs
+logs/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+
+# Runtime lock files
+*.lock
+.*.lock
+
+# Binary knowledge-engine / ledger databases and ALL their variant/versioned copies
+# (memory/*.sqlite, *.sqlite.vacuum-*, *.sqlite.writelock, *.sqlite.empty-stub-*, etc.)
+# -- large (300MB+), frequently rewritten, and per PROTOCOL_OWNER_AI these log verbatim
+# Owner chat text end-to-end, a real secret-leak vector even where a point-in-time scan
+# finds nothing -- never appropriate for git regardless of content.
+*.sqlite*
+
+# Any subdirectory found directly inside a task folder under tasks/ -- these are
+# per-worker git worktrees under varying names (workspace/, pr89-work/, etc, confirmed
+# NOT uniformly named), never this project's own content, just live checkouts of
+# already-versioned repos (compliance-tracker, claude-control, etc). Task-level metadata
+# FILES (task.yaml, prompt.txt, result.json, etc.) sit directly in tasks/<id>/ and are
+# NOT excluded by this rule since it only matches directories.
+tasks/*/*/
+
+# Never track env/secret files, wherever one might turn up
+.env
+.env.*
+*.env

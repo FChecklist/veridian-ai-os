@@ -1,0 +1,74 @@
+id: task-20260728-031302-adopted-fresh-audit--pr--610
+title: 'Fresh audit: PR #610'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co
+workspace: /opt/veridian/ai-os/tasks/task-20260728-031302-adopted-fresh-audit--pr--610/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-031302-adopted-fresh-audit--pr--610
+service: veridian-supervisor@task-20260728-031302-adopted-fresh-audit--pr--610.service
+created_at: '2026-07-28T03:13:03.448836+00:00'
+last_checkpoint_at: '2026-07-28T03:16:05.288639+00:00'
+completed_steps: &id002
+- Read ACTIVE-CLAIMS.yaml, registered this task's claim, pushed it standalone before
+  real work
+- 'Confirmed crmOpportunities.stage gap: 5 legacy free-text values, none of the mockup''s
+  8'
+- Confirmed no existing "monthly revenue target" concept anywhere (grepped schema.ts
+  +
+- Researched existing win-probability/health-scoring logic (aiWinProbability is an
+  opaque
+- Added `crm_sales_targets` table (schema.ts) + hand-written migration 0268 (additive
+  only,
+- 'Built pure aggregation module `sales-pipeline-dashboard-service.ts`: stage normalization'
+- 20 unit tests (`sales-pipeline-dashboard-service.test.ts`), all passing -- covers
+  KPI math
+- DB-fetch layer (`getSalesPipelineDashboardData`, `setSalesTarget` in crm-service.ts)
+  +
+- 'Dashboard page (`src/app/(app)/crm/sales-pipeline/page.tsx`): 6 KPI tiles, 2 filter'
+- Linked from `/crm` overview page
+- 'Verified: `npx tsc --noEmit` clean, `bun test` (20/20 pass), `eslint` clean on
+  all new/'
+- Committed + pushed
+remaining_steps: &id003
+- '`bun run build` (full production build) could not be completed in this session''s
+  sandbox:'
+- No settings UI for `setSalesTarget` -- only a raw POST endpoint exists. Out of scope
+  per
+- Awaiting fresh supervisor audit before merge (per task's own EXPECTED_OUTPUT --
+  not
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T03:13:03.448836+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co'
+    (https://github.com/FChecklist/compliance-tracker/pull/610) -- registered for
+    real audit, not a fresh worker dispatch
+- at: '2026-07-28T03:16:05.288639+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '74b6ef11 ai-os: mark Sales Pipeline dashboard claim as PR #610 open'
+  - 'ddc75ed8 feat(crm): real interactive Sales Pipeline dashboard with cross-filtering'
+  - '8968c358 ai-os: register active claim for Sales Pipeline dashboard task'
+  - 'df665722 Merge pull request #596 from FChecklist/worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  note: "Superboss rejected: https://github.com/FChecklist/compliance-tracker/pull/610\
+    \ \u2014 see review.json for issues"
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/610
+master_synced_at: '2026-07-29T21:04:26.264316+00:00'

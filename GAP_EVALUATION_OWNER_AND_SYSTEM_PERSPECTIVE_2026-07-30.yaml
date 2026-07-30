@@ -1,0 +1,144 @@
+metadata:
+  title: "VERIDIAN Gap Evaluation -- Owner Perspective + System Self-Knowledge Perspective"
+  date: "2026-07-30"
+  run_id: "phase6-2026-07-30"
+  produced_by: "claude_code_cli gap-evaluation agent"
+  prior_investigation_verified:
+    instruction_id: "INS-20260729-181826-f9f0"
+    knowledge_engine_id: "KE-20260729-181834-91c6"
+    verification_method: "live SELECT against instructions/knowledge_engine tables on 2026-07-30; both rows confirmed to exist, not re-trusted blind"
+    published_artifact_url: "https://claude.ai/code/artifact/e49a7658-a266-45db-90d2-8ccd3f328a34"
+  scope_note: "Read-only investigation + gap-fill using ONLY existing mechanisms (register-knowledge, index-add, log-instruction in /opt/veridian/scripts/superboss-register.py). No new database. No new top-level files -- this document lives inside the existing ai-os/ reports convention (same pattern as MODULE_GAP_AUDIT_2026-07-25.yaml)."
+
+perspective_1_owner_business:
+  question: "What real, concrete things currently block (a) completing PROJEXA-AI.COM for the prospect, (b) safe/confident server operation, (c) knowing is-X-done without re-investigating -- ranked by real business impact."
+
+  finding_1_HIGHEST_IMPACT:
+    title: "3 of 14 BUILD_NEW SAP-equivalent report PRs exist but NONE are actually merge-ready"
+    repo: "FChecklist/compliance-tracker (github.com)"
+    evidence:
+      - pr: 636
+        title: "FI-AR-004: Dunning List (overdue AR by aging bucket + dunning letters)"
+        state: "OPEN, mergeable=MERGEABLE, reviewDecision=(none)"
+        failing_required_checks: ["audit-check (Mandatory Audit Check)", "Terminology Guardrail Check"]
+        updated_at: "2026-07-29T19:41:20Z"
+      - pr: 637
+        title: "feat(fi-ap-005): Payment Proposal List report (SAP F110 equivalent)"
+        state: "OPEN, mergeable=MERGEABLE, reviewDecision=(none)"
+        failing_required_checks: ["audit-check (Mandatory Audit Check)", "Terminology Guardrail Check"]
+        updated_at: "2026-07-29T19:36:36Z"
+      - pr: 638
+        title: "SD-002: Billing Due List (SAP VF04 equivalent) report + generat..."
+        state: "OPEN, mergeable=MERGEABLE, reviewDecision=(none)"
+        failing_required_checks: ["Promptfoo Evals (CANCELLED, not re-run)"]
+    business_impact: "The prospect completion effort's 3 'done' deliverables are not actually in production and cannot be demoed from main. Two share the same two-check failure pattern (audit-check + Terminology Guardrail Check), suggesting a systemic/reusable fix across all 3 rather than 3 separate investigations. None have a human review decision recorded yet -- reviewer bandwidth may be the real bottleneck, not the code."
+    remaining_scope: "11 of 14 BUILD_NEW reports have no PR at all yet (not started)."
+    umr_tasks_tracking_caveat: "The DB task-tracking row for this effort (umr-task-20260728-061556-sap-reports-prospect, task_identity task-20260728-061556-sap-reports-prospect) shows status=failed with reason 'Manual one-time reconciliation 2026-07-29 07:xx UTC: no matching real process (ps aux) and no task workspace', metadata phase=phase_1_complete_phase_2_pending. This is a STALE TRACKING ROW, not a statement that the work failed -- the real state is the 3 PRs above. Anyone reading only umr_tasks would wrongly conclude the effort failed outright; the PRs are the ground truth."
+    gap_fill_status: "NOT fillable by this agent -- requires either (a) a maintainer to actually fix the audit-check/Terminology Guardrail Check findings on 636/637 and re-run/approve Promptfoo Evals on 638, or (b) an Owner decision to review and merge. Reported as an open gap, not actioned (out of read-only-investigation + existing-mechanism-only scope)."
+
+  finding_2_HIGH_IMPACT:
+    title: "umr_tasks queue is not a reliable 'is it running / did it fail' signal on its own"
+    evidence: "24+ adversarial/security test probes (task_identity values like 'ADVTEST6-BADKIND' with task_kind literally 'DROP TABLE umr_tasks; --', SQL-injection-style strings) are present in umr_tasks from 2026-07-29 testing, alongside real production dispatches, all in the same table with statuses failed/killed/rejected_duplicate. This is GOOD news for security (parameterized queries held -- the literal string was stored, not executed) but means a naive count of failed/killed rows in umr_tasks today (43 non-completed rows out of 44 submitted since 2026-07-29T00:00) is NOT a meaningful health signal -- it is mostly adversarial-test noise, not production failures."
+    business_impact: "Whoever next asks 'is the server healthy' by querying umr_tasks status counts will see a scary-looking ~98% failure rate that is actually expected test-probe rejection, not an outage. No existing filter (e.g. a `test_probe` flag) distinguishes real dispatches from adversarial/synthetic ones in this table."
+    gap_fill_status: "NOT filled -- would require a schema change (new column) or a naming convention audit, both out of scope for existing-mechanism-only, read-only-investigation work. Reported as an open gap."
+
+  finding_3_MEDIUM_IMPACT:
+    title: "MASTER_INDEX.yaml self-regeneration script is now live but --apply is safe-by-default to the point of doing nothing without explicit --only/--scope"
+    evidence: "/opt/veridian/scripts/regenerate_master_index.py --apply with no --only/--scope applies ZERO initiative-status corrections (conservative default, documented in --help: 'you must name entries explicitly once a human has reviewed their evidence trail'). Dry-run on 2026-07-30 shows 3 real pending corrections (auditor_engine, testing_engine_irvf, wiring_engine all showing stale phase-incomplete statuses when evidence says all phases are complete as of 2026-07-30)."
+    business_impact: "Whoever runs the regen script expecting 'auto-fix my stale statuses' will get a report of what's wrong but nothing will actually change unless they pass --only auditor_engine,testing_engine_irvf,wiring_engine explicitly. This is a deliberate safety gate (false-positive risk on short/generic phase names), not a bug, but it means MASTER_INDEX.yaml will keep drifting unless someone owns running this regularly with explicit scope."
+    gap_fill_status: "NOT actioned here -- per the script's own design, applying initiative-status corrections requires a human to have reviewed the evidence trail first; this agent did not do that review for auditor_engine/testing_engine_irvf/wiring_engine and is not the right actor to self-authorize it. Flagging for Owner/human review is the correct next step, not silently running --apply --only=... ourselves."
+
+  finding_4_MEDIUM_IMPACT:
+    title: "6 real, currently-shipped systems were invisible to every self-knowledge mechanism until this run (see perspective 2) -- 'is X done' for these required re-investigating from scratch as of this morning"
+    cross_reference: "See perspective_2_system_self_knowledge below. Partially fixed in this run (knowledge_engine + system_index rows added for all 6); MASTER_INDEX.yaml registries[] entries and wiring_registry scan-scope remain open gaps."
+
+perspective_2_system_self_knowledge:
+  question: "What real, currently-existing things are invisible to VERIDIAN's own self-knowledge mechanisms (MASTER_INDEX.yaml, knowledge_engine, capability_registry, wiring_registry, system_index)?"
+
+  six_item_check_requested_this_run:
+    method: "Live grep of MASTER_INDEX.yaml (2953 lines, fresh read 2026-07-30) + live SQL against knowledge_engine/system_index/capability_registry/wiring_registry in /opt/veridian/ai-os/memory/superboss-register.sqlite"
+    items:
+      - item: "umr_tasks"
+        real: true
+        real_evidence: "CREATE TABLE umr_tasks in /opt/veridian/scripts/superboss-register.py; 44+ live rows"
+        MASTER_INDEX_yaml: "MISSING (confirmed again 2026-07-30, 0 grep hits)"
+        knowledge_engine_before: "MISSING (0 rows)"
+        system_index_before: "MISSING (0 rows)"
+        capability_registry_before: "N/A -- not applicable, see note below"
+        wiring_registry_before: "MISSING AS OWN ENTITY (0 path matches) -- but referenced 24x in OTHER rows' free-text relationships. Root cause: wiring_registry's generator scans the app codebase (Supabase/Vercel/GitHub), not this AI-ops control-plane sqlite DB at all. This is a structural blind spot, not a stale-registration oversight."
+        action_taken: "register-knowledge -> KE-20260730-040455-740d (canonical, VERIFIED_MATCH). index-add: see incident note below -- NOT a separate umr_tasks-specific system_index row; captured only in knowledge_engine."
+        still_open: "MASTER_INDEX.yaml registries[] entry NOT added (no safe existing mechanism -- see fill_mechanism_limits below). wiring_registry scan-scope gap NOT closed (would require modifying/re-running the wiring_registry generator against the AI-ops DB, which is a build task, not a registration task)."
+      - item: "task_capabilities"
+        real: true
+        real_evidence: "drizzle/0156_priority5_capability_memory.sql (+ 0190_task_capabilities_status_backfill.sql) in compliance-tracker repo defines platform.task_capabilities Postgres table"
+        MASTER_INDEX_yaml: "MISSING (confirmed 2026-07-30)"
+        knowledge_engine_before: "MISSING (0 rows)"
+        system_index_before: "MISSING (0 rows)"
+        capability_registry_before: "N/A -- see note"
+        wiring_registry_before: "ALREADY PRESENT as its own entity: entity_id 'supabase_table-platform__task_capabilities'. So this item was NOT invisible everywhere -- only to the curated/manually-registered layers (knowledge_engine, system_index, capability_registry, MASTER_INDEX), not to the auto-generated wiring_registry."
+        action_taken: "register-knowledge -> KE-20260730-040455-b76c (canonical, VERIFIED_MATCH). index-add -> IDX-20260730-040455-d59d (category=task_register, layer=database, status=live)."
+        still_open: "MASTER_INDEX.yaml registries[] entry not added (same mechanism limit as umr_tasks)."
+      - item: "capability-learning-service.ts"
+        real: true
+        real_evidence: "/opt/veridian/repos/compliance-tracker/src/lib/services/capability-learning-service.ts (+ matching .test.ts)"
+        MASTER_INDEX_yaml: "MISSING"
+        knowledge_engine_before: "MISSING"
+        system_index_before: "MISSING"
+        wiring_registry_before: "14 rows already reference this path (real call-graph edges), but it had no entity/knowledge/system_index row of its own"
+        action_taken: "register-knowledge -> KE-20260730-040455-296c. index-add -> IDX-20260730-040455-ce6e (category=other, layer=typescript, status=live)."
+        still_open: "MASTER_INDEX.yaml entry not added."
+      - item: "capability-audit-service.ts"
+        real: true
+        real_evidence: "/opt/veridian/repos/compliance-tracker/src/lib/services/capability-audit-service.ts (+ matching .test.ts)"
+        MASTER_INDEX_yaml: "MISSING"
+        knowledge_engine_before: "MISSING"
+        system_index_before: "MISSING"
+        wiring_registry_before: "20 rows already reference this path"
+        known_limitation: "Per prior ground-truth investigation (KE-20260729-181834-91c6): the capability-audit loop this file backs dead-ends at human-reviewed advisories -- confirmed still the case, not re-verified to have changed."
+        action_taken: "register-knowledge -> KE-20260730-040455-d016. index-add -> IDX-20260730-040456-cb90 (category=audit, layer=typescript, status=partial -- partial reflects the human-review dead-end, not a code defect)."
+        still_open: "MASTER_INDEX.yaml entry not added."
+      - item: "veri-chat"
+        real: true
+        real_evidence: "src/app/api/veri-chat/{approvals,conversations,guest-access,meetings,messages,share-links,share-target,voice-tickets}/route.ts (9 route files) + src/components/veri-chat/{ChainSelector,HomeThreadSlot,IntentCommandPalette,VeriChatPanel,VeriComposer}.tsx + src/lib/services/veri-chat-service.ts (used as the anchor path since veri-chat has no single root file)"
+        MASTER_INDEX_yaml: "MISSING"
+        knowledge_engine_before: "MISSING"
+        system_index_before: "MISSING"
+        wiring_registry_before: "129 rows already reference veri-chat paths -- the largest wiring footprint of all 6 items, confirming this is real software-first chat routing (matches prior investigation's finding that END_USER_ENGINE is not a separate named system; veri-chat IS the real entrypoint)"
+        action_taken: "register-knowledge -> KE-20260730-040456-52ed (path=src/lib/services/veri-chat-service.ts). index-add -> IDX-20260730-040456-65be (category=dispatch_entrypoint, layer=typescript, status=live)."
+        still_open: "MASTER_INDEX.yaml entry not added. Only the anchor service file is indexed -- the other 8 route files + 5 components are NOT individually indexed (would need 13 more index-add calls to fully catalog the namespace; left as future work, not done here to avoid scope creep)."
+      - item: "browser-intent-cache.ts"
+        real: true
+        real_evidence: "/opt/veridian/repos/compliance-tracker/src/lib/browser-intent-cache.ts (PR #324 per prior memory record)"
+        MASTER_INDEX_yaml: "MISSING"
+        knowledge_engine_before: "MISSING"
+        system_index_before: "MISSING"
+        wiring_registry_before: "16 rows already reference this path"
+        known_limitation: "Encryption and attachments confirmed still not built (per prior memory record; not re-verified by code read in this run -- carried forward as an existing claim, flagged as such)"
+        action_taken: "register-knowledge -> KE-20260730-040456-344e. index-add -> IDX-20260730-040456-7a31 (category=cache, layer=typescript, status=partial -- reflects the encryption/attachments gap)."
+        still_open: "MASTER_INDEX.yaml entry not added."
+
+  capability_registry_applicability_note:
+    finding: "capability_registry is NOT a generic file/system index -- register-capability requires a full JSON record matching CAPABILITY_REGISTRY_SCHEMA_2026-07-24.yaml (business-capability records like gratuity_calculator, commission_calculator, gst_calculation_engine, with inputs/business_rules/workflow/automation/documents/reports fields). None of the 6 flagged items are business-capability records in that sense -- they are infrastructure/service files and DB tables. Checking capability_registry for them was correct due diligence but 'missing from capability_registry' is not a real gap for these 6 items; it would be a category error to force-fit them there. Not actioned, correctly out of scope."
+
+  fill_mechanism_limits_MASTER_INDEX_yaml:
+    finding: "MASTER_INDEX.yaml's own regeneration tool (/opt/veridian/scripts/regenerate_master_index.py) only supports two safe write operations: (1) correcting the STATUS TEXT of an ALREADY-PRESENT registries[] entry (--apply --only=<id>), and (2) resolving rows in the unregistered_mentions backlog table (status='NEEDS_REGISTRATION') into system_index if the mentioned_path resolves on disk. Neither operation creates a brand-new named registries[] entry for an artifact that was never mentioned/flagged before. Manually hand-authoring 6 new registries[] blocks by editing the YAML directly was considered and rejected for this run: it would bypass the self-regeneration discipline established today (2026-07-30, per the regen script's own docstring) and requires human editorial judgment (what phase-tracking status text/structure to assign) that this agent should not unilaterally invent. CONCLUSION: adding these 6 to MASTER_INDEX.yaml's registries[] section is a genuine, currently-open gap, not silently fillable -- recommend either (a) inserting 6 rows into the unregistered_mentions table with status='NEEDS_REGISTRATION' and the real paths above, then a human running regenerate_master_index.py --apply to resolve them into system_index (still would not add registries[] entries, only system_index -- confirmed by reading resolve_unregistered_mentions()), or (b) a deliberate human-reviewed manual YAML addition."
+
+  self_correction_incident_this_run:
+    title: "index-add for umr_tasks accidentally overwrote the pre-existing system_index row for superboss-register.py itself"
+    root_cause: "system_index.path has a UNIQUE constraint with ON CONFLICT(path) DO UPDATE (upsert-by-design, per the tool's own docstring: 'a living catalog re-checked over time, not a write-once log'). This agent initially reused the shared path /opt/veridian/scripts/superboss-register.py (the file that defines the umr_tasks schema) for a table-specific index-add call, which overwrote the existing entry IDX-20260723-063735-bf08's purpose/category/tags (originally describing the whole registration CLI, dated 2026-07-23) with narrow umr_tasks-only text."
+    detection: "Caught immediately by checking the returned index_id (was the OLD 2026-07-23 id, not a new one) and inspecting the row post-write."
+    remediation: "Same index-add path was re-run with a corrected, comprehensive purpose describing the whole file (all 31 subcommands), with an explicit correction note in metadata_json. The exact original 2026-07-23 purpose text could not be recovered (no system_index history/audit table exists), so the restored text was reconstructed from a fresh, direct read of the file's actual contents on 2026-07-30, not fabricated from memory."
+    lesson_for_future_sessions: "system_index is ONE ROW PER PATH (upsert). knowledge_engine is NOT (artifact_id is the only PK, multiple facet-rows per path are fine). Never index-add a shared/parent path to describe a narrower sub-concept living inside it -- use knowledge_engine for that facet instead, exactly as was correctly done for the umr_tasks knowledge_engine row (KE-20260730-040455-740d) which required no such workaround."
+
+fill_summary:
+  filled_via_existing_mechanisms:
+    - "6x register-knowledge calls -> knowledge_engine (artifact_ids KE-20260730-040455-740d, -b76c, -296c, -d016, -52ed, and KE-20260730-040456-344e), all verification_status=VERIFIED_MATCH (real live file reads, real content hashes)"
+    - "6x index-add calls -> system_index (5 new IDX-20260730-* rows + 1 corrected pre-existing row IDX-20260723-063735-bf08)"
+    - "1x self-correction of an overwrite mistake made during this same run (see self_correction_incident_this_run)"
+  left_as_open_gaps_not_actioned:
+    - "MASTER_INDEX.yaml registries[] entries for all 6 items -- no safe existing mechanism creates new entries, only corrects existing ones (see fill_mechanism_limits_MASTER_INDEX_yaml)"
+    - "wiring_registry scan-scope gap for umr_tasks (the AI-ops sqlite DB is entirely outside its generator's scan roots) -- a build/config task, not a registration task"
+    - "PROJEXA prospect PRs 636/637/638 CI failures (audit-check, Terminology Guardrail Check, cancelled Promptfoo Evals) -- requires actual code/config fixes and human review, not a documentation fill"
+    - "umr_tasks lacks a way to distinguish real dispatches from adversarial/synthetic test probes (43 of 44 rows since 2026-07-29T00:00 are test noise, not production failures) -- would need a schema change"
+    - "auditor_engine / testing_engine_irvf / wiring_engine MASTER_INDEX status corrections are ready (regen --dry-run confirms) but require a human evidence review before --apply --only=<these 3> per the script's own safety gate -- NOT self-authorized by this agent"
+    - "veri-chat: only 1 of 14 real files (the anchor service) was indexed; the other 8 route files + 5 components remain individually unindexed"

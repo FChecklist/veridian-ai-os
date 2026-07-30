@@ -1,0 +1,27 @@
+## OBJECTIVE
+Fix real AUDIT: REJECT findings on the current claude-control PR #80 branch (the interactive-session write-gate). The gate's basic shell-function approach and INVOCATION_ID signal concept are sound and stay; this round closes real bypass vectors the reviewer found.
+
+## KNOWN_CONTEXT
+Read the current write-gate implementation (the bashrc snippet plus its committed reference copy in claude-control) in full first. Real findings from the review: (1) the INVOCATION_ID check is a plain environment-variable read with no cryptographic or systemd-verified binding -- any interactive session can simply run `export INVOCATION_ID=fake-value` before calling gh/git and the gate would treat it as a legitimate systemd-worker context. (2) The shell-function wrapper approach is trivially bypassed by prefixing the real command with the shell builtin `command` (e.g. `command git push origin master`, `command gh pr merge 1 --merge`), which calls the real binary directly and skips the shell function entirely -- a well-known, standard bash technique, not an obscure edge case. (3) Only the `gh pr merge` subcommand is intercepted -- other real ways to merge a PR via gh/the GitHub API (`gh api -X PUT repos/OWNER/REPO/pulls/N/merge`, or any other gh subcommand/flag combination that achieves a merge) are not covered. (4) Only `git push` to specifically-named protected branches is checked -- `git push --all` or `git push --mirror` run from a non-protected current branch can still push to a protected branch as a side effect and is not blocked.
+
+## SCOPE
+1. Strengthen the INVOCATION_ID check so it cannot be trivially spoofed by an interactive session simply setting the variable: verify the CURRENT PROCESS is actually a descendant of a systemd-managed unit by checking `/proc/self/cgroup` (systemd units have a real, kernel-tracked cgroup path containing the unit name, e.g. `veridian-worker@<task-id>.service`, that cannot be faked by just exporting an env var) rather than trusting an environment variable alone. Combine both signals (INVOCATION_ID presence AND a matching real cgroup path) for a much harder-to-spoof check.
+2. Close the `command git`/`command gh` bypass: a shell function alone cannot prevent this by design (that is what `command` exists to do). Given this real limitation, do not attempt to solve it purely with a shell function -- instead add a real, binary-level guard by replacing PATH resolution for `gh` and `git` in the interactive session with wrapper SCRIPTS placed earlier in PATH than the real binaries (not shell functions), so `command git`/`command gh` still resolve to the wrapper first (since `command` bypasses shell functions and aliases, but NOT PATH search order) -- verify this actually works by testing `command git push` and `command gh pr merge` against the real wrapper script, not just theorize it.
+3. Extend the gh-merge detection to cover the real GitHub API path (`gh api` calls with `-X PUT` or `-X PATCH` targeting a `/pulls/*/merge` endpoint pattern) in addition to `gh pr merge` itself.
+4. Extend the git-push detection to catch `git push --all`/`git push --mirror` (which push all branches including protected ones) regardless of the current checked-out branch, not only an explicit `git push origin master`/`main` invocation.
+5. Update the regression test to cover all 4 bypass vectors found, each proven blocked after the fix (not just asserted in prose).
+6. Update the "known limitation" documentation honestly: if any residual bypass remains after this round (e.g. a statically-linked git/gh binary invoked by full absolute path could still skip PATH-based wrapper resolution), disclose that plainly rather than overclaiming completeness.
+
+## SUCCESS_CRITERIA
+- `bash -c 'export INVOCATION_ID=fake123; git push origin master'` (simulating a spoofed variable with no real systemd cgroup) is still blocked after the fix.
+- `bash -c 'command git push origin master'` and `bash -c 'command gh pr merge 1 --repo some/repo --merge'` are both blocked by the PATH-based wrapper script approach.
+- `python3 -m pytest tests/ -k write_gate -v` (or whichever real test file this round extends) exits 0 with all 4 new bypass-vector tests passing.
+
+## EXPECTED_OUTPUT
+Push directly to the existing PR #80 branch in FChecklist/claude-control (find it via `gh pr view 80 --repo FChecklist/claude-control --json headRefName`). Do not open a new PR.
+
+## CONSTRAINTS
+Do not remove or weaken the existing read-only command pass-through (gh pr view/checks/comment/diff, git status/log/diff/fetch must all keep working normally in an interactive session). Do not merge yourself; this needs a fresh, thorough audit pass -- explicitly encourage the reviewer to test the bypass vectors directly (spoofed env var, `command` prefix, gh api merge path, git push --all) rather than reviewing the diff alone.
+
+## COMPLEXITY_TIER
+judgment

@@ -1,0 +1,468 @@
+id: task-20260729-092906-resolve-fresh-conflict-on-pr--610
+title: 'Resolve fresh conflict on PR #610'
+status: in_progress
+repo: compliance-tracker
+branch: worker/task-20260729-092906-resolve-fresh-conflict-on-pr--610
+workspace: /opt/veridian/ai-os/tasks/task-20260729-092906-resolve-fresh-conflict-on-pr--610/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260729-092906-resolve-fresh-conflict-on-pr--610
+service: veridian-worker@task-20260729-092906-resolve-fresh-conflict-on-pr--610.service
+created_at: '2026-07-29T09:29:07.980217+00:00'
+last_checkpoint_at: '2026-07-29T10:25:45.099093+00:00'
+completed_steps: &id002
+- 'Read ACTIVE-CLAIMS.yaml -- no other session claims PR #610 / Sales Pipeline dashboard
+  work'
+- 'Fetched fresh origin/main and origin PR #610 branch (worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co)'
+- 'Confirmed via `gh pr view 610` that mergeable=MERGEABLE / mergeStateStatus=BEHIND
+  (not a raw git text conflict anymore -- branch''s prior 2026-07-28 merge commit
+  cd3db8e6 already resolved the textual conflict that existed then; main has since
+  moved forward again with PR #617)'
+- Merged fresh origin/main into a local copy of the PR branch (worktree /tmp/m610-resolve,
+  branch m610-conflict-resolve) -- merge succeeded with `git merge --no-edit`, zero
+  `<<<<<<<` conflict markers, confirmed by full-tree grep
+- 'Found the REAL conflict by reading the diff, not just trusting the clean git merge:
+  both branches independently added a drizzle migration numbered `0268` -- main has
+  `0268_pms_time_entry_approval_flow.sql` (PR #613), this branch has `0268_sales_pipeline_dashboard_targets.sql`.
+  Different filenames so git''s text merge didn''t flag it, but `scripts/check-migration-collision.mjs`
+  (CI guardrail) does, and confirmed failing before the fix'
+- 'Also found: the branch''s own original commit (ddc75ed8) never registered its 0268
+  migration in `drizzle/meta/_journal.json` at all (checked the journal at that commit
+  directly via `git cat-file`)'
+- 'Fix: `git mv` the migration to `0269_sales_pipeline_dashboard_targets.sql`, added
+  its journal entry (idx 266, tag `0269_sales_pipeline_dashboard_targets`), updated
+  the two test files that load/reference the old filename by literal path (`sales-pipeline-rls.test.ts`,
+  `tenant-isolation.test.ts`)'
+- Re-ran `scripts/check-migration-collision.mjs` logic manually (diff against origin/main
+  directly, since this shared multi-worktree repo's local `main` ref is checked out
+  by another active task's worktree and must not be force-moved) -- confirmed old
+  `0268_sales_pipeline...` filename no longer appears in the diff, only the renamed
+  `0269_...` file
+- Ran `scripts/check-guardrail-presence.mjs` -- passed, all 88 markers present. Other
+  check-*.mjs scripts (asset-registry-coverage, terminology-guardrail, doc-cross-references,
+  metadata-index-coverage) require `js-yaml` from node_modules, which isn't installed
+  in this sandbox (no bun binary available, npm has peer-dep conflicts requiring --legacy-peer-deps)
+  -- ran `npm install --legacy-peer-deps` in background for local-only verification,
+  not committed
+- 'Committed fix on top of the merge (commit 1b083b93) and pushed to origin''s PR
+  #610 branch (`worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co`)'
+remaining_steps: &id003
+- Confirm push succeeded and re-check `gh pr view 610` mergeable/mergeStateStatus
+  is now clean (re-adopt)
+- Re-run the full guardrail/check-*.mjs sweep once node_modules finishes installing
+  (re-sweep), record results
+- Register this session's claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+- Clean up /tmp/m610-resolve worktree
+files_modified: &id001
+- PROGRESS.md
+checkpoints:
+- at: '2026-07-29T09:29:10.104397+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-29T09:34:11.686388+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: periodic checkpoint
+- at: '2026-07-29T09:39:15.010812+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: periodic checkpoint
+- at: '2026-07-29T09:44:29.540481+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: periodic checkpoint
+- at: '2026-07-29T09:49:42.798007+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Read ACTIVE-CLAIMS.yaml -- no other session claims PR #610 / Sales Pipeline dashboard
+    work'
+  - 'Fetched fresh origin/main and origin PR #610 branch (worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co)'
+  - 'Confirmed via `gh pr view 610` that mergeable=MERGEABLE / mergeStateStatus=BEHIND
+    (not a raw git text conflict anymore -- branch''s prior 2026-07-28 merge commit
+    cd3db8e6 already resolved the textual conflict that existed then; main has since
+    moved forward again with PR #617)'
+  - Merged fresh origin/main into a local copy of the PR branch (worktree /tmp/m610-resolve,
+    branch m610-conflict-resolve) -- merge succeeded with `git merge --no-edit`, zero
+    `<<<<<<<` conflict markers, confirmed by full-tree grep
+  - 'Found the REAL conflict by reading the diff, not just trusting the clean git
+    merge: both branches independently added a drizzle migration numbered `0268` --
+    main has `0268_pms_time_entry_approval_flow.sql` (PR #613), this branch has `0268_sales_pipeline_dashboard_targets.sql`.
+    Different filenames so git''s text merge didn''t flag it, but `scripts/check-migration-collision.mjs`
+    (CI guardrail) does, and confirmed failing before the fix'
+  - 'Also found: the branch''s own original commit (ddc75ed8) never registered its
+    0268 migration in `drizzle/meta/_journal.json` at all (checked the journal at
+    that commit directly via `git cat-file`)'
+  - 'Fix: `git mv` the migration to `0269_sales_pipeline_dashboard_targets.sql`, added
+    its journal entry (idx 266, tag `0269_sales_pipeline_dashboard_targets`), updated
+    the two test files that load/reference the old filename by literal path (`sales-pipeline-rls.test.ts`,
+    `tenant-isolation.test.ts`)'
+  - Re-ran `scripts/check-migration-collision.mjs` logic manually (diff against origin/main
+    directly, since this shared multi-worktree repo's local `main` ref is checked
+    out by another active task's worktree and must not be force-moved) -- confirmed
+    old `0268_sales_pipeline...` filename no longer appears in the diff, only the
+    renamed `0269_...` file
+  - Ran `scripts/check-guardrail-presence.mjs` -- passed, all 88 markers present.
+    Other check-*.mjs scripts (asset-registry-coverage, terminology-guardrail, doc-cross-references,
+    metadata-index-coverage) require `js-yaml` from node_modules, which isn't installed
+    in this sandbox (no bun binary available, npm has peer-dep conflicts requiring
+    --legacy-peer-deps) -- ran `npm install --legacy-peer-deps` in background for
+    local-only verification, not committed
+  - 'Committed fix on top of the merge (commit 1b083b93) and pushed to origin''s PR
+    #610 branch (`worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co`)'
+  remaining_steps:
+  - Confirm push succeeded and re-check `gh pr view 610` mergeable/mergeStateStatus
+    is now clean (re-adopt)
+  - Re-run the full guardrail/check-*.mjs sweep once node_modules finishes installing
+    (re-sweep), record results
+  - Register this session's claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - Clean up /tmp/m610-resolve worktree
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: periodic checkpoint
+- at: '2026-07-29T10:00:05.478407+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Read ACTIVE-CLAIMS.yaml -- no other session claims PR #610 / Sales Pipeline dashboard
+    work'
+  - 'Fetched fresh origin/main and origin PR #610 branch (worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co)'
+  - 'Confirmed via `gh pr view 610` that mergeable=MERGEABLE / mergeStateStatus=BEHIND
+    (not a raw git text conflict anymore -- branch''s prior 2026-07-28 merge commit
+    cd3db8e6 already resolved the textual conflict that existed then; main has since
+    moved forward again with PR #617)'
+  - Merged fresh origin/main into a local copy of the PR branch (worktree /tmp/m610-resolve,
+    branch m610-conflict-resolve) -- merge succeeded with `git merge --no-edit`, zero
+    `<<<<<<<` conflict markers, confirmed by full-tree grep
+  - 'Found the REAL conflict by reading the diff, not just trusting the clean git
+    merge: both branches independently added a drizzle migration numbered `0268` --
+    main has `0268_pms_time_entry_approval_flow.sql` (PR #613), this branch has `0268_sales_pipeline_dashboard_targets.sql`.
+    Different filenames so git''s text merge didn''t flag it, but `scripts/check-migration-collision.mjs`
+    (CI guardrail) does, and confirmed failing before the fix'
+  - 'Also found: the branch''s own original commit (ddc75ed8) never registered its
+    0268 migration in `drizzle/meta/_journal.json` at all (checked the journal at
+    that commit directly via `git cat-file`)'
+  - 'Fix: `git mv` the migration to `0269_sales_pipeline_dashboard_targets.sql`, added
+    its journal entry (idx 266, tag `0269_sales_pipeline_dashboard_targets`), updated
+    the two test files that load/reference the old filename by literal path (`sales-pipeline-rls.test.ts`,
+    `tenant-isolation.test.ts`)'
+  - Re-ran `scripts/check-migration-collision.mjs` logic manually (diff against origin/main
+    directly, since this shared multi-worktree repo's local `main` ref is checked
+    out by another active task's worktree and must not be force-moved) -- confirmed
+    old `0268_sales_pipeline...` filename no longer appears in the diff, only the
+    renamed `0269_...` file
+  - Ran `scripts/check-guardrail-presence.mjs` -- passed, all 88 markers present.
+    Other check-*.mjs scripts (asset-registry-coverage, terminology-guardrail, doc-cross-references,
+    metadata-index-coverage) require `js-yaml` from node_modules, which isn't installed
+    in this sandbox (no bun binary available, npm has peer-dep conflicts requiring
+    --legacy-peer-deps) -- ran `npm install --legacy-peer-deps` in background for
+    local-only verification, not committed
+  - 'Committed fix on top of the merge (commit 1b083b93) and pushed to origin''s PR
+    #610 branch (`worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co`)'
+  remaining_steps:
+  - Confirm push succeeded and re-check `gh pr view 610` mergeable/mergeStateStatus
+    is now clean (re-adopt)
+  - Re-run the full guardrail/check-*.mjs sweep once node_modules finishes installing
+    (re-sweep), record results
+  - Register this session's claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - Clean up /tmp/m610-resolve worktree
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: periodic checkpoint
+- at: '2026-07-29T10:07:38.528893+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Read ACTIVE-CLAIMS.yaml -- no other session claims PR #610 / Sales Pipeline dashboard
+    work'
+  - 'Fetched fresh origin/main and origin PR #610 branch (worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co)'
+  - 'Confirmed via `gh pr view 610` that mergeable=MERGEABLE / mergeStateStatus=BEHIND
+    (not a raw git text conflict anymore -- branch''s prior 2026-07-28 merge commit
+    cd3db8e6 already resolved the textual conflict that existed then; main has since
+    moved forward again with PR #617)'
+  - Merged fresh origin/main into a local copy of the PR branch (worktree /tmp/m610-resolve,
+    branch m610-conflict-resolve) -- merge succeeded with `git merge --no-edit`, zero
+    `<<<<<<<` conflict markers, confirmed by full-tree grep
+  - 'Found the REAL conflict by reading the diff, not just trusting the clean git
+    merge: both branches independently added a drizzle migration numbered `0268` --
+    main has `0268_pms_time_entry_approval_flow.sql` (PR #613), this branch has `0268_sales_pipeline_dashboard_targets.sql`.
+    Different filenames so git''s text merge didn''t flag it, but `scripts/check-migration-collision.mjs`
+    (CI guardrail) does, and confirmed failing before the fix'
+  - 'Also found: the branch''s own original commit (ddc75ed8) never registered its
+    0268 migration in `drizzle/meta/_journal.json` at all (checked the journal at
+    that commit directly via `git cat-file`)'
+  - 'Fix: `git mv` the migration to `0269_sales_pipeline_dashboard_targets.sql`, added
+    its journal entry (idx 266, tag `0269_sales_pipeline_dashboard_targets`), updated
+    the two test files that load/reference the old filename by literal path (`sales-pipeline-rls.test.ts`,
+    `tenant-isolation.test.ts`)'
+  - Re-ran `scripts/check-migration-collision.mjs` logic manually (diff against origin/main
+    directly, since this shared multi-worktree repo's local `main` ref is checked
+    out by another active task's worktree and must not be force-moved) -- confirmed
+    old `0268_sales_pipeline...` filename no longer appears in the diff, only the
+    renamed `0269_...` file
+  - Ran `scripts/check-guardrail-presence.mjs` -- passed, all 88 markers present.
+    Other check-*.mjs scripts (asset-registry-coverage, terminology-guardrail, doc-cross-references,
+    metadata-index-coverage) require `js-yaml` from node_modules, which isn't installed
+    in this sandbox (no bun binary available, npm has peer-dep conflicts requiring
+    --legacy-peer-deps) -- ran `npm install --legacy-peer-deps` in background for
+    local-only verification, not committed
+  - 'Committed fix on top of the merge (commit 1b083b93) and pushed to origin''s PR
+    #610 branch (`worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co`)'
+  remaining_steps:
+  - Confirm push succeeded and re-check `gh pr view 610` mergeable/mergeStateStatus
+    is now clean (re-adopt)
+  - Re-run the full guardrail/check-*.mjs sweep once node_modules finishes installing
+    (re-sweep), record results
+  - Register this session's claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - Clean up /tmp/m610-resolve worktree
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: periodic checkpoint
+- at: '2026-07-29T10:15:12.155153+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Read ACTIVE-CLAIMS.yaml -- no other session claims PR #610 / Sales Pipeline dashboard
+    work'
+  - 'Fetched fresh origin/main and origin PR #610 branch (worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co)'
+  - 'Confirmed via `gh pr view 610` that mergeable=MERGEABLE / mergeStateStatus=BEHIND
+    (not a raw git text conflict anymore -- branch''s prior 2026-07-28 merge commit
+    cd3db8e6 already resolved the textual conflict that existed then; main has since
+    moved forward again with PR #617)'
+  - Merged fresh origin/main into a local copy of the PR branch (worktree /tmp/m610-resolve,
+    branch m610-conflict-resolve) -- merge succeeded with `git merge --no-edit`, zero
+    `<<<<<<<` conflict markers, confirmed by full-tree grep
+  - 'Found the REAL conflict by reading the diff, not just trusting the clean git
+    merge: both branches independently added a drizzle migration numbered `0268` --
+    main has `0268_pms_time_entry_approval_flow.sql` (PR #613), this branch has `0268_sales_pipeline_dashboard_targets.sql`.
+    Different filenames so git''s text merge didn''t flag it, but `scripts/check-migration-collision.mjs`
+    (CI guardrail) does, and confirmed failing before the fix'
+  - 'Also found: the branch''s own original commit (ddc75ed8) never registered its
+    0268 migration in `drizzle/meta/_journal.json` at all (checked the journal at
+    that commit directly via `git cat-file`)'
+  - 'Fix: `git mv` the migration to `0269_sales_pipeline_dashboard_targets.sql`, added
+    its journal entry (idx 266, tag `0269_sales_pipeline_dashboard_targets`), updated
+    the two test files that load/reference the old filename by literal path (`sales-pipeline-rls.test.ts`,
+    `tenant-isolation.test.ts`)'
+  - Re-ran `scripts/check-migration-collision.mjs` logic manually (diff against origin/main
+    directly, since this shared multi-worktree repo's local `main` ref is checked
+    out by another active task's worktree and must not be force-moved) -- confirmed
+    old `0268_sales_pipeline...` filename no longer appears in the diff, only the
+    renamed `0269_...` file
+  - Ran `scripts/check-guardrail-presence.mjs` -- passed, all 88 markers present.
+    Other check-*.mjs scripts (asset-registry-coverage, terminology-guardrail, doc-cross-references,
+    metadata-index-coverage) require `js-yaml` from node_modules, which isn't installed
+    in this sandbox (no bun binary available, npm has peer-dep conflicts requiring
+    --legacy-peer-deps) -- ran `npm install --legacy-peer-deps` in background for
+    local-only verification, not committed
+  - 'Committed fix on top of the merge (commit 1b083b93) and pushed to origin''s PR
+    #610 branch (`worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co`)'
+  remaining_steps:
+  - Confirm push succeeded and re-check `gh pr view 610` mergeable/mergeStateStatus
+    is now clean (re-adopt)
+  - Re-run the full guardrail/check-*.mjs sweep once node_modules finishes installing
+    (re-sweep), record results
+  - Register this session's claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - Clean up /tmp/m610-resolve worktree
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: periodic checkpoint
+- at: '2026-07-29T10:20:34.074794+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Read ACTIVE-CLAIMS.yaml -- no other session claims PR #610 / Sales Pipeline dashboard
+    work'
+  - 'Fetched fresh origin/main and origin PR #610 branch (worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co)'
+  - 'Confirmed via `gh pr view 610` that mergeable=MERGEABLE / mergeStateStatus=BEHIND
+    (not a raw git text conflict anymore -- branch''s prior 2026-07-28 merge commit
+    cd3db8e6 already resolved the textual conflict that existed then; main has since
+    moved forward again with PR #617)'
+  - Merged fresh origin/main into a local copy of the PR branch (worktree /tmp/m610-resolve,
+    branch m610-conflict-resolve) -- merge succeeded with `git merge --no-edit`, zero
+    `<<<<<<<` conflict markers, confirmed by full-tree grep
+  - 'Found the REAL conflict by reading the diff, not just trusting the clean git
+    merge: both branches independently added a drizzle migration numbered `0268` --
+    main has `0268_pms_time_entry_approval_flow.sql` (PR #613), this branch has `0268_sales_pipeline_dashboard_targets.sql`.
+    Different filenames so git''s text merge didn''t flag it, but `scripts/check-migration-collision.mjs`
+    (CI guardrail) does, and confirmed failing before the fix'
+  - 'Also found: the branch''s own original commit (ddc75ed8) never registered its
+    0268 migration in `drizzle/meta/_journal.json` at all (checked the journal at
+    that commit directly via `git cat-file`)'
+  - 'Fix: `git mv` the migration to `0269_sales_pipeline_dashboard_targets.sql`, added
+    its journal entry (idx 266, tag `0269_sales_pipeline_dashboard_targets`), updated
+    the two test files that load/reference the old filename by literal path (`sales-pipeline-rls.test.ts`,
+    `tenant-isolation.test.ts`)'
+  - Re-ran `scripts/check-migration-collision.mjs` logic manually (diff against origin/main
+    directly, since this shared multi-worktree repo's local `main` ref is checked
+    out by another active task's worktree and must not be force-moved) -- confirmed
+    old `0268_sales_pipeline...` filename no longer appears in the diff, only the
+    renamed `0269_...` file
+  - Ran `scripts/check-guardrail-presence.mjs` -- passed, all 88 markers present.
+    Other check-*.mjs scripts (asset-registry-coverage, terminology-guardrail, doc-cross-references,
+    metadata-index-coverage) require `js-yaml` from node_modules, which isn't installed
+    in this sandbox (no bun binary available, npm has peer-dep conflicts requiring
+    --legacy-peer-deps) -- ran `npm install --legacy-peer-deps` in background for
+    local-only verification, not committed
+  - 'Committed fix on top of the merge (commit 1b083b93) and pushed to origin''s PR
+    #610 branch (`worker/task-20260727-193351-sales-pipeline-interactive-dashboard--co`)'
+  remaining_steps:
+  - Confirm push succeeded and re-check `gh pr view 610` mergeable/mergeStateStatus
+    is now clean (re-adopt)
+  - Re-run the full guardrail/check-*.mjs sweep once node_modules finishes installing
+    (re-sweep), record results
+  - Register this session's claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - Clean up /tmp/m610-resolve worktree
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: periodic checkpoint
+- at: '2026-07-29T10:25:45.099093+00:00'
+  status: in_progress
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: periodic checkpoint
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false

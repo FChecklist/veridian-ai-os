@@ -1,0 +1,26 @@
+VERIDIAN Review Framework gap-closure: Business Rules Engine / Rule Governance & Quality.
+This covers 6 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] Business Rule Explainability
+  Gap: Business Rule Explainability (why did this rule produce this outcome) is not built as a generic capability
+  Recommended approach: Design explainability (matched condition + evaluated values) as a first-class part of the row-4 engine, not bolted on later.
+- [Medium] Business Rule Conflict Detection
+  Gap: Business Rule Conflict Detection (two active rules contradicting each other) does not exist
+  Recommended approach: Build conflict detection over the row-4 engine's rule schema once it exists, reusing the similarity-scoring pattern already proven in capability-registry-service.ts.
+- [Low] Business Rule Optimization
+  Gap: Business Rule Optimization does not exist
+  Recommended approach: Defer until the base rule engine has enough real rules in production to make optimization meaningful.
+- [Medium] Reusable Business Rule Library
+  Gap: No Reusable Business Rule Library -- rules are hand-coded per feature, not published to a shared catalog admins can browse/reuse
+  Recommended approach: Once the row-4 engine exists, expose a browsable library the same way computationEngines already does for calculators.
+- [Low] AI Assisted Rule Generation
+  Gap: AI Assisted Rule Generation (natural-language to structured rule) does not exist
+  Recommended approach: Sequence after row 4; reuse FDE's proposal-and-human-approval pattern for AI-drafted rules.
+- [Medium] Business Rule Governance
+  Gap: Business Rule Governance (ownership, approval-to-publish, retirement workflow specific to rules) is not built as its own capability
+  Recommended approach: Reuse the existing approvalWorkflowDefinitions engine to gate rule publish/retire once row 4 exists.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

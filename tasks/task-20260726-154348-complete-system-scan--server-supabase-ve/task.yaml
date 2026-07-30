@@ -1,0 +1,297 @@
+id: task-20260726-154348-complete-system-scan--server-supabase-ve
+title: 'Complete system scan: Server+Supabase+Vercel+GitHub gap/duplication check'
+status: completed
+repo: claude-control
+branch: worker/task-20260726-154348-complete-system-scan--server-supabase-ve
+workspace: /opt/veridian/ai-os/tasks/task-20260726-154348-complete-system-scan--server-supabase-ve/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-154348-complete-system-scan--server-supabase-ve
+service: veridian-worker@task-20260726-154348-complete-system-scan--server-supabase-ve.service
+created_at: '2026-07-26T15:43:48.917050+00:00'
+last_checkpoint_at: '2026-07-26T16:02:11.605159+00:00'
+completed_steps: &id002
+- 'Read MASTER_INDEX.yaml (153 `- id:` entries total: 42 in `quick_reference:` short-form
+  + 111 in `registries:`, confirmed by-design split, not duplication) and 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml
+  fresh'
+- 'Ran `python3 scripts/metadata_reconciliation.py report` fresh: registries_total=97
+  (live /opt/veridian copy, older than this workspace''s git branch -- expected, live
+  runtime sync lags git), registries_no_path_field=6 (matches documented by-design
+  list), 1 non-file-only entry (audit198_framework directory path, by-design per METADATA_ENGINE_RECONCILIATION_2026-07-24.yaml
+  known_limitations -- not a new failure)'
+- 'Found + fixed real path drift: registries.audit198_framework''s `path` field still
+  said `ai-os/scripts/audit198/` (nonexistent) even though STANDING_DIRECTIVE.yaml
+  was already corrected to the real `ai-os/audit198/` on 2026-07-22 -- MASTER_INDEX.yaml
+  never got the matching fix. Fixed.'
+- 'Found + fixed real mis-citation (SCOPE item 2): registries.engine_registry''s path
+  (`ai-os/engines/ENGINES.yaml`) is NOT the VCEL engine registry -- that file is a
+  Z.ai/Claude-Code agent-authorization grant (confirmed via `git log --follow`, one
+  unrelated commit ever). Real VCEL registry (~247 functions/25 files) is `src/lib/engines/*.ts`
+  per `ai-os/system-tree/10-compliance-tracker-governance.yaml#GOV-07`. Not a collision
+  with engines_gateways_architecture (that non-collision holds); a mis-citation inside
+  engine_registry itself. compliance-tracker''s own MASTER_INDEX.yaml carries the
+  identical error -- out of this repo''s boundary, flagged not fixed. Committed +
+  pushed (bfd8fc0).'
+- 'Fresh `gh api .../pulls/{79,80,82,84,563}` + branch-protection checks: found PR
+  #79 and PR #82 are now MERGED (both landed after the earlier vercel_github_state_census
+  ran but before this task started) -- registry entries said "PR open". PR #80 still
+  open but mergeable_state changed CONFLICTING->clean. Fixed all 3, plus annotated
+  the census''s own open_prs block. compliance-tracker/veda-advisors branch-protection
+  required_status_checks re-checked live: 0 drift vs recorded.'
+- 'Fresh Supabase MCP query (`SELECT COUNT(*) FROM drizzle.__drizzle_migrations` on
+  pcrjmlpuqsbocqfwoxod) = 261, matches PR #563/#569''s claim exactly, no drift. PR
+  #563 itself still open (unmerged).'
+- 'Found real staleness: compliance-tracker PR #567 (merged) regenerated DATABASE_CATALOG.json
+  to 449/124, but neither this live-runtime path nor compliance-tracker''s own on-server
+  clone (stale branch, 7 commits behind origin/main) reflect it yet -- both still
+  444/124. Documented with full evidence, not fixed (outside this repo''s git history
+  / no new sync mechanism per CONSTRAINTS). Committed + pushed (035b913).'
+- Added final dated summary entry `registries.cross_system_verification_summary_2026_07_26`
+  to MASTER_INDEX.yaml per SUCCESS_CRITERIA (engine coverage 1 full/19 partial/0 none,
+  registries verified, all findings + remediation recommendations, cross-system single-source
+  confirmation).
+- Verified `git diff --stat` vs origin/master shows only ai-os/MASTER_INDEX.yaml changed
+  -- 0 new files.
+remaining_steps: &id003
+- Final commit + push of the summary entry (not merging -- task constraint)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T15:43:50.906033+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  - 485281c Merge remote-tracking branch 'origin/master' into pr85-local
+  - 'e34f9b4 Merge pull request #88 from FChecklist/worker/task-20260726-112102-fix-branch-resolution-edge-case--local-a'
+  - 0bd63d1 Prefer upstream tracking branch over local alias in branch resolution
+  - '9d69805 Merge pull request #82 from FChecklist/worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'
+  - 3b9173c Auto-sync 10 server task(s) to master controller
+  - 6496736 Auto-sync 14 server task(s) to master controller
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T15:48:52.131595+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/MASTER_INDEX.yaml
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  - 485281c Merge remote-tracking branch 'origin/master' into pr85-local
+  - 'e34f9b4 Merge pull request #88 from FChecklist/worker/task-20260726-112102-fix-branch-resolution-edge-case--local-a'
+  - 0bd63d1 Prefer upstream tracking branch over local alias in branch resolution
+  - '9d69805 Merge pull request #82 from FChecklist/worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'
+  - 3b9173c Auto-sync 10 server task(s) to master controller
+  - 6496736 Auto-sync 14 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-26T15:53:53.260201+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/MASTER_INDEX.yaml
+  completed_steps:
+  - 'Read MASTER_INDEX.yaml (153 `- id:` entries total: 42 in `quick_reference:` short-form
+    + 111 in `registries:`, confirmed by-design split, not duplication) and 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml
+    fresh'
+  - 'Ran `python3 scripts/metadata_reconciliation.py report` fresh: registries_total=97
+    (live /opt/veridian copy, older than this workspace''s git branch -- expected,
+    live runtime sync lags git), registries_no_path_field=6 (matches documented by-design
+    list), 1 non-file-only entry (audit198_framework directory path, by-design per
+    METADATA_ENGINE_RECONCILIATION_2026-07-24.yaml known_limitations -- not a new
+    failure)'
+  - 'Found + fixed real path drift: registries.audit198_framework''s `path` field
+    still said `ai-os/scripts/audit198/` (nonexistent) even though STANDING_DIRECTIVE.yaml
+    was already corrected to the real `ai-os/audit198/` on 2026-07-22 -- MASTER_INDEX.yaml
+    never got the matching fix. Fixed in this task.'
+  - 'Found + fixed real mis-citation (SCOPE item 2): registries.engine_registry''s
+    path (`ai-os/engines/ENGINES.yaml`) is NOT the VCEL engine registry -- that file
+    is a Z.ai/Claude-Code agent-authorization grant (confirmed via `git log --follow`,
+    one unrelated commit ever). Real VCEL registry (~247 functions/25 files) is `src/lib/engines/*.ts`
+    per `ai-os/system-tree/10-compliance-tracker-governance.yaml#GOV-07`. Not a collision
+    with engines_gateways_architecture (that non-collision holds); a mis-citation
+    inside engine_registry itself. compliance-tracker''s own MASTER_INDEX.yaml carries
+    the identical error -- out of this repo''s boundary, flagged not fixed.'
+  remaining_steps:
+  - Commit + push the two fixes
+  - Fresh `gh api repos/FChecklist/<repo>/branches/<default>/protection/required_status_checks`
+    per repo with branch protection (compliance-tracker, veda-advisors -- the only
+    2 public repos; 5 private repos return 403 on Free plan, already documented in
+    registries.vercel_github_state_census_2026_07_26)
+  - 'Fresh Supabase migration count via MCP (`SELECT COUNT(*) FROM drizzle.__drizzle_migrations`)
+    vs PR #567/#569 claim, checking PR #563 status'
+  - Add one dated summary section to MASTER_INDEX.yaml per SUCCESS_CRITERIA
+  - Final commit + push (not merging)
+  recent_commits:
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  - 485281c Merge remote-tracking branch 'origin/master' into pr85-local
+  - 'e34f9b4 Merge pull request #88 from FChecklist/worker/task-20260726-112102-fix-branch-resolution-edge-case--local-a'
+  - 0bd63d1 Prefer upstream tracking branch over local alias in branch resolution
+  - '9d69805 Merge pull request #82 from FChecklist/worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'
+  - 3b9173c Auto-sync 10 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-26T15:58:54.634324+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read MASTER_INDEX.yaml (153 `- id:` entries total: 42 in `quick_reference:` short-form
+    + 111 in `registries:`, confirmed by-design split, not duplication) and 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml
+    fresh'
+  - 'Ran `python3 scripts/metadata_reconciliation.py report` fresh: registries_total=97
+    (live /opt/veridian copy, older than this workspace''s git branch -- expected,
+    live runtime sync lags git), registries_no_path_field=6 (matches documented by-design
+    list), 1 non-file-only entry (audit198_framework directory path, by-design per
+    METADATA_ENGINE_RECONCILIATION_2026-07-24.yaml known_limitations -- not a new
+    failure)'
+  - 'Found + fixed real path drift: registries.audit198_framework''s `path` field
+    still said `ai-os/scripts/audit198/` (nonexistent) even though STANDING_DIRECTIVE.yaml
+    was already corrected to the real `ai-os/audit198/` on 2026-07-22 -- MASTER_INDEX.yaml
+    never got the matching fix. Fixed in this task.'
+  - 'Found + fixed real mis-citation (SCOPE item 2): registries.engine_registry''s
+    path (`ai-os/engines/ENGINES.yaml`) is NOT the VCEL engine registry -- that file
+    is a Z.ai/Claude-Code agent-authorization grant (confirmed via `git log --follow`,
+    one unrelated commit ever). Real VCEL registry (~247 functions/25 files) is `src/lib/engines/*.ts`
+    per `ai-os/system-tree/10-compliance-tracker-governance.yaml#GOV-07`. Not a collision
+    with engines_gateways_architecture (that non-collision holds); a mis-citation
+    inside engine_registry itself. compliance-tracker''s own MASTER_INDEX.yaml carries
+    the identical error -- out of this repo''s boundary, flagged not fixed.'
+  remaining_steps:
+  - Commit + push the two fixes
+  - Fresh `gh api repos/FChecklist/<repo>/branches/<default>/protection/required_status_checks`
+    per repo with branch protection (compliance-tracker, veda-advisors -- the only
+    2 public repos; 5 private repos return 403 on Free plan, already documented in
+    registries.vercel_github_state_census_2026_07_26)
+  - 'Fresh Supabase migration count via MCP (`SELECT COUNT(*) FROM drizzle.__drizzle_migrations`)
+    vs PR #567/#569 claim, checking PR #563 status'
+  - Add one dated summary section to MASTER_INDEX.yaml per SUCCESS_CRITERIA
+  - Final commit + push (not merging)
+  recent_commits:
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  - 485281c Merge remote-tracking branch 'origin/master' into pr85-local
+  - 'e34f9b4 Merge pull request #88 from FChecklist/worker/task-20260726-112102-fix-branch-resolution-edge-case--local-a'
+  - 0bd63d1 Prefer upstream tracking branch over local alias in branch resolution
+  - '9d69805 Merge pull request #82 from FChecklist/worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'
+  note: periodic checkpoint
+- at: '2026-07-26T16:00:45.227363+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Read MASTER_INDEX.yaml (153 `- id:` entries total: 42 in `quick_reference:` short-form
+    + 111 in `registries:`, confirmed by-design split, not duplication) and 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml
+    fresh'
+  - 'Ran `python3 scripts/metadata_reconciliation.py report` fresh: registries_total=97
+    (live /opt/veridian copy, older than this workspace''s git branch -- expected,
+    live runtime sync lags git), registries_no_path_field=6 (matches documented by-design
+    list), 1 non-file-only entry (audit198_framework directory path, by-design per
+    METADATA_ENGINE_RECONCILIATION_2026-07-24.yaml known_limitations -- not a new
+    failure)'
+  - 'Found + fixed real path drift: registries.audit198_framework''s `path` field
+    still said `ai-os/scripts/audit198/` (nonexistent) even though STANDING_DIRECTIVE.yaml
+    was already corrected to the real `ai-os/audit198/` on 2026-07-22 -- MASTER_INDEX.yaml
+    never got the matching fix. Fixed.'
+  - 'Found + fixed real mis-citation (SCOPE item 2): registries.engine_registry''s
+    path (`ai-os/engines/ENGINES.yaml`) is NOT the VCEL engine registry -- that file
+    is a Z.ai/Claude-Code agent-authorization grant (confirmed via `git log --follow`,
+    one unrelated commit ever). Real VCEL registry (~247 functions/25 files) is `src/lib/engines/*.ts`
+    per `ai-os/system-tree/10-compliance-tracker-governance.yaml#GOV-07`. Not a collision
+    with engines_gateways_architecture (that non-collision holds); a mis-citation
+    inside engine_registry itself. compliance-tracker''s own MASTER_INDEX.yaml carries
+    the identical error -- out of this repo''s boundary, flagged not fixed. Committed
+    + pushed (bfd8fc0).'
+  - 'Fresh `gh api .../pulls/{79,80,82,84,563}` + branch-protection checks: found
+    PR #79 and PR #82 are now MERGED (both landed after the earlier vercel_github_state_census
+    ran but before this task started) -- registry entries said "PR open". PR #80 still
+    open but mergeable_state changed CONFLICTING->clean. Fixed all 3, plus annotated
+    the census''s own open_prs block. compliance-tracker/veda-advisors branch-protection
+    required_status_checks re-checked live: 0 drift vs recorded.'
+  - 'Fresh Supabase MCP query (`SELECT COUNT(*) FROM drizzle.__drizzle_migrations`
+    on pcrjmlpuqsbocqfwoxod) = 261, matches PR #563/#569''s claim exactly, no drift.
+    PR #563 itself still open (unmerged).'
+  - 'Found real staleness: compliance-tracker PR #567 (merged) regenerated DATABASE_CATALOG.json
+    to 449/124, but neither this live-runtime path nor compliance-tracker''s own on-server
+    clone (stale branch, 7 commits behind origin/main) reflect it yet -- both still
+    444/124. Documented with full evidence, not fixed (outside this repo''s git history
+    / no new sync mechanism per CONSTRAINTS). Committed + pushed (035b913).'
+  - Added final dated summary entry `registries.cross_system_verification_summary_2026_07_26`
+    to MASTER_INDEX.yaml per SUCCESS_CRITERIA (engine coverage 1 full/19 partial/0
+    none, registries verified, all findings + remediation recommendations, cross-system
+    single-source confirmation).
+  - Verified `git diff --stat` vs origin/master shows only ai-os/MASTER_INDEX.yaml
+    changed -- 0 new files.
+  remaining_steps:
+  - Final commit + push of the summary entry (not merging -- task constraint)
+  recent_commits:
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  - 485281c Merge remote-tracking branch 'origin/master' into pr85-local
+  - 'e34f9b4 Merge pull request #88 from FChecklist/worker/task-20260726-112102-fix-branch-resolution-edge-case--local-a'
+  - 0bd63d1 Prefer upstream tracking branch over local alias in branch resolution
+  note: quality gates passed, pushed branch worker/task-20260726-154348-complete-system-scan--server-supabase-ve,
+    awaiting review
+- at: '2026-07-26T16:02:11.605159+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  - 485281c Merge remote-tracking branch 'origin/master' into pr85-local
+  - 'e34f9b4 Merge pull request #88 from FChecklist/worker/task-20260726-112102-fix-branch-resolution-edge-case--local-a'
+  - 0bd63d1 Prefer upstream tracking branch over local alias in branch resolution
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/90'
+execution_seconds: 1013
+restart_count: 0
+token_usage:
+  input_tokens: 240
+  cache_creation_input_tokens: 169787
+  cache_read_input_tokens: 14405809
+  output_tokens: 60798
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 169787
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 782
+    cache_read_input_tokens: 191888
+    cache_creation_input_tokens: 1583
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1583
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-26T18:05:35.002916+00:00'

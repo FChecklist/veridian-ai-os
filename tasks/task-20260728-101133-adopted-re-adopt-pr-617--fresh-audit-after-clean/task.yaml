@@ -1,0 +1,85 @@
+id: task-20260728-101133-adopted-re-adopt-pr-617--fresh-audit-after-clean
+title: 'Re-adopt PR 617: fresh audit after clean merge'
+status: blocked
+repo: compliance-tracker
+branch: feat/projexa-permits-drawings-moms
+workspace: /opt/veridian/ai-os/tasks/task-20260728-101133-adopted-re-adopt-pr-617--fresh-audit-after-clean/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-101133-adopted-re-adopt-pr-617--fresh-audit-after-clean
+service: veridian-supervisor@task-20260728-101133-adopted-re-adopt-pr-617--fresh-audit-after-clean.service
+created_at: '2026-07-28T10:11:34.121442+00:00'
+last_checkpoint_at: '2026-07-28T10:14:49.014980+00:00'
+completed_steps: &id002
+- Read governance docs, registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+- 'Audited existing infra: confirmed designer-wise Budget-vs-Actual cut (byDesigner)
+  already exists in construction-reports-service.ts (PR #597 + audit fix 46d6967d)
+  -- SCOPE item 1 already satisfied, no rebuild needed'
+- 'Audited existing infra: confirmed a full KPI designer-fills/manager-approves table
+  pair already exists (constructionKpiDefinitions/constructionKpiEntries, construction-kpi-service.ts,
+  /api/construction/kpi-entries + /[id]/approve) -- SCOPE item 3 already satisfied,
+  not duplicating'
+- 'Schema: added `pmsTimeEntryApprovalStatusEnum` (draft/submitted/approved/rejected)
+  + approvalStatus/approvedById/approvedAt/rejectionReason columns to `pmsTimeEntries`
+  (schema.ts)'
+- Hand-written migration `drizzle/0268_pms_time_entry_approval_flow.sql` + `_journal.json`
+  entry (same drizzle/meta snapshot-gap approach documented in 0267's header)
+- 'Service: `submitTimeEntry`/`approveTimeEntry`/`rejectTimeEntry` in pms-time-service.ts,
+  modeled on construction-kpi-service.ts''s submitKpiEntry/approveKpiEntry (self-approval
+  blocked, state-machine enforced)'
+- 'API routes: `/api/pms/time-entries/[id]/{submit,approve,reject}` -- approve/reject
+  gated via `requireRole(dbUser, "manager")`'
+- 'Report: `designerApprovalStatusReport`/`aggregateDesignerApprovalStatus` (designer-wise
+  approval-status view) in construction-reports-service.ts'
+- 'Report: `workAnalysisReport`/`aggregateWorkAnalysis` (hours by task/category per
+  designer over a period) in construction-reports-service.ts'
+- Registered both new reports (`designer-approval-status`, `work-analysis`) in REPORT_REGISTRY
+  + dispatcher route (dateFrom/dateTo query params for work-analysis)
+- 'Tests: existing designer-wise Budget-vs-Actual cut tests (PR #597) still pass unmodified;
+  new pure-aggregator tests for both new reports; new state-machine tests (self-approval
+  blocked, wrong-state transitions blocked, happy path) in pms-time-service.test.ts;
+  new route-level access-control test (member 403''d, manager allowed) in approve/route.test.ts'
+- 'Verified: `bunx tsc --noEmit` clean; `bun test construction-reports-service.test.ts`
+  (10 pass, includes all pre-existing PR #597 tests); full `bun test` -- 2244 pass,
+  0 fail'
+- Commit + push
+remaining_steps: &id003
+- Open PR, request supervisor audit (per EXPECTED_OUTPUT -- not self-merged)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T10:11:34.121442+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'feat/projexa-permits-drawings-moms' (https://github.com/FChecklist/compliance-tracker/pull/617)
+    -- registered for real audit, not a fresh worker dispatch
+- at: '2026-07-28T10:14:49.014980+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 34301415 Wire Permits/Drawings/Documents upload + Minutes of Meeting into PROJEXA's
+    Bearer-key surface
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: "tier1, Superboss-approved, but the merge itself FAILED (gh pr view confirms\
+    \ state=OPEN, mergedAt=; see supervisor.log) \u2014 needs manual attention, NOT\
+    \ actually merged: https://github.com/FChecklist/compliance-tracker/pull/617"
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/617
+master_synced_at: '2026-07-29T21:04:26.627920+00:00'

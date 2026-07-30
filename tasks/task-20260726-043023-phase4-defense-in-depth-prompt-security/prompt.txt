@@ -1,0 +1,38 @@
+## OBJECTIVE
+0 of the document's 7 named security/guardrails tools (NeMo Guardrails, Llama Guard, Prompt Guard, Garak, PyRIT, Presidio -- stack-security-guardrails) are installed anywhere. This phase evaluates and installs the minimum real subset needed to make Layer 1 (input sanitization, already partially covered by phase_2's classifier work) through Layer 4 (output filtering) real for at least one compiled prompt's execution, following the same real-tool-evaluation method AUDITOR_ENGINE_PHASE_PLAN used for its own domain/tool mapping (never install a tool the KNOWN_CONTEXT stack-confirmation step hasn't verified compatible).
+
+## SCOPE
+- Gap items closed: engine-defense-in-depth, engine-prompt-security, engine-red-team, engine-quality, pipeline-pre-execution-guardrails, pipeline-post-execution (guardrails + quality-scoring sub-scope only -- staleness/caching sub-scope is phase_6/phase_7), defense-in-depth-4-layer-enforcement, stack-security-guardrails.
+- Tool evaluation table (same shape as AUDITOR_ENGINE_PHASE_PLAN's domains[] rows): tool_mapping / tool_installable_compatible / custom_work_required per of the 7 named tools, confirmed against compliance-tracker's real stack (Next.js/TypeScript + bun) before any install.
+- Reuse registries.auditor_engine's and registries.security_audit_implementation_plan's existing scanning infrastructure pattern for the Red Team Engine's adversarial-testing cadence (cron-wired, findings normalized into knowledge_engine) rather than building a parallel scan-and-report pipeline from scratch.
+
+## KNOWN_CONTEXT
+This is phase_4_defense_in_depth_security_quality of ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml, part of the VERIDIAN_Architecture_v2.0.docx -- Phased Implementation Plan initiative. Read that file in
+full before starting -- this OBJECTIVE/SCOPE text is copied verbatim from its own phases[] entry for
+phase_4_defense_in_depth_security_quality, not invented here. Its depends_on phase(s) are confirmed done via real merged PR(s) for task(s):
+task-20260725-231836-phase2-prompt-compiler-pipeline-core-non. This task was auto-dispatched by scripts/auto_phase_continuation.py per instruction
+INS-20260724-113032-8032, which exists specifically because this same initiative's phased dispatch had
+previously stalled after an earlier phase with nothing to continue it automatically -- do not stop after
+this phase either without updating the plan file per EXPECTED_OUTPUT below, so the next cron tick can find
+real next-phase work if one exists.
+
+## SUCCESS_CRITERIA
+- `python3 scripts/superboss-register.py query-knowledge "phase_4_defense_in_depth_security_quality" --tag domain:veridian-architecture-v2-0-docx` returns at least one registered row for this phase's real deliverable once you register it (same convention this plan file's own `registration:` block or prior phases already use).
+- `grep -A3 "id: phase_4_defense_in_depth_security_quality" ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml` shows this phase's own status updated away from its current not-done value (e.g. to `status: done`), committed as part of this task's real diff -- not hand-edited prose, produced by whatever script/process you use to close this phase out.
+
+## EXPECTED_OUTPUT
+Real, committed and pushed code (PR on claude-control) implementing this phase's scope above. Update
+ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml's own phases[] entry for phase_4_defense_in_depth_security_quality in place (same status/status_detail or
+evidence convention the plan file's already-done phases use) to record what shipped and real evidence, so
+a future run of auto_phase_continuation.py can correctly detect this phase as done and move on to whatever
+depends on it.
+
+## CONSTRAINTS
+Do not re-build or re-litigate anything already marked done in an earlier phase of this same plan file.
+Do not duplicate an existing engine/mechanism -- search first, per this session's standing no-duplication
+rule (see VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml's own inventory/precedent notes if present). Any crontab change needs an approved
+entry in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml plus a matching ai-os/CRONTAB_APPROVED_SNAPSHOT.txt
+update, per the Owner's existing blanket approval -- do not add cron entries without that citation.
+
+## COMPLEXITY_TIER
+judgment

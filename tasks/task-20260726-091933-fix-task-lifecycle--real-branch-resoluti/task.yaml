@@ -1,0 +1,254 @@
+id: task-20260726-091933-fix-task-lifecycle--real-branch-resoluti
+title: 'Fix TASK lifecycle: real branch resolution + real HOLD_FOR_OWNER_SIGNOFF (redispatch
+  after API limit)'
+status: superseded
+repo: claude-control
+branch: worker/task-20260726-091933-fix-task-lifecycle--real-branch-resoluti
+workspace: /opt/veridian/ai-os/tasks/task-20260726-091933-fix-task-lifecycle--real-branch-resoluti/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-091933-fix-task-lifecycle--real-branch-resoluti
+service: veridian-worker@task-20260726-091933-fix-task-lifecycle--real-branch-resoluti.service
+created_at: '2026-07-26T09:19:34.319036+00:00'
+last_checkpoint_at: '2026-07-26T09:36:07.986921+00:00'
+completed_steps: &id002
+- Discovered scripts/supervisor-entrypoint.sh and scripts/veridian-task.py were never
+  actually tracked in claude-control git history (live-only, per ai-os/SCRIPTS_LIVE_VS_REPO_DRIFT_AUDIT_2026-07-25.yaml's
+  "core orchestration code with 0 commits" finding) -- brought both into git tracking
+  from their live content at /opt/veridian/scripts/ (byte-identical, verified via
+  diff) as the baseline for this task's edits.
+- Found an earlier, incomplete attempt at this same task (branch worker/task-20260726-083946-fix-task-lifecycle--real-branch-resoluti,
+  checkpoint commit 6efac81, "invocation failed, exit 1"). Independently reviewed
+  its tight_task_validation.py and task-gateway.py diffs and both test files; verified
+  them against the current live baseline (hashes matched exactly) and adopted them
+  since they were sound. That attempt never actually implemented the veridian-task.py
+  or supervisor-entrypoint.sh changes -- those are original to this task.
+- 'Gap 1 (real branch resolution): scripts/veridian-task.py''s cmd_checkpoint() now
+  reads the workspace''s real current branch (`git rev-parse --abbrev-ref HEAD`) and
+  updates task["branch"] before saving, so a corrective task whose prompt instructed
+  it to push to a different pre-existing branch is handed off correctly to supervisor-entrypoint.sh
+  (which already read task.yaml''s ''branch'' field unchanged -- no new field needed).'
+- 'Gap 2 (HOLD_FOR_OWNER_SIGNOFF): scripts/tight_task_validation.py extracts a real
+  `HOLD_FOR_OWNER_SIGNOFF: true` marker line from EXPECTED_OUTPUT/CONSTRAINTS; scripts/task-gateway.py''s
+  cmd_start() threads it through to scripts/veridian-task.py''s cmd_create() (--hold-for-owner-signoff),
+  which writes hold_for_owner_signoff into task.yaml; scripts/supervisor-entrypoint.sh''s
+  merge-decision block reads it FIRST and skips auto-merge unconditionally when true,
+  posting a PR comment, checkpointing awaiting_human_approval, and notifying the Owner.'
+- Added tests/hold_for_signoff_test.py and tests/veridian_task_branch_resolution_test.py,
+  both testing the real shipped code (subprocess/importlib against the actual scripts,
+  no reimplementation). `python3 -m pytest tests/ -k "branch_resolution or hold_for_signoff"
+  -v` -- 7 passed. Full suite (`python3 -m pytest tests/`) -- 18 passed, no regressions.
+- Re-ran the two existing shell regression tests (supervisor_merge_detection_test.sh,
+  supervisor_audit_rerun_test.sh) against the edited supervisor-entrypoint.sh -- both
+  still pass, confirming the new HOLD-FOR-OWNER-SIGNOFF-BLOCK wrapping didn't disturb
+  the existing tier1/tier2/scope/reject logic.
+- Updated ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml (article A15_hold_for_owner_signoff)
+  documenting the mechanism and the PR563 real incident, confirmed via scripts/check_single_protocol_file.py
+  as the one canonical protocol file.
+- 'Opened PR #81 against claude-control (https://github.com/FChecklist/claude-control/pull/81).
+  Not merged -- Owner merges. PR body flags two known conflicts with parallel work:
+  PR #80 (task-20260726-083833) adds its own new article at the same insertion point
+  in PROTOCOL_OWNER_AI.yaml (both A15_...); and task-20260726-082342''s DDL pre-flight
+  gate is expected to also edit task-gateway.py''s cmd_start().'
+remaining_steps: &id003
+- None -- task complete, awaiting Owner PR review/merge.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T09:19:38.175504+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T09:24:39.408542+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  note: periodic checkpoint
+- at: '2026-07-26T09:29:40.500337+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/task-gateway.py
+  - scripts/tight_task_validation.py
+  - scripts/supervisor-entrypoint.sh
+  - scripts/veridian-task.py
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  note: periodic checkpoint
+- at: '2026-07-26T09:34:10.512203+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Discovered scripts/supervisor-entrypoint.sh and scripts/veridian-task.py were
+    never actually tracked in claude-control git history (live-only, per ai-os/SCRIPTS_LIVE_VS_REPO_DRIFT_AUDIT_2026-07-25.yaml's
+    "core orchestration code with 0 commits" finding) -- brought both into git tracking
+    from their live content at /opt/veridian/scripts/ (byte-identical, verified via
+    diff) as the baseline for this task's edits.
+  - Found an earlier, incomplete attempt at this same task (branch worker/task-20260726-083946-fix-task-lifecycle--real-branch-resoluti,
+    checkpoint commit 6efac81, "invocation failed, exit 1"). Independently reviewed
+    its tight_task_validation.py and task-gateway.py diffs and both test files; verified
+    them against the current live baseline (hashes matched exactly) and adopted them
+    since they were sound. That attempt never actually implemented the veridian-task.py
+    or supervisor-entrypoint.sh changes -- those are original to this task.
+  - 'Gap 1 (real branch resolution): scripts/veridian-task.py''s cmd_checkpoint()
+    now reads the workspace''s real current branch (`git rev-parse --abbrev-ref HEAD`)
+    and updates task["branch"] before saving, so a corrective task whose prompt instructed
+    it to push to a different pre-existing branch is handed off correctly to supervisor-entrypoint.sh
+    (which already read task.yaml''s ''branch'' field unchanged -- no new field needed).'
+  - 'Gap 2 (HOLD_FOR_OWNER_SIGNOFF): scripts/tight_task_validation.py extracts a real
+    `HOLD_FOR_OWNER_SIGNOFF: true` marker line from EXPECTED_OUTPUT/CONSTRAINTS; scripts/task-gateway.py''s
+    cmd_start() threads it through to scripts/veridian-task.py''s cmd_create() (--hold-for-owner-signoff),
+    which writes hold_for_owner_signoff into task.yaml; scripts/supervisor-entrypoint.sh''s
+    merge-decision block reads it FIRST and skips auto-merge unconditionally when
+    true, posting a PR comment, checkpointing awaiting_human_approval, and notifying
+    the Owner.'
+  - Added tests/hold_for_signoff_test.py and tests/veridian_task_branch_resolution_test.py,
+    both testing the real shipped code (subprocess/importlib against the actual scripts,
+    no reimplementation). `python3 -m pytest tests/ -k "branch_resolution or hold_for_signoff"
+    -v` -- 7 passed. Full suite (`python3 -m pytest tests/`) -- 18 passed, no regressions.
+  - Re-ran the two existing shell regression tests (supervisor_merge_detection_test.sh,
+    supervisor_audit_rerun_test.sh) against the edited supervisor-entrypoint.sh --
+    both still pass, confirming the new HOLD-FOR-OWNER-SIGNOFF-BLOCK wrapping didn't
+    disturb the existing tier1/tier2/scope/reject logic.
+  - Updated ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml (article A15_hold_for_owner_signoff)
+    documenting the mechanism and the PR563 real incident, confirmed via scripts/check_single_protocol_file.py
+    as the one canonical protocol file.
+  - 'Opened PR #81 against claude-control (https://github.com/FChecklist/claude-control/pull/81).
+    Not merged -- Owner merges. PR body flags two known conflicts with parallel work:
+    PR #80 (task-20260726-083833) adds its own new article at the same insertion point
+    in PROTOCOL_OWNER_AI.yaml (both A15_...); and task-20260726-082342''s DDL pre-flight
+    gate is expected to also edit task-gateway.py''s cmd_start().'
+  remaining_steps:
+  - None -- task complete, awaiting Owner PR review/merge.
+  recent_commits:
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  note: quality gates passed, pushed branch worker/task-20260726-091933-fix-task-lifecycle--real-branch-resoluti,
+    awaiting review
+- at: '2026-07-26T09:36:07.986921+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  note: "Superboss rejected: https://github.com/FChecklist/claude-control/pull/81\
+    \ \u2014 see review.json for issues"
+execution_seconds: 872
+restart_count: 0
+token_usage:
+  input_tokens: 200
+  cache_creation_input_tokens: 158155
+  cache_read_input_tokens: 11497699
+  output_tokens: 65110
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 158155
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 576
+    cache_read_input_tokens: 180473
+    cache_creation_input_tokens: 1366
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1366
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T10:00:09.709210+00:00'
+duplicate_of: task-20260726-195236-rca-task-20260726-083946-fix-task-lifecy
+superseded_reason: Collapsed by plan_backlog_completion.py dedup 2026-07-27 -- same
+  underlying issue as task-20260726-195236-rca-task-20260726-083946-fix-task-lifecy
+  (3 total attempts in chain).
+superseded_at: '2026-07-27T03:38:37.870404+00:00'

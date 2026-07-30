@@ -1,0 +1,28 @@
+## OBJECTIVE
+Close the real, live-reproduced git/gh command-alias bypass of the interactive-session write-gate that got PR #80's round-4 diff (task-20260726-121633-adopted-write-gate-round-4--argv-position-fix, https://github.com/FChecklist/claude-control/pull/80, branch worker/task-20260726-083833-build-interactive-session-write-gate--re) a real AUDIT: REJECT verdict. This is round 5 of an iterative hardening effort on the same PR/branch -- rounds 1-4 each closed the previously-found bypass and each introduced or left one new bypass that the next round's audit caught; round 4 (the current branch tip, commit 353fa09) correctly fixed the round-3 argv-global-flag-position bug, but its own review found a new, still-unfixed native alias bypass. Do not blindly re-run any earlier round's prompt -- fix exactly the round-4 finding below.
+
+## KNOWN_CONTEXT
+Verbatim from ai-os/tasks/task-20260726-121633-adopted-write-gate-round-4--argv-position-fix/review.json (verdict: reject):
+"Git-alias bypass: `git -c alias.<name>=push <name> <remote> <branch>` (or a pre-existing `[alias]` entry in ~/.gitconfig) lets an interactive session push to a protected branch completely undetected, because `_interactive_guard_git_find_subcommand` matches on the literal subcommand token and has no alias-resolution step; the wrapper execs the real git with the untouched argv, and real git expands the alias into an actual push." and "Gh-alias bypass: the same class applies to `gh alias set <name> 'pr merge ...'` followed by `gh <name> ...` -- `_interactive_guard_gh_is_merge` only recognizes the literal `pr merge` / `api ... /pulls/*/merge` forms and has no alias-resolution step, so an aliased merge command passes through unblocked." and "Neither bypass is disclosed in this diff's own (otherwise thorough) known_limitations sections, and neither has a regression-test scenario in tests/interactive_session_guard_test.sh."
+The review's suggested direction: "closes native git/gh command aliasing (e.g. by rejecting/stripping `-c alias.*=` and `--config`-set aliases outright, and refusing to trust any subcommand token without first resolving effective aliases via `git config --get-regexp ^alias\.` / `gh alias list`)."
+Re-verified live on 2026-07-26 (this dispatch): `git show <branch-tip>:ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet | grep -i alias` on the current branch tip (commit 353fa09) returns only a comment acknowledging aliases exist by design, with no actual alias-resolution or alias-rejection logic -- confirming this bypass is still fully live and unfixed as of this dispatch, not already superseded by a later commit.
+
+## SCOPE
+1. Check out branch worker/task-20260726-083833-build-interactive-session-write-gate--re (PR #80's real existing branch, currently at commit 353fa09 "Round 4: fix real argv-position detection bypass...") -- push your fix here, do not open a new PR.
+2. Read the current ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet in full (all four prior rounds' logic) before changing anything, so round 5 composes with, rather than reverts, the round-3/round-4 global-flag-position fix.
+3. Close both alias bypasses: before trusting any resolved subcommand token as "not push" / "not pr merge", resolve real git/gh aliases first -- e.g. reject or strip `-c alias.*=`/`--config`-supplied one-shot aliases outright (since a legitimate write-gate cannot reasonably need to honor an ad-hoc alias defined in the same command line), and separately check the invoked token against `git config --get-regexp '^alias\.'` (persistent ~/.gitconfig aliases) and `gh alias list` (persistent gh aliases) to see if it resolves to a guarded subcommand before deciding to let it through.
+4. Add real regression test cases to tests/interactive_session_guard_test.sh reproducing both bypasses from the review (the `git -c alias.wip=push wip origin master` case and a `gh alias set`+invoke case for a merge-mapped alias), following the same live-fixture-harness methodology the existing rounds' tests already use (source the actual shipped snippet, not a reimplementation), and confirm they now correctly BLOCK.
+5. Update the known_limitations section to either remove these two items (if fully closed) or, if any residual edge case remains (e.g. aliases with arguments baked in, or nested aliases), disclose it honestly rather than silently leaving it out as prior rounds did.
+6. Push the fix to the existing branch.
+
+## SUCCESS_CRITERIA
+`bash tests/interactive_session_guard_test.sh` exits 0 with all scenarios (including the two new alias-bypass regression tests you add) reported as PASS -- real command output pasted into your final report.
+
+## EXPECTED_OUTPUT
+A real, pushed commit to the existing branch worker/task-20260726-083833-build-interactive-session-write-gate--re, updating PR #80 (do not open a new PR -- this branch and PR already exist and are open, currently at round-4 commit 353fa09).
+
+## CONSTRAINTS
+Do not revert or weaken the round-3 (cgroup hardcoding, force-push refspec, multi-refspec) or round-4 (argv global-flag-position resolution) fixes already on this branch -- compose with them. Do not re-run rounds 1-4's prompts from scratch. If you find yet another new bypass class while testing this fix (this has happened in every prior round), disclose it honestly in known_limitations rather than silently omitting it, but do not scope-creep into fixing bypass classes unrelated to git/gh command aliasing in this same task -- flag them for a future round instead. Do not merge the PR yourself.
+
+## COMPLEXITY_TIER
+judgment

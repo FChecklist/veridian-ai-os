@@ -1,0 +1,41 @@
+## OBJECTIVE
+TASK REQUIRING AI JUDGMENT: re-verify current real state (do not trust the audit doc's MISSING status without re-checking, since scripts/notify-owner.py did not exist when items 27/28/56 were first audited and now does) and close items 27, 28, 44, 56 from ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml. Targets:
+- item_number: 27, requirement: notify_owner_when_needed, current_status: MISSING (stale -- re-verify, scripts/notify-owner.py now exists and has real confirmed sends)
+- item_number: 28, requirement: escalate_critical_issues, current_status: MISSING (stale -- re-verify against the same real mechanism)
+- item_number: 44, requirement: mobile_thin_client_policy, current_status: MISSING
+- item_number: 56, requirement: report_unresolved_problems_to_owner, current_status: MISSING (stale -- re-verify)
+
+## SCOPE
+ITEMS_27_28_56 OUTPUT:
+- INVESTIGATE FIRST: scripts/notify-owner.py (real, working, Resend-based) is already called from scripts/health-check-15min.py (anomaly + blocked-task escalation, both real, both with confirmed real sends this session -- see ai-os/logs/notify-owner-state.json) and scripts/security-check.py (3 finding types). Determine precisely, with evidence, whether this closes items 27/28/56 as-is, or whether a real gap remains -- e.g. no severity tiering (a first-time anomaly and a 6-hour-unresolved anomaly currently send the same plain email every hour once the rate-limit window passes), and ai-os/logs/ATTENTION.md's known historical case (repeated identical unresolved entries 2026-07-19, no escalation) predates notify-owner.py's existence, so it does not by itself prove item 56 is still open today.
+- IF a real gap remains (e.g. no escalation tiering for problems unresolved beyond N consecutive health-check cycles): build the minimal fix -- likely a consecutive-occurrence counter per anomaly signature (health-check-15min.py already tracks prev-cycle state for blocked-task detection, same pattern) that changes the email subject/urgency after e.g. 3 consecutive unresolved cycles (45 min), reusing the existing notify_owner() call, not a new notification path.
+- IF no real gap remains: mark DONE with the real evidence (do not leave MISSING out of inertia, and do not build something unneeded just to have something to build).
+
+ITEM_44 OUTPUT:
+- FILE: ai-os/STANDING_DIRECTIVE.yaml or ai-os/AI_ENGINEERING_POLICY.yaml (pick whichever already hosts RULE-067-equivalent local-execution-only language, mirror its structure)
+- ADD: an explicit policy statement naming "mobile" as thin-client-only (mirroring RULE-067's "no development/execution/AI processing on local machines" language, extended to mobile devices), since the current gap is real: RULE-067 names local machines explicitly, nothing names mobile
+- This is a documentation-only gap (no code enforcement exists for the laptop rule either, per item 43's own PARTIAL evidence) -- do not build a technical enforcement mechanism beyond what item 43 already has for laptops, that would be scope creep beyond what this item asks
+
+## KNOWN_CONTEXT
+zero_duplication_check_performed: true (this task's own OBJECTIVE requires re-verifying before building, precisely to avoid re-building scripts/notify-owner.py which already exists, VERIFIED_WORKING, with 3+ real confirmed sends as of Phase 6 -- see ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml item 47's evidence for exact real message text and dedupe keys)
+db_concurrency_constraint: sequential writes only to superboss-register.sqlite
+coaching_text_correction: ai-os/CONTINUOUS_GAP_CLOSING_PROMPT_2026-07-23.txt KNOWN_CONTEXT point 3 was corrected 2026-07-23 -- already verified corrected as of Phase 6, no need to re-verify again this phase unless something changed
+
+## SUCCESS_CRITERIA
+TEST_27_28_56: either (a) real evidence citing file:line for existing coverage, with an honest explanation of why no further build is needed, or (b) if a consecutive-occurrence escalation counter is built, one real test showing an anomaly's email subject/body actually changes after N simulated consecutive unresolved cycles (using real state manipulation, not a fabricated anomaly)
+TEST_44: the new policy text exists at the real file:line cited, and reads as a genuine policy statement (not a placeholder)
+
+## EXPECTED_OUTPUT
+COMMIT: whatever live-host script diff results from items 27/28/56 (if any), plus ai-os/patches/<name>-2026-07-23.diff for it, verified with patch --dry-run (write the diff file with the Write tool, not bash `>` redirection -- Phase 6 found that bash redirection of long-line command output silently truncates and corrupts the file in this sandbox)
+UPDATE_FILE: ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml items [27, 28, 44, 56] status updated with real evidence, summary counts recomputed and cross-checked against an independent recount of all 60 items[].status entries (do not hand-compute, verify programmatically)
+CHECKPOINT: status=pending_review, real evidence in note
+NEXT_PHASE: create AND start Phase 8 (both commands, not just create) targeting the next 3-5 concrete items from ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml's remaining PARTIAL items (24 remain as of Phase 6: 1, 3, 4, 5, 6, 10, 11, 15, 21, 24, 25, 29, 30, 31, 32, 36, 42, 45, 49, 50, 51, 52, 54, 60) or ai-os/EXECUTION_RULES_AUDIT_2026-07-23.yaml -- exact file paths, exact function signatures or exact policy text, exact test criteria, same structure as this document, no narrative continuation language
+
+## CONSTRAINTS
+NO_NEW_TAGGING_SYSTEM: reuse system_index.tags column
+NO_PARALLEL_DB_WRITES: sequential only for superboss-register.sqlite
+EVIDENCE_REQUIRED: every DONE status change cites file:line or real command output, zero exceptions
+NO_FABRICATED_TEST_DATA: if no real anomaly/unresolved-cycle event is available to test escalation, say so explicitly rather than inventing one
+
+## COMPLEXITY_TIER
+judgment

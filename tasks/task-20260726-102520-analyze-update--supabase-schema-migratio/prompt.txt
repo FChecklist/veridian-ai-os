@@ -1,0 +1,26 @@
+## OBJECTIVE
+Produce a real, current analysis of everything already built in the two live Supabase projects (compliance-tracker's pcrjmlpuqsbocqfwoxod "verdian-ai" and projexa's evpckeuxgvahguwsaeul) and update the existing DATABASE_CATALOG.json + MIGRATION_DRIFT_AUDIT_2026-07-26.yaml (compliance-tracker PR #563/#565, currently DIRTY/CONFLICTING per a fresh `gh pr view 563 --repo FChecklist/compliance-tracker` check) to reflect real current state. Do not build any new database engine, migration tool, or parallel schema-tracking system -- analyze and update what already exists only.
+
+## KNOWN_CONTEXT
+ai-os/DATABASE_CATALOG.json (generated 2026-07-20, 444 tables/124 enums at that time, via ai-os-scripts/extract-db-schema-catalog.mjs) is the existing real schema catalog -- re-run its generator, do not hand-write a new one. A real migration-drift audit was already dispatched and mostly completed this session (task-20260726-071400-migration-drift-audit-and-reconciliation, PR #563 opened with real findings: drizzle.__drizzle_migrations had 0 rows despite hundreds of real applied tables, now populated with 261 rows after applying missing migrations; 3 stale migration files identified referencing relocated/misnamed tables). A follow-up task fixed CI issues in a separate PR (#565, already merged to master) but PR #563 itself is now real and CONFLICTING against master (confirmed via a fresh `gh pr view` check just now) -- resolve this conflict for real, do not leave it stuck.
+
+## SCOPE
+1. Resolve PR #563's real merge conflict against current master (likely caused by PR #565's separate merge touching overlapping files) -- read both sides, merge correctly (same pattern as this session's other real conflict resolutions: keep both real sides' content for structured registries, take the more current side for pure narrative files), verify with a real parse/test, then get a fresh audit.
+2. Re-run ai-os-scripts/extract-db-schema-catalog.mjs against the live compliance-tracker schema.ts and regenerate DATABASE_CATALOG.json with real current table/enum counts (cross-check against the 2026-07-20 baseline of 444/124 to confirm growth, not regression).
+3. Confirm `SELECT COUNT(*) FROM drizzle.__drizzle_migrations` on the real live pcrjmlpuqsbocqfwoxod project now returns a real, non-zero count matching the total real migration file count (per the migration-drift-audit's own success criteria) -- if PR #563's fix hasn't actually been merged/applied yet, this may still show the old gap; report the real current number honestly either way.
+4. Check projexa's own Supabase project (evpckeuxgvahguwsaeul) for the same drizzle-migration-tracking gap class, if projexa has its own drizzle migration history -- confirm real scope before assuming it applies there.
+5. Do not build a new schema-tracking tool or a new migration system -- only resolve the existing PR conflict and re-run the existing catalog generator.
+
+## SUCCESS_CRITERIA
+- `gh pr view 563 --repo FChecklist/compliance-tracker --json mergeable -q '.mergeable'` returns MERGEABLE, not CONFLICTING, after the fix.
+- `SELECT COUNT(*) FROM drizzle.__drizzle_migrations` on the real live project returns a real non-zero count, reported honestly.
+- `node ai-os-scripts/extract-db-schema-catalog.mjs` (or wherever it's invoked from) exits 0 and produces a regenerated DATABASE_CATALOG.json with a real, current table/enum count.
+
+## EXPECTED_OUTPUT
+PR #563 resolved and mergeable (do not merge yourself), plus a regenerated DATABASE_CATALOG.json committed via a real PR if it has changed materially since 2026-07-20.
+
+## CONSTRAINTS
+Do not run drizzle-kit migrate blind against either live project -- already confirmed unsafe earlier this session. Do not build a new migration or cataloging tool. Do not merge anything yourself.
+
+## COMPLEXITY_TIER
+judgment

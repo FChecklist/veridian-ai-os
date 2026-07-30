@@ -1,0 +1,66 @@
+id: task-20260727-143938-adopted-boq-valuation-fix--v4--final-re-merge
+title: 'BoQ/valuation fix (v4, final re-merge): taxTemplateId + retention'
+status: awaiting_human_approval
+repo: compliance-tracker
+branch: worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown
+workspace: /opt/veridian/ai-os/tasks/task-20260727-143938-adopted-boq-valuation-fix--v4--final-re-merge/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-143938-adopted-boq-valuation-fix--v4--final-re-merge
+service: veridian-supervisor@task-20260727-143938-adopted-boq-valuation-fix--v4--final-re-merge.service
+created_at: '2026-07-27T14:39:39.300957+00:00'
+last_checkpoint_at: '2026-07-27T14:45:30.587881+00:00'
+completed_steps: &id002
+- Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim
+- 'Explored existing code: constructionBoqLineItems schema, construction-boq-service.ts,'
+- bun was missing from this sandbox (only bunx existed) -- installed via bun.sh/install,
+- 'Schema: added parentLineItemId + breakdownPercentage to constructionBoqLineItems;'
+- Migration drizzle/0265_construction_boq_hierarchy_interim_billing.sql -- HAND-WRITTEN,
+- 'construction-boq-service.ts: computeHierarchicalAmount() (root-Main-based formula,'
+- 'construction-boq-service.test.ts: 11 tests, all passing -- exact Owner formula'
+- 'construction-valuation-service.ts: interim/RA billing + retention % + invoice emission'
+- Verified existing /api/construction/boq and /api/v1/construction/boq routes need
+  no
+- 'New API routes: GET/POST /api/construction/interim-bills, GET'
+- 'Excel BoQ importer: construction-boq-import-service.ts + API route. 5 tests including'
+- npx tsc --noEmit clean (had to raise Node heap via NODE_OPTIONS=--max-old-space-size,
+remaining_steps: &id003
+- This task's migration (drizzle/0265_*.sql) has NOT been applied to any live Supabase
+- Because the migration is unapplied, `get_advisors(security)` has NOT been run
+- 'Open PR -- PR #596, `worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown`'
+- This corrective push needs a fresh supervisor audit (the original audit's FAIL verdict
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T14:39:39.300957+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown'
+    (https://github.com/FChecklist/compliance-tracker/pull/596) -- registered for
+    real audit, not a fresh worker dispatch
+- at: '2026-07-27T14:45:30.587881+00:00'
+  status: awaiting_human_approval
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '0ed3ef35 merge: resolve conflicts with main'
+  - '8e57644a Merge pull request #601 from FChecklist/fix/csv-injection-reporting-gateway-v2'
+  - 'a33af7f8 merge: resolve conflicts with main'
+  - '01394b08 ci: exempt real dated comments in auth-guard.ts'
+  - '20910339 merge: resolve conflicts with main'
+  - 'd9d98232 Merge pull request #597 from FChecklist/worker/task-20260727-122935-timesheet-budget-vs-actual'
+  - '4766fbc7 ci: exempt real dated comments across 7 BoQ/valuation files, bump schema.ts
+    to 79, register 2 new interim-bill tables'
+  - '8791c5d8 merge: resolve conflicts with main'
+  - '581d29f3 merge: resolve conflicts with main + renumber migration 0265->0267 (0264-0266
+    now taken by Helpdesk/PM-gaps/HR-gaps)'
+  - '5f4bfb80 docs: update PROGRESS.md with CI results after PR #597 fix push'
+  note: 'tier2, Superboss-approved, held for human merge: https://github.com/FChecklist/compliance-tracker/pull/596'
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/596
+master_synced_at: '2026-07-29T21:04:26.080782+00:00'

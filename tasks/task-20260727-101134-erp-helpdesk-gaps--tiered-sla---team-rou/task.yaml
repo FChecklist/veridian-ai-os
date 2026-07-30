@@ -1,0 +1,588 @@
+id: task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou
+title: 'ERP Helpdesk gaps: tiered SLA + team routing, email-to-ticket, self-service
+  portal'
+status: awaiting_human_approval
+repo: compliance-tracker
+branch: worker/task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou
+workspace: /opt/veridian/ai-os/tasks/task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou
+service: veridian-worker@task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou.service
+created_at: '2026-07-27T10:11:35.784414+00:00'
+last_checkpoint_at: '2026-07-27T11:54:54.338962+00:00'
+completed_steps: &id002
+- Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (no collision
+  found).
+- 'Re-verified all 3 gaps by direct code inspection (grep + full-file reads), confirming
+  the SPEC''s KNOWN_CONTEXT:'
+- '**Gap 1 -- tiered SLA policy + team routing**:'
+- '**Gap 2 -- email-to-ticket ingestion**: `createTicketFromEmailIntelligenceItem()`
+  in `ticket-service.ts` promotes an `emailIntelligenceItems` row straight to a `tickets`
+  row (reuses the existing email-ingestion record rather than building a second pipeline,
+  per spec) -- posts the email body as the first conversation message, sets `requesterEmail`,
+  marks the source item `promotedTicketId`/`status: "promoted_to_ticket"`. Route:
+  `POST /api/email-intelligence/[id]/promote-to-ticket`.'
+- '**Gap 3 -- public self-service portal**:'
+- 'Verification given this sandbox''s lack of a live DB/Supabase connection: `bun
+  test` (10/10 pass on the new pure-function suite), `bun build` on every new/changed
+  file (all bundle cleanly -- catches import/syntax errors, not full type errors).
+  Full-project `npx tsc --noEmit` OOM''d in this sandbox (>8GB heap) both times it
+  was attempted -- **not run to completion here**; CI''s own Type Check job (AGENTS.md
+  Rule 6 gate) will run it for real before merge.'
+remaining_steps: &id003
+- CI must actually run and pass (Lint/Type Check/Build/Unit Tests) -- full-project
+  `tsc --noEmit` could not be completed in this sandbox (OOM), so there is real residual
+  risk of a type error CI will catch that this session didn't.
+- '`get_advisors(security)` was not run (no live Supabase MCP connection available
+  in this sandbox this session) -- **must be run against the real project before/at
+  merge**, with particular attention to the new public-portal routes/RLS per this
+  task''s own SUCCESS_CRITERIA.'
+- No live DB to apply `drizzle/0264_helpdesk_tiered_sla_team_routing.sql` against
+  this session -- migration is hand-written (following the exact existing pattern
+  from `0067_wave81_customer_service_enhancements.sql`/`0146_org_join_codes.sql`)
+  and journal-registered, but **not yet applied to any real database**; whoever merges/deploys
+  this must run it (`bun run db:push` or the standard migration-apply step) before
+  the new tables/columns exist for real.
+- No minimal public-facing UI pages were built for the self-service portal (e.g. `/portal/[orgSlug]`)
+  -- only the API routes exist and are tested. The SPEC's SUCCESS_CRITERIA only requires
+  the anonymous-caller API behavior (browse published KB, raise a ticket without a
+  pre-issued token), which is met; a real page UI is left as a followup if the Owner
+  wants a browsable frontend, not just an API surface.
+- Admin UI for configuring SLA policies/teams/escalation rules/business-hours schedules
+  doesn't exist yet either -- only the CRUD API routes. An org must currently configure
+  these via direct API calls (or a future admin screen) before tiered SLA/team routing
+  or the public portal (which requires a default team) actually activate for that
+  org.
+- PR not yet opened/merged as of this checkpoint -- see git log for the commit(s)
+  this PROGRESS.md update ships with.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T10:11:37.606187+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  - '6318fc77 Fix PR586 CI: terminology-guardrail exemptions + bunfig.toml scoping
+    bun test to src/ only'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T10:16:39.066444+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7546e98e ai-os/boss/ACTIVE-CLAIMS.yaml: register claim for erp-helpdesk-gaps
+    tiered SLA + team routing task'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  note: periodic checkpoint
+- at: '2026-07-27T10:21:40.552486+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7546e98e ai-os/boss/ACTIVE-CLAIMS.yaml: register claim for erp-helpdesk-gaps
+    tiered SLA + team routing task'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  note: periodic checkpoint
+- at: '2026-07-27T10:27:01.314762+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7546e98e ai-os/boss/ACTIVE-CLAIMS.yaml: register claim for erp-helpdesk-gaps
+    tiered SLA + team routing task'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  note: periodic checkpoint
+- at: '2026-07-27T10:32:04.225537+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - drizzle/meta/_journal.json
+  - src/lib/db/schema.ts
+  - src/lib/services/ticket-service.ts
+  - drizzle/0264_helpdesk_tiered_sla_team_routing.sql
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7546e98e ai-os/boss/ACTIVE-CLAIMS.yaml: register claim for erp-helpdesk-gaps
+    tiered SLA + team routing task'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  note: periodic checkpoint
+- at: '2026-07-27T10:37:44.149614+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - drizzle/meta/_journal.json
+  - src/lib/db/schema.ts
+  - src/lib/services/ticket-service.ts
+  - drizzle/0264_helpdesk_tiered_sla_team_routing.sql
+  - src/lib/services/ticket-service.test.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7546e98e ai-os/boss/ACTIVE-CLAIMS.yaml: register claim for erp-helpdesk-gaps
+    tiered SLA + team routing task'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '1ad5b345 PROGRESS.md + ACTIVE-CLAIMS.yaml: phase_9 complete, PRs open (compliance-tracker#588,
+    claude-control#112)'
+  note: periodic checkpoint
+- at: '2026-07-27T10:43:02.017291+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (no collision
+    found).
+  - 'Re-verified all 3 gaps by direct code inspection (grep + full-file reads), confirming
+    the SPEC''s KNOWN_CONTEXT:'
+  - '**Gap 1 -- tiered SLA policy + team routing**:'
+  - '**Gap 2 -- email-to-ticket ingestion**: `createTicketFromEmailIntelligenceItem()`
+    in `ticket-service.ts` promotes an `emailIntelligenceItems` row straight to a
+    `tickets` row (reuses the existing email-ingestion record rather than building
+    a second pipeline, per spec) -- posts the email body as the first conversation
+    message, sets `requesterEmail`, marks the source item `promotedTicketId`/`status:
+    "promoted_to_ticket"`. Route: `POST /api/email-intelligence/[id]/promote-to-ticket`.'
+  - '**Gap 3 -- public self-service portal**:'
+  - 'Verification given this sandbox''s lack of a live DB/Supabase connection: `bun
+    test` (10/10 pass on the new pure-function suite), `bun build` on every new/changed
+    file (all bundle cleanly -- catches import/syntax errors, not full type errors).
+    Full-project `npx tsc --noEmit` OOM''d in this sandbox (>8GB heap) both times
+    it was attempted -- **not run to completion here**; CI''s own Type Check job (AGENTS.md
+    Rule 6 gate) will run it for real before merge.'
+  remaining_steps:
+  - CI must actually run and pass (Lint/Type Check/Build/Unit Tests) -- full-project
+    `tsc --noEmit` could not be completed in this sandbox (OOM), so there is real
+    residual risk of a type error CI will catch that this session didn't.
+  - '`get_advisors(security)` was not run (no live Supabase MCP connection available
+    in this sandbox this session) -- **must be run against the real project before/at
+    merge**, with particular attention to the new public-portal routes/RLS per this
+    task''s own SUCCESS_CRITERIA.'
+  - No live DB to apply `drizzle/0264_helpdesk_tiered_sla_team_routing.sql` against
+    this session -- migration is hand-written (following the exact existing pattern
+    from `0067_wave81_customer_service_enhancements.sql`/`0146_org_join_codes.sql`)
+    and journal-registered, but **not yet applied to any real database**; whoever
+    merges/deploys this must run it (`bun run db:push` or the standard migration-apply
+    step) before the new tables/columns exist for real.
+  - No minimal public-facing UI pages were built for the self-service portal (e.g.
+    `/portal/[orgSlug]`) -- only the API routes exist and are tested. The SPEC's SUCCESS_CRITERIA
+    only requires the anonymous-caller API behavior (browse published KB, raise a
+    ticket without a pre-issued token), which is met; a real page UI is left as a
+    followup if the Owner wants a browsable frontend, not just an API surface.
+  - Admin UI for configuring SLA policies/teams/escalation rules/business-hours schedules
+    doesn't exist yet either -- only the CRUD API routes. An org must currently configure
+    these via direct API calls (or a future admin screen) before tiered SLA/team routing
+    or the public portal (which requires a default team) actually activate for that
+    org.
+  - PR not yet opened/merged as of this checkpoint -- see git log for the commit(s)
+    this PROGRESS.md update ships with.
+  recent_commits:
+  - '4438ca79 Helpdesk gap-closure: tiered SLA policy + team routing, email-to-ticket,
+    public self-service portal'
+  - '7546e98e ai-os/boss/ACTIVE-CLAIMS.yaml: register claim for erp-helpdesk-gaps
+    tiered SLA + team routing task'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  note: periodic checkpoint
+- at: '2026-07-27T10:49:18.455065+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (no collision
+    found).
+  - 'Re-verified all 3 gaps by direct code inspection (grep + full-file reads), confirming
+    the SPEC''s KNOWN_CONTEXT:'
+  - '**Gap 1 -- tiered SLA policy + team routing**:'
+  - '**Gap 2 -- email-to-ticket ingestion**: `createTicketFromEmailIntelligenceItem()`
+    in `ticket-service.ts` promotes an `emailIntelligenceItems` row straight to a
+    `tickets` row (reuses the existing email-ingestion record rather than building
+    a second pipeline, per spec) -- posts the email body as the first conversation
+    message, sets `requesterEmail`, marks the source item `promotedTicketId`/`status:
+    "promoted_to_ticket"`. Route: `POST /api/email-intelligence/[id]/promote-to-ticket`.'
+  - '**Gap 3 -- public self-service portal**:'
+  - 'Verification given this sandbox''s lack of a live DB/Supabase connection: `bun
+    test` (10/10 pass on the new pure-function suite), `bun build` on every new/changed
+    file (all bundle cleanly -- catches import/syntax errors, not full type errors).
+    Full-project `npx tsc --noEmit` OOM''d in this sandbox (>8GB heap) both times
+    it was attempted -- **not run to completion here**; CI''s own Type Check job (AGENTS.md
+    Rule 6 gate) will run it for real before merge.'
+  remaining_steps:
+  - CI must actually run and pass (Lint/Type Check/Build/Unit Tests) -- full-project
+    `tsc --noEmit` could not be completed in this sandbox (OOM), so there is real
+    residual risk of a type error CI will catch that this session didn't.
+  - '`get_advisors(security)` was not run (no live Supabase MCP connection available
+    in this sandbox this session) -- **must be run against the real project before/at
+    merge**, with particular attention to the new public-portal routes/RLS per this
+    task''s own SUCCESS_CRITERIA.'
+  - No live DB to apply `drizzle/0264_helpdesk_tiered_sla_team_routing.sql` against
+    this session -- migration is hand-written (following the exact existing pattern
+    from `0067_wave81_customer_service_enhancements.sql`/`0146_org_join_codes.sql`)
+    and journal-registered, but **not yet applied to any real database**; whoever
+    merges/deploys this must run it (`bun run db:push` or the standard migration-apply
+    step) before the new tables/columns exist for real.
+  - No minimal public-facing UI pages were built for the self-service portal (e.g.
+    `/portal/[orgSlug]`) -- only the API routes exist and are tested. The SPEC's SUCCESS_CRITERIA
+    only requires the anonymous-caller API behavior (browse published KB, raise a
+    ticket without a pre-issued token), which is met; a real page UI is left as a
+    followup if the Owner wants a browsable frontend, not just an API surface.
+  - Admin UI for configuring SLA policies/teams/escalation rules/business-hours schedules
+    doesn't exist yet either -- only the CRUD API routes. An org must currently configure
+    these via direct API calls (or a future admin screen) before tiered SLA/team routing
+    or the public portal (which requires a default team) actually activate for that
+    org.
+  - PR not yet opened/merged as of this checkpoint -- see git log for the commit(s)
+    this PROGRESS.md update ships with.
+  recent_commits:
+  - '4438ca79 Helpdesk gap-closure: tiered SLA policy + team routing, email-to-ticket,
+    public self-service portal'
+  - '7546e98e ai-os/boss/ACTIVE-CLAIMS.yaml: register claim for erp-helpdesk-gaps
+    tiered SLA + team routing task'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  note: periodic checkpoint
+- at: '2026-07-27T11:03:12.052637+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (no collision
+    found).
+  - 'Re-verified all 3 gaps by direct code inspection (grep + full-file reads), confirming
+    the SPEC''s KNOWN_CONTEXT:'
+  - '**Gap 1 -- tiered SLA policy + team routing**:'
+  - '**Gap 2 -- email-to-ticket ingestion**: `createTicketFromEmailIntelligenceItem()`
+    in `ticket-service.ts` promotes an `emailIntelligenceItems` row straight to a
+    `tickets` row (reuses the existing email-ingestion record rather than building
+    a second pipeline, per spec) -- posts the email body as the first conversation
+    message, sets `requesterEmail`, marks the source item `promotedTicketId`/`status:
+    "promoted_to_ticket"`. Route: `POST /api/email-intelligence/[id]/promote-to-ticket`.'
+  - '**Gap 3 -- public self-service portal**:'
+  - 'Verification given this sandbox''s lack of a live DB/Supabase connection: `bun
+    test` (10/10 pass on the new pure-function suite), `bun build` on every new/changed
+    file (all bundle cleanly -- catches import/syntax errors, not full type errors).
+    Full-project `npx tsc --noEmit` OOM''d in this sandbox (>8GB heap) both times
+    it was attempted -- **not run to completion here**; CI''s own Type Check job (AGENTS.md
+    Rule 6 gate) will run it for real before merge.'
+  remaining_steps:
+  - CI must actually run and pass (Lint/Type Check/Build/Unit Tests) -- full-project
+    `tsc --noEmit` could not be completed in this sandbox (OOM), so there is real
+    residual risk of a type error CI will catch that this session didn't.
+  - '`get_advisors(security)` was not run (no live Supabase MCP connection available
+    in this sandbox this session) -- **must be run against the real project before/at
+    merge**, with particular attention to the new public-portal routes/RLS per this
+    task''s own SUCCESS_CRITERIA.'
+  - No live DB to apply `drizzle/0264_helpdesk_tiered_sla_team_routing.sql` against
+    this session -- migration is hand-written (following the exact existing pattern
+    from `0067_wave81_customer_service_enhancements.sql`/`0146_org_join_codes.sql`)
+    and journal-registered, but **not yet applied to any real database**; whoever
+    merges/deploys this must run it (`bun run db:push` or the standard migration-apply
+    step) before the new tables/columns exist for real.
+  - No minimal public-facing UI pages were built for the self-service portal (e.g.
+    `/portal/[orgSlug]`) -- only the API routes exist and are tested. The SPEC's SUCCESS_CRITERIA
+    only requires the anonymous-caller API behavior (browse published KB, raise a
+    ticket without a pre-issued token), which is met; a real page UI is left as a
+    followup if the Owner wants a browsable frontend, not just an API surface.
+  - Admin UI for configuring SLA policies/teams/escalation rules/business-hours schedules
+    doesn't exist yet either -- only the CRUD API routes. An org must currently configure
+    these via direct API calls (or a future admin screen) before tiered SLA/team routing
+    or the public portal (which requires a default team) actually activate for that
+    org.
+  - PR not yet opened/merged as of this checkpoint -- see git log for the commit(s)
+    this PROGRESS.md update ships with.
+  recent_commits:
+  - '4438ca79 Helpdesk gap-closure: tiered SLA policy + team routing, email-to-ticket,
+    public self-service portal'
+  - '7546e98e ai-os/boss/ACTIVE-CLAIMS.yaml: register claim for erp-helpdesk-gaps
+    tiered SLA + team routing task'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-27T11:20:30.323384+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (no collision
+    found).
+  - 'Re-verified all 3 gaps by direct code inspection (grep + full-file reads), confirming
+    the SPEC''s KNOWN_CONTEXT:'
+  - '**Gap 1 -- tiered SLA policy + team routing**:'
+  - '**Gap 2 -- email-to-ticket ingestion**: `createTicketFromEmailIntelligenceItem()`
+    in `ticket-service.ts` promotes an `emailIntelligenceItems` row straight to a
+    `tickets` row (reuses the existing email-ingestion record rather than building
+    a second pipeline, per spec) -- posts the email body as the first conversation
+    message, sets `requesterEmail`, marks the source item `promotedTicketId`/`status:
+    "promoted_to_ticket"`. Route: `POST /api/email-intelligence/[id]/promote-to-ticket`.'
+  - '**Gap 3 -- public self-service portal**:'
+  - 'Verification given this sandbox''s lack of a live DB/Supabase connection: `bun
+    test` (10/10 pass on the new pure-function suite), `bun build` on every new/changed
+    file (all bundle cleanly -- catches import/syntax errors, not full type errors).
+    Full-project `npx tsc --noEmit` OOM''d in this sandbox (>8GB heap) both times
+    it was attempted -- **not run to completion here**; CI''s own Type Check job (AGENTS.md
+    Rule 6 gate) will run it for real before merge.'
+  remaining_steps:
+  - CI must actually run and pass (Lint/Type Check/Build/Unit Tests) -- full-project
+    `tsc --noEmit` could not be completed in this sandbox (OOM), so there is real
+    residual risk of a type error CI will catch that this session didn't.
+  - '`get_advisors(security)` was not run (no live Supabase MCP connection available
+    in this sandbox this session) -- **must be run against the real project before/at
+    merge**, with particular attention to the new public-portal routes/RLS per this
+    task''s own SUCCESS_CRITERIA.'
+  - No live DB to apply `drizzle/0264_helpdesk_tiered_sla_team_routing.sql` against
+    this session -- migration is hand-written (following the exact existing pattern
+    from `0067_wave81_customer_service_enhancements.sql`/`0146_org_join_codes.sql`)
+    and journal-registered, but **not yet applied to any real database**; whoever
+    merges/deploys this must run it (`bun run db:push` or the standard migration-apply
+    step) before the new tables/columns exist for real.
+  - No minimal public-facing UI pages were built for the self-service portal (e.g.
+    `/portal/[orgSlug]`) -- only the API routes exist and are tested. The SPEC's SUCCESS_CRITERIA
+    only requires the anonymous-caller API behavior (browse published KB, raise a
+    ticket without a pre-issued token), which is met; a real page UI is left as a
+    followup if the Owner wants a browsable frontend, not just an API surface.
+  - Admin UI for configuring SLA policies/teams/escalation rules/business-hours schedules
+    doesn't exist yet either -- only the CRUD API routes. An org must currently configure
+    these via direct API calls (or a future admin screen) before tiered SLA/team routing
+    or the public portal (which requires a default team) actually activate for that
+    org.
+  - PR not yet opened/merged as of this checkpoint -- see git log for the commit(s)
+    this PROGRESS.md update ships with.
+  recent_commits:
+  - '4438ca79 Helpdesk gap-closure: tiered SLA policy + team routing, email-to-ticket,
+    public self-service portal'
+  - '7546e98e ai-os/boss/ACTIVE-CLAIMS.yaml: register claim for erp-helpdesk-gaps
+    tiered SLA + team routing task'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 2, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+- at: '2026-07-27T11:25:29.087819+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (no collision
+    found).
+  - 'Re-verified all 3 gaps by direct code inspection (grep + full-file reads), confirming
+    the SPEC''s KNOWN_CONTEXT:'
+  - '**Gap 1 -- tiered SLA policy + team routing**:'
+  - '**Gap 2 -- email-to-ticket ingestion**: `createTicketFromEmailIntelligenceItem()`
+    in `ticket-service.ts` promotes an `emailIntelligenceItems` row straight to a
+    `tickets` row (reuses the existing email-ingestion record rather than building
+    a second pipeline, per spec) -- posts the email body as the first conversation
+    message, sets `requesterEmail`, marks the source item `promotedTicketId`/`status:
+    "promoted_to_ticket"`. Route: `POST /api/email-intelligence/[id]/promote-to-ticket`.'
+  - '**Gap 3 -- public self-service portal**:'
+  - 'Verification given this sandbox''s lack of a live DB/Supabase connection: `bun
+    test` (10/10 pass on the new pure-function suite), `bun build` on every new/changed
+    file (all bundle cleanly -- catches import/syntax errors, not full type errors).
+    Full-project `npx tsc --noEmit` OOM''d in this sandbox (>8GB heap) both times
+    it was attempted -- **not run to completion here**; CI''s own Type Check job (AGENTS.md
+    Rule 6 gate) will run it for real before merge.'
+  remaining_steps:
+  - CI must actually run and pass (Lint/Type Check/Build/Unit Tests) -- full-project
+    `tsc --noEmit` could not be completed in this sandbox (OOM), so there is real
+    residual risk of a type error CI will catch that this session didn't.
+  - '`get_advisors(security)` was not run (no live Supabase MCP connection available
+    in this sandbox this session) -- **must be run against the real project before/at
+    merge**, with particular attention to the new public-portal routes/RLS per this
+    task''s own SUCCESS_CRITERIA.'
+  - No live DB to apply `drizzle/0264_helpdesk_tiered_sla_team_routing.sql` against
+    this session -- migration is hand-written (following the exact existing pattern
+    from `0067_wave81_customer_service_enhancements.sql`/`0146_org_join_codes.sql`)
+    and journal-registered, but **not yet applied to any real database**; whoever
+    merges/deploys this must run it (`bun run db:push` or the standard migration-apply
+    step) before the new tables/columns exist for real.
+  - No minimal public-facing UI pages were built for the self-service portal (e.g.
+    `/portal/[orgSlug]`) -- only the API routes exist and are tested. The SPEC's SUCCESS_CRITERIA
+    only requires the anonymous-caller API behavior (browse published KB, raise a
+    ticket without a pre-issued token), which is met; a real page UI is left as a
+    followup if the Owner wants a browsable frontend, not just an API surface.
+  - Admin UI for configuring SLA policies/teams/escalation rules/business-hours schedules
+    doesn't exist yet either -- only the CRUD API routes. An org must currently configure
+    these via direct API calls (or a future admin screen) before tiered SLA/team routing
+    or the public portal (which requires a default team) actually activate for that
+    org.
+  - PR not yet opened/merged as of this checkpoint -- see git log for the commit(s)
+    this PROGRESS.md update ships with.
+  recent_commits:
+  - '4438ca79 Helpdesk gap-closure: tiered SLA policy + team routing, email-to-ticket,
+    public self-service portal'
+  - '7546e98e ai-os/boss/ACTIVE-CLAIMS.yaml: register claim for erp-helpdesk-gaps
+    tiered SLA + team routing task'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  note: periodic checkpoint
+- at: '2026-07-27T11:54:54.338962+00:00'
+  status: awaiting_human_approval
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '4438ca79 Helpdesk gap-closure: tiered SLA policy + team routing, email-to-ticket,
+    public self-service portal'
+  - '7546e98e ai-os/boss/ACTIVE-CLAIMS.yaml: register claim for erp-helpdesk-gaps
+    tiered SLA + team routing task'
+  - 'e4e319a3 Merge pull request #588 from FChecklist/worker/task-20260727-082615-architecture-phase-9--gateway-knowledge'
+  - 'da1e128a merge: resolve PROGRESS.md conflict with main (keep both -- PR 586 just
+    merged)'
+  - 'fef1983b Merge pull request #586 from FChecklist/worker/task-20260727-065831-architecture-phase-5--browser-execution'
+  - '92ec7e8a ci: exempt real dated comments in orchestrate/route.ts + mother-router.ts
+    (terminology guardrail, phase_9 gateway wiring)'
+  - '63e94fcd merge: resolve PROGRESS.md + terminology-guardrail-exemptions.yaml conflicts
+    with main (keep both -- append-only logs, PR 562 just merged)'
+  - 'ee541a6a Merge pull request #562 from FChecklist/worker/task-20260726-043023-phase4-defense-in-depth-prompt-security'
+  - cb4f9b69 Merge branch 'main' into worker/task-20260727-065831-architecture-phase-5--browser-execution
+  - db41bfc5 Merge branch 'main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  note: 'tier2, Superboss-approved, held for human merge: https://github.com/FChecklist/compliance-tracker/pull/591'
+execution_seconds: 1918
+restart_count: 1
+token_usage:
+  input_tokens: 186
+  cache_creation_input_tokens: 202427
+  cache_read_input_tokens: 14697407
+  output_tokens: 102511
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 202427
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 932
+    cache_read_input_tokens: 224929
+    cache_creation_input_tokens: 1182
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1182
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:25.892453+00:00'

@@ -1,0 +1,38 @@
+## OBJECTIVE
+Audit every task dispatched this session (2026-07-24) against its own real success criteria, using real GitHub/file/DB state as evidence, and fix every real gap found. Instruction INS-20260724-081631-c418.
+
+## SCOPE
+1. For each of these 10 tasks, read its prompt.txt's SUCCESS_CRITERIA section and its task.yaml, then independently verify each criterion against real state (gh pr view, file existence, knowledge_engine row queries, crontab -l, MASTER_INDEX.yaml contents) -- do not trust task.yaml's own self-reported status or completed_steps text as proof:
+   - task-20260724-033446-self-sustaining-system-engine-phase2-con (PR #10, merged)
+   - task-20260724-041754-self-sustaining-system-engine-phase2-cle (PR #11, rejected and closed -- treat its SUCCESS_CRITERIA as still open unless independently verified done elsewhere)
+   - task-20260724-042659-veridian-auditor-engine-phase0-inventory (PR #12, closed superseded by PR #19)
+   - task-20260724-053213-veridian-20engines-10gateways-phase0-inv (PR #13, merged)
+   - task-20260724-060203-xpost-github-catalog-2026-07-24 (PR #14, merged)
+   - task-20260724-063403-fix-supervisor-merge-report-bug (PR #15, merged)
+   - task-20260724-063645-veridian-testing-engine-irvf-phase0 (PR #17, merged)
+   - task-20260724-070131-veridian-terminology-standardization-pha (PR #18, merged)
+   - task-20260724-072725-fix-auditor-engine-pr12-conflict (PR #19, merged)
+   - task-20260724-074329-fix-worker-noop-pending-review (PR #20, merged)
+2. For task-20260724-033446 specifically, confirm or fix these 2 known-as-of-08:15-today gaps: (a) MASTER_INDEX.yaml registries.self_sustaining_system_engine is present in the LIVE file (not just claimed) -- add it via a script if still missing; (b) run `python3 /opt/veridian/scripts/task-gateway.py close --task-id task-20260724-033446-self-sustaining-system-engine-phase2-con --audit-cmd "<verbatim substring copied from that task's own prompt.txt SUCCESS_CRITERIA>" --evidence "<real check output>"` for real, and confirm the postflight_audit_gate.py verdict is DONE (not just attempted).
+3. For every other task in the list, if a real gap is found (a criterion that is not actually true), fix it with real code/data changes through this same task-gateway.py pipeline -- do not just note it and move on.
+4. Write ai-os/SESSION_AUDIT_2026-07-24.yaml: one entry per task with fields {task_id, pr_number, pr_state, criteria_checked: [{criterion, verified_true_or_false, evidence}], verdict: DONE|PARTIAL|INCOMPLETE, fixed_this_task: true|false}.
+
+## KNOWN_CONTEXT
+- Several PRs this session were initially misreported as "blocked/merge FAILED" due to a since-fixed supervisor-entrypoint.sh bug (gh pr merge --delete-branch worktree conflict, fixed in PR #15) -- always use a fresh `gh pr view --json state,mergedAt` as ground truth, never task.yaml's own note text alone.
+- PR #11 was a real, legitimate reviewer rejection (not the merge-bug) -- its content did not land except for the narrow no-op-pending_review fix that was later redone cleanly in PR #20. Its other 2 scope items (MASTER_INDEX entry, close/reverify demo) must be treated as NOT done unless this audit independently verifies them true.
+- Standing rules already established this session: crontab changes need an approved entry in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml (Owner's blanket approval this session covers new ones -- record and update ai-os/CRONTAB_APPROVED_SNAPSHOT.txt rather than asking again); all registry/catalog writes must come from a script, not hand-authored prose.
+
+## SUCCESS_CRITERIA
+- ai-os/SESSION_AUDIT_2026-07-24.yaml exists with all 10 tasks accounted for, each verdict backed by real evidence.
+- MASTER_INDEX.yaml's live copy has registries.self_sustaining_system_engine.
+- A real task-gateway.py close call for task-20260724-033446 has run and produced verdict DONE, with the real command output captured as evidence in the audit file.
+- Any other real gap found across the 10 tasks is fixed, not just logged.
+
+## EXPECTED_OUTPUT
+Real committed and pushed changes (PR on claude-control) containing SESSION_AUDIT_2026-07-24.yaml plus any fixes made, and a final checkpoint summary giving the Owner a clean DONE/PARTIAL/INCOMPLETE count across all 10 tasks.
+
+## CONSTRAINTS
+Verify every criterion against real state before writing a verdict -- a task.yaml saying "completed" is not sufficient evidence on its own, per this session's own repeated experience of that being wrong. Any crontab need follows the existing Owner-approval-citation pattern rather than a fresh confirmation.
+
+## COMPLEXITY_TIER
+judgment

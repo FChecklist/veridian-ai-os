@@ -1,0 +1,224 @@
+id: task-20260727-073319-fix-pr562--enforce-output-side-llama-gua
+title: 'Fix PR562: enforce output-side Llama Guard + system-prompt-leak blocking (round
+  2, real AUDIT REJECT)'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+workspace: /opt/veridian/ai-os/tasks/task-20260727-073319-fix-pr562--enforce-output-side-llama-gua/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-073319-fix-pr562--enforce-output-side-llama-gua
+service: veridian-worker@task-20260727-073319-fix-pr562--enforce-output-side-llama-gua.service
+created_at: '2026-07-27T07:33:20.140859+00:00'
+last_checkpoint_at: '2026-07-27T07:57:20.877229+00:00'
+completed_steps: &id002
+- Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- this session's own claim already
+- Read `defense-in-depth.ts` in full. Found `layer3.outputGuard`
+- Decided block-entirely (not strip-and-continue) for a detected leaked
+- 'Implemented the new block path in `runDefenseInDepth()`: after Layer 4'
+- Added 2 new tests to `defense-in-depth.test.ts` (new
+- '`bun install` (node_modules was absent in this task''s fresh workspace);'
+- '`bun test src/lib/prompt-security/` -> 44 pass, 0 fail (up from the'
+- '`NODE_OPTIONS="--max-old-space-size=4096" bunx tsc --noEmit` -> 0'
+- '`bun test` (full suite) -> 2087 pass, 0 fail.'
+- Committed + pushed directly to
+remaining_steps: &id003
+- 'Independent audit / `AUDIT: PASS` comment (per AGENTS.md Rule 7(c)/'
+- 'PR #562 merge itself -- out of scope for this task.'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T07:33:24.424833+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '59ec4dd2 Merge pull request #581 from FChecklist/worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc'
+  - 5fe3166e Merge remote-tracking branch 'origin/main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - 'dc11ec20 Merge pull request #573 from FChecklist/worker/task-20260726-171950-preview-deployment-spot-check'
+  - '009b8805 ai-os/OS.yaml: register PREVIEW_DEPLOYMENT_SPOTCHECK_2026-07-26.md (fix
+    Metadata Index Coverage Check)'
+  - b3529a44 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - 874348ed Merge remote-tracking branch 'origin/main' into worker/task-20260726-171950-preview-deployment-spot-check
+  - 'a6d32a3c Merge pull request #563 from FChecklist/worker/task-20260726-071400-migration-drift-audit-and-reconciliation'
+  - 15c6135d Merge remote-tracking branch 'origin/main' into worker/task-20260726-071400-migration-drift-audit-and-reconciliation
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - '833751ba PROGRESS.md: record merge-conflict re-resolution (reintroduced by PR
+    #572) + push'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T07:38:25.793067+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/prompt-security/defense-in-depth.test.ts
+  - src/lib/prompt-security/defense-in-depth.ts
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- this session's own claim already
+  - Read `defense-in-depth.ts` in full. Found `layer3.outputGuard`
+  - Decided block-entirely (not strip-and-continue) for a detected leaked
+  - 'Implemented the new block path in `runDefenseInDepth()`: after Layer 4'
+  - Added 2 new tests to `defense-in-depth.test.ts` (new
+  - '`bun install` (node_modules was absent in this task''s fresh workspace);'
+  - '`bun test src/lib/prompt-security/` -> 44 pass, 0 fail (up from the'
+  - '`NODE_OPTIONS="--max-old-space-size=4096" bunx tsc --noEmit` -> 0'
+  - '`bun test` (full suite) -> 2087 pass, 0 fail.'
+  - Committed + pushed directly to
+  remaining_steps:
+  - 'Independent audit / `AUDIT: PASS` comment (per AGENTS.md Rule 7(c)/'
+  - 'PR #562 merge itself -- out of scope for this task.'
+  recent_commits:
+  - '88e3fe28 Fix PR562 CI: register defense-in-depth tool-eval doc in OS.yaml; raise/add
+    terminology-guardrail exemptions for real PII-scrubbing test fixtures'
+  - a9341317 Merge remote-tracking branch 'origin/main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '59ec4dd2 Merge pull request #581 from FChecklist/worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc'
+  - 5fe3166e Merge remote-tracking branch 'origin/main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - 'dc11ec20 Merge pull request #573 from FChecklist/worker/task-20260726-171950-preview-deployment-spot-check'
+  - '009b8805 ai-os/OS.yaml: register PREVIEW_DEPLOYMENT_SPOTCHECK_2026-07-26.md (fix
+    Metadata Index Coverage Check)'
+  - b3529a44 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - 874348ed Merge remote-tracking branch 'origin/main' into worker/task-20260726-171950-preview-deployment-spot-check
+  - 'a6d32a3c Merge pull request #563 from FChecklist/worker/task-20260726-071400-migration-drift-audit-and-reconciliation'
+  - 15c6135d Merge remote-tracking branch 'origin/main' into worker/task-20260726-071400-migration-drift-audit-and-reconciliation
+  note: periodic checkpoint
+- at: '2026-07-27T07:43:32.968352+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- this session's own claim already
+  - Read `defense-in-depth.ts` in full. Found `layer3.outputGuard`
+  - Decided block-entirely (not strip-and-continue) for a detected leaked
+  - 'Implemented the new block path in `runDefenseInDepth()`: after Layer 4'
+  - Added 2 new tests to `defense-in-depth.test.ts` (new
+  - '`bun install` (node_modules was absent in this task''s fresh workspace);'
+  - '`bun test src/lib/prompt-security/` -> 44 pass, 0 fail (up from the'
+  - '`NODE_OPTIONS="--max-old-space-size=4096" bunx tsc --noEmit` -> 0'
+  - '`bun test` (full suite) -> 2087 pass, 0 fail.'
+  - Committed + pushed directly to
+  remaining_steps:
+  - 'Independent audit / `AUDIT: PASS` comment (per AGENTS.md Rule 7(c)/'
+  - 'PR #562 merge itself -- out of scope for this task.'
+  recent_commits:
+  - '058a2619 Fix PR #562 round 2: enforce layer4.leakedSystemInstruction (output-side)'
+  - '88e3fe28 Fix PR562 CI: register defense-in-depth tool-eval doc in OS.yaml; raise/add
+    terminology-guardrail exemptions for real PII-scrubbing test fixtures'
+  - a9341317 Merge remote-tracking branch 'origin/main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '59ec4dd2 Merge pull request #581 from FChecklist/worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc'
+  - 5fe3166e Merge remote-tracking branch 'origin/main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - 'dc11ec20 Merge pull request #573 from FChecklist/worker/task-20260726-171950-preview-deployment-spot-check'
+  - '009b8805 ai-os/OS.yaml: register PREVIEW_DEPLOYMENT_SPOTCHECK_2026-07-26.md (fix
+    Metadata Index Coverage Check)'
+  - b3529a44 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - 874348ed Merge remote-tracking branch 'origin/main' into worker/task-20260726-171950-preview-deployment-spot-check
+  - 'a6d32a3c Merge pull request #563 from FChecklist/worker/task-20260726-071400-migration-drift-audit-and-reconciliation'
+  note: periodic checkpoint
+- at: '2026-07-27T07:50:58.543944+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- this session's own claim already
+  - Read `defense-in-depth.ts` in full. Found `layer3.outputGuard`
+  - Decided block-entirely (not strip-and-continue) for a detected leaked
+  - 'Implemented the new block path in `runDefenseInDepth()`: after Layer 4'
+  - Added 2 new tests to `defense-in-depth.test.ts` (new
+  - '`bun install` (node_modules was absent in this task''s fresh workspace);'
+  - '`bun test src/lib/prompt-security/` -> 44 pass, 0 fail (up from the'
+  - '`NODE_OPTIONS="--max-old-space-size=4096" bunx tsc --noEmit` -> 0'
+  - '`bun test` (full suite) -> 2087 pass, 0 fail.'
+  - Committed + pushed directly to
+  remaining_steps:
+  - 'Independent audit / `AUDIT: PASS` comment (per AGENTS.md Rule 7(c)/'
+  - 'PR #562 merge itself -- out of scope for this task.'
+  recent_commits:
+  - '058a2619 Fix PR #562 round 2: enforce layer4.leakedSystemInstruction (output-side)'
+  - '88e3fe28 Fix PR562 CI: register defense-in-depth tool-eval doc in OS.yaml; raise/add
+    terminology-guardrail exemptions for real PII-scrubbing test fixtures'
+  - a9341317 Merge remote-tracking branch 'origin/main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '59ec4dd2 Merge pull request #581 from FChecklist/worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc'
+  - 5fe3166e Merge remote-tracking branch 'origin/main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - 'dc11ec20 Merge pull request #573 from FChecklist/worker/task-20260726-171950-preview-deployment-spot-check'
+  - '009b8805 ai-os/OS.yaml: register PREVIEW_DEPLOYMENT_SPOTCHECK_2026-07-26.md (fix
+    Metadata Index Coverage Check)'
+  - b3529a44 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - 874348ed Merge remote-tracking branch 'origin/main' into worker/task-20260726-171950-preview-deployment-spot-check
+  - 'a6d32a3c Merge pull request #563 from FChecklist/worker/task-20260726-071400-migration-drift-audit-and-reconciliation'
+  note: periodic checkpoint
+- at: '2026-07-27T07:57:18.244926+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- this session's own claim already
+  - Read `defense-in-depth.ts` in full. Found `layer3.outputGuard`
+  - Decided block-entirely (not strip-and-continue) for a detected leaked
+  - 'Implemented the new block path in `runDefenseInDepth()`: after Layer 4'
+  - Added 2 new tests to `defense-in-depth.test.ts` (new
+  - '`bun install` (node_modules was absent in this task''s fresh workspace);'
+  - '`bun test src/lib/prompt-security/` -> 44 pass, 0 fail (up from the'
+  - '`NODE_OPTIONS="--max-old-space-size=4096" bunx tsc --noEmit` -> 0'
+  - '`bun test` (full suite) -> 2087 pass, 0 fail.'
+  - Committed + pushed directly to
+  remaining_steps:
+  - 'Independent audit / `AUDIT: PASS` comment (per AGENTS.md Rule 7(c)/'
+  - 'PR #562 merge itself -- out of scope for this task.'
+  recent_commits:
+  - '058a2619 Fix PR #562 round 2: enforce layer4.leakedSystemInstruction (output-side)'
+  - '88e3fe28 Fix PR562 CI: register defense-in-depth tool-eval doc in OS.yaml; raise/add
+    terminology-guardrail exemptions for real PII-scrubbing test fixtures'
+  - a9341317 Merge remote-tracking branch 'origin/main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '59ec4dd2 Merge pull request #581 from FChecklist/worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc'
+  - 5fe3166e Merge remote-tracking branch 'origin/main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - 'dc11ec20 Merge pull request #573 from FChecklist/worker/task-20260726-171950-preview-deployment-spot-check'
+  - '009b8805 ai-os/OS.yaml: register PREVIEW_DEPLOYMENT_SPOTCHECK_2026-07-26.md (fix
+    Metadata Index Coverage Check)'
+  - b3529a44 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - 874348ed Merge remote-tracking branch 'origin/main' into worker/task-20260726-171950-preview-deployment-spot-check
+  - 'a6d32a3c Merge pull request #563 from FChecklist/worker/task-20260726-071400-migration-drift-audit-and-reconciliation'
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-27T07:57:20.877229+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '058a2619 Fix PR #562 round 2: enforce layer4.leakedSystemInstruction (output-side)'
+  - '88e3fe28 Fix PR562 CI: register defense-in-depth tool-eval doc in OS.yaml; raise/add
+    terminology-guardrail exemptions for real PII-scrubbing test fixtures'
+  - a9341317 Merge remote-tracking branch 'origin/main' into worker/task-20260726-043023-phase4-defense-in-depth-prompt-security
+  - '59ec4dd2 Merge pull request #581 from FChecklist/worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc'
+  - 5fe3166e Merge remote-tracking branch 'origin/main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - 'dc11ec20 Merge pull request #573 from FChecklist/worker/task-20260726-171950-preview-deployment-spot-check'
+  - '009b8805 ai-os/OS.yaml: register PREVIEW_DEPLOYMENT_SPOTCHECK_2026-07-26.md (fix
+    Metadata Index Coverage Check)'
+  - b3529a44 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - 874348ed Merge remote-tracking branch 'origin/main' into worker/task-20260726-171950-preview-deployment-spot-check
+  - 'a6d32a3c Merge pull request #563 from FChecklist/worker/task-20260726-071400-migration-drift-audit-and-reconciliation'
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 2, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+execution_seconds: 493
+restart_count: 1
+token_usage:
+  input_tokens: 104
+  cache_creation_input_tokens: 84705
+  cache_read_input_tokens: 4019644
+  output_tokens: 20675
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 84705
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 90
+    cache_read_input_tokens: 108256
+    cache_creation_input_tokens: 133
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 133
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:25.725019+00:00'

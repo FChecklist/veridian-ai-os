@@ -1,0 +1,362 @@
+id: task-20260718-053004-ai-architecture--governance---audit
+title: 'AI Architecture: Governance & Audit'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-053004-ai-architecture--governance---audit
+workspace: /opt/veridian/ai-os/tasks/task-20260718-053004-ai-architecture--governance---audit/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-053004-ai-architecture--governance---audit
+service: veridian-worker@task-20260718-053004-ai-architecture--governance---audit.service
+created_at: '2026-07-18T05:30:05.396446+00:00'
+last_checkpoint_at: '2026-07-18T06:00:03.873720+00:00'
+completed_steps: &id002
+- Read governance docs (ACTIVE-CLAIMS.yaml, CONSTITUTION.yaml, OS.yaml) and registered
+  this session's claim in ai-os/boss/ACTIVE-CLAIMS.yaml (committed + pushed separately,
+  no collisions found with the 5 findings' real file scope).
+- Re-verified each finding against current code before implementing (per task brief)
+  -- several were partially stale; corrected CONSTITUTION.yaml's status/gap text everywhere
+  that was true rather than making an unnecessary code change to "fix" something already
+  resolved.
+- '**ABAC / Fine-Grained Policies (Critical)**: generalized approval-workflow-service.ts''s
+  single conditionField/conditionOperator predicate into a reusable multi-condition
+  evaluator.'
+- '**Audit Trail (Medium)**: confirmed full prompt/response text was already persisted
+  for most real call sites (chat-service.ts, fde-service.ts -- Wave 144/146, PII-redacted);
+  CONSTITUTION.yaml''s SEC-03 "500-char excerpt only" gap text was stale for those
+  (the 500-char excerpt is real, but only for the policy-`denied` case, which never
+  reaches a model). The one genuinely missing piece -- no TTL/expiry on stored full
+  text -- is now closed:'
+- '**Unified cross-table audit search (Medium)**: `compliance.audit_search` view (migration
+  `drizzle/0227_audit_search_view.sql`) unions `audit_logs` + `orchestra_executions`
+  + `activity_log` into one `{source_table, id, org_id, user_id, actor_label, action,
+  entity_type, entity_id, details, created_at}` shape.'
+- '**Maintainability dashboard (High)**: confirmed no maintainability score of any
+  kind existed (VERIDIAN_AUDIT_ORGANIZATION.md explicitly declined to build the ~149
+  fake specialist-auditor roles including "Maintainability Auditor" -- correctly,
+  per its own reasoning). Built a real, additive scorecard instead of an LLM role:'
+- '**GP-06/GP-09/GP-26 enforcement (High)**: re-verified each against current code
+  -- GP-09 and GP-26''s CONSTITUTION.yaml status/gap text were significantly stale
+  (real mechanisms already existed for the AI Team dispatch surface); GP-06 was genuinely
+  still open.'
+- 'Also fixed real-but-incidental CI-gate requirements surfaced along the way: registered
+  the new `abac_policies` table in `ai-os/registry/asset-registry-coverage.yaml` (required
+  by `scripts/check-asset-registry-coverage.mjs`).'
+- 'Full verification: `bunx tsc --noEmit` clean (0 errors), `bun test` 1443 pass /
+  0 fail across 107 files (includes all new tests), `bun run lint` 0 errors (3 pre-existing
+  unrelated warnings), `scripts/check-guardrail-presence.mjs` / `check-asset-registry-coverage.mjs`
+  / `check-doc-cross-references.mjs` / `check-doc-quarantine-banner.mjs` / `check-metadata-index-coverage.mjs`
+  all pass.'
+remaining_steps: &id003
+- Open PR (not self-merged, per this task's own instruction and AGENTS.md Rule 6/7c)
+  -- flag for the supervising session's audit. Apply drizzle migrations (0225-0228)
+  to the live Supabase project as part of that merge, matching this repo's convention
+  of shipping the SQL in the PR itself.
+- 'Note for the supervising session: `scripts/check-migration-collision.mjs` reports
+  a PRE-EXISTING collision at migration number 0224 (`0224_crm_accounts_contacts_actor_columns_no_fk.sql`
+  vs `0224_erp_exchange_rates_source.sql`, both already on `main`, neither touched
+  by this session) -- not part of this task''s scope, flagging rather than silently
+  fixing someone else''s already-merged files. This session''s own new migrations
+  are 0225-0228, no collisions.'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T05:30:06.000533+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  - 97dd8773 Re-trigger CI after corrected audit comment
+  note: worker started (resume=0)
+- at: '2026-07-18T05:35:06.285617+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'd8bde49e Register active claim: AI Architecture / Governance & Audit gap-closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:40:06.432641+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/db/schema.ts
+  - src/lib/services/approval-workflow-service.ts
+  - drizzle/0225_abac_policy_layer.sql
+  - src/lib/abac.test.ts
+  - src/lib/abac.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'd8bde49e Register active claim: AI Architecture / Governance & Audit gap-closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:45:06.587316+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/db/schema.ts
+  - src/lib/orchestra-execution-logger.ts
+  - src/lib/services/approval-workflow-service.ts
+  - vercel.json
+  - drizzle/0225_abac_policy_layer.sql
+  - drizzle/0226_orchestra_execution_payload_purge.sql
+  - src/app/api/governance/
+  - src/app/api/internal/orchestra-log-purge/
+  - src/lib/abac.test.ts
+  - src/lib/abac.ts
+  - src/lib/services/abac-policy-service.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'd8bde49e Register active claim: AI Architecture / Governance & Audit gap-closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:50:06.711823+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/db/schema.ts
+  - src/lib/orchestra-execution-logger.ts
+  - src/lib/services/approval-workflow-service.ts
+  - vercel.json
+  - drizzle/0225_abac_policy_layer.sql
+  - drizzle/0226_orchestra_execution_payload_purge.sql
+  - drizzle/0227_audit_search_view.sql
+  - src/app/api/ai/team/maintainability-dashboard/
+  - src/app/api/governance/
+  - src/app/api/internal/orchestra-log-purge/
+  - src/lib/abac.test.ts
+  - src/lib/abac.ts
+  - src/lib/services/abac-policy-service.ts
+  - src/lib/services/audit-search-service.ts
+  - src/lib/services/maintainability-dashboard-service.test.ts
+  - src/lib/services/maintainability-dashboard-service.ts
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS.yaml, CONSTITUTION.yaml, OS.yaml) and registered
+    this session's claim in ai-os/boss/ACTIVE-CLAIMS.yaml (committed + pushed separately,
+    no collisions found with the 5 findings' real file scope).
+  - Re-verified each finding against current code before implementing (per task brief)
+    -- see notes below; several findings were partially stale.
+  - '**ABAC / Fine-Grained Policies (Critical)**: generalized approval-workflow-service.ts''s
+    single conditionField/conditionOperator predicate into a reusable multi-condition
+    evaluator.'
+  - '**Audit Trail (Medium)**: full prompt/response text was already being persisted
+    for most real call sites (chat-service.ts, fde-service.ts, etc. -- Wave 144/146,
+    PII-redacted) -- confirmed CONSTITUTION.yaml''s SEC-03 gap text describing a "500-char
+    excerpt only" was stale for those sites. The one genuinely missing piece: no TTL/expiry
+    on that stored full text.'
+  - '**Unified cross-table audit search (Medium)**: `compliance.audit_search` view
+    (migration `drizzle/0227_audit_search_view.sql`) unions `audit_logs` + `orchestra_executions`
+    + `activity_log` into one `{source_table, id, org_id, user_id, actor_label, action,
+    entity_type, entity_id, details, created_at}` shape.'
+  - '`bun test` (new/changed files) and `bunx tsc --noEmit` clean after each piece
+    above.'
+  remaining_steps:
+  - '**Maintainability dashboard (High)**: wire real audit-role/CI/guardrail outputs
+    into a consolidated 0-100 maintainability score, surfaced in `ai-os/` (in progress
+    -- confirmed no such score exists yet; `monitoring-engine.ts::computeGovernanceHealthScore`
+    is the closest precedent (reasoningQuality/dependencyHealth/compliance, AI-dispatch-outcome-based)
+    but has no "maintainability" axis; VERIDIAN_AUDIT_ORGANIZATION.md explicitly declined
+    to build 149 fake specialist-auditor roles including "Maintainability Auditor"
+    -- real signals to wire instead: guardrail-violation rate (`loopImprovements`
+    where `improvementType=''guardrail_violation''`), governance health score, unresolved
+    loop-improvement backlog).'
+  - '**GP-06/GP-09/GP-26 enforcement (High)**: build real enforcement code per CONSTITUTION.yaml''s
+    documented gap fields.'
+  - Final full `bun test` + `bunx tsc --noEmit` + `bun run lint` pass across the whole
+    diff.
+  - Open PR (not self-merged, per this task's own instruction and AGENTS.md Rule 6/7c)
+    -- flag for the supervising session's audit.
+  recent_commits:
+  - 'd8bde49e Register active claim: AI Architecture / Governance & Audit gap-closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T05:55:06.897885+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/OS.yaml
+  - src/app/api/ai/team/dispatch/route.ts
+  - src/lib/activity-log-service.ts
+  - src/lib/db/schema.ts
+  - src/lib/orchestra-execution-logger.ts
+  - src/lib/qa-precompletion-gate.test.ts
+  - src/lib/qa-precompletion-gate.ts
+  - src/lib/services/approval-workflow-service.ts
+  - vercel.json
+  - ai-os/registry/maintainability-scorecard.md
+  - drizzle/0225_abac_policy_layer.sql
+  - drizzle/0226_orchestra_execution_payload_purge.sql
+  - drizzle/0227_audit_search_view.sql
+  - src/app/api/ai/team/maintainability-dashboard/
+  - src/app/api/governance/
+  - src/app/api/internal/orchestra-log-purge/
+  - src/lib/abac.test.ts
+  - src/lib/abac.ts
+  - src/lib/dispatch-confidence-scoring.test.ts
+  - src/lib/dispatch-confidence-scoring.ts
+  - src/lib/knowledge-sufficiency-gate.test.ts
+  - src/lib/knowledge-sufficiency-gate.ts
+  - src/lib/services/abac-policy-service.ts
+  - src/lib/services/audit-search-service.ts
+  - src/lib/services/maintainability-dashboard-service.test.ts
+  - src/lib/services/maintainability-dashboard-service.ts
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS.yaml, CONSTITUTION.yaml, OS.yaml) and registered
+    this session's claim in ai-os/boss/ACTIVE-CLAIMS.yaml (committed + pushed separately,
+    no collisions found with the 5 findings' real file scope).
+  - Re-verified each finding against current code before implementing (per task brief)
+    -- see notes below; several findings were partially stale.
+  - '**ABAC / Fine-Grained Policies (Critical)**: generalized approval-workflow-service.ts''s
+    single conditionField/conditionOperator predicate into a reusable multi-condition
+    evaluator.'
+  - '**Audit Trail (Medium)**: full prompt/response text was already being persisted
+    for most real call sites (chat-service.ts, fde-service.ts, etc. -- Wave 144/146,
+    PII-redacted) -- confirmed CONSTITUTION.yaml''s SEC-03 gap text describing a "500-char
+    excerpt only" was stale for those sites. The one genuinely missing piece: no TTL/expiry
+    on that stored full text.'
+  - '**Unified cross-table audit search (Medium)**: `compliance.audit_search` view
+    (migration `drizzle/0227_audit_search_view.sql`) unions `audit_logs` + `orchestra_executions`
+    + `activity_log` into one `{source_table, id, org_id, user_id, actor_label, action,
+    entity_type, entity_id, details, created_at}` shape.'
+  - '`bun test` (new/changed files) and `bunx tsc --noEmit` clean after each piece
+    above.'
+  remaining_steps:
+  - '**Maintainability dashboard (High)**: wire real audit-role/CI/guardrail outputs
+    into a consolidated 0-100 maintainability score, surfaced in `ai-os/` (in progress
+    -- confirmed no such score exists yet; `monitoring-engine.ts::computeGovernanceHealthScore`
+    is the closest precedent (reasoningQuality/dependencyHealth/compliance, AI-dispatch-outcome-based)
+    but has no "maintainability" axis; VERIDIAN_AUDIT_ORGANIZATION.md explicitly declined
+    to build 149 fake specialist-auditor roles including "Maintainability Auditor"
+    -- real signals to wire instead: guardrail-violation rate (`loopImprovements`
+    where `improvementType=''guardrail_violation''`), governance health score, unresolved
+    loop-improvement backlog).'
+  - '**GP-06/GP-09/GP-26 enforcement (High)**: build real enforcement code per CONSTITUTION.yaml''s
+    documented gap fields.'
+  - Final full `bun test` + `bunx tsc --noEmit` + `bun run lint` pass across the whole
+    diff.
+  - Open PR (not self-merged, per this task's own instruction and AGENTS.md Rule 6/7c)
+    -- flag for the supervising session's audit.
+  recent_commits:
+  - 'd8bde49e Register active claim: AI Architecture / Governance & Audit gap-closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  - '6ff59531 Re-trigger CI: retry known test-isolation flake (mock.module leakage
+    between test files, unrelated to this PR)'
+  note: periodic checkpoint
+- at: '2026-07-18T06:00:03.873720+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '9d4ce42f AI Architecture / Governance & Audit: ABAC layer, audit-trail TTL purge,
+    unified audit search, maintainability scorecard, GP-06/09/26 enforcement'
+  - 'd8bde49e Register active claim: AI Architecture / Governance & Audit gap-closure'
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  - '9468e2ef Re-trigger CI: final retry before escalating the unreproducible-locally
+    test-isolation flake'
+  note: worker finished, no changes to commit
+execution_seconds: 1798
+restart_count: 0
+token_usage:
+  input_tokens: 3464
+  cache_creation_input_tokens: 299657
+  cache_read_input_tokens: 45554111
+  output_tokens: 122822
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 299657
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 2373
+    cache_read_input_tokens: 321440
+    cache_creation_input_tokens: 1755
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1755
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T06:30:03.268997+00:00'

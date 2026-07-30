@@ -1,0 +1,29 @@
+## OBJECTIVE
+Build the real ChatGPT Audit Workspace infrastructure (sandboxed write directory, access-control, audit record schema, versioning, indexing, catalogue). Instruction INS-20260724-141101-89d8. The LLM-execution step (ChatGPT actually producing an audit) is explicitly out of scope for this task -- no OPENAI_API_KEY exists yet.
+
+## SCOPE
+1. Create /opt/veridian/chatgpt-audit/ with subfolders: Architecture/ Business/ Capabilities/ Modules/ Metadata/ Database/ Rules/ Workflow/ APIs/ UI/ Reports/ Security/ Performance/ AI/ Prompts/ Routes/ Testing/ Dependencies/ Integrations/ Observability/ Release/ Recommendations/ History/.
+2. Write a real access-control enforcement script (scripts/chatgpt_audit_guard.py): a wrapper that, given any file-write attempt, only permits paths under /opt/veridian/chatgpt-audit/ and rejects everything else with a clear error -- this is the mechanical guarantee that "ChatGPT never modifies production source code", not just a policy statement.
+3. Design and write ai-os/CHATGPT_AUDIT_RECORD_SCHEMA_2026-07-24.yaml: the real schema for an audit record (Audit ID, Timestamp, Repository Version, Commit Hash, Files Analysed, Modules Analysed, Standards Used, Missing Items, Duplicate Items, Incomplete Items, Risk Score, Priority, Recommendation, Implementation Suggestion, Confidence %), plus the linkage fields (Capability, Workflow, Metadata, Business Rule, Database, API, UI, Report, Document).
+4. Write a real versioning mechanism (each audit gets a unique, incrementing ID and timestamped filename under the relevant subfolder -- e.g. Architecture/AUDIT-<id>-<ts>.yaml; never overwrite), an auto-index generator script (scripts/generate_chatgpt_audit_index.mjs or .py, scans the workspace and produces a searchable index + a master catalogue ai-os/CHATGPT_AUDIT_MASTER_CATALOGUE_2026-07-24.yaml).
+5. Write ai-os/CHATGPT_AUDIT_BLOCKER_2026-07-24.yaml documenting exactly what's needed to make this live: a real OPENAI_API_KEY, and the exact call shape (model, prompt template referencing the read-scope, output written only through the guard script from item 2) that will execute the actual audit once the key exists. Register this as an OWNER_DECISIONS_NEEDED entry.
+6. Register all new artifacts in knowledge_engine and MASTER_INDEX.yaml (registries.chatgpt_audit_workspace, live file).
+
+## KNOWN_CONTEXT
+- Confirmed this session: `grep -i openai /opt/veridian/shared/.env` shows no real key, only a placeholder comment. Do not fabricate one or silently route this through Claude/GROQ/OpenRouter instead -- the Owner asked specifically for ChatGPT, and using a different model without saying so would be exactly the kind of silent substitution this session's "no lying" rule forbids.
+- Standing rules: registry writes come from scripts not hand-authored prose; any crontab need follows the Owner-approval-citation pattern in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml (Owner's blanket approval covers new ones this session).
+
+## SUCCESS_CRITERIA
+- /opt/veridian/chatgpt-audit/ exists with all 22 real subfolders.
+- `python3 scripts/chatgpt_audit_guard.py --test-path /opt/veridian/repos/compliance-tracker/src/lib/foo.ts` exits non-zero (rejects), `python3 scripts/chatgpt_audit_guard.py --test-path /opt/veridian/chatgpt-audit/Architecture/test.yaml` exits 0 (allows) -- both real, run commands, not descriptions.
+- CHATGPT_AUDIT_RECORD_SCHEMA_2026-07-24.yaml and CHATGPT_AUDIT_MASTER_CATALOGUE_2026-07-24.yaml exist and are valid.
+- CHATGPT_AUDIT_BLOCKER_2026-07-24.yaml exists, is registered as an awaiting_owner_decision entry in OWNER_DECISIONS_NEEDED_2026-07-23.yaml.
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on claude-control), the real guard-script test evidence, and a final checkpoint stating the infrastructure is 100% ready and exactly what's needed (the API key) to make it live.
+
+## CONSTRAINTS
+Keep this task's real work limited to infrastructure (folders, guard script, schema, versioning, index, catalogue, blocker documentation) -- the actual audit-generation call belongs to a future task once the real key exists, and must use the model the Owner actually named when it runs.
+
+## COMPLEXITY_TIER
+integrative

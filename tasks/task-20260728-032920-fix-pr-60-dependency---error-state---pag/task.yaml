@@ -1,0 +1,307 @@
+id: task-20260728-032920-fix-pr-60-dependency---error-state---pag
+title: Fix PR 60 dependency + error-state + pagination gaps
+status: blocked
+repo: projexa
+branch: worker/task-20260728-032920-fix-pr-60-dependency---error-state---pag
+workspace: /opt/veridian/ai-os/tasks/task-20260728-032920-fix-pr-60-dependency---error-state---pag/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-032920-fix-pr-60-dependency---error-state---pag
+service: veridian-worker@task-20260728-032920-fix-pr-60-dependency---error-state---pag.service
+created_at: '2026-07-28T03:29:21.399060+00:00'
+last_checkpoint_at: '2026-07-28T03:51:54.041807+00:00'
+completed_steps: &id002
+- Found unpushed `category-boq-amounts` commit (6051e330) on `feat/category-boq-amounts-report`
+  in compliance-tracker checkout
+- 'Pushed branch + opened compliance-tracker PR #611 (https://github.com/FChecklist/compliance-tracker/pull/611),
+  confirmed OPEN via `gh pr view`'
+- 'Fixed `CategoryDistributionCharts.tsx`: distinct error state (`error`) vs empty
+  state vs loading state'
+- 'Fixed `revenueForProjectInRange()`: returns `{ total, truncated }`; route surfaces
+  `revenueTruncated`; `DashboardHierarchyClient.tsx` shows "figures may be incomplete"
+  note when true'
+- Added `route.test.ts` (truncated true/false/no-date-range cases) and `CategoryDistributionCharts.test.tsx`
+  (error vs empty render, via new dev deps `@testing-library/react` + `@happy-dom/global-registrator`)
+  -- all pass
+- '`npx tsc --noEmit` clean; scoped `bun test` (12 pass, 0 fail across the 4 touched-area
+  test files)'
+- 'Committed (4d776a0) + pushed to `feat/company-dept-project-dashboard` (work done
+  in worktree `pj-worktree/` on local branch `pr60-fix`, pushed to remote branch name
+  via refspec since another local task worktree already had that branch checked out);
+  confirmed PR #60 `headRefOid` now matches via `gh pr view`'
+remaining_steps: &id003
+- 'Live browser smoke test of `/dashboard/hierarchy` and `/dashboard/overview` --
+  local dev server can''t start (no real Supabase keys, only a Vercel OIDC token in
+  `.env.local`); switched to PR #60''s Vercel preview deployment (https://projexa-git-feat-company-dept-proj-9b1dcd-meet-track-s-projects.vercel.app),
+  currently waiting on it to finish building (polling in background, see /tmp/vercel_poll.log)'
+- 'Once preview is up: log in as seeded E2E `ceo` user (e2e/users.ts), visit both
+  pages, confirm no hard error'
+- Final PROGRESS.md update + confirm nothing else pending
+files_modified: &id001
+- pj-worktree/
+checkpoints:
+- at: '2026-07-28T03:29:23.606125+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'e65774d Merge pull request #59 from FChecklist/worker/task-20260727-182111-wire-full-veridian-module-chain-into-pro'
+  - '9f4657d merge: resolve PROGRESS.md conflict with main'
+  - 032febe Record PR links; task implementation complete pending supervisor audit
+  - ca05cc1 Wire full VERIDIAN module chain into PROJEXA's chat composer
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - cc7037d Record investigation findings + implementation plan
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '581fd60 Worker task-20260727-182111-wire-full-veridian-module-chain-into-pro:
+    checkpoint commit (invocation failed, exit 1)'
+  - '638330f Merge pull request #54 from FChecklist/feat/pwa-offline-infra'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-28T03:34:24.964148+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - pj-worktree/
+  completed_steps:
+  - Found unpushed `category-boq-amounts` commit (6051e330) on `feat/category-boq-amounts-report`
+    in compliance-tracker checkout
+  - 'Pushed branch + opened compliance-tracker PR #611 (https://github.com/FChecklist/compliance-tracker/pull/611),
+    confirmed OPEN via `gh pr view`'
+  remaining_steps:
+  - Fix `CategoryDistributionCharts.tsx` to distinguish fetch-failure error state
+    from genuinely-empty state
+  - Fix `revenueForProjectInRange()` to surface `truncated` when MAX_INVOICE_PAGES
+    cap hit; UI indicator
+  - 'Tests: error-state render test, truncated:true/false test'
+  - '`npx tsc --noEmit`, `bun test` scoped to touched files'
+  - Live browser smoke test of `/dashboard/hierarchy` and `/dashboard/overview`
+  - 'Commit + push to `feat/company-dept-project-dashboard` (PR #60)'
+  recent_commits:
+  - 'e65774d Merge pull request #59 from FChecklist/worker/task-20260727-182111-wire-full-veridian-module-chain-into-pro'
+  - '9f4657d merge: resolve PROGRESS.md conflict with main'
+  - 032febe Record PR links; task implementation complete pending supervisor audit
+  - ca05cc1 Wire full VERIDIAN module chain into PROJEXA's chat composer
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - cc7037d Record investigation findings + implementation plan
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '581fd60 Worker task-20260727-182111-wire-full-veridian-module-chain-into-pro:
+    checkpoint commit (invocation failed, exit 1)'
+  - '638330f Merge pull request #54 from FChecklist/feat/pwa-offline-infra'
+  note: periodic checkpoint
+- at: '2026-07-28T03:39:26.302318+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - pj-worktree/
+  completed_steps:
+  - Found unpushed `category-boq-amounts` commit (6051e330) on `feat/category-boq-amounts-report`
+    in compliance-tracker checkout
+  - 'Pushed branch + opened compliance-tracker PR #611 (https://github.com/FChecklist/compliance-tracker/pull/611),
+    confirmed OPEN via `gh pr view`'
+  remaining_steps:
+  - Fix `CategoryDistributionCharts.tsx` to distinguish fetch-failure error state
+    from genuinely-empty state
+  - Fix `revenueForProjectInRange()` to surface `truncated` when MAX_INVOICE_PAGES
+    cap hit; UI indicator
+  - 'Tests: error-state render test, truncated:true/false test'
+  - '`npx tsc --noEmit`, `bun test` scoped to touched files'
+  - Live browser smoke test of `/dashboard/hierarchy` and `/dashboard/overview`
+  - 'Commit + push to `feat/company-dept-project-dashboard` (PR #60)'
+  recent_commits:
+  - 'e65774d Merge pull request #59 from FChecklist/worker/task-20260727-182111-wire-full-veridian-module-chain-into-pro'
+  - '9f4657d merge: resolve PROGRESS.md conflict with main'
+  - 032febe Record PR links; task implementation complete pending supervisor audit
+  - ca05cc1 Wire full VERIDIAN module chain into PROJEXA's chat composer
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - cc7037d Record investigation findings + implementation plan
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '581fd60 Worker task-20260727-182111-wire-full-veridian-module-chain-into-pro:
+    checkpoint commit (invocation failed, exit 1)'
+  - '638330f Merge pull request #54 from FChecklist/feat/pwa-offline-infra'
+  note: periodic checkpoint
+- at: '2026-07-28T03:44:29.380827+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - pj-worktree/
+  completed_steps:
+  - Found unpushed `category-boq-amounts` commit (6051e330) on `feat/category-boq-amounts-report`
+    in compliance-tracker checkout
+  - 'Pushed branch + opened compliance-tracker PR #611 (https://github.com/FChecklist/compliance-tracker/pull/611),
+    confirmed OPEN via `gh pr view`'
+  remaining_steps:
+  - Fix `CategoryDistributionCharts.tsx` to distinguish fetch-failure error state
+    from genuinely-empty state
+  - Fix `revenueForProjectInRange()` to surface `truncated` when MAX_INVOICE_PAGES
+    cap hit; UI indicator
+  - 'Tests: error-state render test, truncated:true/false test'
+  - '`npx tsc --noEmit`, `bun test` scoped to touched files'
+  - Live browser smoke test of `/dashboard/hierarchy` and `/dashboard/overview`
+  - 'Commit + push to `feat/company-dept-project-dashboard` (PR #60)'
+  recent_commits:
+  - 'e65774d Merge pull request #59 from FChecklist/worker/task-20260727-182111-wire-full-veridian-module-chain-into-pro'
+  - '9f4657d merge: resolve PROGRESS.md conflict with main'
+  - 032febe Record PR links; task implementation complete pending supervisor audit
+  - ca05cc1 Wire full VERIDIAN module chain into PROJEXA's chat composer
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - cc7037d Record investigation findings + implementation plan
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '581fd60 Worker task-20260727-182111-wire-full-veridian-module-chain-into-pro:
+    checkpoint commit (invocation failed, exit 1)'
+  - '638330f Merge pull request #54 from FChecklist/feat/pwa-offline-infra'
+  note: periodic checkpoint
+- at: '2026-07-28T03:49:30.751342+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - pj-worktree/
+  completed_steps:
+  - Found unpushed `category-boq-amounts` commit (6051e330) on `feat/category-boq-amounts-report`
+    in compliance-tracker checkout
+  - 'Pushed branch + opened compliance-tracker PR #611 (https://github.com/FChecklist/compliance-tracker/pull/611),
+    confirmed OPEN via `gh pr view`'
+  - 'Fixed `CategoryDistributionCharts.tsx`: distinct error state (`error`) vs empty
+    state vs loading state'
+  - 'Fixed `revenueForProjectInRange()`: returns `{ total, truncated }`; route surfaces
+    `revenueTruncated`; `DashboardHierarchyClient.tsx` shows "figures may be incomplete"
+    note when true'
+  - Added `route.test.ts` (truncated true/false/no-date-range cases) and `CategoryDistributionCharts.test.tsx`
+    (error vs empty render, via new dev deps `@testing-library/react` + `@happy-dom/global-registrator`)
+    -- all pass
+  - '`npx tsc --noEmit` clean; scoped `bun test` (12 pass, 0 fail across the 4 touched-area
+    test files)'
+  - 'Committed (4d776a0) + pushed to `feat/company-dept-project-dashboard` (work done
+    in worktree `pj-worktree/` on local branch `pr60-fix`, pushed to remote branch
+    name via refspec since another local task worktree already had that branch checked
+    out); confirmed PR #60 `headRefOid` now matches via `gh pr view`'
+  remaining_steps:
+  - 'Live browser smoke test of `/dashboard/hierarchy` and `/dashboard/overview` --
+    local dev server can''t start (no real Supabase keys, only a Vercel OIDC token
+    in `.env.local`); switched to PR #60''s Vercel preview deployment (https://projexa-git-feat-company-dept-proj-9b1dcd-meet-track-s-projects.vercel.app),
+    currently waiting on it to finish building (polling in background, see /tmp/vercel_poll.log)'
+  - 'Once preview is up: log in as seeded E2E `ceo` user (e2e/users.ts), visit both
+    pages, confirm no hard error'
+  - Final PROGRESS.md update + confirm nothing else pending
+  recent_commits:
+  - 'e65774d Merge pull request #59 from FChecklist/worker/task-20260727-182111-wire-full-veridian-module-chain-into-pro'
+  - '9f4657d merge: resolve PROGRESS.md conflict with main'
+  - 032febe Record PR links; task implementation complete pending supervisor audit
+  - ca05cc1 Wire full VERIDIAN module chain into PROJEXA's chat composer
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - cc7037d Record investigation findings + implementation plan
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '581fd60 Worker task-20260727-182111-wire-full-veridian-module-chain-into-pro:
+    checkpoint commit (invocation failed, exit 1)'
+  - '638330f Merge pull request #54 from FChecklist/feat/pwa-offline-infra'
+  note: periodic checkpoint
+- at: '2026-07-28T03:51:51.885989+00:00'
+  status: in_progress
+  files_modified:
+  - pj-worktree/
+  completed_steps:
+  - Found unpushed `category-boq-amounts` commit (6051e330) on `feat/category-boq-amounts-report`
+    in compliance-tracker checkout
+  - 'Pushed branch + opened compliance-tracker PR #611 (https://github.com/FChecklist/compliance-tracker/pull/611),
+    confirmed OPEN via `gh pr view`'
+  - 'Fixed `CategoryDistributionCharts.tsx`: distinct error state (`error`) vs empty
+    state vs loading state'
+  - 'Fixed `revenueForProjectInRange()`: returns `{ total, truncated }`; route surfaces
+    `revenueTruncated`; `DashboardHierarchyClient.tsx` shows "figures may be incomplete"
+    note when true'
+  - Added `route.test.ts` (truncated true/false/no-date-range cases) and `CategoryDistributionCharts.test.tsx`
+    (error vs empty render, via new dev deps `@testing-library/react` + `@happy-dom/global-registrator`)
+    -- all pass
+  - '`npx tsc --noEmit` clean; scoped `bun test` (12 pass, 0 fail across the 4 touched-area
+    test files)'
+  - 'Committed (4d776a0) + pushed to `feat/company-dept-project-dashboard` (work done
+    in worktree `pj-worktree/` on local branch `pr60-fix`, pushed to remote branch
+    name via refspec since another local task worktree already had that branch checked
+    out); confirmed PR #60 `headRefOid` now matches via `gh pr view`'
+  remaining_steps:
+  - 'Live browser smoke test of `/dashboard/hierarchy` and `/dashboard/overview` --
+    local dev server can''t start (no real Supabase keys, only a Vercel OIDC token
+    in `.env.local`); switched to PR #60''s Vercel preview deployment (https://projexa-git-feat-company-dept-proj-9b1dcd-meet-track-s-projects.vercel.app),
+    currently waiting on it to finish building (polling in background, see /tmp/vercel_poll.log)'
+  - 'Once preview is up: log in as seeded E2E `ceo` user (e2e/users.ts), visit both
+    pages, confirm no hard error'
+  - Final PROGRESS.md update + confirm nothing else pending
+  recent_commits:
+  - '2449914 Update PROGRESS.md: code fixes + tests done, pending live smoke test'
+  - 'e65774d Merge pull request #59 from FChecklist/worker/task-20260727-182111-wire-full-veridian-module-chain-into-pro'
+  - '9f4657d merge: resolve PROGRESS.md conflict with main'
+  - 032febe Record PR links; task implementation complete pending supervisor audit
+  - ca05cc1 Wire full VERIDIAN module chain into PROJEXA's chat composer
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - cc7037d Record investigation findings + implementation plan
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '581fd60 Worker task-20260727-182111-wire-full-veridian-module-chain-into-pro:
+    checkpoint commit (invocation failed, exit 1)'
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-28T03:51:54.041807+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '2449914 Update PROGRESS.md: code fixes + tests done, pending live smoke test'
+  - 'e65774d Merge pull request #59 from FChecklist/worker/task-20260727-182111-wire-full-veridian-module-chain-into-pro'
+  - '9f4657d merge: resolve PROGRESS.md conflict with main'
+  - 032febe Record PR links; task implementation complete pending supervisor audit
+  - ca05cc1 Wire full VERIDIAN module chain into PROJEXA's chat composer
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - cc7037d Record investigation findings + implementation plan
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '581fd60 Worker task-20260727-182111-wire-full-veridian-module-chain-into-pro:
+    checkpoint commit (invocation failed, exit 1)'
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 2, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+execution_seconds: 1282
+restart_count: 1
+token_usage:
+  input_tokens: 282
+  cache_creation_input_tokens: 114706
+  cache_read_input_tokens: 12780080
+  output_tokens: 49839
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 114706
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 38
+    cache_read_input_tokens: 138050
+    cache_creation_input_tokens: 340
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 340
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:26.303091+00:00'

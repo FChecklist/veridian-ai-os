@@ -1,0 +1,26 @@
+## OBJECTIVE
+Fix one real, audit-confirmed gap on PROJEXA PR #53 ("PM/Site-Engineer role model + enforcement", branch `worker/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model`) before it can go to Owner sign-off. This is the SECOND fix pass on this PR -- the first fix pass (punch-list PATCH gate + `PATCH /api/org-members/[id]` role-assignment endpoint) is already real, correct, and merged into this exact branch as commit `77de705` (re-verify it's still there via `git log --oneline` on this branch before starting, but do not redo that work).
+
+## CRITICAL PROCESS NOTE
+A prior fix attempt on this same underlying issue caused real confusion: a differently-dispatched task committed its fix directly to THIS branch (`worker/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model`) instead of its own assigned worktree, and a separate near-empty PR (#55, now closed) was accidentally created alongside it. **You MUST commit your work to this exact branch name and this branch only** -- do not create a new branch, do not open a new PR, do not touch any other task's worktree. If your own dispatched worktree's branch name differs from `worker/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model`, that is expected (your own task gets its own branch name) -- push your commit to YOUR OWN branch as normal, and note clearly in your PROGRESS.md/PR description that this fix is intended to land on top of PR #53 (do not attempt to directly modify PR #53's branch yourself this time -- your own dispatch pipeline will open its own PR for your own branch; a human will decide how to reconcile it with PR #53 afterward. The prior confusion was specifically about an agent manually checking out and pushing to ANOTHER task's branch -- do not do that.).
+
+## KNOWN_CONTEXT
+Real, audit-confirmed finding, do not re-derive:
+- The new `PATCH /api/org-members/[id]` role-assignment endpoint (added in commit `77de705`, correctly gated to owner/admin only, validates against `ALL_ORG_ROLES`) has no guard against demoting or removing an org's LAST remaining owner/admin. An org's last owner/admin could be demoted to `member`/`pm`/`site_engineer`/`client_viewer` (or the membership removed entirely, if a removal path exists) via this endpoint, stranding the org with zero owners/admins and no in-product recovery path -- the exact same class of lockout risk this whole feature was built to close, just relocated to a new endpoint instead of fixed.
+
+## SCOPE
+First, search the codebase for every real endpoint that can change or remove a membership's role (the `PATCH /api/org-members/[id]` endpoint at minimum, plus grep for any other membership-removal/deletion route). Add a real check to EVERY endpoint found by that search: before demoting or removing an `owner`/`admin`-role membership, verify at least one OTHER `owner`-or-`admin`-role membership will remain in the org after the change. If the change would leave zero owners/admins, reject it with a real, specific error message explaining why. State explicitly in your PR description exactly which endpoints you found and gated.
+
+## SUCCESS_CRITERIA
+- A real test proving: an org's sole owner/admin cannot be demoted to a lower role via `PATCH /api/org-members/[id]`.
+- A real test proving: an org WITH multiple owners/admins CAN have one of them demoted successfully (the check only blocks the last-one-out case).
+- `npx tsc --noEmit` clean, `bun test` passing.
+
+## EXPECTED_OUTPUT
+A real PR (your own task's normal dispatch flow -- whatever branch/PR your own worktree produces is fine) containing this fix, clearly noting in the PR description that it's intended to land on top of PR #53. Requires a fresh supervisor audit; do not merge anything yourself.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not touch any file/branch belonging to a different task's worktree -- work only in your own assigned workspace.
+
+## COMPLEXITY_TIER
+judgment

@@ -1,0 +1,28 @@
+## OBJECTIVE
+Build a real Work Progress Report (WPR) feature in PROJEXA: daily activity-wise entry of completed quantity plus site photos against BoQ line items, with date-range filtered reports broken down category-wise, scope-wise, manpower-wise, and vendor-wise.
+
+## KNOWN_CONTEXT
+Real, Owner-supplied report column spec (do not invent a different shape): S.No | Category | Code | Description, then grouped columns Qty[Unit | Rate | Amt], Amt[Prev | Current | Total], Percentage[Prev | Current | Total] -- the Percentage columns are computed ratios over the Amt columns (previous-cumulative/total, current-period/total, running-total/total), not raw user input. This report is filtered by a date range. PROJEXA already has a real PWA offline work-progress sync queue (`src/lib/offline/work-progress-queue.ts`, PR #54) for per-user offline entry queuing -- reuse this existing queue/sync mechanism for the daily entry capture, do not build a second offline-queue mechanism. PROJEXA's construction BoQ line items (`constructionBoqLineItems`) are the real entities progress gets recorded against.
+
+## SCOPE
+1. Add a real `constructionWorkProgressEntries` table (or matching this codebase's naming convention) recording: BoQ line item reference, date, quantity completed that day, cumulative quantity, computed amount (qty * rate), and a photo attachment reference (reuse whatever file/photo storage pattern already exists in this codebase -- check for one before adding a new storage integration).
+2. Wire entry creation through the existing PWA offline queue (`work-progress-queue.ts`) so entries work offline and sync when connectivity returns, matching its existing per-user scoping and sync-mutex guarantees (do not weaken either).
+3. Build the real WPR report matching the exact column spec above (Prev/Current/Total for both Amt and Percentage), with a date-range filter, and the 4 required breakdown views (category-wise, scope-wise, manpower-wise, vendor-wise).
+4. Real, PROJEXA-branded screen for daily entry (per-activity qty + photo capture) and for viewing the report.
+
+## SUCCESS_CRITERIA
+- A real test proving the Prev/Current/Total percentage columns compute correctly against a realistic multi-day entry sequence (e.g. day 1 completes 30% of a line item's qty, day 2 completes another 20% -- Prev=30%, Current=20%, Total=50%).
+- A real test proving entries created while offline (via the existing queue) sync correctly and appear in the report once synced.
+- Verify by actually running:
+`npx tsc --noEmit`
+`bun test src/lib/offline/work-progress-queue.test.ts` (confirm the existing queue's tests still pass after reuse)
+`bun test` (scoped to new WPR files)
+
+## EXPECTED_OUTPUT
+A real PR on a new branch in the projexa repo. Requires a fresh supervisor audit before merge; do not merge yourself.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not modify the existing offline-queue's per-user scoping or sync-mutex logic -- reuse it as-is.
+
+## COMPLEXITY_TIER
+judgment

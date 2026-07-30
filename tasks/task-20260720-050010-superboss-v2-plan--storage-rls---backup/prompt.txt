@@ -1,0 +1,20 @@
+TASK: V2-15 -- Storage RLS + backup PITR + Supabase monitoring audit
+
+### V2-15 — Storage RLS + backup PITR + Supabase monitoring audit [C6]
+- READY: yes
+- SOFTWARE TEAM LEVEL: L2 Sequential Worker
+- TASK ID: V2-15-SUPABASE-DR-AUDIT
+- MODULE: compliance-tracker
+- OBJECTIVE: `get_advisors` audit on `storage.objects` RLS for both buckets; verify PITR/backup via Supabase MCP/dashboard; document RTO/RPO; confirm Sentry monitoring activation. Closes CSV rows #40/#41/#42.
+- READ FIRST: Supabase MCP; `sentry.*.config.ts`; the bucket definitions.
+- WHAT TO BUILD: An audit doc + any missing RLS policy fix (tier2 if schema/policy) + RTO/RPO statement.
+- CONSTRAINTS: The DSN-provisioning half is Owner-dashboard (V2-6/C17); the audit is code/MCP. Tier2 if RLS policy changed — supervisor holds. Register claim.
+- DONE CRITERIA: Audit doc + RTO/RPO; rows re-scored; PR open.
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

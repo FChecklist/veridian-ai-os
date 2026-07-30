@@ -1,0 +1,21 @@
+## OBJECTIVE
+Build a real Owner-notification mechanism (email via Resend API) and wire it into the two existing detection points that currently find problems but cannot tell the Owner: scripts/health-check-15min.py's anomaly detection, and blocked-task detection in the credit-accountant/task-checkpoint path.
+
+## SCOPE
+In scope: new script scripts/notify-owner.py (sends email via Resend API using RESEND_API_KEY already in shared/.env, rate-limited to max 1 email per distinct issue signature per hour, dedupe via content-hash state file). Integration edit into scripts/health-check-15min.py to call it on a genuinely new anomaly (not already notified in the last hour), keeping the existing ai-os/logs/ATTENTION.md write unchanged. Integration point for tasks that remain status=blocked across two consecutive health-check cycles (30 min), calling notify-owner.py once.
+Out of scope: rewriting any other script's output format, a general-purpose notification framework, security/network monitoring, log retention policy, mobile notifications.
+
+## KNOWN_CONTEXT
+Duplication check already performed, do not re-derive: a full grep for resend|sendmail|smtp|notify_owner|notify-owner|webhook|slack|telegram across scripts/*.py, scripts/*.sh, ai-os/scripts/*.py returned zero hits (see ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml items 27/28/56) -- this is genuinely new capability, not a reuse-avoidance gap. Concrete evidence of consequence: ai-os/logs/ATTENTION.md logged the identical unresolved entry "1 systemd unit(s) in failed state: veridian-worker@task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d.service" 14 times from 2026-07-19T13:44 through at least 2026-07-19T16:00 with zero resolution or escalation ever following -- this is the failure mode being fixed. Owner is explicitly non-technical (recipient: raajat.agarwal@gmail.com); email body must be simple English, short sentences, no paragraphs, no jargon.
+
+## SUCCESS_CRITERIA
+scripts/notify-owner.py exists, is callable with --subject and --body, actually sends via the real Resend API, and a real test send during this task returns a Resend message id (not just an HTTP 200 assumption). scripts/health-check-15min.py calls it on new anomalies without breaking its existing ATTENTION.md behavior. A task stuck at status=blocked for 2 consecutive health-check cycles triggers exactly one notification, not one per cycle.
+
+## EXPECTED_OUTPUT
+Commit and push: scripts/notify-owner.py, the health-check-15min.py integration edit, and the blocked-task-escalation integration edit. Checkpoint status=pending_review with the real Resend message id from the test send included in the checkpoint note as evidence.
+
+## CONSTRAINTS
+Do not modify or remove existing ATTENTION.md writes. Do not add integration call sites beyond health-check-15min.py and the blocked-task check listed in Scope. Keep verification to a single pass.
+
+## COMPLEXITY_TIER
+judgment

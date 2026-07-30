@@ -1,0 +1,760 @@
+id: task-20260724-122143-phase3-data-model-static-quality-linting
+title: phase3-data-model-static-quality-linting-documentation
+status: completed
+repo: claude-control
+branch: worker/task-20260724-122143-phase3-data-model-static-quality-linting
+workspace: /opt/veridian/ai-os/tasks/task-20260724-122143-phase3-data-model-static-quality-linting/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260724-122143-phase3-data-model-static-quality-linting
+service: veridian-worker@task-20260724-122143-phase3-data-model-static-quality-linting.service
+created_at: '2026-07-24T12:21:44.207987+00:00'
+last_checkpoint_at: '2026-07-24T13:44:25.884675+00:00'
+completed_steps: &id002
+- Read full AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml + Phase 1/2 evidence scripts
+  for convention reuse
+- 'Confirmed real inputs: compliance-tracker/projexa drizzle/*.sql, veda-advisors
+  prisma/schema.prisma, 3 repos'' eslint.config.mjs, no existing markdownlint/sqlfluff
+  on PATH'
+- Installed sqlfluff 4.2.2 in its own venv (~/.local/share/veridian-tool-venvs/sqlfluff,
+  symlinked ~/.local/bin/sqlfluff) -- same convention as checkov/schemathesis
+- Installed markdownlint-cli 0.49.1 (~/.local/share/veridian-node-tools/markdownlint-cli,
+  symlinked ~/.local/bin/markdownlint)
+- Authored ai-os/.sqlfluff (postgres dialect, exclude layout/capitalisation rule groups
+  -- documented rationale + real before/after counts, raised large_file_skip_byte_limit
+  so no real migration files are silently skipped)
+- Wrote custom RLS-presence check inline in audit_pipeline_data_model.py (drizzle
+  CREATE TABLE vs ALTER TABLE ... ENABLE ROW LEVEL SECURITY, whole-tree two-pass match)
+- 'Wrote ai-os-scripts/audit_pipeline_data_model.py (sqlfluff + RLS-presence for compliance-tracker/projexa,
+  prisma validate for veda-advisors) -> audit_findings table, domain=data-model. Ran
+  for real: 1779 findings (1528+205 compliance-tracker, 45+1 projexa, 0 veda-advisors).
+  Re-ran: 0 new findings (idempotent, confirmed).'
+- Authored ai-os/eslint/ISO25010_QUALITY_RULESET_2026-07-24.mjs (ESLint rules mapped
+  to ISO 25010 maintainability/reliability sub-characteristics; resolves eslint-config-next/typescript-eslint
+  relative to process.cwd() via createRequire so it works against all 3 repos' own
+  node_modules without a new install)
+- 'Wrote ai-os-scripts/audit_pipeline_product_quality.py (eslint --config <ruleset>
+  against src/lib in each repo, cwd=repo_path) -> domain=product-quality. Ran for
+  real: 351 findings (all in compliance-tracker; projexa/veda-advisors genuinely clean,
+  confirmed by manual eslint run). Re-ran: 0 new findings (idempotent, confirmed).'
+- 'Wrote ai-os-scripts/audit_pipeline_documentation.py (markdownlint-cli, default
+  ruleset per phase plan''s own "zero authoring" instruction, whole-repo *.md scan
+  excluding node_modules/.next/out/build/dist/.git) -> domain=documentation. Ran for
+  real: 14445 findings (13699 compliance-tracker, 616 projexa, 130 veda-advisors).
+  Found+fixed a real bug during verification: MD060 table-column-style fires multiple
+  times per line with errorContext=None, initial finding_id scheme collapsed 2030
+  genuinely distinct violations into duplicates -- fixed by adding errorRange+errorDetail
+  to the id hash, cleaned up the 12415 stale pre-fix rows from the DB. Re-ran after
+  fix: 0 new findings (idempotent, confirmed).'
+- Ran all 3 pipelines for real against real repos, verified idempotent re-run for
+  each (0 new_findings on unchanged target)
+- 'Registered plan file + 6 new Phase 3 artifacts in knowledge_engine (superboss-register.py
+  register-knowledge): plan file, ai-os/.sqlfluff, audit_pipeline_data_model.py, ISO25010_QUALITY_RULESET_2026-07-24.mjs,
+  audit_pipeline_product_quality.py, audit_pipeline_documentation.py, close_phase3_auditor_engine.py.
+  All tagged domain:veridian-auditor-engine-0-inventory + phase:3.'
+- 'Wrote ai-os-scripts/close_phase3_auditor_engine.py, ran it for real: appended status+evidence
+  to phases[3] in AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml (live DB-query-derived,
+  same pattern as close_out_auditor_engine_phase2.py). YAML re-validated (yaml.safe_load
+  succeeds).'
+- 'Verified success criteria: `query-knowledge "phase-3" --tag domain:veridian-auditor-engine-0-inventory`
+  returns 7 rows (>=1 required); confirmed query text is meaningful FTS not just tag-filtering
+  (nonsense query returns 0). `grep "phase: 3"` + status block present in plan file.'
+- 'Committed + pushed, opened PR #37: https://github.com/FChecklist/claude-control/pull/37'
+remaining_steps: &id003 []
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-24T12:21:45.987698+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  - 'd092587 Merge pull request #32 from FChecklist/worker/task-20260724-115921-phase2-directory-scoped-guardrail-rollou'
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  - '07c12c5 Phase 2 directory-scoped guardrail rollout: full 4-tier sweep, 488-finding
+    baseline'
+  - 'b43c50c Phase 3 (route replay storage + diff): route_replay table + capture/replay
+    runner'
+  - '40b8f7d Merge pull request #31 from FChecklist/worker/task-20260724-115041-phase2-give-policy-engine-preflight-guar'
+  - '9b6bddd Phase 2 (policy_rule_decision_unification): shared Policy Engine decision
+    schema'
+  - 6af15c5 Auto-sync 2 server task(s) to master controller
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-24T12:26:47.022714+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  - 'd092587 Merge pull request #32 from FChecklist/worker/task-20260724-115921-phase2-directory-scoped-guardrail-rollou'
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  - '07c12c5 Phase 2 directory-scoped guardrail rollout: full 4-tier sweep, 488-finding
+    baseline'
+  - 'b43c50c Phase 3 (route replay storage + diff): route_replay table + capture/replay
+    runner'
+  - '40b8f7d Merge pull request #31 from FChecklist/worker/task-20260724-115041-phase2-give-policy-engine-preflight-guar'
+  - '9b6bddd Phase 2 (policy_rule_decision_unification): shared Policy Engine decision
+    schema'
+  - 6af15c5 Auto-sync 2 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-24T12:31:48.114021+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os-scripts/audit_pipeline_data_model.py
+  completed_steps:
+  - Read full AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml + Phase 1/2 evidence scripts
+    for convention reuse
+  - 'Confirmed real inputs: compliance-tracker/projexa drizzle/*.sql, veda-advisors
+    prisma/schema.prisma, 3 repos'' eslint.config.mjs, no existing markdownlint/sqlfluff
+    on PATH'
+  - Installed sqlfluff 4.2.2 in its own venv (~/.local/share/veridian-tool-venvs/sqlfluff,
+    symlinked ~/.local/bin/sqlfluff) -- same convention as checkov/schemathesis
+  - Installed markdownlint-cli 0.49.1 (~/.local/share/veridian-node-tools/markdownlint-cli,
+    symlinked ~/.local/bin/markdownlint)
+  - Authored ai-os/.sqlfluff (postgres dialect, exclude layout/capitalisation rule
+    groups -- documented rationale + real before/after counts, raised large_file_skip_byte_limit
+    so no real migration files are silently skipped)
+  remaining_steps:
+  - Write custom RLS-presence check (drizzle CREATE TABLE vs ALTER TABLE ... ENABLE
+    ROW LEVEL SECURITY)
+  - Write ai-os-scripts/audit_pipeline_data_model.py (sqlfluff + RLS-presence + prisma
+    validate) -> audit_findings table, domain=data-model
+  - Author ai-os/eslint/ISO25010_QUALITY_RULESET_2026-07-24.mjs (ESLint rules mapped
+    to ISO 25010 sub-characteristics)
+  - Write ai-os-scripts/audit_pipeline_product_quality.py (eslint against src/lib
+    in each repo) -> domain=product-quality
+  - Write ai-os-scripts/audit_pipeline_documentation.py (markdownlint-cli) -> domain=documentation
+  - Run all 3 pipelines for real against real repos, verify idempotent re-run
+  - Register plan file + new tools/artifacts in knowledge_engine (superboss-register.py
+    register-knowledge), tags incl. domain:veridian-auditor-engine-0-inventory, purpose
+    text containing "Phase 3"
+  - Write ai-os-scripts/close_phase3_auditor_engine.py to append status+evidence to
+    phases[3] in AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml (produced from live DB
+    query, same pattern as close_out_auditor_engine_phase2.py)
+  - 'Verify success criteria: query-knowledge "phase-3" --tag domain:veridian-auditor-engine-0-inventory
+    returns >=1 row; grep "phase: 3" status updated in plan file'
+  - Commit + push, open PR
+  recent_commits:
+  - 'b3c18cd Phase 3 setup: sqlfluff config for data-model domain'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  - 'd092587 Merge pull request #32 from FChecklist/worker/task-20260724-115921-phase2-directory-scoped-guardrail-rollou'
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  - '07c12c5 Phase 2 directory-scoped guardrail rollout: full 4-tier sweep, 488-finding
+    baseline'
+  - 'b43c50c Phase 3 (route replay storage + diff): route_replay table + capture/replay
+    runner'
+  - '40b8f7d Merge pull request #31 from FChecklist/worker/task-20260724-115041-phase2-give-policy-engine-preflight-guar'
+  - '9b6bddd Phase 2 (policy_rule_decision_unification): shared Policy Engine decision
+    schema'
+  note: periodic checkpoint
+- at: '2026-07-24T12:32:53.012505+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Read full AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml + Phase 1/2 evidence scripts
+    for convention reuse
+  - 'Confirmed real inputs: compliance-tracker/projexa drizzle/*.sql, veda-advisors
+    prisma/schema.prisma, 3 repos'' eslint.config.mjs, no existing markdownlint/sqlfluff
+    on PATH'
+  - Installed sqlfluff 4.2.2 in its own venv (~/.local/share/veridian-tool-venvs/sqlfluff,
+    symlinked ~/.local/bin/sqlfluff) -- same convention as checkov/schemathesis
+  - Installed markdownlint-cli 0.49.1 (~/.local/share/veridian-node-tools/markdownlint-cli,
+    symlinked ~/.local/bin/markdownlint)
+  - Authored ai-os/.sqlfluff (postgres dialect, exclude layout/capitalisation rule
+    groups -- documented rationale + real before/after counts, raised large_file_skip_byte_limit
+    so no real migration files are silently skipped)
+  remaining_steps:
+  - Write custom RLS-presence check (drizzle CREATE TABLE vs ALTER TABLE ... ENABLE
+    ROW LEVEL SECURITY)
+  - Write ai-os-scripts/audit_pipeline_data_model.py (sqlfluff + RLS-presence + prisma
+    validate) -> audit_findings table, domain=data-model
+  - Author ai-os/eslint/ISO25010_QUALITY_RULESET_2026-07-24.mjs (ESLint rules mapped
+    to ISO 25010 sub-characteristics)
+  - Write ai-os-scripts/audit_pipeline_product_quality.py (eslint against src/lib
+    in each repo) -> domain=product-quality
+  - Write ai-os-scripts/audit_pipeline_documentation.py (markdownlint-cli) -> domain=documentation
+  - Run all 3 pipelines for real against real repos, verify idempotent re-run
+  - Register plan file + new tools/artifacts in knowledge_engine (superboss-register.py
+    register-knowledge), tags incl. domain:veridian-auditor-engine-0-inventory, purpose
+    text containing "Phase 3"
+  - Write ai-os-scripts/close_phase3_auditor_engine.py to append status+evidence to
+    phases[3] in AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml (produced from live DB
+    query, same pattern as close_out_auditor_engine_phase2.py)
+  - 'Verify success criteria: query-knowledge "phase-3" --tag domain:veridian-auditor-engine-0-inventory
+    returns >=1 row; grep "phase: 3" status updated in plan file'
+  - Commit + push, open PR
+  recent_commits:
+  - '22051ab Worker task-20260724-122143-phase3-data-model-static-quality-linting:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'b3c18cd Phase 3 setup: sqlfluff config for data-model domain'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  - 'd092587 Merge pull request #32 from FChecklist/worker/task-20260724-115921-phase2-directory-scoped-guardrail-rollou'
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  - '07c12c5 Phase 2 directory-scoped guardrail rollout: full 4-tier sweep, 488-finding
+    baseline'
+  - 'b43c50c Phase 3 (route replay storage + diff): route_replay table + capture/replay
+    runner'
+  - '40b8f7d Merge pull request #31 from FChecklist/worker/task-20260724-115041-phase2-give-policy-engine-preflight-guar'
+  note: worker exited with code 1; failure signature recorded for circuit breaker;
+    pushed whatever progress existed; systemd will retry up to the burst limit
+- at: '2026-07-24T12:33:24.701864+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read full AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml + Phase 1/2 evidence scripts
+    for convention reuse
+  - 'Confirmed real inputs: compliance-tracker/projexa drizzle/*.sql, veda-advisors
+    prisma/schema.prisma, 3 repos'' eslint.config.mjs, no existing markdownlint/sqlfluff
+    on PATH'
+  - Installed sqlfluff 4.2.2 in its own venv (~/.local/share/veridian-tool-venvs/sqlfluff,
+    symlinked ~/.local/bin/sqlfluff) -- same convention as checkov/schemathesis
+  - Installed markdownlint-cli 0.49.1 (~/.local/share/veridian-node-tools/markdownlint-cli,
+    symlinked ~/.local/bin/markdownlint)
+  - Authored ai-os/.sqlfluff (postgres dialect, exclude layout/capitalisation rule
+    groups -- documented rationale + real before/after counts, raised large_file_skip_byte_limit
+    so no real migration files are silently skipped)
+  remaining_steps:
+  - Write custom RLS-presence check (drizzle CREATE TABLE vs ALTER TABLE ... ENABLE
+    ROW LEVEL SECURITY)
+  - Write ai-os-scripts/audit_pipeline_data_model.py (sqlfluff + RLS-presence + prisma
+    validate) -> audit_findings table, domain=data-model
+  - Author ai-os/eslint/ISO25010_QUALITY_RULESET_2026-07-24.mjs (ESLint rules mapped
+    to ISO 25010 sub-characteristics)
+  - Write ai-os-scripts/audit_pipeline_product_quality.py (eslint against src/lib
+    in each repo) -> domain=product-quality
+  - Write ai-os-scripts/audit_pipeline_documentation.py (markdownlint-cli) -> domain=documentation
+  - Run all 3 pipelines for real against real repos, verify idempotent re-run
+  - Register plan file + new tools/artifacts in knowledge_engine (superboss-register.py
+    register-knowledge), tags incl. domain:veridian-auditor-engine-0-inventory, purpose
+    text containing "Phase 3"
+  - Write ai-os-scripts/close_phase3_auditor_engine.py to append status+evidence to
+    phases[3] in AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml (produced from live DB
+    query, same pattern as close_out_auditor_engine_phase2.py)
+  - 'Verify success criteria: query-knowledge "phase-3" --tag domain:veridian-auditor-engine-0-inventory
+    returns >=1 row; grep "phase: 3" status updated in plan file'
+  - Commit + push, open PR
+  recent_commits:
+  - '22051ab Worker task-20260724-122143-phase3-data-model-static-quality-linting:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'b3c18cd Phase 3 setup: sqlfluff config for data-model domain'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  - 'd092587 Merge pull request #32 from FChecklist/worker/task-20260724-115921-phase2-directory-scoped-guardrail-rollou'
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  - '07c12c5 Phase 2 directory-scoped guardrail rollout: full 4-tier sweep, 488-finding
+    baseline'
+  - 'b43c50c Phase 3 (route replay storage + diff): route_replay table + capture/replay
+    runner'
+  - '40b8f7d Merge pull request #31 from FChecklist/worker/task-20260724-115041-phase2-give-policy-engine-preflight-guar'
+  note: worker started (resume=1, lifetime invocation 2/20, pre-flight passed)
+- at: '2026-07-24T12:33:29.244794+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Read full AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml + Phase 1/2 evidence scripts
+    for convention reuse
+  - 'Confirmed real inputs: compliance-tracker/projexa drizzle/*.sql, veda-advisors
+    prisma/schema.prisma, 3 repos'' eslint.config.mjs, no existing markdownlint/sqlfluff
+    on PATH'
+  - Installed sqlfluff 4.2.2 in its own venv (~/.local/share/veridian-tool-venvs/sqlfluff,
+    symlinked ~/.local/bin/sqlfluff) -- same convention as checkov/schemathesis
+  - Installed markdownlint-cli 0.49.1 (~/.local/share/veridian-node-tools/markdownlint-cli,
+    symlinked ~/.local/bin/markdownlint)
+  - Authored ai-os/.sqlfluff (postgres dialect, exclude layout/capitalisation rule
+    groups -- documented rationale + real before/after counts, raised large_file_skip_byte_limit
+    so no real migration files are silently skipped)
+  remaining_steps:
+  - Write custom RLS-presence check (drizzle CREATE TABLE vs ALTER TABLE ... ENABLE
+    ROW LEVEL SECURITY)
+  - Write ai-os-scripts/audit_pipeline_data_model.py (sqlfluff + RLS-presence + prisma
+    validate) -> audit_findings table, domain=data-model
+  - Author ai-os/eslint/ISO25010_QUALITY_RULESET_2026-07-24.mjs (ESLint rules mapped
+    to ISO 25010 sub-characteristics)
+  - Write ai-os-scripts/audit_pipeline_product_quality.py (eslint against src/lib
+    in each repo) -> domain=product-quality
+  - Write ai-os-scripts/audit_pipeline_documentation.py (markdownlint-cli) -> domain=documentation
+  - Run all 3 pipelines for real against real repos, verify idempotent re-run
+  - Register plan file + new tools/artifacts in knowledge_engine (superboss-register.py
+    register-knowledge), tags incl. domain:veridian-auditor-engine-0-inventory, purpose
+    text containing "Phase 3"
+  - Write ai-os-scripts/close_phase3_auditor_engine.py to append status+evidence to
+    phases[3] in AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml (produced from live DB
+    query, same pattern as close_out_auditor_engine_phase2.py)
+  - 'Verify success criteria: query-knowledge "phase-3" --tag domain:veridian-auditor-engine-0-inventory
+    returns >=1 row; grep "phase: 3" status updated in plan file'
+  - Commit + push, open PR
+  recent_commits:
+  - '22051ab Worker task-20260724-122143-phase3-data-model-static-quality-linting:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'b3c18cd Phase 3 setup: sqlfluff config for data-model domain'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  - 'd092587 Merge pull request #32 from FChecklist/worker/task-20260724-115921-phase2-directory-scoped-guardrail-rollou'
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  - '07c12c5 Phase 2 directory-scoped guardrail rollout: full 4-tier sweep, 488-finding
+    baseline'
+  - 'b43c50c Phase 3 (route replay storage + diff): route_replay table + capture/replay
+    runner'
+  - '40b8f7d Merge pull request #31 from FChecklist/worker/task-20260724-115041-phase2-give-policy-engine-preflight-guar'
+  note: worker exited with code 1; failure signature recorded for circuit breaker;
+    pushed whatever progress existed; systemd will retry up to the burst limit
+- at: '2026-07-24T12:34:00.666393+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read full AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml + Phase 1/2 evidence scripts
+    for convention reuse
+  - 'Confirmed real inputs: compliance-tracker/projexa drizzle/*.sql, veda-advisors
+    prisma/schema.prisma, 3 repos'' eslint.config.mjs, no existing markdownlint/sqlfluff
+    on PATH'
+  - Installed sqlfluff 4.2.2 in its own venv (~/.local/share/veridian-tool-venvs/sqlfluff,
+    symlinked ~/.local/bin/sqlfluff) -- same convention as checkov/schemathesis
+  - Installed markdownlint-cli 0.49.1 (~/.local/share/veridian-node-tools/markdownlint-cli,
+    symlinked ~/.local/bin/markdownlint)
+  - Authored ai-os/.sqlfluff (postgres dialect, exclude layout/capitalisation rule
+    groups -- documented rationale + real before/after counts, raised large_file_skip_byte_limit
+    so no real migration files are silently skipped)
+  remaining_steps:
+  - Write custom RLS-presence check (drizzle CREATE TABLE vs ALTER TABLE ... ENABLE
+    ROW LEVEL SECURITY)
+  - Write ai-os-scripts/audit_pipeline_data_model.py (sqlfluff + RLS-presence + prisma
+    validate) -> audit_findings table, domain=data-model
+  - Author ai-os/eslint/ISO25010_QUALITY_RULESET_2026-07-24.mjs (ESLint rules mapped
+    to ISO 25010 sub-characteristics)
+  - Write ai-os-scripts/audit_pipeline_product_quality.py (eslint against src/lib
+    in each repo) -> domain=product-quality
+  - Write ai-os-scripts/audit_pipeline_documentation.py (markdownlint-cli) -> domain=documentation
+  - Run all 3 pipelines for real against real repos, verify idempotent re-run
+  - Register plan file + new tools/artifacts in knowledge_engine (superboss-register.py
+    register-knowledge), tags incl. domain:veridian-auditor-engine-0-inventory, purpose
+    text containing "Phase 3"
+  - Write ai-os-scripts/close_phase3_auditor_engine.py to append status+evidence to
+    phases[3] in AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml (produced from live DB
+    query, same pattern as close_out_auditor_engine_phase2.py)
+  - 'Verify success criteria: query-knowledge "phase-3" --tag domain:veridian-auditor-engine-0-inventory
+    returns >=1 row; grep "phase: 3" status updated in plan file'
+  - Commit + push, open PR
+  recent_commits:
+  - '22051ab Worker task-20260724-122143-phase3-data-model-static-quality-linting:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'b3c18cd Phase 3 setup: sqlfluff config for data-model domain'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  - 'd092587 Merge pull request #32 from FChecklist/worker/task-20260724-115921-phase2-directory-scoped-guardrail-rollou'
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  - '07c12c5 Phase 2 directory-scoped guardrail rollout: full 4-tier sweep, 488-finding
+    baseline'
+  - 'b43c50c Phase 3 (route replay storage + diff): route_replay table + capture/replay
+    runner'
+  - '40b8f7d Merge pull request #31 from FChecklist/worker/task-20260724-115041-phase2-give-policy-engine-preflight-guar'
+  note: worker started (resume=1, lifetime invocation 3/20, pre-flight passed)
+- at: '2026-07-24T12:34:05.223243+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Read full AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml + Phase 1/2 evidence scripts
+    for convention reuse
+  - 'Confirmed real inputs: compliance-tracker/projexa drizzle/*.sql, veda-advisors
+    prisma/schema.prisma, 3 repos'' eslint.config.mjs, no existing markdownlint/sqlfluff
+    on PATH'
+  - Installed sqlfluff 4.2.2 in its own venv (~/.local/share/veridian-tool-venvs/sqlfluff,
+    symlinked ~/.local/bin/sqlfluff) -- same convention as checkov/schemathesis
+  - Installed markdownlint-cli 0.49.1 (~/.local/share/veridian-node-tools/markdownlint-cli,
+    symlinked ~/.local/bin/markdownlint)
+  - Authored ai-os/.sqlfluff (postgres dialect, exclude layout/capitalisation rule
+    groups -- documented rationale + real before/after counts, raised large_file_skip_byte_limit
+    so no real migration files are silently skipped)
+  remaining_steps:
+  - Write custom RLS-presence check (drizzle CREATE TABLE vs ALTER TABLE ... ENABLE
+    ROW LEVEL SECURITY)
+  - Write ai-os-scripts/audit_pipeline_data_model.py (sqlfluff + RLS-presence + prisma
+    validate) -> audit_findings table, domain=data-model
+  - Author ai-os/eslint/ISO25010_QUALITY_RULESET_2026-07-24.mjs (ESLint rules mapped
+    to ISO 25010 sub-characteristics)
+  - Write ai-os-scripts/audit_pipeline_product_quality.py (eslint against src/lib
+    in each repo) -> domain=product-quality
+  - Write ai-os-scripts/audit_pipeline_documentation.py (markdownlint-cli) -> domain=documentation
+  - Run all 3 pipelines for real against real repos, verify idempotent re-run
+  - Register plan file + new tools/artifacts in knowledge_engine (superboss-register.py
+    register-knowledge), tags incl. domain:veridian-auditor-engine-0-inventory, purpose
+    text containing "Phase 3"
+  - Write ai-os-scripts/close_phase3_auditor_engine.py to append status+evidence to
+    phases[3] in AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml (produced from live DB
+    query, same pattern as close_out_auditor_engine_phase2.py)
+  - 'Verify success criteria: query-knowledge "phase-3" --tag domain:veridian-auditor-engine-0-inventory
+    returns >=1 row; grep "phase: 3" status updated in plan file'
+  - Commit + push, open PR
+  recent_commits:
+  - '22051ab Worker task-20260724-122143-phase3-data-model-static-quality-linting:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'b3c18cd Phase 3 setup: sqlfluff config for data-model domain'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  - 'd092587 Merge pull request #32 from FChecklist/worker/task-20260724-115921-phase2-directory-scoped-guardrail-rollou'
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  - '07c12c5 Phase 2 directory-scoped guardrail rollout: full 4-tier sweep, 488-finding
+    baseline'
+  - 'b43c50c Phase 3 (route replay storage + diff): route_replay table + capture/replay
+    runner'
+  - '40b8f7d Merge pull request #31 from FChecklist/worker/task-20260724-115041-phase2-give-policy-engine-preflight-guar'
+  note: worker exited with code 1; failure signature recorded for circuit breaker;
+    pushed whatever progress existed; systemd will retry up to the burst limit
+- at: '2026-07-24T13:25:33.224862+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read full AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml + Phase 1/2 evidence scripts
+    for convention reuse
+  - 'Confirmed real inputs: compliance-tracker/projexa drizzle/*.sql, veda-advisors
+    prisma/schema.prisma, 3 repos'' eslint.config.mjs, no existing markdownlint/sqlfluff
+    on PATH'
+  - Installed sqlfluff 4.2.2 in its own venv (~/.local/share/veridian-tool-venvs/sqlfluff,
+    symlinked ~/.local/bin/sqlfluff) -- same convention as checkov/schemathesis
+  - Installed markdownlint-cli 0.49.1 (~/.local/share/veridian-node-tools/markdownlint-cli,
+    symlinked ~/.local/bin/markdownlint)
+  - Authored ai-os/.sqlfluff (postgres dialect, exclude layout/capitalisation rule
+    groups -- documented rationale + real before/after counts, raised large_file_skip_byte_limit
+    so no real migration files are silently skipped)
+  remaining_steps:
+  - Write custom RLS-presence check (drizzle CREATE TABLE vs ALTER TABLE ... ENABLE
+    ROW LEVEL SECURITY)
+  - Write ai-os-scripts/audit_pipeline_data_model.py (sqlfluff + RLS-presence + prisma
+    validate) -> audit_findings table, domain=data-model
+  - Author ai-os/eslint/ISO25010_QUALITY_RULESET_2026-07-24.mjs (ESLint rules mapped
+    to ISO 25010 sub-characteristics)
+  - Write ai-os-scripts/audit_pipeline_product_quality.py (eslint against src/lib
+    in each repo) -> domain=product-quality
+  - Write ai-os-scripts/audit_pipeline_documentation.py (markdownlint-cli) -> domain=documentation
+  - Run all 3 pipelines for real against real repos, verify idempotent re-run
+  - Register plan file + new tools/artifacts in knowledge_engine (superboss-register.py
+    register-knowledge), tags incl. domain:veridian-auditor-engine-0-inventory, purpose
+    text containing "Phase 3"
+  - Write ai-os-scripts/close_phase3_auditor_engine.py to append status+evidence to
+    phases[3] in AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml (produced from live DB
+    query, same pattern as close_out_auditor_engine_phase2.py)
+  - 'Verify success criteria: query-knowledge "phase-3" --tag domain:veridian-auditor-engine-0-inventory
+    returns >=1 row; grep "phase: 3" status updated in plan file'
+  - Commit + push, open PR
+  recent_commits:
+  - '22051ab Worker task-20260724-122143-phase3-data-model-static-quality-linting:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'b3c18cd Phase 3 setup: sqlfluff config for data-model domain'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  - 'd092587 Merge pull request #32 from FChecklist/worker/task-20260724-115921-phase2-directory-scoped-guardrail-rollou'
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  - '07c12c5 Phase 2 directory-scoped guardrail rollout: full 4-tier sweep, 488-finding
+    baseline'
+  - 'b43c50c Phase 3 (route replay storage + diff): route_replay table + capture/replay
+    runner'
+  - '40b8f7d Merge pull request #31 from FChecklist/worker/task-20260724-115041-phase2-give-policy-engine-preflight-guar'
+  note: worker started (resume=1, lifetime invocation 4/20, pre-flight passed)
+- at: '2026-07-24T13:30:37.162252+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/eslint/
+  completed_steps:
+  - Read full AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml + Phase 1/2 evidence scripts
+    for convention reuse
+  - 'Confirmed real inputs: compliance-tracker/projexa drizzle/*.sql, veda-advisors
+    prisma/schema.prisma, 3 repos'' eslint.config.mjs, no existing markdownlint/sqlfluff
+    on PATH'
+  - Installed sqlfluff 4.2.2 in its own venv (~/.local/share/veridian-tool-venvs/sqlfluff,
+    symlinked ~/.local/bin/sqlfluff) -- same convention as checkov/schemathesis
+  - Installed markdownlint-cli 0.49.1 (~/.local/share/veridian-node-tools/markdownlint-cli,
+    symlinked ~/.local/bin/markdownlint)
+  - Authored ai-os/.sqlfluff (postgres dialect, exclude layout/capitalisation rule
+    groups -- documented rationale + real before/after counts, raised large_file_skip_byte_limit
+    so no real migration files are silently skipped)
+  - Wrote custom RLS-presence check inline in audit_pipeline_data_model.py (drizzle
+    CREATE TABLE vs ALTER TABLE ... ENABLE ROW LEVEL SECURITY, whole-tree two-pass
+    match)
+  - 'Wrote ai-os-scripts/audit_pipeline_data_model.py (sqlfluff + RLS-presence for
+    compliance-tracker/projexa, prisma validate for veda-advisors) -> audit_findings
+    table, domain=data-model. Ran for real: 1779 findings (1528+205 compliance-tracker,
+    45+1 projexa, 0 veda-advisors). Re-ran: 0 new findings (idempotent, confirmed).'
+  remaining_steps:
+  - Author ai-os/eslint/ISO25010_QUALITY_RULESET_2026-07-24.mjs (ESLint rules mapped
+    to ISO 25010 sub-characteristics)
+  - Write ai-os-scripts/audit_pipeline_product_quality.py (eslint against src/lib
+    in each repo) -> domain=product-quality
+  - Write ai-os-scripts/audit_pipeline_documentation.py (markdownlint-cli) -> domain=documentation
+  - Run all 3 pipelines for real against real repos, verify idempotent re-run
+  - Register plan file + new tools/artifacts in knowledge_engine (superboss-register.py
+    register-knowledge), tags incl. domain:veridian-auditor-engine-0-inventory, purpose
+    text containing "Phase 3"
+  - Write ai-os-scripts/close_phase3_auditor_engine.py to append status+evidence to
+    phases[3] in AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml (produced from live DB
+    query, same pattern as close_out_auditor_engine_phase2.py)
+  - 'Verify success criteria: query-knowledge "phase-3" --tag domain:veridian-auditor-engine-0-inventory
+    returns >=1 row; grep "phase: 3" status updated in plan file'
+  - Commit + push, open PR
+  recent_commits:
+  - '22051ab Worker task-20260724-122143-phase3-data-model-static-quality-linting:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'b3c18cd Phase 3 setup: sqlfluff config for data-model domain'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  - 'd092587 Merge pull request #32 from FChecklist/worker/task-20260724-115921-phase2-directory-scoped-guardrail-rollou'
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  - '07c12c5 Phase 2 directory-scoped guardrail rollout: full 4-tier sweep, 488-finding
+    baseline'
+  - 'b43c50c Phase 3 (route replay storage + diff): route_replay table + capture/replay
+    runner'
+  - '40b8f7d Merge pull request #31 from FChecklist/worker/task-20260724-115041-phase2-give-policy-engine-preflight-guar'
+  note: periodic checkpoint
+- at: '2026-07-24T13:35:38.259888+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read full AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml + Phase 1/2 evidence scripts
+    for convention reuse
+  - 'Confirmed real inputs: compliance-tracker/projexa drizzle/*.sql, veda-advisors
+    prisma/schema.prisma, 3 repos'' eslint.config.mjs, no existing markdownlint/sqlfluff
+    on PATH'
+  - Installed sqlfluff 4.2.2 in its own venv (~/.local/share/veridian-tool-venvs/sqlfluff,
+    symlinked ~/.local/bin/sqlfluff) -- same convention as checkov/schemathesis
+  - Installed markdownlint-cli 0.49.1 (~/.local/share/veridian-node-tools/markdownlint-cli,
+    symlinked ~/.local/bin/markdownlint)
+  - Authored ai-os/.sqlfluff (postgres dialect, exclude layout/capitalisation rule
+    groups -- documented rationale + real before/after counts, raised large_file_skip_byte_limit
+    so no real migration files are silently skipped)
+  - Wrote custom RLS-presence check inline in audit_pipeline_data_model.py (drizzle
+    CREATE TABLE vs ALTER TABLE ... ENABLE ROW LEVEL SECURITY, whole-tree two-pass
+    match)
+  - 'Wrote ai-os-scripts/audit_pipeline_data_model.py (sqlfluff + RLS-presence for
+    compliance-tracker/projexa, prisma validate for veda-advisors) -> audit_findings
+    table, domain=data-model. Ran for real: 1779 findings (1528+205 compliance-tracker,
+    45+1 projexa, 0 veda-advisors). Re-ran: 0 new findings (idempotent, confirmed).'
+  - Authored ai-os/eslint/ISO25010_QUALITY_RULESET_2026-07-24.mjs (ESLint rules mapped
+    to ISO 25010 maintainability/reliability sub-characteristics; resolves eslint-config-next/typescript-eslint
+    relative to process.cwd() via createRequire so it works against all 3 repos' own
+    node_modules without a new install)
+  - 'Wrote ai-os-scripts/audit_pipeline_product_quality.py (eslint --config <ruleset>
+    against src/lib in each repo, cwd=repo_path) -> domain=product-quality. Ran for
+    real: 351 findings (all in compliance-tracker; projexa/veda-advisors genuinely
+    clean, confirmed by manual eslint run). Re-ran: 0 new findings (idempotent, confirmed).'
+  remaining_steps:
+  - Write ai-os-scripts/audit_pipeline_documentation.py (markdownlint-cli) -> domain=documentation
+  - Run all 3 pipelines for real against real repos, verify idempotent re-run
+  - Register plan file + new tools/artifacts in knowledge_engine (superboss-register.py
+    register-knowledge), tags incl. domain:veridian-auditor-engine-0-inventory, purpose
+    text containing "Phase 3"
+  - Write ai-os-scripts/close_phase3_auditor_engine.py to append status+evidence to
+    phases[3] in AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml (produced from live DB
+    query, same pattern as close_out_auditor_engine_phase2.py)
+  - 'Verify success criteria: query-knowledge "phase-3" --tag domain:veridian-auditor-engine-0-inventory
+    returns >=1 row; grep "phase: 3" status updated in plan file'
+  - Commit + push, open PR
+  recent_commits:
+  - '78c5134 Phase 3 product-quality pipeline: ESLint ruleset mapped to ISO 25010'
+  - '22051ab Worker task-20260724-122143-phase3-data-model-static-quality-linting:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'b3c18cd Phase 3 setup: sqlfluff config for data-model domain'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  - 'd092587 Merge pull request #32 from FChecklist/worker/task-20260724-115921-phase2-directory-scoped-guardrail-rollou'
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  - '07c12c5 Phase 2 directory-scoped guardrail rollout: full 4-tier sweep, 488-finding
+    baseline'
+  - 'b43c50c Phase 3 (route replay storage + diff): route_replay table + capture/replay
+    runner'
+  note: periodic checkpoint
+- at: '2026-07-24T13:40:39.403639+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os-scripts/close_phase3_auditor_engine.py
+  completed_steps:
+  - Read full AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml + Phase 1/2 evidence scripts
+    for convention reuse
+  - 'Confirmed real inputs: compliance-tracker/projexa drizzle/*.sql, veda-advisors
+    prisma/schema.prisma, 3 repos'' eslint.config.mjs, no existing markdownlint/sqlfluff
+    on PATH'
+  - Installed sqlfluff 4.2.2 in its own venv (~/.local/share/veridian-tool-venvs/sqlfluff,
+    symlinked ~/.local/bin/sqlfluff) -- same convention as checkov/schemathesis
+  - Installed markdownlint-cli 0.49.1 (~/.local/share/veridian-node-tools/markdownlint-cli,
+    symlinked ~/.local/bin/markdownlint)
+  - Authored ai-os/.sqlfluff (postgres dialect, exclude layout/capitalisation rule
+    groups -- documented rationale + real before/after counts, raised large_file_skip_byte_limit
+    so no real migration files are silently skipped)
+  - Wrote custom RLS-presence check inline in audit_pipeline_data_model.py (drizzle
+    CREATE TABLE vs ALTER TABLE ... ENABLE ROW LEVEL SECURITY, whole-tree two-pass
+    match)
+  - 'Wrote ai-os-scripts/audit_pipeline_data_model.py (sqlfluff + RLS-presence for
+    compliance-tracker/projexa, prisma validate for veda-advisors) -> audit_findings
+    table, domain=data-model. Ran for real: 1779 findings (1528+205 compliance-tracker,
+    45+1 projexa, 0 veda-advisors). Re-ran: 0 new findings (idempotent, confirmed).'
+  - Authored ai-os/eslint/ISO25010_QUALITY_RULESET_2026-07-24.mjs (ESLint rules mapped
+    to ISO 25010 maintainability/reliability sub-characteristics; resolves eslint-config-next/typescript-eslint
+    relative to process.cwd() via createRequire so it works against all 3 repos' own
+    node_modules without a new install)
+  - 'Wrote ai-os-scripts/audit_pipeline_product_quality.py (eslint --config <ruleset>
+    against src/lib in each repo, cwd=repo_path) -> domain=product-quality. Ran for
+    real: 351 findings (all in compliance-tracker; projexa/veda-advisors genuinely
+    clean, confirmed by manual eslint run). Re-ran: 0 new findings (idempotent, confirmed).'
+  - 'Wrote ai-os-scripts/audit_pipeline_documentation.py (markdownlint-cli, default
+    ruleset per phase plan''s own "zero authoring" instruction, whole-repo *.md scan
+    excluding node_modules/.next/out/build/dist/.git) -> domain=documentation. Ran
+    for real: 14445 findings (13699 compliance-tracker, 616 projexa, 130 veda-advisors).
+    Found+fixed a real bug during verification: MD060 table-column-style fires multiple
+    times per line with errorContext=None, initial finding_id scheme collapsed 2030
+    genuinely distinct violations into duplicates -- fixed by adding errorRange+errorDetail
+    to the id hash, cleaned up the 12415 stale pre-fix rows from the DB. Re-ran after
+    fix: 0 new findings (idempotent, confirmed).'
+  remaining_steps:
+  - Run all 3 pipelines for real against real repos, verify idempotent re-run
+  - Register plan file + new tools/artifacts in knowledge_engine (superboss-register.py
+    register-knowledge), tags incl. domain:veridian-auditor-engine-0-inventory, purpose
+    text containing "Phase 3"
+  - Write ai-os-scripts/close_phase3_auditor_engine.py to append status+evidence to
+    phases[3] in AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml (produced from live DB
+    query, same pattern as close_out_auditor_engine_phase2.py)
+  - 'Verify success criteria: query-knowledge "phase-3" --tag domain:veridian-auditor-engine-0-inventory
+    returns >=1 row; grep "phase: 3" status updated in plan file'
+  - Commit + push, open PR
+  recent_commits:
+  - 'dd59d41 Phase 3 documentation pipeline: markdownlint-cli default ruleset'
+  - '78c5134 Phase 3 product-quality pipeline: ESLint ruleset mapped to ISO 25010'
+  - '22051ab Worker task-20260724-122143-phase3-data-model-static-quality-linting:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'b3c18cd Phase 3 setup: sqlfluff config for data-model domain'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  - 'd092587 Merge pull request #32 from FChecklist/worker/task-20260724-115921-phase2-directory-scoped-guardrail-rollou'
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  - '07c12c5 Phase 2 directory-scoped guardrail rollout: full 4-tier sweep, 488-finding
+    baseline'
+  note: periodic checkpoint
+- at: '2026-07-24T13:42:46.578579+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read full AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml + Phase 1/2 evidence scripts
+    for convention reuse
+  - 'Confirmed real inputs: compliance-tracker/projexa drizzle/*.sql, veda-advisors
+    prisma/schema.prisma, 3 repos'' eslint.config.mjs, no existing markdownlint/sqlfluff
+    on PATH'
+  - Installed sqlfluff 4.2.2 in its own venv (~/.local/share/veridian-tool-venvs/sqlfluff,
+    symlinked ~/.local/bin/sqlfluff) -- same convention as checkov/schemathesis
+  - Installed markdownlint-cli 0.49.1 (~/.local/share/veridian-node-tools/markdownlint-cli,
+    symlinked ~/.local/bin/markdownlint)
+  - Authored ai-os/.sqlfluff (postgres dialect, exclude layout/capitalisation rule
+    groups -- documented rationale + real before/after counts, raised large_file_skip_byte_limit
+    so no real migration files are silently skipped)
+  - Wrote custom RLS-presence check inline in audit_pipeline_data_model.py (drizzle
+    CREATE TABLE vs ALTER TABLE ... ENABLE ROW LEVEL SECURITY, whole-tree two-pass
+    match)
+  - 'Wrote ai-os-scripts/audit_pipeline_data_model.py (sqlfluff + RLS-presence for
+    compliance-tracker/projexa, prisma validate for veda-advisors) -> audit_findings
+    table, domain=data-model. Ran for real: 1779 findings (1528+205 compliance-tracker,
+    45+1 projexa, 0 veda-advisors). Re-ran: 0 new findings (idempotent, confirmed).'
+  - Authored ai-os/eslint/ISO25010_QUALITY_RULESET_2026-07-24.mjs (ESLint rules mapped
+    to ISO 25010 maintainability/reliability sub-characteristics; resolves eslint-config-next/typescript-eslint
+    relative to process.cwd() via createRequire so it works against all 3 repos' own
+    node_modules without a new install)
+  - 'Wrote ai-os-scripts/audit_pipeline_product_quality.py (eslint --config <ruleset>
+    against src/lib in each repo, cwd=repo_path) -> domain=product-quality. Ran for
+    real: 351 findings (all in compliance-tracker; projexa/veda-advisors genuinely
+    clean, confirmed by manual eslint run). Re-ran: 0 new findings (idempotent, confirmed).'
+  - 'Wrote ai-os-scripts/audit_pipeline_documentation.py (markdownlint-cli, default
+    ruleset per phase plan''s own "zero authoring" instruction, whole-repo *.md scan
+    excluding node_modules/.next/out/build/dist/.git) -> domain=documentation. Ran
+    for real: 14445 findings (13699 compliance-tracker, 616 projexa, 130 veda-advisors).
+    Found+fixed a real bug during verification: MD060 table-column-style fires multiple
+    times per line with errorContext=None, initial finding_id scheme collapsed 2030
+    genuinely distinct violations into duplicates -- fixed by adding errorRange+errorDetail
+    to the id hash, cleaned up the 12415 stale pre-fix rows from the DB. Re-ran after
+    fix: 0 new findings (idempotent, confirmed).'
+  - Ran all 3 pipelines for real against real repos, verified idempotent re-run for
+    each (0 new_findings on unchanged target)
+  - 'Registered plan file + 6 new Phase 3 artifacts in knowledge_engine (superboss-register.py
+    register-knowledge): plan file, ai-os/.sqlfluff, audit_pipeline_data_model.py,
+    ISO25010_QUALITY_RULESET_2026-07-24.mjs, audit_pipeline_product_quality.py, audit_pipeline_documentation.py,
+    close_phase3_auditor_engine.py. All tagged domain:veridian-auditor-engine-0-inventory
+    + phase:3.'
+  - 'Wrote ai-os-scripts/close_phase3_auditor_engine.py, ran it for real: appended
+    status+evidence to phases[3] in AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml (live
+    DB-query-derived, same pattern as close_out_auditor_engine_phase2.py). YAML re-validated
+    (yaml.safe_load succeeds).'
+  - 'Verified success criteria: `query-knowledge "phase-3" --tag domain:veridian-auditor-engine-0-inventory`
+    returns 7 rows (>=1 required); confirmed query text is meaningful FTS not just
+    tag-filtering (nonsense query returns 0). `grep "phase: 3"` + status block present
+    in plan file.'
+  - 'Committed + pushed, opened PR #37: https://github.com/FChecklist/claude-control/pull/37'
+  remaining_steps: []
+  recent_commits:
+  - a388bea Close Phase 3 (data-model + product-quality + documentation linting)
+  - 'dd59d41 Phase 3 documentation pipeline: markdownlint-cli default ruleset'
+  - '78c5134 Phase 3 product-quality pipeline: ESLint ruleset mapped to ISO 25010'
+  - '22051ab Worker task-20260724-122143-phase3-data-model-static-quality-linting:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'b3c18cd Phase 3 setup: sqlfluff config for data-model domain'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  - 'd092587 Merge pull request #32 from FChecklist/worker/task-20260724-115921-phase2-directory-scoped-guardrail-rollou'
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  note: quality gates passed, pushed branch worker/task-20260724-122143-phase3-data-model-static-quality-linting,
+    awaiting review
+- at: '2026-07-24T13:44:25.884675+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - a388bea Close Phase 3 (data-model + product-quality + documentation linting)
+  - 'dd59d41 Phase 3 documentation pipeline: markdownlint-cli default ruleset'
+  - '78c5134 Phase 3 product-quality pipeline: ESLint ruleset mapped to ISO 25010'
+  - '22051ab Worker task-20260724-122143-phase3-data-model-static-quality-linting:
+    checkpoint commit (invocation failed, exit 1)'
+  - 'b3c18cd Phase 3 setup: sqlfluff config for data-model domain'
+  - '1f8cd7e Merge pull request #34 from FChecklist/worker/task-20260724-115044-phase2-api-contract-authoring-linting-co'
+  - '68d9c79 Phase 2: author OpenAPI 3.1 contracts + wire Spectral, ajv-cli, schemathesis'
+  - '295a953 Merge pull request #33 from FChecklist/worker/task-20260724-115924-phase3-route-replay-storage-diff'
+  - 'd092587 Merge pull request #32 from FChecklist/worker/task-20260724-115921-phase2-directory-scoped-guardrail-rollou'
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/37'
+execution_seconds: 1704
+restart_count: 3
+token_usage:
+  input_tokens: 82
+  cache_creation_input_tokens: 115454
+  cache_read_input_tokens: 4088620
+  output_tokens: 37772
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 115454
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 919
+    cache_read_input_tokens: 137751
+    cache_creation_input_tokens: 1294
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1294
+    type: message
+  speed: standard
+master_synced_at: '2026-07-24T14:00:08.623799+00:00'

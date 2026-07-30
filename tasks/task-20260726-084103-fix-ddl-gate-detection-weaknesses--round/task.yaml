@@ -1,0 +1,181 @@
+id: task-20260726-084103-fix-ddl-gate-detection-weaknesses--round
+title: Fix DDL gate detection weaknesses (round 2, real AUDIT REJECT)
+status: completed
+repo: claude-control
+branch: worker/task-20260726-084103-fix-ddl-gate-detection-weaknesses--round
+workspace: /opt/veridian/ai-os/tasks/task-20260726-084103-fix-ddl-gate-detection-weaknesses--round/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-084103-fix-ddl-gate-detection-weaknesses--round
+service: veridian-worker@task-20260726-084103-fix-ddl-gate-detection-weaknesses--round.service
+created_at: '2026-07-26T08:41:04.206452+00:00'
+last_checkpoint_at: '2026-07-26T08:49:27.536007+00:00'
+completed_steps: &id002
+- Read scripts/ddl_authorization_check.py and tests/test_ddl_authorization_check.py
+  in full
+- 'Checked out PR #79''s real branch (worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to)'
+- 'Tightened PRE-APPROVED-LIVE-DDL citation check: now requires a real reference'
+- Widened DDL keyword regex from 5 to 19 real forms, evidence-grounded by grepping
+- Expanded tool-name detection from apply_migration only to the real, verified
+- Added an explicit "Known limitation" section to ddl_authorization_check.py's
+- Extended tests/test_ddl_authorization_check.py from 5 to 17 tests covering the
+- '`python3 -m pytest tests/ -k ddl_authorization -v` -- 17 passed'
+- '`grep -c "CREATE UNIQUE INDEX\|TRUNCATE" scripts/ddl_authorization_check.py` --
+  4'
+- '`grep -n "Known limitation" scripts/ddl_authorization_check.py` -- present'
+- Validated PROTOCOL_OWNER_AI.yaml still parses as valid YAML after edit
+- 'Committed and pushed to PR #79''s branch'
+remaining_steps: &id003
+- 'Fresh audit pass on PR #79 (not to be done by this task -- see CONSTRAINTS)'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T08:41:06.175600+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T08:46:07.356572+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml
+  - scripts/ddl_authorization_check.py
+  - tests/test_ddl_authorization_check.py
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - e23c2d4 Add DDL pre-flight authorization gate to task dispatch
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  - '5a93d3f Fix broken YAML (bare colon in SATISFIED: annotation) + backfill phase_3
+    self-report -- PR 561 merged with real security corrective fix'
+  - 8168e78 Merge branch 'master' of https://github.com/FChecklist/claude-control
+  - 'e6c0e44 Merge pull request #77 from FChecklist/worker/task-20260726-051203-server-owner-ai-protocol-memory-consolid'
+  note: periodic checkpoint
+- at: '2026-07-26T08:46:43.458106+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read scripts/ddl_authorization_check.py and tests/test_ddl_authorization_check.py
+    in full
+  - 'Checked out PR #79''s real branch (worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to)'
+  - 'Tightened PRE-APPROVED-LIVE-DDL citation check: now requires a real reference'
+  - Widened DDL keyword regex from 5 to 19 real forms, evidence-grounded by grepping
+  - Expanded tool-name detection from apply_migration only to the real, verified
+  - Added an explicit "Known limitation" section to ddl_authorization_check.py's
+  - Extended tests/test_ddl_authorization_check.py from 5 to 17 tests covering the
+  - '`python3 -m pytest tests/ -k ddl_authorization -v` -- 17 passed'
+  - '`grep -c "CREATE UNIQUE INDEX\|TRUNCATE" scripts/ddl_authorization_check.py`
+    -- 4'
+  - '`grep -n "Known limitation" scripts/ddl_authorization_check.py` -- present'
+  - Validated PROTOCOL_OWNER_AI.yaml still parses as valid YAML after edit
+  - 'Committed and pushed to PR #79''s branch'
+  remaining_steps:
+  - 'Fresh audit pass on PR #79 (not to be done by this task -- see CONSTRAINTS)'
+  recent_commits:
+  - 'ef16649 Tighten DDL authorization gate: real citation check, wider keyword/tool
+    coverage, honest limitation note'
+  - e23c2d4 Add DDL pre-flight authorization gate to task dispatch
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  - '5a93d3f Fix broken YAML (bare colon in SATISFIED: annotation) + backfill phase_3
+    self-report -- PR 561 merged with real security corrective fix'
+  - 8168e78 Merge branch 'master' of https://github.com/FChecklist/claude-control
+  note: quality gates passed, pushed branch worker/task-20260726-084103-fix-ddl-gate-detection-weaknesses--round,
+    awaiting review
+- at: '2026-07-26T08:49:27.536007+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'ef16649 Tighten DDL authorization gate: real citation check, wider keyword/tool
+    coverage, honest limitation note'
+  - e23c2d4 Add DDL pre-flight authorization gate to task dispatch
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  - '5a93d3f Fix broken YAML (bare colon in SATISFIED: annotation) + backfill phase_3
+    self-report -- PR 561 merged with real security corrective fix'
+  - 8168e78 Merge branch 'master' of https://github.com/FChecklist/claude-control
+  note: "Superboss rejected:  \u2014 see review.json for issues"
+execution_seconds: 336
+restart_count: 0
+token_usage:
+  input_tokens: 68
+  cache_creation_input_tokens: 67142
+  cache_read_input_tokens: 2144502
+  output_tokens: 32580
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 67142
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 687
+    cache_read_input_tokens: 90585
+    cache_creation_input_tokens: 241
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 241
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T10:00:09.697163+00:00'
+status_corrected_at: '2026-07-27T03:38:37.950433+00:00'
+status_correction_reason: 'Real PR #79 already merged -- patch task.yaml status to
+  completed, no redispatch.'
+real_pr_evidence:
+  mergeable: UNKNOWN
+  mergedAt: '2026-07-26T11:59:10Z'
+  reviewDecision: ''
+  state: MERGED
+  title: Add DDL pre-flight authorization gate to task dispatch
+  url: https://github.com/FChecklist/claude-control/pull/79

@@ -1,0 +1,50 @@
+VERIDIAN Review Framework gap-closure: CRM & Sales Modules / Sales Pipeline.
+This covers 14 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] Sales Pipeline: Data Model Completeness & Referential Integrity
+  Gap: No dedicated pipeline/stage-config table; pipeline is derived from crm_leads.status + crm_opportunities.stage text fields
+  Recommended approach: Introduce a configurable pipeline_stages table per org, or per productKey
+- [High] Sales Pipeline: CRUD & Approval Workflow Correctness
+  Gap: No UI to move opportunities through a visual pipeline (drag/drop kanban)
+  Recommended approach: Build a kanban view for Opportunities reusing the existing PMS/Tasks kanban component
+- [Medium] Sales Pipeline: Business Rule & Validation Accuracy
+  Gap: Stage-transition legality is unenforced (see Opportunities' Business Rule finding) -- winRate calc trusts stage values as-is
+  Recommended approach: Validate stage transitions before this dimension can be trusted at Target=5
+- [Low] Sales Pipeline: Multi-Tenant / Multi-Project Isolation
+  Gap: None identified
+  Recommended approach: Re-verify if a pipeline_stages config table is added
+- [High] Sales Pipeline: Reporting & Export Accuracy
+  Gap: Pipeline metrics (stage counts, winRate) are computed but not reportable/exportable in-app
+  Recommended approach: Register a pipeline-overview report in the Reports & Analysis catalog
+- [Medium] Sales Pipeline: AI Copilot / Worker Agent Integration Depth
+  Gap: aiWinProbability exists per-opportunity (see Opportunities module) but there is no pipeline-level AI insight (e.g. 'which deals are at risk this quarter') aggregating across the funnel.
+  Recommended approach: Add a pipeline-level AI summary (e.g. via the existing AI orchestration layer) once a UI exists to show it
+- [Medium] Sales Pipeline: Audit Trail & Change History
+  Gap: Pipeline audit trail unverified in live usage
+  Recommended approach: Same fix as Leads/Opportunities
+- [Critical] Sales Pipeline: Search, Filter & Bulk Operations
+  Gap: No search/filter for the pipeline view since no pipeline view exists in-app
+  Recommended approach: Build alongside the kanban/funnel UI
+- [Medium] Sales Pipeline: Error Handling & Data Validation Messaging
+  Gap: No pipeline-specific error handling since the aggregate endpoint has no in-app consumer to display errors to a user
+  Recommended approach: Build alongside the UI
+- [Medium] Sales Pipeline: Cross-Module Integration Consistency
+  Gap: getSalesPipelineOverview composes cleanly with erp_quotations/erp_sales_orders totals client-side per the code comment, but only for the v1/projexa external API consumer, not VERIDIAN's own UI
+  Recommended approach: Build the in-app consumer to prove out this composition
+- [Critical] Sales Pipeline: Notification & Alert Trigger Correctness
+  Gap: No pipeline-specific notifications (e.g. 'deal stuck in stage X for 30 days') found
+  Recommended approach: Add a stuck-deal digest job, mirroring internal/task-nudge-digest's pattern
+- [Critical] Sales Pipeline: Documentation & In-App Help Coverage
+  Gap: No documentation for a pipeline concept that has no dedicated UI
+  Recommended approach: Document once a UI exists
+- [Critical] Sales Pipeline: Data Import/Export Template Fidelity
+  Gap: No import/export for pipeline data specifically (beyond generic lead/opp gaps already noted)
+  Recommended approach: Bundle with Leads/Opportunities import/export work
+- [Medium] Sales Pipeline: Localization Readiness (multi-currency / multi-language fields)
+  Gap: Pipeline value rolls up crm_opportunities.estimatedValue, which has no currency field (see Opportunities dimension 16)
+  Recommended approach: Fix at the Opportunities data-model level
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

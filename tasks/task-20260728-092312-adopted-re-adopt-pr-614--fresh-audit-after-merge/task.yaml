@@ -1,0 +1,62 @@
+id: task-20260728-092312-adopted-re-adopt-pr-614--fresh-audit-after-merge
+title: 'Re-adopt PR 614: fresh audit after merge-conflict-resolution push'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260728-050606-verify-excel-boq-importer-against-real-p
+workspace: /opt/veridian/ai-os/tasks/task-20260728-092312-adopted-re-adopt-pr-614--fresh-audit-after-merge/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-092312-adopted-re-adopt-pr-614--fresh-audit-after-merge
+service: veridian-supervisor@task-20260728-092312-adopted-re-adopt-pr-614--fresh-audit-after-merge.service
+created_at: '2026-07-28T09:23:13.197019+00:00'
+last_checkpoint_at: '2026-07-28T09:26:49.953965+00:00'
+completed_steps: &id002
+- Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision with
+- Reconstructed the real prospect BoQ file's structural quirks
+- Ran the real importer (`parseBoqSpreadsheet`) against this fixture
+- Fixed `construction-boq-import-service.ts` (import/parsing layer
+- Added a real regression test,
+- 'Verified: `NODE_OPTIONS="--max-old-space-size=8192" npx tsc --noEmit`'
+- 'Constraint check: no cron entries or systemd `.timer` units were'
+remaining_steps: &id003
+- Open a PR on this task's branch (real code fix was required --
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T09:23:13.197019+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+    (https://github.com/FChecklist/compliance-tracker/pull/614) -- registered for
+    real audit, not a fresh worker dispatch
+- at: '2026-07-28T09:26:49.953965+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  - 'b1631f6e docs: Phase 0 SAP-informed VERIDIAN baseline inventory (compliance-tracker
+    + PROJEXA)'
+  - 'c1d5b027 fix: excel BoQ importer drops all real task/sub-task rows on real prospect
+    file shape'
+  - '4d3f978a chore: register ACTIVE-CLAIMS entry for excel BoQ importer verification
+    task'
+  note: "tier1, Superboss-approved, but the merge itself FAILED (gh pr view confirms\
+    \ state=OPEN, mergedAt=; see supervisor.log) \u2014 needs manual attention, NOT\
+    \ actually merged: https://github.com/FChecklist/compliance-tracker/pull/614"
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/614
+master_synced_at: '2026-07-29T21:04:26.612014+00:00'

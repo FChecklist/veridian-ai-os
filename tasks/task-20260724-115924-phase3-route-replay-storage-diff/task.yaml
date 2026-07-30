@@ -1,0 +1,201 @@
+id: task-20260724-115924-phase3-route-replay-storage-diff
+title: phase3-route-replay-storage-diff
+status: completed
+repo: claude-control
+branch: worker/task-20260724-115924-phase3-route-replay-storage-diff
+workspace: /opt/veridian/ai-os/tasks/task-20260724-115924-phase3-route-replay-storage-diff/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260724-115924-phase3-route-replay-storage-diff
+service: veridian-worker@task-20260724-115924-phase3-route-replay-storage-diff.service
+created_at: '2026-07-24T11:59:25.622578+00:00'
+last_checkpoint_at: '2026-07-24T12:09:21.199732+00:00'
+completed_steps: &id002
+- Read TESTING_ENGINE_PHASE_PLAN_2026-07-24.yaml in full; confirmed phase_1 dependency
+  done, phase_3 scope
+- Read ROUTE_REGISTRY_SCHEMA_2026-07-24.yaml (route_record_schema.replay_status field
+  + 5 populated_routes)
+- Read scripts/superboss-register.py conventions (knowledge_engine artifact_path/content_hash
+  pattern, capability_registry table+CLI pattern)
+- Read ai-os-scripts/generate_route_tests.py (Phase 1's dispatch-target derivation
+  + REGISTERED_FIXTURES + targeted-yaml-surgery pattern) to reuse, not duplicate
+- Read scripts/auto_phase_continuation.py to confirm what phase-closure proof it needs
+  (status done-ish + produced_by_task/completed_by_task task id resolving to a real
+  merged PR)
+- Add `route_replay` table (+FTS5+trigger) to scripts/superboss-register.py, reusing
+  knowledge_engine's artifact_path/content_hash convention
+- 'Add CLI subcommands: capture-replay, run-replay, list-replays (smoke-tested against
+  a scratch DB)'
+- 'Build ai-os-scripts/generate_route_replays.py: reuses generate_route_tests.py''s
+  derive_dispatch_target/REGISTERED_FIXTURES, captures real request/response per route,
+  replays against current code, updates ROUTE_REGISTRY_SCHEMA replay_status in place'
+- Ran it for real against the 5 populated_routes; committed evidence under ai-os/testing_engine_evidence/phase3/
+  (4 replayed_match, 1 honestly not_yet_captured/blocked)
+- Registered phase_3 deliverable in knowledge_engine (tag domain:veridian-testing-engine-irvf-phased)
+  via register-knowledge
+- Verified SUCCESS_CRITERIA query-knowledge command returns 1 row
+- 'Wrote ai-os-scripts/close_phase3_testing_engine.py (targeted surgery, same convention
+  as phase 1) to set phase_3 status: done'
+- Verified grep -A3 SUCCESS_CRITERIA passes + full YAML still parses
+- Committed + pushed (2 commits)
+remaining_steps: &id003
+- Open PR
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-24T11:59:27.243363+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'cc0453e Merge pull request #30 from FChecklist/worker/task-20260724-113131-watertight-100pct-gate-and-auto-phase-co'
+  - 'bfb6492 Close Phase-1 stall root cause: SUCCESS_CRITERIA runnable-command gate
+    + auto phase continuation'
+  - 43e5e31 Auto-sync 1 server task(s) to master controller
+  - 3ec77e9 Auto-sync 1 server task(s) to master controller
+  - 'd0a1295 Merge pull request #29 from FChecklist/worker/task-20260724-095857-xpost-github-catalog-batch3-2026-07-24'
+  - 'd703131 Merge batch-3 X-post GitHub catalog: 8 new repos into XPOST_GITHUB_CATALOG_2026-07-24.yaml'
+  - 26aacc6 Auto-sync 1 server task(s) to master controller
+  - 'ecbf3c7 Merge pull request #28 from FChecklist/worker/task-20260724-093519-fix-progressmd-merge-conflicts'
+  - 988cdcb Stop tracking PROGRESS.md in git to eliminate recurring merge conflicts
+  - 'd42594d Merge pull request #27 from FChecklist/worker/task-20260724-091206-xpost-github-catalog-batch2-2026-07-24'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-24T12:04:28.466483+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/superboss-register.py
+  completed_steps:
+  - Read TESTING_ENGINE_PHASE_PLAN_2026-07-24.yaml in full; confirmed phase_1 dependency
+    done, phase_3 scope
+  - Read ROUTE_REGISTRY_SCHEMA_2026-07-24.yaml (route_record_schema.replay_status
+    field + 5 populated_routes)
+  - Read scripts/superboss-register.py conventions (knowledge_engine artifact_path/content_hash
+    pattern, capability_registry table+CLI pattern)
+  - Read ai-os-scripts/generate_route_tests.py (Phase 1's dispatch-target derivation
+    + REGISTERED_FIXTURES + targeted-yaml-surgery pattern) to reuse, not duplicate
+  - Read scripts/auto_phase_continuation.py to confirm what phase-closure proof it
+    needs (status done-ish + produced_by_task/completed_by_task task id resolving
+    to a real merged PR)
+  remaining_steps:
+  - Add `route_replay` table (+FTS5+triggers) to scripts/superboss-register.py, reusing
+    knowledge_engine's artifact_path/content_hash convention
+  - 'Add CLI subcommands: capture-replay, run-replay, list-replays'
+  - 'Build ai-os-scripts/generate_route_replays.py: reuse generate_route_tests.py''s
+    derive_dispatch_target/REGISTERED_FIXTURES, capture real request/response per
+    route, replay-and-diff against current code, update ROUTE_REGISTRY_SCHEMA replay_status
+    in place'
+  - Run it for real against the 5 populated_routes; commit evidence under ai-os/testing_engine_evidence/phase3/
+  - Register phase_3 deliverable in knowledge_engine (tag domain:veridian-testing-engine-irvf-phased)
+    via register-knowledge
+  - Verify SUCCESS_CRITERIA query-knowledge command returns a row
+  - Write close-phase script to update TESTING_ENGINE_PHASE_PLAN_2026-07-24.yaml phase_3
+    status -> done with real evidence (targeted surgery, same convention as phase
+    1)
+  - Verify grep -A3 SUCCESS_CRITERIA passes
+  - Commit + push, open PR
+  recent_commits:
+  - 'cc0453e Merge pull request #30 from FChecklist/worker/task-20260724-113131-watertight-100pct-gate-and-auto-phase-co'
+  - 'bfb6492 Close Phase-1 stall root cause: SUCCESS_CRITERIA runnable-command gate
+    + auto phase continuation'
+  - 43e5e31 Auto-sync 1 server task(s) to master controller
+  - 3ec77e9 Auto-sync 1 server task(s) to master controller
+  - 'd0a1295 Merge pull request #29 from FChecklist/worker/task-20260724-095857-xpost-github-catalog-batch3-2026-07-24'
+  - 'd703131 Merge batch-3 X-post GitHub catalog: 8 new repos into XPOST_GITHUB_CATALOG_2026-07-24.yaml'
+  - 26aacc6 Auto-sync 1 server task(s) to master controller
+  - 'ecbf3c7 Merge pull request #28 from FChecklist/worker/task-20260724-093519-fix-progressmd-merge-conflicts'
+  - 988cdcb Stop tracking PROGRESS.md in git to eliminate recurring merge conflicts
+  - 'd42594d Merge pull request #27 from FChecklist/worker/task-20260724-091206-xpost-github-catalog-batch2-2026-07-24'
+  note: periodic checkpoint
+- at: '2026-07-24T12:07:51.983721+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read TESTING_ENGINE_PHASE_PLAN_2026-07-24.yaml in full; confirmed phase_1 dependency
+    done, phase_3 scope
+  - Read ROUTE_REGISTRY_SCHEMA_2026-07-24.yaml (route_record_schema.replay_status
+    field + 5 populated_routes)
+  - Read scripts/superboss-register.py conventions (knowledge_engine artifact_path/content_hash
+    pattern, capability_registry table+CLI pattern)
+  - Read ai-os-scripts/generate_route_tests.py (Phase 1's dispatch-target derivation
+    + REGISTERED_FIXTURES + targeted-yaml-surgery pattern) to reuse, not duplicate
+  - Read scripts/auto_phase_continuation.py to confirm what phase-closure proof it
+    needs (status done-ish + produced_by_task/completed_by_task task id resolving
+    to a real merged PR)
+  - Add `route_replay` table (+FTS5+trigger) to scripts/superboss-register.py, reusing
+    knowledge_engine's artifact_path/content_hash convention
+  - 'Add CLI subcommands: capture-replay, run-replay, list-replays (smoke-tested against
+    a scratch DB)'
+  - 'Build ai-os-scripts/generate_route_replays.py: reuses generate_route_tests.py''s
+    derive_dispatch_target/REGISTERED_FIXTURES, captures real request/response per
+    route, replays against current code, updates ROUTE_REGISTRY_SCHEMA replay_status
+    in place'
+  - Ran it for real against the 5 populated_routes; committed evidence under ai-os/testing_engine_evidence/phase3/
+    (4 replayed_match, 1 honestly not_yet_captured/blocked)
+  - Registered phase_3 deliverable in knowledge_engine (tag domain:veridian-testing-engine-irvf-phased)
+    via register-knowledge
+  - Verified SUCCESS_CRITERIA query-knowledge command returns 1 row
+  - 'Wrote ai-os-scripts/close_phase3_testing_engine.py (targeted surgery, same convention
+    as phase 1) to set phase_3 status: done'
+  - Verified grep -A3 SUCCESS_CRITERIA passes + full YAML still parses
+  - Committed + pushed (2 commits)
+  remaining_steps:
+  - Open PR
+  recent_commits:
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  - 'b43c50c Phase 3 (route replay storage + diff): route_replay table + capture/replay
+    runner'
+  - 'cc0453e Merge pull request #30 from FChecklist/worker/task-20260724-113131-watertight-100pct-gate-and-auto-phase-co'
+  - 'bfb6492 Close Phase-1 stall root cause: SUCCESS_CRITERIA runnable-command gate
+    + auto phase continuation'
+  - 43e5e31 Auto-sync 1 server task(s) to master controller
+  - 3ec77e9 Auto-sync 1 server task(s) to master controller
+  - 'd0a1295 Merge pull request #29 from FChecklist/worker/task-20260724-095857-xpost-github-catalog-batch3-2026-07-24'
+  - 'd703131 Merge batch-3 X-post GitHub catalog: 8 new repos into XPOST_GITHUB_CATALOG_2026-07-24.yaml'
+  - 26aacc6 Auto-sync 1 server task(s) to master controller
+  - 'ecbf3c7 Merge pull request #28 from FChecklist/worker/task-20260724-093519-fix-progressmd-merge-conflicts'
+  note: quality gates passed, pushed branch worker/task-20260724-115924-phase3-route-replay-storage-diff,
+    awaiting review
+- at: '2026-07-24T12:09:21.199732+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '1b84b45 Close Phase 3 (route replay storage + diff): mark phase_3 status: done'
+  - 'b43c50c Phase 3 (route replay storage + diff): route_replay table + capture/replay
+    runner'
+  - 'cc0453e Merge pull request #30 from FChecklist/worker/task-20260724-113131-watertight-100pct-gate-and-auto-phase-co'
+  - 'bfb6492 Close Phase-1 stall root cause: SUCCESS_CRITERIA runnable-command gate
+    + auto phase continuation'
+  - 43e5e31 Auto-sync 1 server task(s) to master controller
+  - 3ec77e9 Auto-sync 1 server task(s) to master controller
+  - 'd0a1295 Merge pull request #29 from FChecklist/worker/task-20260724-095857-xpost-github-catalog-batch3-2026-07-24'
+  - 'd703131 Merge batch-3 X-post GitHub catalog: 8 new repos into XPOST_GITHUB_CATALOG_2026-07-24.yaml'
+  - 26aacc6 Auto-sync 1 server task(s) to master controller
+  - 'ecbf3c7 Merge pull request #28 from FChecklist/worker/task-20260724-093519-fix-progressmd-merge-conflicts'
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/33'
+execution_seconds: 504
+restart_count: 0
+token_usage:
+  input_tokens: 132
+  cache_creation_input_tokens: 126763
+  cache_read_input_tokens: 6901060
+  output_tokens: 45267
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 126763
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 484
+    cache_read_input_tokens: 149134
+    cache_creation_input_tokens: 1220
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1220
+    type: message
+  speed: standard
+master_synced_at: '2026-07-24T12:30:08.375854+00:00'

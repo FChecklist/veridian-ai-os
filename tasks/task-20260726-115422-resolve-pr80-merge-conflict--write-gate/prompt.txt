@@ -1,0 +1,25 @@
+## OBJECTIVE
+Resolve the real merge conflict on claude-control PR #80 (interactive-session write-gate, round 3 in progress) against origin/master. The conflict arose after PR #84 (branch-resolution fix) merged to master.
+
+## KNOWN_CONTEXT
+`gh pr view 80 --repo FChecklist/claude-control --json mergeable,mergeStateStatus` currently shows CONFLICTING/DIRTY. This PR's content (ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet and related tests, round 3 in progress -- real cgroup check and refspec-parsing fixes for round-2's live-reproduced bypasses) is a separate track of work from PR #84's branch-resolution fix. Do not change the write-gate logic itself in this task; only resolve the conflicting file(s) against the new master.
+
+## SCOPE
+1. Check out PR #80's branch, fetch and merge origin/master, identify the real conflicting file(s) (likely ai-os/MASTER_INDEX.yaml and/or ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml given recent merges to master).
+2. Resolve conflicts by keeping both sides' real content where additive (MASTER_INDEX.yaml registries[] entries, PROTOCOL_OWNER_AI.yaml sections) -- do not drop either side's real content.
+3. After resolving, run the existing write-gate test suite to confirm current logic still passes after the merge.
+4. Push the resolved merge to the existing PR #80 branch.
+
+## SUCCESS_CRITERIA
+- `gh pr view 80 --repo FChecklist/claude-control --json mergeable -q '.mergeable'` returns MERGEABLE after the push.
+- `python3 -m pytest tests/ -k write_gate -v` (or whichever real test file covers this) exits 0 after the merge.
+- `python3 -c "import yaml; yaml.safe_load(open('ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml'))"` succeeds (valid YAML after merge).
+
+## EXPECTED_OUTPUT
+Push the resolved merge directly to the existing PR #80 branch. Do not open a new PR.
+
+## CONSTRAINTS
+Do not change the write-gate's own logic in this task -- this is conflict resolution only, not round 4 of the security hardening. Do not merge yourself.
+
+## COMPLEXITY_TIER
+integrative

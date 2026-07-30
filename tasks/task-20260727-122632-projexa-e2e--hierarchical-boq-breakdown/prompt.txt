@@ -1,0 +1,33 @@
+## OBJECTIVE
+Build the hierarchical BoQ breakdown-% engine, interim-billing/valuation/retention engine, and Excel BoQ importer for compliance-tracker, per Owner directive PROJEXA_ERP_END_TO_END_REQUIREMENT_ANALYSIS_GAP_FILL_AND_IMPLEMENTATION. This closes 3 real gaps confirmed absent by a Phase 0 investigation on 2026-07-27, grounded in the Owner's own provided requirement images and the exact formula the Owner specified.
+
+## KNOWN_CONTEXT
+Verified real state as of 2026-07-27, do not re-derive:
+- `constructionBoqs`/`constructionBoqLineItems` (schema.ts:9446-9483) and `construction-boq-service.ts` (234 lines: create/revision-chain/compare/submit/approve) are real and live. But they only support FLAT line items: `amount = quantity * rate` -- no `parentLineItemId`/hierarchy column, no "breakdown %" field. A DIFFERENT, unrelated feature -- rate buildup (`computedRate()`, Wave 125) -- exists but does NOT do hierarchical breakdown.
+- The Owner's own real note: "Sub-Task Amount = Main QTY * Main RATE * Breakdown %" -- confirmed real requirement from the Owner's provided "Sample Scope with Sub Task.xlsx" data and image #3 (Interactive Work Progress Report Dashboard, which enumerates a real `S.No | Category | Code | Description` table with grouped `PO(Qty/Unit/Rate/Amt)`, `Qty(Prev/Current/Total)`, `Amt(Prev/Current/Total)`, `Percentage(Prev/Current/Total)` columns -- this is the real shape the hierarchy + progress tracking needs to support).
+- Interim billing/valuation/retention-% logic: confirmed absent anywhere in the codebase (grepped `valuation|retention|interim.?bill` across all services, zero real matches).
+- Excel BoQ importer: confirmed absent. `xlsx` package IS a real dependency, used elsewhere for GST spreadsheet import (`src/lib/gst/adapters/spreadsheet-adapter.ts`, `src/lib/gst/column-mapper.ts`) and general data ingest (`src/lib/ingest/parser.ts` + `src/app/api/ingest/route.ts`) -- model the new BoQ importer on these existing, working patterns, do not invent a new xlsx-parsing approach.
+- `TABLE_REGISTRY` (report-engine-service.ts) and the whitelist-only aggregation discipline used throughout this codebase (custom-report-service.ts's `GROUP_BY_FIELDS`) is the established security pattern for any new dynamic-field/aggregation code -- follow it if this work touches dynamic field resolution.
+- `firm-billing-service.ts`'s `generateInvoiceFromUnbilledTime()` (line 81) is the real, working invoice-generation pattern already used for a different module (CA-firm billing) -- model the new interim-billing invoice emission on this pattern's structure (reuses the existing sales-invoice schema/service), do not invent a parallel invoice mechanism.
+- A separate, parallel task (PM gaps, real PR #592) is building a DIFFERENT invoicing feature: PMS timesheet-to-invoice, using `resolveBillableRate()`/`pms-invoice-service.ts`. This task's interim-billing/valuation work is for CONSTRUCTION BoQ progress billing specifically (retention %, milestone-based interim bills against BoQ line items) -- a distinct real feature, not a duplicate. Do not touch `pms-invoice-service.ts` or `pms-time-service.ts` -- that is PM-gaps' own scope.
+
+## SCOPE
+1. **Hierarchical BoQ**: extend `constructionBoqLineItems` with real parent/child nesting (`parentLineItemId` self-reference) and a `breakdownPercentage` column. Update `construction-boq-service.ts` to compute `Sub-Task Amount = Main QTY * Main RATE * Breakdown %` for child line items, with the existing revision-chain/diff logic extended to handle the new hierarchy (a diff between two BoQ revisions must correctly show hierarchy-aware changes, not just flat line diffs).
+2. **Interim billing / valuation / retention engine**: a new service (e.g. `construction-valuation-service.ts`) that computes an interim/RA (Running Account) bill from BoQ work-progress percentage-complete data (`constructionWorkProgressEntries`, already real), applies a real, configurable retention percentage, and emits a real invoice via the existing sales-invoice schema/service (same reuse discipline as `firm-billing-service.ts`'s pattern -- cite the real file/function you're modeling this on in your PR description).
+3. **Excel BoQ importer**: a new import path (service + API route) that parses an uploaded BoQ spreadsheet into the new hierarchical `constructionBoqLineItems` structure, modeled on `src/lib/gst/adapters/spreadsheet-adapter.ts`'s real, working pattern.
+
+## SUCCESS_CRITERIA
+- Real Drizzle migration, service functions, and `requireAuth()`-gated API routes for all 3 pieces.
+- A real test proving the exact Owner formula: given a Main line item (QTY, RATE) and a child breakdown of e.g. 40%/35%/25%, the 3 sub-task amounts sum correctly and each equals `Main QTY * Main RATE * Breakdown %`.
+- A real test proving interim-bill generation correctly applies retention % and emits a real invoice row.
+- A real test proving the Excel importer correctly parses a realistic BoQ spreadsheet (hierarchical rows) into the new schema.
+- `npx tsc --noEmit` clean, `bun test` passing, `get_advisors(security)` zero new findings.
+
+## EXPECTED_OUTPUT
+A real PR against compliance-tracker through the normal task-gateway dispatch pipeline (AGENTS.md Rule 6/7(c) -- structured audit-verdict comment required before merge, no direct push to main).
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do NOT touch `pms-invoice-service.ts`/`pms-time-service.ts` -- that is a separate, parallel task's scope (PMS timesheet-to-invoice, PR #592). Do NOT invent a new invoice table -- reuse the real, existing sales-invoice schema/service, same discipline as `firm-billing-service.ts`. Check `ai-os/boss/ACTIVE-CLAIMS.yaml` for the PM-gaps claim before starting to confirm zero real file-level overlap.
+
+## COMPLEXITY_TIER
+judgment

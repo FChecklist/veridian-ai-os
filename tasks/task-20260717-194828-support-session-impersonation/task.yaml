@@ -1,0 +1,405 @@
+id: task-20260717-194828-support-session-impersonation
+title: Support session impersonation
+status: awaiting_human_approval
+repo: compliance-tracker
+branch: worker/task-20260717-194828-support-session-impersonation
+workspace: /opt/veridian/ai-os/tasks/task-20260717-194828-support-session-impersonation/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260717-194828-support-session-impersonation
+service: veridian-worker@task-20260717-194828-support-session-impersonation.service
+created_at: '2026-07-17T19:48:28.827993+00:00'
+last_checkpoint_at: '2026-07-18T04:20:49.631102+00:00'
+completed_steps: &id002
+- Read auth-guard.ts (veridian_admin / ROLE_RANK), tenant-scoped.ts
+- Confirmed zero pre-existing support-session/impersonation concept
+- Confirmed audit_logs vs activity_log are distinct tables.
+- Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml.
+- 'schema.ts: added supportSessions table (initiatedByUserId/Name,'
+- "drizzle/0224_support_sessions.sql \u2014 table + FORCE RLS 2-policy"
+- 'src/lib/services/support-session-service.ts: startSupportSession/'
+- Extended src/lib/audit.ts's logActivity() with an optional
+- 'Routes: POST /api/support-sessions/start (veridian_admin only),'
+- "src/lib/services/support-session-service.test.ts \u2014 pure-helper unit"
+- Ran tsc --noEmit (0 errors), eslint (0 errors, 3 pre-existing
+- Moved ai-os/boss/ACTIVE-CLAIMS.yaml entry to recently_completed.
+remaining_steps: &id003
+- Open the PR (branch worker/task-20260717-194828-support-session-impersonation).
+- Live DB migration (drizzle/0224_support_sessions.sql) needs to be
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-17T19:48:29.402189+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker started (resume=0)
+- at: '2026-07-17T19:52:50.518985+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - PROGRESS.md
+  completed_steps:
+  - Read auth-guard.ts (veridian_admin / ROLE_RANK), tenant-scoped.ts
+  - Confirmed zero pre-existing support-session/impersonation concept
+  - Confirmed audit_logs vs activity_log are distinct tables.
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml.
+  remaining_steps:
+  - 'schema.ts: add supportSessions table + 2 nullable audit_logs columns'
+  - drizzle/0224_support_sessions.sql migration (table + FORCE RLS
+  - src/lib/services/support-session-service.ts (start/end/token-validate,
+  - Extend src/lib/audit.ts logActivity() with optional supportSession
+  - 'Routes: POST /api/support-sessions/start,'
+  - support-session-service.test.ts (pure helpers).
+  - Run tsc --noEmit, eslint, bun test; report real numbers.
+  - Update this file + move ACTIVE-CLAIMS entry to recently_completed.
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-17T19:53:20.974055+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - PROGRESS.md
+  completed_steps:
+  - Read auth-guard.ts (veridian_admin / ROLE_RANK), tenant-scoped.ts
+  - Confirmed zero pre-existing support-session/impersonation concept
+  - Confirmed audit_logs vs activity_log are distinct tables.
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml.
+  remaining_steps:
+  - 'schema.ts: add supportSessions table + 2 nullable audit_logs columns'
+  - drizzle/0224_support_sessions.sql migration (table + FORCE RLS
+  - src/lib/services/support-session-service.ts (start/end/token-validate,
+  - Extend src/lib/audit.ts logActivity() with optional supportSession
+  - 'Routes: POST /api/support-sessions/start,'
+  - support-session-service.test.ts (pure helpers).
+  - Run tsc --noEmit, eslint, bun test; report real numbers.
+  - Update this file + move ACTIVE-CLAIMS entry to recently_completed.
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker started (resume=1)
+- at: '2026-07-17T19:53:23.094767+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - PROGRESS.md
+  completed_steps:
+  - Read auth-guard.ts (veridian_admin / ROLE_RANK), tenant-scoped.ts
+  - Confirmed zero pre-existing support-session/impersonation concept
+  - Confirmed audit_logs vs activity_log are distinct tables.
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml.
+  remaining_steps:
+  - 'schema.ts: add supportSessions table + 2 nullable audit_logs columns'
+  - drizzle/0224_support_sessions.sql migration (table + FORCE RLS
+  - src/lib/services/support-session-service.ts (start/end/token-validate,
+  - Extend src/lib/audit.ts logActivity() with optional supportSession
+  - 'Routes: POST /api/support-sessions/start,'
+  - support-session-service.test.ts (pure helpers).
+  - Run tsc --noEmit, eslint, bun test; report real numbers.
+  - Update this file + move ACTIVE-CLAIMS entry to recently_completed.
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-17T19:53:53.447404+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - PROGRESS.md
+  completed_steps:
+  - Read auth-guard.ts (veridian_admin / ROLE_RANK), tenant-scoped.ts
+  - Confirmed zero pre-existing support-session/impersonation concept
+  - Confirmed audit_logs vs activity_log are distinct tables.
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml.
+  remaining_steps:
+  - 'schema.ts: add supportSessions table + 2 nullable audit_logs columns'
+  - drizzle/0224_support_sessions.sql migration (table + FORCE RLS
+  - src/lib/services/support-session-service.ts (start/end/token-validate,
+  - Extend src/lib/audit.ts logActivity() with optional supportSession
+  - 'Routes: POST /api/support-sessions/start,'
+  - support-session-service.test.ts (pure helpers).
+  - Run tsc --noEmit, eslint, bun test; report real numbers.
+  - Update this file + move ACTIVE-CLAIMS entry to recently_completed.
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker started (resume=1)
+- at: '2026-07-17T19:53:55.496409+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - PROGRESS.md
+  completed_steps:
+  - Read auth-guard.ts (veridian_admin / ROLE_RANK), tenant-scoped.ts
+  - Confirmed zero pre-existing support-session/impersonation concept
+  - Confirmed audit_logs vs activity_log are distinct tables.
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml.
+  remaining_steps:
+  - 'schema.ts: add supportSessions table + 2 nullable audit_logs columns'
+  - drizzle/0224_support_sessions.sql migration (table + FORCE RLS
+  - src/lib/services/support-session-service.ts (start/end/token-validate,
+  - Extend src/lib/audit.ts logActivity() with optional supportSession
+  - 'Routes: POST /api/support-sessions/start,'
+  - support-session-service.test.ts (pure helpers).
+  - Run tsc --noEmit, eslint, bun test; report real numbers.
+  - Update this file + move ACTIVE-CLAIMS entry to recently_completed.
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-18T04:06:20.550950+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - PROGRESS.md
+  completed_steps:
+  - Read auth-guard.ts (veridian_admin / ROLE_RANK), tenant-scoped.ts
+  - Confirmed zero pre-existing support-session/impersonation concept
+  - Confirmed audit_logs vs activity_log are distinct tables.
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml.
+  remaining_steps:
+  - 'schema.ts: add supportSessions table + 2 nullable audit_logs columns'
+  - drizzle/0224_support_sessions.sql migration (table + FORCE RLS
+  - src/lib/services/support-session-service.ts (start/end/token-validate,
+  - Extend src/lib/audit.ts logActivity() with optional supportSession
+  - 'Routes: POST /api/support-sessions/start,'
+  - support-session-service.test.ts (pure helpers).
+  - Run tsc --noEmit, eslint, bun test; report real numbers.
+  - Update this file + move ACTIVE-CLAIMS entry to recently_completed.
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: worker started (resume=1)
+- at: '2026-07-18T04:11:20.685219+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - src/lib/audit.ts
+  - src/lib/db/schema.ts
+  - PROGRESS.md
+  - drizzle/0224_support_sessions.sql
+  - src/app/api/support-sessions/
+  - src/lib/services/support-session-service.ts
+  completed_steps:
+  - Read auth-guard.ts (veridian_admin / ROLE_RANK), tenant-scoped.ts
+  - Confirmed zero pre-existing support-session/impersonation concept
+  - Confirmed audit_logs vs activity_log are distinct tables.
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml.
+  remaining_steps:
+  - 'schema.ts: add supportSessions table + 2 nullable audit_logs columns'
+  - drizzle/0224_support_sessions.sql migration (table + FORCE RLS
+  - src/lib/services/support-session-service.ts (start/end/token-validate,
+  - Extend src/lib/audit.ts logActivity() with optional supportSession
+  - 'Routes: POST /api/support-sessions/start,'
+  - support-session-service.test.ts (pure helpers).
+  - Run tsc --noEmit, eslint, bun test; report real numbers.
+  - Update this file + move ACTIVE-CLAIMS entry to recently_completed.
+  recent_commits:
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  - c0016d76 Auto-transition change order status on e-signature completion + close
+    approve/reject bypass (#398)
+  note: periodic checkpoint
+- at: '2026-07-18T04:17:51.719239+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read auth-guard.ts (veridian_admin / ROLE_RANK), tenant-scoped.ts
+  - Confirmed zero pre-existing support-session/impersonation concept
+  - Confirmed audit_logs vs activity_log are distinct tables.
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml.
+  - 'schema.ts: added supportSessions table (initiatedByUserId/Name,'
+  - "drizzle/0224_support_sessions.sql \u2014 table + FORCE RLS 2-policy"
+  - 'src/lib/services/support-session-service.ts: startSupportSession/'
+  - Extended src/lib/audit.ts's logActivity() with an optional
+  - 'Routes: POST /api/support-sessions/start (veridian_admin only),'
+  - "src/lib/services/support-session-service.test.ts \u2014 pure-helper unit"
+  - Ran tsc --noEmit (0 errors), eslint (0 errors, 3 pre-existing
+  - Moved ai-os/boss/ACTIVE-CLAIMS.yaml entry to recently_completed.
+  remaining_steps:
+  - Open the PR (branch worker/task-20260717-194828-support-session-impersonation).
+  - Live DB migration (drizzle/0224_support_sessions.sql) needs to be
+  recent_commits:
+  - '05037c8d Worker task-20260717-194828-support-session-impersonation: automated
+    checkpoint commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  note: quality gates passed, pushed branch worker/task-20260717-194828-support-session-impersonation,
+    awaiting review
+- at: '2026-07-18T04:20:49.631102+00:00'
+  status: awaiting_human_approval
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '05037c8d Worker task-20260717-194828-support-session-impersonation: automated
+    checkpoint commit'
+  - 'b3ec5c5a Merge pull request #404 from FChecklist/wave4-erp-rbac-batch1'
+  - d81ce737 Re-trigger CI after severity-field fix
+  - bdac2549 Re-trigger CI after structured audit comment
+  - '3f5b56be wave4-erp-rbac-batch1: add RBAC gates to GL/Journal Entries, Chart of
+    Accounts, Fiscal Year & Periods, Banking'
+  - '7f3fc639 CRM Accounts/Contacts: business-rule validation + RBAC (Review Framework
+    Wave 4) (#402)'
+  - '0f5959bc VERIDIAN Review Framework Wave 4: HR Attendance business-rule validation
+    + RBAC (#403)'
+  - 13bddf6f Add shared ERP permission-check utility; apply RBAC to Fixed Assets,
+    Sales Orders, Quotations (#401)
+  - 'e95ec28e fix: FORCE ROW LEVEL SECURITY on hr_attendance_records/hr_holidays (#400)'
+  - '7c8be903 docs: sync 20-projexa.yaml with PROJEXA-COMPLETION-01 phase 3 closure
+    (change-order e-sig bypass, CI, cross-tenant leak, PRX-11 cleanup) (#399)'
+  note: 'tier2, Superboss-approved, held for human merge: https://github.com/FChecklist/compliance-tracker/pull/412'
+execution_seconds: 860
+restart_count: 3
+token_usage:
+  input_tokens: 184
+  cache_creation_input_tokens: 136231
+  cache_read_input_tokens: 9257693
+  output_tokens: 42929
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 136231
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 841
+    cache_read_input_tokens: 159506
+    cache_creation_input_tokens: 263
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 263
+    type: message
+  speed: standard
+master_synced_at: '2026-07-17T20:00:02.556658+00:00'

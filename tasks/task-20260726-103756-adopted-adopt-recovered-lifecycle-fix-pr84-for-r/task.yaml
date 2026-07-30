@@ -1,0 +1,60 @@
+id: task-20260726-103756-adopted-adopt-recovered-lifecycle-fix-pr84-for-r
+title: Adopt recovered-lifecycle-fix PR84 for retroactive audit
+status: superseded
+repo: claude-control
+branch: recovered-lifecycle-fix-e6c7049
+workspace: /opt/veridian/ai-os/tasks/task-20260726-103756-adopted-adopt-recovered-lifecycle-fix-pr84-for-r/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-103756-adopted-adopt-recovered-lifecycle-fix-pr84-for-r
+service: veridian-supervisor@task-20260726-103756-adopted-adopt-recovered-lifecycle-fix-pr84-for-r.service
+created_at: '2026-07-26T10:37:57.580454+00:00'
+last_checkpoint_at: '2026-07-26T10:47:54.511371+00:00'
+completed_steps: &id002 []
+remaining_steps: &id003 []
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T10:37:57.580454+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'recovered-lifecycle-fix-e6c7049' (https://github.com/FChecklist/claude-control/pull/84)
+    -- registered for real audit, not a fresh worker dispatch
+- at: '2026-07-26T10:47:54.511371+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - e6c7049 Fix stale PR branch + prose-only hold-for-signoff in task lifecycle
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  note: "supervisor could not resolve a real PR for branch 'recovered-lifecycle-fix-e6c7049'\
+    \ (gh pr create failed, no existing open PR found for it) \u2014 refusing to proceed\
+    \ rather than risk operating on an unrelated PR via gh's empty-argument fallback.\
+    \ See supervisor.log."
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/claude-control/pull/84
+master_synced_at: '2026-07-26T11:00:09.616793+00:00'
+duplicate_of: task-20260726-101817-fix-tier1-merge-not-executed-bug---regis
+superseded_reason: 'PR #84 confirmed MERGED 2026-07-26T10:19:37Z; task-20260726-101817
+  already registered+audited it for real (status=completed). Nothing left to adopt.'
+superseded_at: '2026-07-27T04:26:05.905299+00:00'

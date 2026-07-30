@@ -1,0 +1,296 @@
+id: task-20260724-113131-watertight-100pct-gate-and-auto-phase-co
+title: watertight-100pct-gate-and-auto-phase-continuation
+status: completed
+repo: claude-control
+branch: worker/task-20260724-113131-watertight-100pct-gate-and-auto-phase-co
+workspace: /opt/veridian/ai-os/tasks/task-20260724-113131-watertight-100pct-gate-and-auto-phase-co/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260724-113131-watertight-100pct-gate-and-auto-phase-co
+service: veridian-worker@task-20260724-113131-watertight-100pct-gate-and-auto-phase-co.service
+created_at: '2026-07-24T11:31:32.140332+00:00'
+last_checkpoint_at: '2026-07-24T11:54:28.031245+00:00'
+completed_steps: &id002
+- 'Extended `scripts/tight_task_validation.py` with `check_success_criteria_has_runnable_command()`
+  -- a documented heuristic requiring at least one SUCCESS_CRITERIA line that looks
+  like a real runnable shell command. Tested: prose-only -> `valid:false` with `no_runnable_verification_command_in_success_criteria`
+  reason; real-command -> `valid:true`.'
+- Wired `tight_task_validation.py` into `task-gateway.py`'s `cmd_start`, blocking
+  dispatch until fixed. Deployed to live `/opt/veridian/scripts/` (surgical edit,
+  preserving the live file's other unmerged improvements) since that's the copy real
+  dispatch actually runs through.
+- 'Built `scripts/auto_phase_continuation.py`: scans both `/opt/veridian/ai-os/` and
+  `/opt/veridian/repos/claude-control/ai-os/` for `*_PHASE_PLAN_2026-07-24.yaml`,
+  merges live-vs-repo drift, cross-references self-reported phase status against real
+  merged PRs via `gh pr list` (with a master-ref-content fallback for the Auditor
+  Engine Phase 0 case where the originating PR closed unmerged but content landed
+  via a recovery commit), resolves the next dependency-satisfied and not-externally-blocked
+  phase, and dispatches via `task-gateway.py submit`+`start`.'
+- '`--dry-run` verified correct for all 4 initiatives, including correctly skipping
+  Testing Engine''s Phase 2 (unmet external dependency on Auditor Engine Phase 7)
+  in favor of Phase 3.'
+- 'Real (non-dry-run, `--limit 2`) invocation dispatched 2 real next-phase tasks:
+  `task-20260724-115041-phase2-give-policy-engine-preflight-guar` (20-Engines Phase
+  2) and `task-20260724-115044-phase2-api-contract-authoring-linting-co` (Auditor
+  Engine Phase 2), both confirmed `systemd_active: true`.'
+- 'Cron wired: `*/30 * * * * run-logged.sh "auto-phase-continuation" ... auto_phase_continuation.py`.
+  `OWNER_DECISIONS_NEEDED_2026-07-23.yaml` id `auto-phase-continuation-crontab-addition`
+  recorded with `status: approved`. `CRONTAB_APPROVED_SNAPSHOT.txt` updated to match
+  (both live and repo copies).'
+- 'Incident: an early test of the gate wiring (before deploying to the live path)
+  accidentally dispatched a real throwaway task (`task-20260724-114058-test`) because
+  the live `/opt/veridian/scripts/task-gateway.py` was still calling the OLD `tight_task_validation.py`
+  -- stopped/disabled the systemd unit within ~10s and checkpointed the task `failed`
+  with an explanatory note. No branch/PR was created. Lesson applied: all further
+  negative-path testing used the standalone validator only, never `task-gateway.py
+  start` directly, until live deployment was confirmed.'
+remaining_steps: &id003
+- 'Commit + push both scripts and the OWNER_DECISIONS/CRONTAB changes; open PR on
+  claude-control -- PR #30: https://github.com/FChecklist/claude-control/pull/30'
+- Terminology Standardization Phase 2 and Testing Engine Phase 3 were correctly identified
+  as ready but deliberately deferred (`--limit 2`) -- left for the next cron tick
+  (within 30 min), per this task's own CONSTRAINTS not to manually dispatch every
+  remaining phase itself.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-24T11:31:36.806551+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 43e5e31 Auto-sync 1 server task(s) to master controller
+  - 3ec77e9 Auto-sync 1 server task(s) to master controller
+  - 'd0a1295 Merge pull request #29 from FChecklist/worker/task-20260724-095857-xpost-github-catalog-batch3-2026-07-24'
+  - 'd703131 Merge batch-3 X-post GitHub catalog: 8 new repos into XPOST_GITHUB_CATALOG_2026-07-24.yaml'
+  - 26aacc6 Auto-sync 1 server task(s) to master controller
+  - 'ecbf3c7 Merge pull request #28 from FChecklist/worker/task-20260724-093519-fix-progressmd-merge-conflicts'
+  - 988cdcb Stop tracking PROGRESS.md in git to eliminate recurring merge conflicts
+  - 'd42594d Merge pull request #27 from FChecklist/worker/task-20260724-091206-xpost-github-catalog-batch2-2026-07-24'
+  - 28d5d8b Merge master to resolve conflict for PR27
+  - db15a5c Auto-sync 4 server task(s) to master controller
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-24T11:36:37.926335+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 43e5e31 Auto-sync 1 server task(s) to master controller
+  - 3ec77e9 Auto-sync 1 server task(s) to master controller
+  - 'd0a1295 Merge pull request #29 from FChecklist/worker/task-20260724-095857-xpost-github-catalog-batch3-2026-07-24'
+  - 'd703131 Merge batch-3 X-post GitHub catalog: 8 new repos into XPOST_GITHUB_CATALOG_2026-07-24.yaml'
+  - 26aacc6 Auto-sync 1 server task(s) to master controller
+  - 'ecbf3c7 Merge pull request #28 from FChecklist/worker/task-20260724-093519-fix-progressmd-merge-conflicts'
+  - 988cdcb Stop tracking PROGRESS.md in git to eliminate recurring merge conflicts
+  - 'd42594d Merge pull request #27 from FChecklist/worker/task-20260724-091206-xpost-github-catalog-batch2-2026-07-24'
+  - 28d5d8b Merge master to resolve conflict for PR27
+  - db15a5c Auto-sync 4 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-24T11:41:41.570628+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/task-gateway.py
+  - scripts/__pycache__/
+  - scripts/tight_task_validation.py
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 43e5e31 Auto-sync 1 server task(s) to master controller
+  - 3ec77e9 Auto-sync 1 server task(s) to master controller
+  - 'd0a1295 Merge pull request #29 from FChecklist/worker/task-20260724-095857-xpost-github-catalog-batch3-2026-07-24'
+  - 'd703131 Merge batch-3 X-post GitHub catalog: 8 new repos into XPOST_GITHUB_CATALOG_2026-07-24.yaml'
+  - 26aacc6 Auto-sync 1 server task(s) to master controller
+  - 'ecbf3c7 Merge pull request #28 from FChecklist/worker/task-20260724-093519-fix-progressmd-merge-conflicts'
+  - 988cdcb Stop tracking PROGRESS.md in git to eliminate recurring merge conflicts
+  - 'd42594d Merge pull request #27 from FChecklist/worker/task-20260724-091206-xpost-github-catalog-batch2-2026-07-24'
+  - 28d5d8b Merge master to resolve conflict for PR27
+  - db15a5c Auto-sync 4 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-24T11:46:42.686288+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/task-gateway.py
+  - scripts/__pycache__/
+  - scripts/auto_phase_continuation.py
+  - scripts/tight_task_validation.py
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 43e5e31 Auto-sync 1 server task(s) to master controller
+  - 3ec77e9 Auto-sync 1 server task(s) to master controller
+  - 'd0a1295 Merge pull request #29 from FChecklist/worker/task-20260724-095857-xpost-github-catalog-batch3-2026-07-24'
+  - 'd703131 Merge batch-3 X-post GitHub catalog: 8 new repos into XPOST_GITHUB_CATALOG_2026-07-24.yaml'
+  - 26aacc6 Auto-sync 1 server task(s) to master controller
+  - 'ecbf3c7 Merge pull request #28 from FChecklist/worker/task-20260724-093519-fix-progressmd-merge-conflicts'
+  - 988cdcb Stop tracking PROGRESS.md in git to eliminate recurring merge conflicts
+  - 'd42594d Merge pull request #27 from FChecklist/worker/task-20260724-091206-xpost-github-catalog-batch2-2026-07-24'
+  - 28d5d8b Merge master to resolve conflict for PR27
+  - db15a5c Auto-sync 4 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-24T11:51:43.788997+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/CRONTAB_APPROVED_SNAPSHOT.txt
+  - ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+  - scripts/auto_phase_continuation.py
+  - scripts/task-gateway.py
+  - scripts/tight_task_validation.py
+  - scripts/__pycache__/
+  completed_steps:
+  - 'Extended `scripts/tight_task_validation.py` with `check_success_criteria_has_runnable_command()`
+    -- a documented heuristic requiring at least one SUCCESS_CRITERIA line that looks
+    like a real runnable shell command. Tested: prose-only -> `valid:false` with `no_runnable_verification_command_in_success_criteria`
+    reason; real-command -> `valid:true`.'
+  - Wired `tight_task_validation.py` into `task-gateway.py`'s `cmd_start`, blocking
+    dispatch until fixed. Deployed to live `/opt/veridian/scripts/` (surgical edit,
+    preserving the live file's other unmerged improvements) since that's the copy
+    real dispatch actually runs through.
+  - 'Built `scripts/auto_phase_continuation.py`: scans both `/opt/veridian/ai-os/`
+    and `/opt/veridian/repos/claude-control/ai-os/` for `*_PHASE_PLAN_2026-07-24.yaml`,
+    merges live-vs-repo drift, cross-references self-reported phase status against
+    real merged PRs via `gh pr list` (with a master-ref-content fallback for the Auditor
+    Engine Phase 0 case where the originating PR closed unmerged but content landed
+    via a recovery commit), resolves the next dependency-satisfied and not-externally-blocked
+    phase, and dispatches via `task-gateway.py submit`+`start`.'
+  - '`--dry-run` verified correct for all 4 initiatives, including correctly skipping
+    Testing Engine''s Phase 2 (unmet external dependency on Auditor Engine Phase 7)
+    in favor of Phase 3.'
+  - 'Real (non-dry-run, `--limit 2`) invocation dispatched 2 real next-phase tasks:
+    `task-20260724-115041-phase2-give-policy-engine-preflight-guar` (20-Engines Phase
+    2) and `task-20260724-115044-phase2-api-contract-authoring-linting-co` (Auditor
+    Engine Phase 2), both confirmed `systemd_active: true`.'
+  - 'Cron wired: `*/30 * * * * run-logged.sh "auto-phase-continuation" ... auto_phase_continuation.py`.
+    `OWNER_DECISIONS_NEEDED_2026-07-23.yaml` id `auto-phase-continuation-crontab-addition`
+    recorded with `status: approved`. `CRONTAB_APPROVED_SNAPSHOT.txt` updated to match
+    (both live and repo copies).'
+  - 'Incident: an early test of the gate wiring (before deploying to the live path)
+    accidentally dispatched a real throwaway task (`task-20260724-114058-test`) because
+    the live `/opt/veridian/scripts/task-gateway.py` was still calling the OLD `tight_task_validation.py`
+    -- stopped/disabled the systemd unit within ~10s and checkpointed the task `failed`
+    with an explanatory note. No branch/PR was created. Lesson applied: all further
+    negative-path testing used the standalone validator only, never `task-gateway.py
+    start` directly, until live deployment was confirmed.'
+  remaining_steps:
+  - Commit + push both scripts and the OWNER_DECISIONS/CRONTAB changes; open PR on
+    claude-control.
+  - Terminology Standardization Phase 2 and Testing Engine Phase 3 were correctly
+    identified as ready but deliberately deferred (`--limit 2`) -- left for the next
+    cron tick (within 30 min), per this task's own CONSTRAINTS not to manually dispatch
+    every remaining phase itself.
+  recent_commits:
+  - 43e5e31 Auto-sync 1 server task(s) to master controller
+  - 3ec77e9 Auto-sync 1 server task(s) to master controller
+  - 'd0a1295 Merge pull request #29 from FChecklist/worker/task-20260724-095857-xpost-github-catalog-batch3-2026-07-24'
+  - 'd703131 Merge batch-3 X-post GitHub catalog: 8 new repos into XPOST_GITHUB_CATALOG_2026-07-24.yaml'
+  - 26aacc6 Auto-sync 1 server task(s) to master controller
+  - 'ecbf3c7 Merge pull request #28 from FChecklist/worker/task-20260724-093519-fix-progressmd-merge-conflicts'
+  - 988cdcb Stop tracking PROGRESS.md in git to eliminate recurring merge conflicts
+  - 'd42594d Merge pull request #27 from FChecklist/worker/task-20260724-091206-xpost-github-catalog-batch2-2026-07-24'
+  - 28d5d8b Merge master to resolve conflict for PR27
+  - db15a5c Auto-sync 4 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-24T11:52:39.821784+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Extended `scripts/tight_task_validation.py` with `check_success_criteria_has_runnable_command()`
+    -- a documented heuristic requiring at least one SUCCESS_CRITERIA line that looks
+    like a real runnable shell command. Tested: prose-only -> `valid:false` with `no_runnable_verification_command_in_success_criteria`
+    reason; real-command -> `valid:true`.'
+  - Wired `tight_task_validation.py` into `task-gateway.py`'s `cmd_start`, blocking
+    dispatch until fixed. Deployed to live `/opt/veridian/scripts/` (surgical edit,
+    preserving the live file's other unmerged improvements) since that's the copy
+    real dispatch actually runs through.
+  - 'Built `scripts/auto_phase_continuation.py`: scans both `/opt/veridian/ai-os/`
+    and `/opt/veridian/repos/claude-control/ai-os/` for `*_PHASE_PLAN_2026-07-24.yaml`,
+    merges live-vs-repo drift, cross-references self-reported phase status against
+    real merged PRs via `gh pr list` (with a master-ref-content fallback for the Auditor
+    Engine Phase 0 case where the originating PR closed unmerged but content landed
+    via a recovery commit), resolves the next dependency-satisfied and not-externally-blocked
+    phase, and dispatches via `task-gateway.py submit`+`start`.'
+  - '`--dry-run` verified correct for all 4 initiatives, including correctly skipping
+    Testing Engine''s Phase 2 (unmet external dependency on Auditor Engine Phase 7)
+    in favor of Phase 3.'
+  - 'Real (non-dry-run, `--limit 2`) invocation dispatched 2 real next-phase tasks:
+    `task-20260724-115041-phase2-give-policy-engine-preflight-guar` (20-Engines Phase
+    2) and `task-20260724-115044-phase2-api-contract-authoring-linting-co` (Auditor
+    Engine Phase 2), both confirmed `systemd_active: true`.'
+  - 'Cron wired: `*/30 * * * * run-logged.sh "auto-phase-continuation" ... auto_phase_continuation.py`.
+    `OWNER_DECISIONS_NEEDED_2026-07-23.yaml` id `auto-phase-continuation-crontab-addition`
+    recorded with `status: approved`. `CRONTAB_APPROVED_SNAPSHOT.txt` updated to match
+    (both live and repo copies).'
+  - 'Incident: an early test of the gate wiring (before deploying to the live path)
+    accidentally dispatched a real throwaway task (`task-20260724-114058-test`) because
+    the live `/opt/veridian/scripts/task-gateway.py` was still calling the OLD `tight_task_validation.py`
+    -- stopped/disabled the systemd unit within ~10s and checkpointed the task `failed`
+    with an explanatory note. No branch/PR was created. Lesson applied: all further
+    negative-path testing used the standalone validator only, never `task-gateway.py
+    start` directly, until live deployment was confirmed.'
+  remaining_steps:
+  - 'Commit + push both scripts and the OWNER_DECISIONS/CRONTAB changes; open PR on
+    claude-control -- PR #30: https://github.com/FChecklist/claude-control/pull/30'
+  - Terminology Standardization Phase 2 and Testing Engine Phase 3 were correctly
+    identified as ready but deliberately deferred (`--limit 2`) -- left for the next
+    cron tick (within 30 min), per this task's own CONSTRAINTS not to manually dispatch
+    every remaining phase itself.
+  recent_commits:
+  - 'bfb6492 Close Phase-1 stall root cause: SUCCESS_CRITERIA runnable-command gate
+    + auto phase continuation'
+  - 43e5e31 Auto-sync 1 server task(s) to master controller
+  - 3ec77e9 Auto-sync 1 server task(s) to master controller
+  - 'd0a1295 Merge pull request #29 from FChecklist/worker/task-20260724-095857-xpost-github-catalog-batch3-2026-07-24'
+  - 'd703131 Merge batch-3 X-post GitHub catalog: 8 new repos into XPOST_GITHUB_CATALOG_2026-07-24.yaml'
+  - 26aacc6 Auto-sync 1 server task(s) to master controller
+  - 'ecbf3c7 Merge pull request #28 from FChecklist/worker/task-20260724-093519-fix-progressmd-merge-conflicts'
+  - 988cdcb Stop tracking PROGRESS.md in git to eliminate recurring merge conflicts
+  - 'd42594d Merge pull request #27 from FChecklist/worker/task-20260724-091206-xpost-github-catalog-batch2-2026-07-24'
+  - 28d5d8b Merge master to resolve conflict for PR27
+  note: quality gates passed, pushed branch worker/task-20260724-113131-watertight-100pct-gate-and-auto-phase-co,
+    awaiting review
+- at: '2026-07-24T11:54:28.031245+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'bfb6492 Close Phase-1 stall root cause: SUCCESS_CRITERIA runnable-command gate
+    + auto phase continuation'
+  - 43e5e31 Auto-sync 1 server task(s) to master controller
+  - 3ec77e9 Auto-sync 1 server task(s) to master controller
+  - 'd0a1295 Merge pull request #29 from FChecklist/worker/task-20260724-095857-xpost-github-catalog-batch3-2026-07-24'
+  - 'd703131 Merge batch-3 X-post GitHub catalog: 8 new repos into XPOST_GITHUB_CATALOG_2026-07-24.yaml'
+  - 26aacc6 Auto-sync 1 server task(s) to master controller
+  - 'ecbf3c7 Merge pull request #28 from FChecklist/worker/task-20260724-093519-fix-progressmd-merge-conflicts'
+  - 988cdcb Stop tracking PROGRESS.md in git to eliminate recurring merge conflicts
+  - 'd42594d Merge pull request #27 from FChecklist/worker/task-20260724-091206-xpost-github-catalog-batch2-2026-07-24'
+  - 28d5d8b Merge master to resolve conflict for PR27
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/30'
+execution_seconds: 1262
+restart_count: 0
+token_usage:
+  input_tokens: 168
+  cache_creation_input_tokens: 203589
+  cache_read_input_tokens: 12317187
+  output_tokens: 91616
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 203589
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 687
+    cache_read_input_tokens: 226422
+    cache_creation_input_tokens: 758
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 758
+    type: message
+  speed: standard
+master_synced_at: '2026-07-24T12:00:09.114893+00:00'

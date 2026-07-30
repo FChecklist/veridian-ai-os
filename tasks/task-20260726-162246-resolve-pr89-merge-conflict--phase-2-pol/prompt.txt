@@ -1,0 +1,24 @@
+## OBJECTIVE
+Resolve the real merge conflict on claude-control PR #89 (Phase 2 Policy/Rule/Decision Engine unification, content already Superboss-approved) against origin/master. The conflict arose because PR #90 merged into ai-os/MASTER_INDEX.yaml moments after PR #89's branch was created.
+
+## KNOWN_CONTEXT
+`gh pr view 89 --repo FChecklist/claude-control --json mergeable,mergeStateStatus` currently shows CONFLICTING/DIRTY. This PR's actual content (the shared policy-gate output contract, the policy gate registry, guardrail-registrations.ts coverage expansion) was already reviewed and approved -- this task is a mechanical conflict resolution, not a re-implementation. Do not change the already-approved logic itself.
+
+## SCOPE
+1. Check out PR #89's real existing branch directly (do not use a local alias without a real upstream tracking relationship to it -- `git clone -b <real-branch-name>` per this session's established, working pattern), fetch and merge origin/master.
+2. Resolve the real conflicting file(s) (likely ai-os/MASTER_INDEX.yaml) by keeping both sides' real registries[] entries (union-merge, same pattern used repeatedly and successfully this session).
+3. Push the resolved merge directly to PR #89's own existing branch -- verify with `gh pr view 89 --repo FChecklist/claude-control --json headRefName` first and push to exactly that ref, not a new one.
+4. Run the existing tests for the Phase 2 policy-unification work to confirm they still pass after the merge.
+
+## SUCCESS_CRITERIA
+- `gh pr view 89 --repo FChecklist/claude-control --json mergeable -q '.mergeable'` returns MERGEABLE after the push.
+- No new PR is opened by this task.
+
+## EXPECTED_OUTPUT
+PR #89 itself becomes MERGEABLE on its own existing branch. No new PR.
+
+## CONSTRAINTS
+Do not open a new PR under any circumstance. Do not change the already-approved Phase 2 logic. Do not merge yourself.
+
+## COMPLEXITY_TIER
+mechanical

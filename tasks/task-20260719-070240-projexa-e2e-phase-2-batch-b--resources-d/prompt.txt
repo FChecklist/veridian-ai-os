@@ -1,0 +1,46 @@
+You are running headlessly, one-shot, with no ongoing session. Never defer any step to "wait for a notification" -- complete every step synchronously.
+
+CONTEXT: Owner directive: full end-to-end testing of PROJEXA, zero gaps, no assumptions. This is Phase 2 (of 5) -- Phase 1 (merged, FChecklist/projexa PR #45) documented the real architecture and seeded a real test org "Meridian Construction Group (E2E Test Org)" in compliance-tracker's live database (1,007 rows: 4 projects, materials/vendors/purchase-orders/quotations/sales-orders/invoices etc.). 11 real PROJEXA login accounts exist and are verified working (firstname.lastname@meridian-construction.e2e-test.projexa-ai.com, password MeridianE2E2026! for all; CEO is arjun.mehta@...). READ PHASE1_SEED_REPORT.md (FChecklist/projexa repo root, already merged) IN FULL FIRST for exact file:line citations, the org id, and real nuances (some modules are thin re-export aliases; documents/labour use a root:true routing bypass; permits has no dedicated table -- it's documents filtered by category).
+
+YOUR SCOPE (Batch B -- Resources, Field & Design modules only): materials, inventory, procurement, purchase-orders, vendors, labour, ffe, floor-plans, mood-boards, permits, documents.
+
+TASK: Write and RUN real, working Playwright E2E tests (this repo's playwright.config.ts already wires `bunx playwright test` in CI, currently `--pass-with-no-tests` since no real tests exist -- add real ones, read playwright.config.ts first for the expected test directory) that:
+1. Log in as a real seeded user (arjun.mehta@meridian-construction.e2e-test.projexa-ai.com / MeridianE2E2026! for admin-level, a member account otherwise).
+2. For EACH of the 11 modules in your scope: navigate to the real page, verify the seeded data renders correctly (assert on REAL seeded values from PHASE1_SEED_REPORT.md's exact counts -- e.g. 10 vendors, 20 materials, 12 purchase orders -- not just "page loads"), and exercise at least one real write operation where the module supports one (e.g. create a purchase order, update inventory, add a floor-plan) -- verify the write persists (reload/re-fetch to confirm).
+3. Test every real filter/sort/search control each page actually has -- read the real component code first, don't invent controls.
+4. Record EVERY test failure with full detail: expected vs actual, real error/stack trace. Do not soften a real failure.
+5. Any 500, wrong/stale value, broken control, console error, or divergence from PHASE1_SEED_REPORT.md's documented backing is a real, reportable gap for Phase 4 -- note it precisely.
+
+STEPS:
+1. Register a claim in ai-os/boss/ACTIVE-CLAIMS.yaml (compliance-tracker's, per Phase 1's precedent). Two sibling tasks (Batch A: dashboard/schedule/scope/rfis/submittals/punch-list/change-orders/site-diary/work-progress/meetings; Batch C: accounting/budgets/invoices/quotations/sales-orders/sales/customers/employees/payroll/recruitment/hr/kpis/reports/wiki/knowledge-base/grc/copilot) are running concurrently on disjoint module lists -- no overlap with your scope, proceed independently.
+2. Write the real Playwright tests.
+3. Run `bunx playwright test` for real against the live projexa-ai.com site (override baseURL via env var for this run if needed, don't permanently change a dev-pointed default).
+4. Run `bunx tsc --noEmit`, `bun run lint` on new files -- must be clean.
+5. Push, open a PR, post the standard 8-field AUDIT comment, wait for CI.
+6. TIER1 if test-files-only with no schema/migration change -- self-merge once CI green.
+7. MOST IMPORTANT deliverable: `PHASE2_BATCH_B_FINDINGS.md` (committed in this PR) -- per-module test results and every real gap with exact route/field/expected-vs-actual detail, specific enough for Phase 4/5 to act on directly.
+
+Report final status: PR number, CI result, exact pass/fail counts, top 3 most significant real gaps found.
+
+
+=== NEW FOLLOW-UP INSTRUCTION (appended 2026-07-19T16:47:11Z) ===
+
+=== FOLLOW-UP INSTRUCTION (appended by supervising session, real work already exists, do not restart from scratch) ===
+
+STATUS: This task's real work is DONE and committed -- 8422 seconds (~2.3 hours) of genuine work: 12 Playwright spec files, 31 real E2E tests for the 11 Batch B modules (materials/inventory/procurement/purchase-orders/vendors/labour/ffe/floor-plans/mood-boards/permits/documents), a findings doc, 2 real app bugs diagnosed, and real git commits already in this branch's history including a merge reconciling with the concurrent Batch C task's own Playwright infra (see `git log --oneline`). After that real work finished, this task's systemd unit crashed 4 times in ~3 seconds each (usage log shows +3s, +3s, +3s, +3s immediately after the +8422s entry) and systemd's restart-rate-limiter (StartLimitBurst) gave up, leaving it stuck in a genuinely FAILED state for over 7 hours with nobody noticing until now.
+
+YOUR JOB: diagnose the real cause of those instant 3-second crashes (do not guess -- check `systemd.log` for the exact bash error, check whether `quality-gate.sh` or a push/PR step is what's actually failing, check whether Playwright's browser binaries or some other dependency is missing/broken in a way that fails fast on every resume attempt) and get this task to an actual finished state: PR opened (or confirmed already open -- check `gh pr list --repo FChecklist/projexa --head worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d` first, the branch may already be pushed with real commits even though the wrapping task never reached "pending_review"), CI green, and the standard 8-field AUDIT comment posted. Do NOT redo the already-completed E2E test-writing work -- it exists and is real, verify it's intact and pick up from wherever the actual break is.
+
+If you find the root cause is a bug in `/opt/veridian/scripts/worker-entrypoint.sh` or `quality-gate.sh` itself (not specific to this task), fix it there too (server-side script, not git-tracked -- document what you changed and why in your final report, same disclosure pattern other server-script fixes have used today) so it doesn't recur for other tasks.
+
+Register/update your claim in FChecklist/projexa's (or compliance-tracker's, whichever this task's claim actually lives in -- check both) ACTIVE-CLAIMS.yaml before finishing.
+
+
+=== FOLLOW-UP 2026-07-19T17:09:14Z ===
+
+
+
+=== FOLLOW-UP 2026-07-19T17:09:35Z ===
+
+=== FOLLOW-UP (Owner-authorized: you decide, don't wait) ===
+PR #49 (FChecklist/projexa) is tier1-approved but has real merge conflicts against current main (it moved since your last attempt). In this worktree: fetch origin, merge origin/main, resolve conflicts (same discipline as before -- understand both sides, don't blindly pick one), re-run bunx tsc --noEmit / bun run lint / bun test / bun run build, push to the same branch, confirm mergeStateStatus clears, confirm all required checks green (re-trigger audit-check if it's stale relative to your own posted comment, same known timing gap), then merge PR #49 yourself (gh pr merge 49 --repo FChecklist/projexa --merge --delete-branch) -- you are authorized to complete this merge, it's tier1. Verify with gh pr view --json state,mergedAt afterward, don't assume the command succeeded.

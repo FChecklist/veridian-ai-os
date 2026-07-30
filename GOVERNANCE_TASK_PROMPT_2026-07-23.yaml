@@ -1,0 +1,107 @@
+task_id: owner-high-governance-2026-07-23
+precheck_required: true
+precheck_refs:
+- ai-os/MASTER_INDEX.yaml
+- ai-os/SYSTEM_MAP.yaml
+- ai-os/STANDING_DIRECTIVE.yaml
+- ai-os/AI_ENGINEERING_POLICY.yaml
+- ai-os/RULES_ARTICLES_198.json
+mandate: zero_duplication. audit before build. do not recreate existing capability.
+
+decision_1_model_routing:
+  scope: all_server_ai_sessions (interactive_tmux_session AND headless_workers AND supervisor)
+  change: replace GLM/OpenRouter proxy routing with real Anthropic auth via Claude Max subscription
+  current_mechanism_to_change: scripts/worker-entrypoint.sh lines ~32-35 (unset CLAUDE_CODE_OAUTH_TOKEN; export ANTHROPIC_BASE_URL=http://127.0.0.1:8787; export ANTHROPIC_API_KEY=proxy-routed-not-a-real-anthropic-key)
+  target_state: export real CLAUDE_CODE_OAUTH_TOKEN (the token currently in ~/.claude/.credentials.json, NOT the stale one in shared/.env - verify which is current before use), do not set ANTHROPIC_API_KEY or ANTHROPIC_BASE_URL, default model = sonnet, effort = high
+  constraint_do_not_break: preflight/circuit-breaker/budget-cap machinery in worker-entrypoint.sh exists because of a real prior incident (2026-07-20 RCA: 47 failed units, 71.9% task failure rate, documented in repos/compliance-tracker/ai-os/COST-CONTROL.md). Do not delete this machinery.
+  known_incompatibility: preflight currently checks live OpenRouter balance as a hard-stop condition. This check is meaningless once OpenRouter routing is removed. Replace with an equivalent guard against Claude Max subscription usage/rate-limit exhaustion if the CLI or account API exposes that signal; if no such signal exists, say so explicitly in the report rather than silently dropping the safety check.
+  side_effect_to_flag_in_report: interactive session and all workers will now share ONE Claude Max subscription's usage limits. Multiple concurrent autonomous workers could exhaust the Owner's own interactive weekly quota. Report this risk explicitly, do not just note it in passing.
+  glm_proxy_service_veridian-glm-proxy.service: after the switch, determine whether this service has any remaining legitimate use; if none, report that finding rather than deciding unilaterally to remove it.
+
+decision_2_owner_directive_verbatim:
+  source: Owner chat message, 2026-07-23, titled "HIGH GOVERNANCE TO BE IMPLEMENTED"
+  instruction: audit each numbered item below against what already exists on this server (cron jobs, systemd units, ai-os/scripts, ai-os/logs). Classify each as DONE / PARTIAL / MISSING with the specific file/service that proves the classification. Build only what is PARTIAL or MISSING. Do not restate or rebuild what is already DONE.
+  items:
+  - "1. create a script to keep the Server and Claude Code CLI connected"
+  - "2. do not allow the connection to stop without logging the reason"
+  - "3. create a monitoring service for the Server"
+  - "4. create a monitoring service for Claude Code CLI"
+  - "5. create a health check script for all services"
+  - "6. check the Server every minute"
+  - "7. restart failed services automatically"
+  - "8. log every action"
+  - "9. log every error"
+  - "10. log every warning"
+  - "11. log every login"
+  - "12. log every file change"
+  - "13. log every deployment"
+  - "14. log every AI request"
+  - "15. log every AI response"
+  - "16. log every AI model used"
+  - "17. log token usage"
+  - "18. log AI cost"
+  - "19. log CPU, RAM and disk usage"
+  - "20. log network usage"
+  - "21. log security events"
+  - "22. log permission changes"
+  - "23. detect failures"
+  - "24. detect security issues"
+  - "25. detect abnormal behaviour"
+  - "26. recover from failures"
+  - "27. notify the Owner when needed"
+  - "28. escalate critical issues"
+  - "29. use Claude Code CLI Sonnet 5 High as the primary Server AI"
+  - "30. let Claude Code CLI manage the Server"
+  - "31. let Claude Code CLI supervise VERIDIAN"
+  - "32. let Claude Code CLI supervise all AI models"
+  - "33. let Claude Code CLI validate AI outputs"
+  - "34. let Claude Code CLI stop unsafe actions"
+  - "35. let Claude Code CLI convert simple English into technical instructions"
+  - "36. let Claude Code CLI create scripts instead of manual work whenever possible"
+  - "37. use software before AI whenever possible"
+  - "38. do not use AI for work that software can do"
+  - "39. reuse existing software before creating new software"
+  - "40. use only Server CPU, RAM, storage and network"
+  - "41. do not use laptop resources for processing"
+  - "42. do not use mobile resources for processing"
+  - "43. treat the laptop as a thin client only"
+  - "44. treat the mobile as a thin client only"
+  - "45. allow the Owner to connect from laptop or mobile"
+  - "46. assume the Owner is non-technical"
+  - "47. explain everything to the Owner in simple English"
+  - "48. do not expect technical knowledge from the Owner"
+  - "49. ask for Owner approval before high-risk actions"
+  - "50. do not make destructive changes without approval"
+  - "51. keep all logs permanently unless the Owner changes the policy"
+  - "52. make all logs searchable"
+  - "53. analyse logs continuously"
+  - "54. fix problems automatically when safe"
+  - "55. report all fixes in the logs"
+  - "56. report unresolved problems to the Owner"
+  - "57. keep every script modular"
+  - "58. keep every service independent"
+  - "59. allow the primary AI to be replaced without changing the system"
+  - "60. document every script, every service and every log automatically"
+
+known_confirmed_findings_this_session_do_not_rederive:
+- finding: no active owner-notification channel exists (checked scripts/*.py scripts/*.sh ai-os/scripts/*.py for resend/sendmail/smtp/notify_owner - zero hits)
+  relevant_items: [27, 28, 56]
+  available_resource: Resend API key already present in shared/.env, unused for this purpose
+- finding: health-check-15min.py runs every 15 minutes via cron, not every 1 minute
+  relevant_items: [6]
+- finding: ai-os/logs/ATTENTION.md has logged the same unresolved failed unit (veridian-worker@task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d.service) repeatedly since 2026-07-19 with no evidence of resolution or escalation
+  relevant_items: [7, 23, 26, 27, 28, 56]
+  action: investigate root cause, fix or formally report as unresolved to Owner
+
+execution_constraints:
+  location: this_server_only
+  auth_after_decision_1: real_claude_max_subscription_not_api_key
+  language_in_all_new_docs_scripts_and_reports: technical_only_no_narrative_prose
+  commit_and_push: required_per_STANDING_DIRECTIVE.sync_scope
+  checkpoint: required_per_existing_worker_framework_convention
+
+output_required:
+  1: per_item_status_table (1-60), format: yaml, fields: [item_number, status(DONE|PARTIAL|MISSING), evidence_file_or_service, action_taken]
+  2: updated STANDING_DIRECTIVE.yaml / MASTER_INDEX.yaml entries per existing convention
+  3: explicit unresolved_items list if anything cannot be safely automated - do not force it, surface it
+  4: on_complete: notify_owner (per existing STANDING_DIRECTIVE.yaml on_complete field) - once notification channel from item 27 exists, use it for this notification too

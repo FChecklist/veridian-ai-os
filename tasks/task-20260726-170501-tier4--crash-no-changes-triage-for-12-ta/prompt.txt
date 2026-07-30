@@ -1,0 +1,25 @@
+## OBJECTIVE
+Triage the real subset of 12 tasks from ai-os/TASK_COMPLETION_AUDIT_2026-07-26.json whose worker either crashed (invocation failed/exited non-zero) or finished with no changes to commit -- determine per task whether this reflects a genuine unresolved gap needing redispatch, or a case where the goal was already satisfied so there was truly nothing to do.
+
+## KNOWN_CONTEXT
+Read ai-os/TASK_COMPLETION_AUDIT_2026-07-26.json and re-derive the real task list whose last checkpoint note contains invocation failed, exited with code, no changes to commit, or finished, no changes (this session own live bucketing pass found 12 real tasks matching this pattern -- do not hardcode a list, re-derive it live).
+
+## SCOPE
+1. For each of the real 12 tasks, read its original prompt.txt and its full checkpoint history in task.yaml (not just the last note) to understand what actually happened during the run.
+2. For a worker-crash case, determine the real crash cause if possible (check for any api_error_status/rate-limit signal, a real code bug, or a resource-contention issue) and note it honestly even if the root cause cannot be fully determined.
+3. For a no-changes-to-commit case, check whether the task real objective is already satisfied on the current default branch (the same real relevance-check method as Tier 3) -- a worker correctly finding nothing to change because the goal was already met is not a failure and should be recorded as such, not redispatched.
+4. For any task confirmed to still have a real, unmet objective, redispatch it fresh via scripts/task-gateway.py submit and start using its real original prompt content.
+5. Write a real, dated report to ai-os/TIER4_CRASH_TRIAGE_REPORT_2026-07-26.md with all 12 real classifications and evidence.
+
+## SUCCESS_CRITERIA
+- python3 -c "t=open('ai-os/TIER4_CRASH_TRIAGE_REPORT_2026-07-26.md').read(); assert t.count('GENUINELY_UNMET_REDISPATCHED')+t.count('ALREADY_SATISFIED_NO_ACTION_NEEDED')+t.count('UNCLEAR_NEEDS_OWNER_DECISION')>=12; print('OK')" exits 0, confirming all 12 real tasks have an explicit classification with cited real evidence, no silent omissions.
+- python3 scripts/task-gateway.py status --task-id NEWID (for each real redispatched task_id) returns a real, verifiable status.
+
+## EXPECTED_OUTPUT
+A real PR against claude-control with the report, plus any genuinely-unmet tasks redispatched as separate, independent worker tasks.
+
+## CONSTRAINTS
+Skip any task already confirmed satisfied on the current default branch. Any crash-cause note must cite a real, specific signal (an api_error_status, a code error, a resource-contention log line) rather than a speculative guess. Do not merge yourself.
+
+## COMPLEXITY_TIER
+judgment

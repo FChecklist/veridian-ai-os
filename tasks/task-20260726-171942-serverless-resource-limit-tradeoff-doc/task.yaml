@@ -1,0 +1,1271 @@
+id: task-20260726-171942-serverless-resource-limit-tradeoff-doc
+title: Serverless resource-limit tradeoff doc + heavy-workload audit
+status: superseded
+repo: compliance-tracker
+branch: worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+workspace: /opt/veridian/ai-os/tasks/task-20260726-171942-serverless-resource-limit-tradeoff-doc/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+service: veridian-worker@task-20260726-171942-serverless-resource-limit-tradeoff-doc.service
+created_at: '2026-07-26T17:19:43.950609+00:00'
+last_checkpoint_at: '2026-07-26T19:53:11.931529+00:00'
+completed_steps: &id002
+- 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+  + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+  CSV row #13)'
+- 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+  open` -- no other claim/PR on serverless doc or route scope'
+- Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+- Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+  + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+- 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+  or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+  bulk ops)'
+- Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+  bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+  generic report engine, construction reports, payslip PDF)
+- Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+  pattern across src/app/api + src/lib/services), independently re-verified its 2
+  most severe claims by direct file reads before trusting them (compliance/import
+  has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+  each, across up to ~500 projects per this codebase's own scale comments)
+- Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+  5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+  once the wider sweep landed)
+- Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+  -- new top-level ai-os/ file)
+- 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (C3/V2-12
+  row, RE-SCORED CLOSED)'
+- Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+- 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+- 'CI dispatch anomaly resolved on its own -- GitHub Actions has now run on PR #581.'
+remaining_steps: &id003
+- Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+- Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T17:19:45.660176+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  - 'aedcbb06 PROGRESS.md: start task-20260726-102520 (resolve PR #563 conflict, refresh
+    DB catalog)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T17:24:46.927690+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  remaining_steps:
+  - Incorporate heavy-route audit agent findings into audit table
+  - Write ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + audit table)
+  - 'Re-score CSV row #13 / MASTER-TRACKER entry'
+  - 'If a workload genuinely exceeds limits: file a separate follow-up task (not build
+    it here)'
+  - Commit, push, open PR
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed on merge
+  recent_commits:
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  note: periodic checkpoint
+- at: '2026-07-26T17:29:48.186704+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/OS.yaml
+  - ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+  - ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  remaining_steps:
+  - Incorporate heavy-route audit agent findings into audit table
+  - Write ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + audit table)
+  - 'Re-score CSV row #13 / MASTER-TRACKER entry'
+  - 'If a workload genuinely exceeds limits: file a separate follow-up task (not build
+    it here)'
+  - Commit, push, open PR
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed on merge
+  recent_commits:
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  note: periodic checkpoint
+- at: '2026-07-26T17:40:22.304940+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  remaining_steps:
+  - 'CI to run and confirm green on PR #581 (could not run bun/check-*.mjs/tsc/eslint
+    locally in this sandboxed environment -- no bun binary, no node_modules; flagged
+    honestly in the PR body rather than asserted)'
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  note: periodic checkpoint
+- at: '2026-07-26T17:47:30.857697+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  remaining_steps:
+  - 'CI to run and confirm green on PR #581 (could not run bun/check-*.mjs/tsc/eslint
+    locally in this sandboxed environment -- no bun binary, no node_modules; flagged
+    honestly in the PR body rather than asserted)'
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  note: periodic checkpoint
+- at: '2026-07-26T17:59:45.749814+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  remaining_steps:
+  - 'CI to run and confirm green on PR #581 (could not run bun/check-*.mjs/tsc/eslint
+    locally in this sandboxed environment -- no bun binary, no node_modules; flagged
+    honestly in the PR body rather than asserted)'
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  note: periodic checkpoint
+- at: '2026-07-26T18:05:26.243990+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  remaining_steps:
+  - 'CI to run and confirm green on PR #581 (could not run bun/check-*.mjs/tsc/eslint
+    locally in this sandboxed environment -- no bun binary, no node_modules; flagged
+    honestly in the PR body rather than asserted)'
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  note: periodic checkpoint
+- at: '2026-07-26T18:32:23.651718+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  remaining_steps:
+  - 'CI to run and confirm green on PR #581 -- **observed anomaly**: GitHub Actions
+    has not'
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  note: worker started (resume=1, lifetime invocation 2/20, pre-flight passed)
+- at: '2026-07-26T18:51:00.247170+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  remaining_steps:
+  - 'CI to run and confirm green on PR #581 -- **observed anomaly**: GitHub Actions
+    has not'
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - b34156e6 Merge branch 'main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  note: periodic checkpoint
+- at: '2026-07-26T18:56:14.311739+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  remaining_steps:
+  - 'CI to run and confirm green on PR #581 -- **observed anomaly**: GitHub Actions
+    has not'
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - b34156e6 Merge branch 'main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  note: periodic checkpoint
+- at: '2026-07-26T19:01:16.958854+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  remaining_steps:
+  - 'CI to run and confirm green on PR #581 -- **observed anomaly**: GitHub Actions
+    has not'
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - b34156e6 Merge branch 'main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  note: periodic checkpoint
+- at: '2026-07-26T19:12:44.413694+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  remaining_steps:
+  - 'CI to run and confirm green on PR #581 -- **observed anomaly**: GitHub Actions
+    has not'
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - b34156e6 Merge branch 'main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  note: worker started (resume=1, lifetime invocation 3/20, pre-flight passed)
+- at: '2026-07-26T19:19:58.154180+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  - 'CI dispatch anomaly resolved on its own -- GitHub Actions has now run on PR #581.'
+  remaining_steps:
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - '8805e245 PROGRESS.md: confirm CI green on required checks for PR #581, document
+    pre-existing unrelated metadata-index check failure'
+  - b34156e6 Merge branch 'main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: periodic checkpoint
+- at: '2026-07-26T19:36:12.929807+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  - 'CI dispatch anomaly resolved on its own -- GitHub Actions has now run on PR #581.'
+  remaining_steps:
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - '8805e245 PROGRESS.md: confirm CI green on required checks for PR #581, document
+    pre-existing unrelated metadata-index check failure'
+  - b34156e6 Merge branch 'main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:36:59.449311+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  - 'CI dispatch anomaly resolved on its own -- GitHub Actions has now run on PR #581.'
+  remaining_steps:
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - '8805e245 PROGRESS.md: confirm CI green on required checks for PR #581, document
+    pre-existing unrelated metadata-index check failure'
+  - b34156e6 Merge branch 'main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:37:33.978936+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  - 'CI dispatch anomaly resolved on its own -- GitHub Actions has now run on PR #581.'
+  remaining_steps:
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - '8805e245 PROGRESS.md: confirm CI green on required checks for PR #581, document
+    pre-existing unrelated metadata-index check failure'
+  - b34156e6 Merge branch 'main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:48:20.499286+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  - 'CI dispatch anomaly resolved on its own -- GitHub Actions has now run on PR #581.'
+  remaining_steps:
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - '8805e245 PROGRESS.md: confirm CI green on required checks for PR #581, document
+    pre-existing unrelated metadata-index check failure'
+  - b34156e6 Merge branch 'main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:49:06.568970+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  - 'CI dispatch anomaly resolved on its own -- GitHub Actions has now run on PR #581.'
+  remaining_steps:
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - '8805e245 PROGRESS.md: confirm CI green on required checks for PR #581, document
+    pre-existing unrelated metadata-index check failure'
+  - b34156e6 Merge branch 'main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:49:41.299920+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  - 'CI dispatch anomaly resolved on its own -- GitHub Actions has now run on PR #581.'
+  remaining_steps:
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - '8805e245 PROGRESS.md: confirm CI green on required checks for PR #581, document
+    pre-existing unrelated metadata-index check failure'
+  - b34156e6 Merge branch 'main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:51:49.589373+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  - 'CI dispatch anomaly resolved on its own -- GitHub Actions has now run on PR #581.'
+  remaining_steps:
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - '8805e245 PROGRESS.md: confirm CI green on required checks for PR #581, document
+    pre-existing unrelated metadata-index check failure'
+  - b34156e6 Merge branch 'main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:52:38.904972+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - 'Read AGENTS.md/CLAUDE.md governance docs, confirmed still-open via GAP_ANALYSIS_2026-07-20_HOLD.md
+    + MASTER-TRACKER.yaml + SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md (V2-12/C3,
+    CSV row #13)'
+  - 'Confirmed no collision: grepped ai-os/boss/ACTIVE-CLAIMS.yaml, `gh pr list --state
+    open` -- no other claim/PR on serverless doc or route scope'
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml, committed + pushed (4255d591)
+  - Confirmed repo is on Vercel Hobby plan (MASTER-TRACKER.yaml:1891 cron-limit note)
+    + fetched current Vercel Functions limits (2026-07-01 docs snapshot)
+  - 'Confirmed no `functions` block/`maxDuration`/`runtime` override anywhere in vercel.json
+    or src/app/api today (dispatched Explore audit of heaviest routes: payroll, reports,
+    bulk ops)'
+  - Manually read+verified payroll/reports/bulk-op/upload routes directly (processPayrollRun,
+    bulkMarkAttendance, bulkReassignLeads, bulkUpdateSalesOrderStatus, financial reports,
+    generic report engine, construction reports, payslip PDF)
+  - Dispatched + incorporated a wider Explore-agent sweep (every awaited-DB-call-in-a-loop
+    pattern across src/app/api + src/lib/services), independently re-verified its
+    2 most severe claims by direct file reads before trusting them (compliance/import
+    has zero file-size cap; computeCostOverrunReport fans out budgetVsActual, ~7 queries
+    each, across up to ~500 projects per this codebase's own scale comments)
+  - Wrote ai-os/V2-12_SERVERLESS_RESOURCE_LIMITS.md (tradeoff doc + full audit table,
+    5 HIGH-severity N+1 routes found, revised upward from the initial 1-route finding
+    once the wider sweep landed)
+  - Registered the new doc in ai-os/OS.yaml's metadata index (required by scripts/check-metadata-index-coverage.mjs
+    -- new top-level ai-os/ file)
+  - 'Re-scored CSV row #13 in ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md
+    (C3/V2-12 row, RE-SCORED CLOSED)'
+  - Committed doc + OS.yaml + plan re-score (ca1c7aa9), pushed
+  - 'Opened PR #581: https://github.com/FChecklist/compliance-tracker/pull/581'
+  - 'CI dispatch anomaly resolved on its own -- GitHub Actions has now run on PR #581.'
+  remaining_steps:
+  - Owner/reviewer sign-off, then merge (not done by this session per Rule 6)
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - '8805e245 PROGRESS.md: confirm CI green on required checks for PR #581, document
+    pre-existing unrelated metadata-index check failure'
+  - b34156e6 Merge branch 'main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:53:11.931529+00:00'
+  status: failed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '8805e245 PROGRESS.md: confirm CI green on required checks for PR #581, document
+    pre-existing unrelated metadata-index check failure'
+  - b34156e6 Merge branch 'main' into worker/task-20260726-171942-serverless-resource-limit-tradeoff-doc
+  - '912a2071 PROGRESS.md: flag observed CI-dispatch anomaly on PR #581'
+  - "908f8008 chore: nudge CI (no workflow run detected on PR #581 after ~15 min \u2014\
+    \ retrigger check)"
+  - '49fd1654 PROGRESS.md: record PR #581 opened for V2-12 serverless resource-limit
+    doc'
+  - 'ca1c7aa9 ai-os: add V2-12 serverless resource-limit tradeoff doc + heavy-workload
+    audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '9d3d4460 PROGRESS.md: log research phase for V2-12 serverless resource-limit
+    doc'
+  - '4255d591 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-12 serverless resource-limit
+    claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+execution_seconds: 2864
+restart_count: 2
+token_usage:
+  input_tokens: 238
+  cache_creation_input_tokens: 180761
+  cache_read_input_tokens: 15742816
+  output_tokens: 61023
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 180761
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 509
+    cache_read_input_tokens: 204141
+    cache_creation_input_tokens: 304
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 304
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+duplicate_of: task-20260726-194912-rca-task-20260726-171942-serverless-reso
+superseded_reason: Collapsed by plan_backlog_completion.py dedup 2026-07-27 -- same
+  underlying issue as task-20260726-194912-rca-task-20260726-171942-serverless-reso
+  (3 total attempts in chain).
+superseded_at: '2026-07-27T03:38:37.037022+00:00'

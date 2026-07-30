@@ -1,0 +1,1106 @@
+id: task-20260720-022700-superboss-v2-plan--finish-the-uae-countr
+title: 'SUPERBOSS_V2_PLAN: Finish the UAE country pack (Multi-Country pluggability
+  proof'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260720-022700-superboss-v2-plan--finish-the-uae-countr
+workspace: /opt/veridian/ai-os/tasks/task-20260720-022700-superboss-v2-plan--finish-the-uae-countr/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260720-022700-superboss-v2-plan--finish-the-uae-countr
+service: veridian-worker@task-20260720-022700-superboss-v2-plan--finish-the-uae-countr.service
+created_at: '2026-07-20T02:27:02.507111+00:00'
+last_checkpoint_at: '2026-07-20T11:23:17.551365+00:00'
+completed_steps: &id002
+- "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA72/\xA7\
+  4 V2-1)"
+- 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+  / erp-einvoice-service.ts / statutory-rule enum'
+- "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+  \ see note below)"
+- Register ACTIVE-CLAIMS claim + push on its own commit (3810ef9f)
+- "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+  \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+  \ apportionment, reverse charge, TRN validation, late-payment penalty, return validation)"
+- "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`) \u2014\
+  \ FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 9% above, 9% on QFZP non-qualifying\
+  \ slice, Pillar Two 15% top-up for MNEs \u2265 EUR 750M)"
+- "Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)\
+  \ \u2014 per-country slots, not a forced uniform shape"
+- 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` + new `einvoice-format.ts`
+  (UAE FTA Peppol UBL alongside India IRP JSON, chosen on `organisations.country`)
+  + fix the V2-21 per-line `GstRt: 0` gap (real tax-template rate per line)'
+- "Shared country-config test suite (`country-config.test.ts`) \u2014 both IN + AE\
+  \ resolve through `getComplianceEngine()` with no India hardcoding; unregistered\
+  \ country throws"
+- "E-invoice country-config test suite (`einvoice-format.test.ts`) \u2014 both IN\
+  \ + AE resolve through `buildEInvoicePayload`; no IRP schema leaks into AE payload;\
+  \ V2-21 GstRt fix asserted"
+- tsc clean / lint clean / guardrail-presence 88 markers / full suite 1842 pass 0
+  fail / `next build` exit 0
+- Commit + push + open PR (#492)
+- "Resume pass 1: merge `origin/main` (moved since branch point) \u2014 PR was CONFLICTING,\
+  \ now MERGEABLE. Conflict was only in governance/tracking files (PROGRESS.md rotating\
+  \ per-task file \u2014 kept this branch's V2-1 content; the V2-6 task's progress\
+  \ is in COMPLETED.yaml, not lost). One mechanical indentation fix to the V2-6 entry's\
+  \ `scope_note` key in ACTIVE-CLAIMS.yaml (came in malformed on main via PR #491:\
+  \ `scope_note` at col 2 with no list-marker broke the YAML sequence; indented to\
+  \ col 4 to nest as a fourth key in the V2-6 list item). No V2-1 code files touched\
+  \ by the merge. Re-ran full gauntlet green: tsc 0 / lint 0 err (3 pre-existing warnings)\
+  \ / guardrail 88 / metadata-index 39 / 1842 pass 0 fail / build exit 0."
+- "Resume pass 2: main moved again (PR #493 moved V2-6 ACTIVE-CLAIMS entry active\u2192\
+  recently_completed). Re-merged origin/main \u2014 same two tracking-file conflicts\
+  \ (PROGRESS.md rotating per-task file, kept V2-1 content; ACTIVE-CLAIMS.yaml \u2014\
+  \ V2-1 claim still active, V2-6 now recently_completed). No V2-1 code files touched.\
+  \ Re-ran gauntlet green: tsc 0 / lint 0 err / guardrail 88 / metadata 39/41 / 28\
+  \ V2-1 tests pass / 1842 pass 0 fail."
+remaining_steps: &id003
+- "Statutory-rule + tax-slab seed for both India and UAE \u2014 **DEFERRED, see STATUS\
+  \ note** (Tier2: per-org master-data tables, no country column; not a V2-1 code\
+  \ task)"
+files_modified: &id001
+- PROGRESS.md
+- ai-os/boss/ACTIVE-CLAIMS.yaml
+checkpoints:
+- at: '2026-07-20T02:27:03.547939+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  - 'a52436c0 ACTIVE-CLAIMS.yaml: move AIROUTER-01 Phase 2 claim to recently_completed
+    (PR #483)'
+  note: worker started (resume=0, lifetime invocation 1/20)
+- at: '2026-07-20T02:32:04.054559+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  - 'a52436c0 ACTIVE-CLAIMS.yaml: move AIROUTER-01 Phase 2 claim to recently_completed
+    (PR #483)'
+  note: periodic checkpoint
+- at: '2026-07-20T02:36:55.979367+00:00'
+  status: failed
+  files_modified:
+  - PROGRESS.md
+  - src/lib/engines/ae/
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  remaining_steps:
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 15% above, 9% qualifying-free-zone)"
+  - Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` (UAE FTA
+    JSON alongside India IRP JSON, chosen on `organisations.country`) + fix the V2-21
+    per-line `GstRt: 0` gap'
+  - Statutory-rule + tax-slab seed for both India and UAE (India has no seed today
+    either)
+  - "Shared country-config test suite (both IN + AE resolve through `getComplianceEngine()`,\
+    \ no India hardcoding) \u2014 **this is the core DONE-CRITERION and is NOT yet\
+    \ met**"
+  - tsc/lint/test clean; flip PR from WIP once green
+  recent_commits:
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T02:37:26.690271+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/engines/ae/
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  remaining_steps:
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 15% above, 9% qualifying-free-zone)"
+  - Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` (UAE FTA
+    JSON alongside India IRP JSON, chosen on `organisations.country`) + fix the V2-21
+    per-line `GstRt: 0` gap'
+  - Statutory-rule + tax-slab seed for both India and UAE (India has no seed today
+    either)
+  - "Shared country-config test suite (both IN + AE resolve through `getComplianceEngine()`,\
+    \ no India hardcoding) \u2014 **this is the core DONE-CRITERION and is NOT yet\
+    \ met**"
+  - tsc/lint/test clean; flip PR from WIP once green
+  recent_commits:
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: worker started (resume=1, lifetime invocation 2/20)
+- at: '2026-07-20T02:42:27.051513+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/engines/ae/
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  remaining_steps:
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 15% above, 9% qualifying-free-zone)"
+  - Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` (UAE FTA
+    JSON alongside India IRP JSON, chosen on `organisations.country`) + fix the V2-21
+    per-line `GstRt: 0` gap'
+  - Statutory-rule + tax-slab seed for both India and UAE (India has no seed today
+    either)
+  - "Shared country-config test suite (both IN + AE resolve through `getComplianceEngine()`,\
+    \ no India hardcoding) \u2014 **this is the core DONE-CRITERION and is NOT yet\
+    \ met**"
+  - tsc/lint/test clean; flip PR from WIP once green
+  recent_commits:
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: periodic checkpoint
+- at: '2026-07-20T02:47:27.406771+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/engines/ae/
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  remaining_steps:
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 15% above, 9% qualifying-free-zone)"
+  - Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` (UAE FTA
+    JSON alongside India IRP JSON, chosen on `organisations.country`) + fix the V2-21
+    per-line `GstRt: 0` gap'
+  - Statutory-rule + tax-slab seed for both India and UAE (India has no seed today
+    either)
+  - "Shared country-config test suite (both IN + AE resolve through `getComplianceEngine()`,\
+    \ no India hardcoding) \u2014 **this is the core DONE-CRITERION and is NOT yet\
+    \ met**"
+  - tsc/lint/test clean; flip PR from WIP once green
+  recent_commits:
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: periodic checkpoint
+- at: '2026-07-20T02:52:21.763957+00:00'
+  status: failed
+  files_modified:
+  - PROGRESS.md
+  - src/lib/engines/compliance-engine-registry.ts
+  - src/lib/engines/ae/
+  - src/lib/engines/country-config.test.ts
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  remaining_steps:
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 15% above, 9% qualifying-free-zone)"
+  - Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` (UAE FTA
+    JSON alongside India IRP JSON, chosen on `organisations.country`) + fix the V2-21
+    per-line `GstRt: 0` gap'
+  - Statutory-rule + tax-slab seed for both India and UAE (India has no seed today
+    either)
+  - "Shared country-config test suite (both IN + AE resolve through `getComplianceEngine()`,\
+    \ no India hardcoding) \u2014 **this is the core DONE-CRITERION and is NOT yet\
+    \ met**"
+  - tsc/lint/test clean; flip PR from WIP once green
+  recent_commits:
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T02:52:52.512968+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/engines/compliance-engine-registry.ts
+  - src/lib/engines/ae/
+  - src/lib/engines/country-config.test.ts
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  remaining_steps:
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 15% above, 9% qualifying-free-zone)"
+  - Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` (UAE FTA
+    JSON alongside India IRP JSON, chosen on `organisations.country`) + fix the V2-21
+    per-line `GstRt: 0` gap'
+  - Statutory-rule + tax-slab seed for both India and UAE (India has no seed today
+    either)
+  - "Shared country-config test suite (both IN + AE resolve through `getComplianceEngine()`,\
+    \ no India hardcoding) \u2014 **this is the core DONE-CRITERION and is NOT yet\
+    \ met**"
+  - tsc/lint/test clean; flip PR from WIP once green
+  recent_commits:
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: worker started (resume=1, lifetime invocation 3/20)
+- at: '2026-07-20T02:57:52.876507+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/engines/compliance-engine-registry.ts
+  - src/lib/engines/ae/
+  - src/lib/engines/country-config.test.ts
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  remaining_steps:
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 15% above, 9% qualifying-free-zone)"
+  - Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` (UAE FTA
+    JSON alongside India IRP JSON, chosen on `organisations.country`) + fix the V2-21
+    per-line `GstRt: 0` gap'
+  - Statutory-rule + tax-slab seed for both India and UAE (India has no seed today
+    either)
+  - "Shared country-config test suite (both IN + AE resolve through `getComplianceEngine()`,\
+    \ no India hardcoding) \u2014 **this is the core DONE-CRITERION and is NOT yet\
+    \ met**"
+  - tsc/lint/test clean; flip PR from WIP once green
+  recent_commits:
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: periodic checkpoint
+- at: '2026-07-20T03:02:17.032419+00:00'
+  status: failed
+  files_modified:
+  - PROGRESS.md
+  - src/lib/engines/compliance-engine-registry.ts
+  - src/lib/services/erp-einvoice-service.ts
+  - src/lib/engines/ae/
+  - src/lib/engines/country-config.test.ts
+  - src/lib/engines/einvoice-format.test.ts
+  - src/lib/engines/einvoice-format.ts
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  remaining_steps:
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 15% above, 9% qualifying-free-zone)"
+  - Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` (UAE FTA
+    JSON alongside India IRP JSON, chosen on `organisations.country`) + fix the V2-21
+    per-line `GstRt: 0` gap'
+  - Statutory-rule + tax-slab seed for both India and UAE (India has no seed today
+    either)
+  - "Shared country-config test suite (both IN + AE resolve through `getComplianceEngine()`,\
+    \ no India hardcoding) \u2014 **this is the core DONE-CRITERION and is NOT yet\
+    \ met**"
+  - tsc/lint/test clean; flip PR from WIP once green
+  recent_commits:
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T03:02:47.774395+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/engines/compliance-engine-registry.ts
+  - src/lib/services/erp-einvoice-service.ts
+  - src/lib/engines/ae/
+  - src/lib/engines/country-config.test.ts
+  - src/lib/engines/einvoice-format.test.ts
+  - src/lib/engines/einvoice-format.ts
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  remaining_steps:
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 15% above, 9% qualifying-free-zone)"
+  - Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` (UAE FTA
+    JSON alongside India IRP JSON, chosen on `organisations.country`) + fix the V2-21
+    per-line `GstRt: 0` gap'
+  - Statutory-rule + tax-slab seed for both India and UAE (India has no seed today
+    either)
+  - "Shared country-config test suite (both IN + AE resolve through `getComplianceEngine()`,\
+    \ no India hardcoding) \u2014 **this is the core DONE-CRITERION and is NOT yet\
+    \ met**"
+  - tsc/lint/test clean; flip PR from WIP once green
+  recent_commits:
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: worker started (resume=1, lifetime invocation 4/20)
+- at: '2026-07-20T03:07:48.125391+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/engines/compliance-engine-registry.ts
+  - src/lib/services/erp-einvoice-service.ts
+  - src/lib/engines/ae/
+  - src/lib/engines/country-config.test.ts
+  - src/lib/engines/einvoice-format.test.ts
+  - src/lib/engines/einvoice-format.ts
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  remaining_steps:
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 15% above, 9% qualifying-free-zone)"
+  - Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` (UAE FTA
+    JSON alongside India IRP JSON, chosen on `organisations.country`) + fix the V2-21
+    per-line `GstRt: 0` gap'
+  - Statutory-rule + tax-slab seed for both India and UAE (India has no seed today
+    either)
+  - "Shared country-config test suite (both IN + AE resolve through `getComplianceEngine()`,\
+    \ no India hardcoding) \u2014 **this is the core DONE-CRITERION and is NOT yet\
+    \ met**"
+  - tsc/lint/test clean; flip PR from WIP once green
+  recent_commits:
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: periodic checkpoint
+- at: '2026-07-20T03:11:47.149730+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit (3810ef9f)
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 9% above, 9% on QFZP\
+    \ non-qualifying slice, Pillar Two 15% top-up for MNEs \u2265 EUR 750M)"
+  - "Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)\
+    \ \u2014 per-country slots, not a forced uniform shape"
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` + new `einvoice-format.ts`
+    (UAE FTA Peppol UBL alongside India IRP JSON, chosen on `organisations.country`)
+    + fix the V2-21 per-line `GstRt: 0` gap (real tax-template rate per line)'
+  - "Shared country-config test suite (`country-config.test.ts`) \u2014 both IN +\
+    \ AE resolve through `getComplianceEngine()` with no India hardcoding; unregistered\
+    \ country throws"
+  - "E-invoice country-config test suite (`einvoice-format.test.ts`) \u2014 both IN\
+    \ + AE resolve through `buildEInvoicePayload`; no IRP schema leaks into AE payload;\
+    \ V2-21 GstRt fix asserted"
+  - tsc clean / lint clean / guardrail-presence 88 markers / full suite 1842 pass
+    0 fail / `next build` exit 0
+  - Commit + push + open PR
+  remaining_steps:
+  - "Statutory-rule + tax-slab seed for both India and UAE \u2014 **DEFERRED, see\
+    \ STATUS note** (Tier2: per-org master-data tables, no country column; not a V2-1\
+    \ code task)"
+  recent_commits:
+  - 'b4220392 V2-1: finish UAE country pack (multi-country pluggability proof)'
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T03:12:17.812468+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit (3810ef9f)
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 9% above, 9% on QFZP\
+    \ non-qualifying slice, Pillar Two 15% top-up for MNEs \u2265 EUR 750M)"
+  - "Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)\
+    \ \u2014 per-country slots, not a forced uniform shape"
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` + new `einvoice-format.ts`
+    (UAE FTA Peppol UBL alongside India IRP JSON, chosen on `organisations.country`)
+    + fix the V2-21 per-line `GstRt: 0` gap (real tax-template rate per line)'
+  - "Shared country-config test suite (`country-config.test.ts`) \u2014 both IN +\
+    \ AE resolve through `getComplianceEngine()` with no India hardcoding; unregistered\
+    \ country throws"
+  - "E-invoice country-config test suite (`einvoice-format.test.ts`) \u2014 both IN\
+    \ + AE resolve through `buildEInvoicePayload`; no IRP schema leaks into AE payload;\
+    \ V2-21 GstRt fix asserted"
+  - tsc clean / lint clean / guardrail-presence 88 markers / full suite 1842 pass
+    0 fail / `next build` exit 0
+  - Commit + push + open PR
+  remaining_steps:
+  - "Statutory-rule + tax-slab seed for both India and UAE \u2014 **DEFERRED, see\
+    \ STATUS note** (Tier2: per-org master-data tables, no country column; not a V2-1\
+    \ code task)"
+  recent_commits:
+  - 'b4220392 V2-1: finish UAE country pack (multi-country pluggability proof)'
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  note: worker started (resume=1, lifetime invocation 5/20)
+- at: '2026-07-20T03:17:18.202470+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/OS.yaml
+  - ai-os/RCA_OVERNIGHT_DISPATCH_FAILURE_2026-07-20.md
+  - ai-os/REVIEW_FRAMEWORK_DECISIONS_2026-07-19.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit (3810ef9f)
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 9% above, 9% on QFZP\
+    \ non-qualifying slice, Pillar Two 15% top-up for MNEs \u2265 EUR 750M)"
+  - "Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)\
+    \ \u2014 per-country slots, not a forced uniform shape"
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` + new `einvoice-format.ts`
+    (UAE FTA Peppol UBL alongside India IRP JSON, chosen on `organisations.country`)
+    + fix the V2-21 per-line `GstRt: 0` gap (real tax-template rate per line)'
+  - "Shared country-config test suite (`country-config.test.ts`) \u2014 both IN +\
+    \ AE resolve through `getComplianceEngine()` with no India hardcoding; unregistered\
+    \ country throws"
+  - "E-invoice country-config test suite (`einvoice-format.test.ts`) \u2014 both IN\
+    \ + AE resolve through `buildEInvoicePayload`; no IRP schema leaks into AE payload;\
+    \ V2-21 GstRt fix asserted"
+  - tsc clean / lint clean / guardrail-presence 88 markers / full suite 1842 pass
+    0 fail / `next build` exit 0
+  - Commit + push + open PR
+  remaining_steps:
+  - "Statutory-rule + tax-slab seed for both India and UAE \u2014 **DEFERRED, see\
+    \ STATUS note** (Tier2: per-org master-data tables, no country column; not a V2-1\
+    \ code task)"
+  recent_commits:
+  - 'b4220392 V2-1: finish UAE country pack (multi-country pluggability proof)'
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  note: periodic checkpoint
+- at: '2026-07-20T03:22:18.615820+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit (3810ef9f)
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 9% above, 9% on QFZP\
+    \ non-qualifying slice, Pillar Two 15% top-up for MNEs \u2265 EUR 750M)"
+  - "Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)\
+    \ \u2014 per-country slots, not a forced uniform shape"
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` + new `einvoice-format.ts`
+    (UAE FTA Peppol UBL alongside India IRP JSON, chosen on `organisations.country`)
+    + fix the V2-21 per-line `GstRt: 0` gap (real tax-template rate per line)'
+  - "Shared country-config test suite (`country-config.test.ts`) \u2014 both IN +\
+    \ AE resolve through `getComplianceEngine()` with no India hardcoding; unregistered\
+    \ country throws"
+  - "E-invoice country-config test suite (`einvoice-format.test.ts`) \u2014 both IN\
+    \ + AE resolve through `buildEInvoicePayload`; no IRP schema leaks into AE payload;\
+    \ V2-21 GstRt fix asserted"
+  - tsc clean / lint clean / guardrail-presence 88 markers / full suite 1842 pass
+    0 fail / `next build` exit 0
+  - Commit + push + open PR
+  remaining_steps:
+  - "Statutory-rule + tax-slab seed for both India and UAE \u2014 **DEFERRED, see\
+    \ STATUS note** (Tier2: per-org master-data tables, no country column; not a V2-1\
+    \ code task)"
+  recent_commits:
+  - c8575fca Merge origin/main into V2-1 UAE country pack branch
+  - 'b4220392 V2-1: finish UAE country pack (multi-country pluggability proof)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  note: periodic checkpoint
+- at: '2026-07-20T03:23:51.144643+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit (3810ef9f)
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 9% above, 9% on QFZP\
+    \ non-qualifying slice, Pillar Two 15% top-up for MNEs \u2265 EUR 750M)"
+  - "Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)\
+    \ \u2014 per-country slots, not a forced uniform shape"
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` + new `einvoice-format.ts`
+    (UAE FTA Peppol UBL alongside India IRP JSON, chosen on `organisations.country`)
+    + fix the V2-21 per-line `GstRt: 0` gap (real tax-template rate per line)'
+  - "Shared country-config test suite (`country-config.test.ts`) \u2014 both IN +\
+    \ AE resolve through `getComplianceEngine()` with no India hardcoding; unregistered\
+    \ country throws"
+  - "E-invoice country-config test suite (`einvoice-format.test.ts`) \u2014 both IN\
+    \ + AE resolve through `buildEInvoicePayload`; no IRP schema leaks into AE payload;\
+    \ V2-21 GstRt fix asserted"
+  - tsc clean / lint clean / guardrail-presence 88 markers / full suite 1842 pass
+    0 fail / `next build` exit 0
+  - Commit + push + open PR (#492)
+  - "Resume pass: merge `origin/main` (moved since branch point) \u2014 PR was CONFLICTING,\
+    \ now MERGEABLE. Conflict was only in governance/tracking files (PROGRESS.md rotating\
+    \ per-task file \u2014 kept this branch's V2-1 content; the V2-6 task's progress\
+    \ is in COMPLETED.yaml, not lost). One mechanical indentation fix to the V2-6\
+    \ entry's `scope_note` key in ACTIVE-CLAIMS.yaml (came in malformed on main via\
+    \ PR #491: `scope_note` at col 2 with no list-marker broke the YAML sequence;\
+    \ indented to col 4 to nest as a fourth key in the V2-6 list item). No V2-1 code\
+    \ files touched by the merge. Re-ran full gauntlet green: tsc 0 / lint 0 err (3\
+    \ pre-existing warnings) / guardrail 88 / metadata-index 39 / 1842 pass 0 fail\
+    \ / build exit 0."
+  remaining_steps:
+  - "Statutory-rule + tax-slab seed for both India and UAE \u2014 **DEFERRED, see\
+    \ STATUS note** (Tier2: per-org master-data tables, no country column; not a V2-1\
+    \ code task)"
+  recent_commits:
+  - "f48cdc81 PROGRESS.md: record resume-pass merge resolution (origin/main \u2192\
+    \ MERGEABLE)"
+  - c8575fca Merge origin/main into V2-1 UAE country pack branch
+  - 'b4220392 V2-1: finish UAE country pack (multi-country pluggability proof)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T03:24:22.063830+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit (3810ef9f)
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 9% above, 9% on QFZP\
+    \ non-qualifying slice, Pillar Two 15% top-up for MNEs \u2265 EUR 750M)"
+  - "Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)\
+    \ \u2014 per-country slots, not a forced uniform shape"
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` + new `einvoice-format.ts`
+    (UAE FTA Peppol UBL alongside India IRP JSON, chosen on `organisations.country`)
+    + fix the V2-21 per-line `GstRt: 0` gap (real tax-template rate per line)'
+  - "Shared country-config test suite (`country-config.test.ts`) \u2014 both IN +\
+    \ AE resolve through `getComplianceEngine()` with no India hardcoding; unregistered\
+    \ country throws"
+  - "E-invoice country-config test suite (`einvoice-format.test.ts`) \u2014 both IN\
+    \ + AE resolve through `buildEInvoicePayload`; no IRP schema leaks into AE payload;\
+    \ V2-21 GstRt fix asserted"
+  - tsc clean / lint clean / guardrail-presence 88 markers / full suite 1842 pass
+    0 fail / `next build` exit 0
+  - Commit + push + open PR (#492)
+  - "Resume pass: merge `origin/main` (moved since branch point) \u2014 PR was CONFLICTING,\
+    \ now MERGEABLE. Conflict was only in governance/tracking files (PROGRESS.md rotating\
+    \ per-task file \u2014 kept this branch's V2-1 content; the V2-6 task's progress\
+    \ is in COMPLETED.yaml, not lost). One mechanical indentation fix to the V2-6\
+    \ entry's `scope_note` key in ACTIVE-CLAIMS.yaml (came in malformed on main via\
+    \ PR #491: `scope_note` at col 2 with no list-marker broke the YAML sequence;\
+    \ indented to col 4 to nest as a fourth key in the V2-6 list item). No V2-1 code\
+    \ files touched by the merge. Re-ran full gauntlet green: tsc 0 / lint 0 err (3\
+    \ pre-existing warnings) / guardrail 88 / metadata-index 39 / 1842 pass 0 fail\
+    \ / build exit 0."
+  remaining_steps:
+  - "Statutory-rule + tax-slab seed for both India and UAE \u2014 **DEFERRED, see\
+    \ STATUS note** (Tier2: per-org master-data tables, no country column; not a V2-1\
+    \ code task)"
+  recent_commits:
+  - "f48cdc81 PROGRESS.md: record resume-pass merge resolution (origin/main \u2192\
+    \ MERGEABLE)"
+  - c8575fca Merge origin/main into V2-1 UAE country pack branch
+  - 'b4220392 V2-1: finish UAE country pack (multi-country pluggability proof)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  note: worker started (resume=1, lifetime invocation 6/20)
+- at: '2026-07-20T03:29:22.484403+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit (3810ef9f)
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 9% above, 9% on QFZP\
+    \ non-qualifying slice, Pillar Two 15% top-up for MNEs \u2265 EUR 750M)"
+  - "Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)\
+    \ \u2014 per-country slots, not a forced uniform shape"
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` + new `einvoice-format.ts`
+    (UAE FTA Peppol UBL alongside India IRP JSON, chosen on `organisations.country`)
+    + fix the V2-21 per-line `GstRt: 0` gap (real tax-template rate per line)'
+  - "Shared country-config test suite (`country-config.test.ts`) \u2014 both IN +\
+    \ AE resolve through `getComplianceEngine()` with no India hardcoding; unregistered\
+    \ country throws"
+  - "E-invoice country-config test suite (`einvoice-format.test.ts`) \u2014 both IN\
+    \ + AE resolve through `buildEInvoicePayload`; no IRP schema leaks into AE payload;\
+    \ V2-21 GstRt fix asserted"
+  - tsc clean / lint clean / guardrail-presence 88 markers / full suite 1842 pass
+    0 fail / `next build` exit 0
+  - Commit + push + open PR (#492)
+  - "Resume pass 1: merge `origin/main` (moved since branch point) \u2014 PR was CONFLICTING,\
+    \ now MERGEABLE. Conflict was only in governance/tracking files (PROGRESS.md rotating\
+    \ per-task file \u2014 kept this branch's V2-1 content; the V2-6 task's progress\
+    \ is in COMPLETED.yaml, not lost). One mechanical indentation fix to the V2-6\
+    \ entry's `scope_note` key in ACTIVE-CLAIMS.yaml (came in malformed on main via\
+    \ PR #491: `scope_note` at col 2 with no list-marker broke the YAML sequence;\
+    \ indented to col 4 to nest as a fourth key in the V2-6 list item). No V2-1 code\
+    \ files touched by the merge. Re-ran full gauntlet green: tsc 0 / lint 0 err (3\
+    \ pre-existing warnings) / guardrail 88 / metadata-index 39 / 1842 pass 0 fail\
+    \ / build exit 0."
+  - "Resume pass 2: main moved again (PR #493 moved V2-6 ACTIVE-CLAIMS entry active\u2192\
+    recently_completed). Re-merged origin/main \u2014 same two tracking-file conflicts\
+    \ (PROGRESS.md rotating per-task file, kept V2-1 content; ACTIVE-CLAIMS.yaml \u2014\
+    \ V2-1 claim still active, V2-6 now recently_completed). No V2-1 code files touched.\
+    \ Re-ran gauntlet green: tsc 0 / lint 0 err / guardrail 88 / metadata 39/41 /\
+    \ 28 V2-1 tests pass / 1842 pass 0 fail."
+  remaining_steps:
+  - Commit the ACTIVE-CLAIMS claim-cleanup + this PROGRESS.md update; open + merge
+    its own small PR (tier1 docs-only)
+  - 'Final confirmation: ACTIVE-CLAIMS.yaml no longer lists V2-6 under `active:`'
+  recent_commits:
+  - "f48cdc81 PROGRESS.md: record resume-pass merge resolution (origin/main \u2192\
+    \ MERGEABLE)"
+  - c8575fca Merge origin/main into V2-1 UAE country pack branch
+  - 'b4220392 V2-1: finish UAE country pack (multi-country pluggability proof)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  note: periodic checkpoint
+- at: '2026-07-20T03:31:30.227943+00:00'
+  status: failed
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - "Read governance (ACTIVE-CLAIMS, CONSTITUTION, SUPERBOSS v2 plan \xA71.1/\xA7\
+    2/\xA74 V2-1)"
+  - 'Collision check: no active claim touches UAE engines / compliance-engine-registry.ts
+    / erp-einvoice-service.ts / statutory-rule enum'
+  - "Map existing country-config architecture (finding: scaffolded-but-unwired \u2014\
+    \ see note below)"
+  - Register ACTIVE-CLAIMS claim + push on its own commit (3810ef9f)
+  - "Build UAE VAT engine (`src/lib/engines/ae/vat-engine.ts`) \u2014 real FTA Decree-Law\
+    \ No. 8/2017 logic (5% standard, zero-rated vs exempt distinction, input-tax recovery\
+    \ apportionment, reverse charge, TRN validation, late-payment penalty, return\
+    \ validation)"
+  - "Build UAE corporate-tax engine (`src/lib/engines/ae/corporate-tax-engine.ts`)\
+    \ \u2014 FTA Decree-Law No. 47/2022 (0% \u2264 AED 375k, 9% above, 9% on QFZP\
+    \ non-qualifying slice, Pillar Two 15% top-up for MNEs \u2265 EUR 750M)"
+  - "Register UAE (`ae`) in `compliance-engine-registry.ts` (wire `getComplianceEngine('AE')`)\
+    \ \u2014 per-country slots, not a forced uniform shape"
+  - 'Add country-config e-invoice FORMAT path in `erp-einvoice-service.ts` + new `einvoice-format.ts`
+    (UAE FTA Peppol UBL alongside India IRP JSON, chosen on `organisations.country`)
+    + fix the V2-21 per-line `GstRt: 0` gap (real tax-template rate per line)'
+  - "Shared country-config test suite (`country-config.test.ts`) \u2014 both IN +\
+    \ AE resolve through `getComplianceEngine()` with no India hardcoding; unregistered\
+    \ country throws"
+  - "E-invoice country-config test suite (`einvoice-format.test.ts`) \u2014 both IN\
+    \ + AE resolve through `buildEInvoicePayload`; no IRP schema leaks into AE payload;\
+    \ V2-21 GstRt fix asserted"
+  - tsc clean / lint clean / guardrail-presence 88 markers / full suite 1842 pass
+    0 fail / `next build` exit 0
+  - Commit + push + open PR (#492)
+  - "Resume pass 1: merge `origin/main` (moved since branch point) \u2014 PR was CONFLICTING,\
+    \ now MERGEABLE. Conflict was only in governance/tracking files (PROGRESS.md rotating\
+    \ per-task file \u2014 kept this branch's V2-1 content; the V2-6 task's progress\
+    \ is in COMPLETED.yaml, not lost). One mechanical indentation fix to the V2-6\
+    \ entry's `scope_note` key in ACTIVE-CLAIMS.yaml (came in malformed on main via\
+    \ PR #491: `scope_note` at col 2 with no list-marker broke the YAML sequence;\
+    \ indented to col 4 to nest as a fourth key in the V2-6 list item). No V2-1 code\
+    \ files touched by the merge. Re-ran full gauntlet green: tsc 0 / lint 0 err (3\
+    \ pre-existing warnings) / guardrail 88 / metadata-index 39 / 1842 pass 0 fail\
+    \ / build exit 0."
+  - "Resume pass 2: main moved again (PR #493 moved V2-6 ACTIVE-CLAIMS entry active\u2192\
+    recently_completed). Re-merged origin/main \u2014 same two tracking-file conflicts\
+    \ (PROGRESS.md rotating per-task file, kept V2-1 content; ACTIVE-CLAIMS.yaml \u2014\
+    \ V2-1 claim still active, V2-6 now recently_completed). No V2-1 code files touched.\
+    \ Re-ran gauntlet green: tsc 0 / lint 0 err / guardrail 88 / metadata 39/41 /\
+    \ 28 V2-1 tests pass / 1842 pass 0 fail."
+  remaining_steps:
+  - "Statutory-rule + tax-slab seed for both India and UAE \u2014 **DEFERRED, see\
+    \ STATUS note** (Tier2: per-org master-data tables, no country column; not a V2-1\
+    \ code task)"
+  recent_commits:
+  - "f48cdc81 PROGRESS.md: record resume-pass merge resolution (origin/main \u2192\
+    \ MERGEABLE)"
+  - c8575fca Merge origin/main into V2-1 UAE country pack branch
+  - 'b4220392 V2-1: finish UAE country pack (multi-country pluggability proof)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T11:23:17.551365+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - "f48cdc81 PROGRESS.md: record resume-pass merge resolution (origin/main \u2192\
+    \ MERGEABLE)"
+  - c8575fca Merge origin/main into V2-1 UAE country pack branch
+  - 'b4220392 V2-1: finish UAE country pack (multi-country pluggability proof)'
+  - '8b0afd65 Super Boss v2 V2-6: decisions-of-record (docs-only close for hold/document
+    rows) (#491)'
+  - 'a0ac251c Merge pull request #488 from FChecklist/docs/rca-overnight-dispatch-failure'
+  - 5b738209 Register RCA doc in OS.yaml index (Metadata Index Coverage Check)
+  - '3810ef9f V2-1: register ACTIVE-CLAIMS claim + PROGRESS scaffold (UAE country
+    pack)'
+  - '5c336ce3 RCA: overnight gap-closure mission dispatch failure + prevention (queue-dispatcher.py
+    re-enabled)'
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  note: 'PRE-FLIGHT HARD STOP (openrouter_balance_exhausted): OpenRouter account has
+    $-0.0676 remaining ($40.07 used of $40.00 credits) -- below the $0.1 safety floor.
+    This is the REAL, live account balance, not this proxy''s own internal spend tracker.
+    Add credits at https://openrouter.ai/settings/credits before retrying -- this
+    is a real money problem, not a code bug, and retrying will not help until the
+    balance is restored.'
+execution_seconds: 3711
+restart_count: 5
+token_usage:
+  input_tokens: 1921222
+  cache_creation_input_tokens: 0
+  cache_read_input_tokens: 0
+  output_tokens: 12532
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 0
+    ephemeral_5m_input_tokens: 0
+  inference_geo: ''
+  iterations: []
+  speed: standard
+master_synced_at: '2026-07-20T04:00:05.115416+00:00'

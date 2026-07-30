@@ -1,0 +1,315 @@
+id: task-20260718-230826-rescue-pr--427
+title: 'Rescue PR #427'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-230826-rescue-pr--427
+workspace: /opt/veridian/ai-os/tasks/task-20260718-230826-rescue-pr--427/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-230826-rescue-pr--427
+service: veridian-worker@task-20260718-230826-rescue-pr--427.service
+created_at: '2026-07-18T23:08:27.599309+00:00'
+last_checkpoint_at: '2026-07-18T23:39:09.748035+00:00'
+completed_steps: &id002
+- 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no conflicting active claim for PR #427 rescue;
+  registered claim & pushed (on this task''s own branch, separate small chore commit)'
+- 'Checked out PR #427 head (branch already in use by another worktree on'
+- Merged origin/main into the PR branch (merge, not rebase). Main had
+- 'Checked PR''s own migration: adds `drizzle/0225_calculation_engine_governance.sql`.'
+- Ran `bun install --frozen-lockfile && bunx tsc --noEmit && bun run lint && bun test`
+- 'Pushed merged + renumbered branch to PR #427''s real head ref (origin'
+- Read the PR's full diff myself (19 files via `gh pr diff 427`) before
+- 'Posted structured `AUDIT: PASS` PR comment (all 8 required fields):'
+- 'Investigated why CI never went green: GitHub Actions never created a'
+- 'TIER classification: this PR touches `drizzle/0236_calculation_engine_governance.sql`'
+- Moved this session's ACTIVE-CLAIMS.yaml entry from `active:` to
+remaining_steps: &id003
+- 'CI has not gone green on PR #427 because GitHub Actions has not'
+- Because of the above, CI cannot be confirmed green in this session,
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T23:08:28.580484+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  - f1cc217f AI Architecture / AI Interaction Efficiency gap closure (11 findings)
+    (#414)
+  - f91a24f8 Support session impersonation (#412)
+  - 'ff480283 chore: close active claim for PR #425 rescue (#453)'
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  note: worker started (resume=0)
+- at: '2026-07-18T23:13:29.096498+00:00'
+  status: in_progress
+  files_modified:
+  - drizzle/0225_calculation_engine_governance.sql -> drizzle/0236_calculation_engine_governance.sql
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no conflicting active claim for PR #427
+    rescue; registered claim & pushed'
+  - 'Checked out PR #427 head (branch already in use by another worktree on this host,
+    fetched as local branch `pr-427-rescue` from `refs/pull/427/head`)'
+  remaining_steps:
+  - Merge origin/main into the PR branch
+  - Check PR's own migrations, renumber if needed
+  - Run bun install/tsc/lint/test locally, fix real failures
+  - Push fixed branch
+  - Read full PR diff, post AUDIT PASS/FAIL comment
+  - Wait for CI to go green
+  - Classify TIER1/TIER2
+  - Merge if TIER1+green+PASS, else report for sign-off
+  recent_commits:
+  - f153be83 Merge remote-tracking branch 'origin/main' into pr-427-rescue
+  - '14c744e7 Update PROGRESS.md for PR #427 rescue'
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  - f1cc217f AI Architecture / AI Interaction Efficiency gap closure (11 findings)
+    (#414)
+  - f91a24f8 Support session impersonation (#412)
+  - 'ff480283 chore: close active claim for PR #425 rescue (#453)'
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  note: periodic checkpoint
+- at: '2026-07-18T23:18:29.446476+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no conflicting active claim for PR #427
+    rescue; registered claim & pushed (on this task''s own branch, separate small
+    chore commit)'
+  - 'Checked out PR #427 head (branch already in use by another worktree on'
+  - Merged origin/main into the PR branch (merge, not rebase). Main had
+  - 'Checked PR''s own migration: adds `drizzle/0225_calculation_engine_governance.sql`.'
+  - Ran `bun install --frozen-lockfile && bunx tsc --noEmit && bun run lint && bun
+    test`
+  - 'Pushed merged + renumbered branch to PR #427''s real head ref (origin'
+  - Read the PR's full diff myself (19 files via `gh pr diff 427`) before
+  - 'Post structured `AUDIT: PASS`/`AUDIT: FAIL` PR comment (all 8 required fields)'
+  - Wait for CI to go green on the pushed commit
+  - Classify TIER1/TIER2 (this PR touches drizzle/0236 + src/lib/db/schema.ts -> TIER2)
+  - Report final status -- TIER2 means do NOT merge regardless of CI outcome
+  remaining_steps:
+  - Complete audit comment + CI wait + final report (see above)
+  recent_commits:
+  - '88b678ba Update PROGRESS.md: rescue-session findings before push'
+  - 693d926a Renumber calculation-engine-governance migration 0225 -> 0236 (collision
+    with main's merged migrations up to 0235)
+  - f153be83 Merge remote-tracking branch 'origin/main' into pr-427-rescue
+  - '14c744e7 Update PROGRESS.md for PR #427 rescue'
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  - f1cc217f AI Architecture / AI Interaction Efficiency gap closure (11 findings)
+    (#414)
+  - f91a24f8 Support session impersonation (#412)
+  - 'ff480283 chore: close active claim for PR #425 rescue (#453)'
+  note: periodic checkpoint
+- at: '2026-07-18T23:23:29.793887+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no conflicting active claim for PR #427
+    rescue; registered claim & pushed (on this task''s own branch, separate small
+    chore commit)'
+  - 'Checked out PR #427 head (branch already in use by another worktree on'
+  - Merged origin/main into the PR branch (merge, not rebase). Main had
+  - 'Checked PR''s own migration: adds `drizzle/0225_calculation_engine_governance.sql`.'
+  - Ran `bun install --frozen-lockfile && bunx tsc --noEmit && bun run lint && bun
+    test`
+  - 'Pushed merged + renumbered branch to PR #427''s real head ref (origin'
+  - Read the PR's full diff myself (19 files via `gh pr diff 427`) before
+  - 'Post structured `AUDIT: PASS`/`AUDIT: FAIL` PR comment (all 8 required fields)'
+  - Wait for CI to go green on the pushed commit
+  - Classify TIER1/TIER2 (this PR touches drizzle/0236 + src/lib/db/schema.ts -> TIER2)
+  - Report final status -- TIER2 means do NOT merge regardless of CI outcome
+  remaining_steps:
+  - Complete audit comment + CI wait + final report (see above)
+  recent_commits:
+  - 'f80d687d chore: retrigger CI (no GitHub Actions check-suite created after prior
+    push)'
+  - '88b678ba Update PROGRESS.md: rescue-session findings before push'
+  - 693d926a Renumber calculation-engine-governance migration 0225 -> 0236 (collision
+    with main's merged migrations up to 0235)
+  - f153be83 Merge remote-tracking branch 'origin/main' into pr-427-rescue
+  - '14c744e7 Update PROGRESS.md for PR #427 rescue'
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  - f1cc217f AI Architecture / AI Interaction Efficiency gap closure (11 findings)
+    (#414)
+  - f91a24f8 Support session impersonation (#412)
+  note: periodic checkpoint
+- at: '2026-07-18T23:28:30.143087+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no conflicting active claim for PR #427
+    rescue; registered claim & pushed (on this task''s own branch, separate small
+    chore commit)'
+  - 'Checked out PR #427 head (branch already in use by another worktree on'
+  - Merged origin/main into the PR branch (merge, not rebase). Main had
+  - 'Checked PR''s own migration: adds `drizzle/0225_calculation_engine_governance.sql`.'
+  - Ran `bun install --frozen-lockfile && bunx tsc --noEmit && bun run lint && bun
+    test`
+  - 'Pushed merged + renumbered branch to PR #427''s real head ref (origin'
+  - Read the PR's full diff myself (19 files via `gh pr diff 427`) before
+  - 'Posted structured `AUDIT: PASS` PR comment (all 8 required fields):'
+  - 'Investigated why CI never went green: GitHub Actions never created a'
+  - 'TIER classification: this PR touches `drizzle/0236_calculation_engine_governance.sql`'
+  - Moved this session's ACTIVE-CLAIMS.yaml entry from `active:` to
+  remaining_steps:
+  - 'CI has not gone green on PR #427 because GitHub Actions has not'
+  - Because of the above, CI cannot be confirmed green in this session,
+  recent_commits:
+  - '509035d6 chore: close PR #427 rescue claim (TIER2, audited PASS, CI blocked by
+    GH Actions anomaly)'
+  - dff787b9 Merge remote-tracking branch 'origin/main' into worker/task-20260718-230826-rescue-pr--427
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  - 'f5e2586f Register active claim: rescue PR #427'
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  - f1cc217f AI Architecture / AI Interaction Efficiency gap closure (11 findings)
+    (#414)
+  note: periodic checkpoint
+- at: '2026-07-18T23:33:30.482559+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no conflicting active claim for PR #427
+    rescue; registered claim & pushed (on this task''s own branch, separate small
+    chore commit)'
+  - 'Checked out PR #427 head (branch already in use by another worktree on'
+  - Merged origin/main into the PR branch (merge, not rebase). Main had
+  - 'Checked PR''s own migration: adds `drizzle/0225_calculation_engine_governance.sql`.'
+  - Ran `bun install --frozen-lockfile && bunx tsc --noEmit && bun run lint && bun
+    test`
+  - 'Pushed merged + renumbered branch to PR #427''s real head ref (origin'
+  - Read the PR's full diff myself (19 files via `gh pr diff 427`) before
+  - 'Posted structured `AUDIT: PASS` PR comment (all 8 required fields):'
+  - 'Investigated why CI never went green: GitHub Actions never created a'
+  - 'TIER classification: this PR touches `drizzle/0236_calculation_engine_governance.sql`'
+  - Moved this session's ACTIVE-CLAIMS.yaml entry from `active:` to
+  remaining_steps:
+  - 'CI has not gone green on PR #427 because GitHub Actions has not'
+  - Because of the above, CI cannot be confirmed green in this session,
+  recent_commits:
+  - '9f3bab0c chore: retrigger audit-check after posting AUDIT comment'
+  - '509035d6 chore: close PR #427 rescue claim (TIER2, audited PASS, CI blocked by
+    GH Actions anomaly)'
+  - dff787b9 Merge remote-tracking branch 'origin/main' into worker/task-20260718-230826-rescue-pr--427
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  - 'f5e2586f Register active claim: rescue PR #427'
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  note: periodic checkpoint
+- at: '2026-07-18T23:38:30.844853+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no conflicting active claim for PR #427
+    rescue; registered claim & pushed (on this task''s own branch, separate small
+    chore commit)'
+  - 'Checked out PR #427 head (branch already in use by another worktree on'
+  - Merged origin/main into the PR branch (merge, not rebase). Main had
+  - 'Checked PR''s own migration: adds `drizzle/0225_calculation_engine_governance.sql`.'
+  - Ran `bun install --frozen-lockfile && bunx tsc --noEmit && bun run lint && bun
+    test`
+  - 'Pushed merged + renumbered branch to PR #427''s real head ref (origin'
+  - Read the PR's full diff myself (19 files via `gh pr diff 427`) before
+  - 'Posted structured `AUDIT: PASS` PR comment (all 8 required fields):'
+  - 'Investigated why CI never went green: GitHub Actions never created a'
+  - 'TIER classification: this PR touches `drizzle/0236_calculation_engine_governance.sql`'
+  - Moved this session's ACTIVE-CLAIMS.yaml entry from `active:` to
+  remaining_steps:
+  - 'CI has not gone green on PR #427 because GitHub Actions has not'
+  - Because of the above, CI cannot be confirmed green in this session,
+  recent_commits:
+  - '9f3bab0c chore: retrigger audit-check after posting AUDIT comment'
+  - '509035d6 chore: close PR #427 rescue claim (TIER2, audited PASS, CI blocked by
+    GH Actions anomaly)'
+  - dff787b9 Merge remote-tracking branch 'origin/main' into worker/task-20260718-230826-rescue-pr--427
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  - 'f5e2586f Register active claim: rescue PR #427'
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  note: periodic checkpoint
+- at: '2026-07-18T23:39:09.748035+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '9f3bab0c chore: retrigger audit-check after posting AUDIT comment'
+  - '509035d6 chore: close PR #427 rescue claim (TIER2, audited PASS, CI blocked by
+    GH Actions anomaly)'
+  - dff787b9 Merge remote-tracking branch 'origin/main' into worker/task-20260718-230826-rescue-pr--427
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  - 'f5e2586f Register active claim: rescue PR #427'
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  note: worker finished, no changes to commit
+execution_seconds: 1841
+restart_count: 0
+token_usage:
+  input_tokens: 256
+  cache_creation_input_tokens: 162818
+  cache_read_input_tokens: 14567446
+  output_tokens: 43852
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 162818
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 896
+    cache_read_input_tokens: 186046
+    cache_creation_input_tokens: 310
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 310
+    type: message
+  speed: standard
+master_synced_at: '2026-07-19T00:00:04.409617+00:00'

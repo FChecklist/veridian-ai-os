@@ -1,0 +1,29 @@
+## OBJECTIVE
+Build increment 1 of the end-user TET (Task Execution Trace) engine: a real Task Execution Trace core service that logs each user-initiated action's lifecycle (started/step/completed/failed) to a real DB table, and a client-facing security shield gate that REUSES the existing 4-layer defense-in-depth prompt-security module rather than reimplementing regex-based filtering from scratch.
+
+## KNOWN_CONTEXT
+Real, already-merged infrastructure exists and must be reused, not duplicated: `src/lib/prompt-security/` (layers 1-4: input sanitization, system-prompt hardening, runtime guardrails, output filtering — currently only wired into `src/app/api/help/ask/route.ts`), `src/lib/supabase/auth-guard.ts` (requireAuth/withTenantContext JWT-based tenant scoping), `src/lib/services/capability-learning-service.ts` (an existing learning-loop-like mechanism), the PWA offline/IndexedDB sync queue from projexa PR #54, and the browser intent-cache/palette (PR #324, IndexedDB workflow-recall). None of these five should be rebuilt from scratch in this task.
+
+## SCOPE
+1. Add a new `task_execution_traces` table (migration, RLS matching existing tenant-scoping pattern) and a `TaskExecutionTraceService` with real methods to start/append-step/complete/fail a trace, scoped per-user/per-org via `withTenantContext`.
+2. Add a client-facing security shield gate function that calls the EXISTING `src/lib/prompt-security/index.ts` layer functions (layer1 input sanitization + layer3 runtime guardrails at minimum) against user-submitted TET-engine actions before they execute — do not write new regex rules if an existing layer already covers the same pattern class; only add new patterns for gaps the existing layers genuinely don't cover (state explicitly in your PR description which gap, if any, required a new pattern).
+3. Wire the trace service so every gated action records a trace entry (started, shield-pass/shield-block, completed/failed).
+4. Produce a written gap-map (in your PROGRESS.md) covering the REMAINING TET engine scope not built in this increment — 4-tier JWT context switching, predictive caching, realtime sync, Claude-Code-style UI, learning loop — for each, state explicitly which existing file/service it should reuse/extend (auth-guard.ts, existing LLM response cache, PWA/IndexedDB sync infra, VERI Chat mode-pill UI, capability-learning-service.ts) and what specific net-new work (if any) each still needs. Do not build those remaining items in this task — this task is increment 1 only.
+
+## SUCCESS_CRITERIA
+- A real test proving a malicious action (matching an existing layer1/layer3 pattern) is blocked by the shield gate and a trace entry records the block.
+- A real test proving a legitimate action passes the shield gate and a trace entry records started→completed.
+- PROGRESS.md contains the gap-map described in SCOPE item 4.
+- Verify by actually running:
+`npx tsc --noEmit`
+`bun test src/lib/services/task-execution-trace-service.test.ts`
+`grep -c "gap-map" PROGRESS.md`
+
+## EXPECTED_OUTPUT
+A real PR on a new branch in the compliance-tracker repo, containing the migration, service, shield-gate wiring, tests, and the gap-map in PROGRESS.md. Requires a fresh supervisor audit; do not merge it yourself even after a PASS verdict.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. The CSV-ingestion bootstrap phase requires Owner-supplied source CSVs that do not exist yet — do not attempt that phase in this task.
+
+## COMPLEXITY_TIER
+judgment

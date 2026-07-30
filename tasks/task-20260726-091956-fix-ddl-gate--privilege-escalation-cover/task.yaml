@@ -1,0 +1,212 @@
+id: task-20260726-091956-fix-ddl-gate--privilege-escalation-cover
+title: 'Fix DDL gate: privilege-escalation coverage + real citation check (redispatch
+  after API limit)'
+status: completed
+repo: claude-control
+branch: worker/task-20260726-091956-fix-ddl-gate--privilege-escalation-cover
+workspace: /opt/veridian/ai-os/tasks/task-20260726-091956-fix-ddl-gate--privilege-escalation-cover/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-091956-fix-ddl-gate--privilege-escalation-cover
+service: veridian-worker@task-20260726-091956-fix-ddl-gate--privilege-escalation-cover.service
+created_at: '2026-07-26T09:19:57.214149+00:00'
+last_checkpoint_at: '2026-07-26T09:28:58.799827+00:00'
+completed_steps: &id002
+- Read scripts/ddl_authorization_check.py (round 2 state) and tests/test_ddl_authorization_check.py
+  in full
+- 'Checked out the real PR #79 branch (worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to,
+  local mirror `pr79-work` @ ef16649) via a new work branch `pr79-round3-work`'
+- 'Expanded DDL_KEYWORD_PATTERNS with privilege-escalation + broader DDL/DCL forms:
+  GRANT, REVOKE, CREATE/ALTER/DROP ROLE, CREATE/ALTER/DROP USER, SECURITY DEFINER
+  (standalone), REASSIGN OWNED, CREATE/DROP VIEW (incl. MATERIALIZED), CREATE/ALTER/DROP
+  FUNCTION (incl. OR REPLACE), COMMENT ON'
+- 'Replaced format-only citation check with real existence check: KE-<date>-<time>-<hex>
+  IDs are verified via full-text scan of ai-os/; OWNER_DECISIONS_NEEDED_<date>.yaml
+  references are verified via os.path.isfile on ai-os/<filename>'
+- 'Corrected docstring: removed the false "not something a worker can fabricate" claim,
+  documented the real existence check, and honestly disclosed the two residual gaps
+  (dated-free-text-note path still format-only; existence check doesn''t prove semantic
+  relevance of the cited record)'
+- 'Updated tests/test_ddl_authorization_check.py: fixed 2 existing tests that used
+  fabricated citations (now rejected under the new check, updated to real on-disk
+  fixtures), added tests for GRANT, REVOKE, SECURITY DEFINER function, ALTER ROLE
+  SUPERUSER, CREATE/DROP ROLE, CREATE/DROP VIEW, fabricated-KE-id rejection, fabricated-file
+  rejection, real-file acceptance, and the two exact SUCCESS_CRITERIA end-to-end scenarios'
+- 'Verified: `python3 -m pytest tests/test_ddl_authorization_check.py -v` -- 28 passed'
+- 'Verified via direct CLI run against crafted files: `GRANT ALL ON compliance.users
+  TO anon` (no citation) -> valid:false; DROP TABLE + fabricated `PRE-APPROVED-LIVE-DDL:
+  KE-20260726-999999-dead` -> valid:false'
+- 'Committed and pushed to the real PR #79 branch'
+remaining_steps: &id003
+- None -- awaiting fresh audit pass (reviewer should live-test with crafted adversarial
+  inputs again per protocol, not just diff-review)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T09:19:59.011101+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T09:25:00.241171+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/ddl_authorization_check.py
+  - tests/test_ddl_authorization_check.py
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'ef16649 Tighten DDL authorization gate: real citation check, wider keyword/tool
+    coverage, honest limitation note'
+  - e23c2d4 Add DDL pre-flight authorization gate to task dispatch
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  - '5a93d3f Fix broken YAML (bare colon in SATISFIED: annotation) + backfill phase_3
+    self-report -- PR 561 merged with real security corrective fix'
+  - 8168e78 Merge branch 'master' of https://github.com/FChecklist/claude-control
+  note: periodic checkpoint
+- at: '2026-07-26T09:27:00.759375+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read scripts/ddl_authorization_check.py (round 2 state) and tests/test_ddl_authorization_check.py
+    in full
+  - 'Checked out the real PR #79 branch (worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to,
+    local mirror `pr79-work` @ ef16649) via a new work branch `pr79-round3-work`'
+  - 'Expanded DDL_KEYWORD_PATTERNS with privilege-escalation + broader DDL/DCL forms:
+    GRANT, REVOKE, CREATE/ALTER/DROP ROLE, CREATE/ALTER/DROP USER, SECURITY DEFINER
+    (standalone), REASSIGN OWNED, CREATE/DROP VIEW (incl. MATERIALIZED), CREATE/ALTER/DROP
+    FUNCTION (incl. OR REPLACE), COMMENT ON'
+  - 'Replaced format-only citation check with real existence check: KE-<date>-<time>-<hex>
+    IDs are verified via full-text scan of ai-os/; OWNER_DECISIONS_NEEDED_<date>.yaml
+    references are verified via os.path.isfile on ai-os/<filename>'
+  - 'Corrected docstring: removed the false "not something a worker can fabricate"
+    claim, documented the real existence check, and honestly disclosed the two residual
+    gaps (dated-free-text-note path still format-only; existence check doesn''t prove
+    semantic relevance of the cited record)'
+  - 'Updated tests/test_ddl_authorization_check.py: fixed 2 existing tests that used
+    fabricated citations (now rejected under the new check, updated to real on-disk
+    fixtures), added tests for GRANT, REVOKE, SECURITY DEFINER function, ALTER ROLE
+    SUPERUSER, CREATE/DROP ROLE, CREATE/DROP VIEW, fabricated-KE-id rejection, fabricated-file
+    rejection, real-file acceptance, and the two exact SUCCESS_CRITERIA end-to-end
+    scenarios'
+  - 'Verified: `python3 -m pytest tests/test_ddl_authorization_check.py -v` -- 28
+    passed'
+  - 'Verified via direct CLI run against crafted files: `GRANT ALL ON compliance.users
+    TO anon` (no citation) -> valid:false; DROP TABLE + fabricated `PRE-APPROVED-LIVE-DDL:
+    KE-20260726-999999-dead` -> valid:false'
+  - 'Committed and pushed to the real PR #79 branch'
+  remaining_steps:
+  - None -- awaiting fresh audit pass (reviewer should live-test with crafted adversarial
+    inputs again per protocol, not just diff-review)
+  recent_commits:
+  - '5839c3e Close round-3 DDL gate gaps: detect privilege-escalation DDL/DCL, verify
+    citation existence'
+  - 'ef16649 Tighten DDL authorization gate: real citation check, wider keyword/tool
+    coverage, honest limitation note'
+  - e23c2d4 Add DDL pre-flight authorization gate to task dispatch
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  - '5a93d3f Fix broken YAML (bare colon in SATISFIED: annotation) + backfill phase_3
+    self-report -- PR 561 merged with real security corrective fix'
+  note: quality gates passed, pushed branch worker/task-20260726-091956-fix-ddl-gate--privilege-escalation-cover,
+    awaiting review
+- at: '2026-07-26T09:28:58.799827+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '5839c3e Close round-3 DDL gate gaps: detect privilege-escalation DDL/DCL, verify
+    citation existence'
+  - 'ef16649 Tighten DDL authorization gate: real citation check, wider keyword/tool
+    coverage, honest limitation note'
+  - e23c2d4 Add DDL pre-flight authorization gate to task dispatch
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  - '5a93d3f Fix broken YAML (bare colon in SATISFIED: annotation) + backfill phase_3
+    self-report -- PR 561 merged with real security corrective fix'
+  note: "tier1, Superboss-approved, but the merge itself FAILED (gh pr view confirms\
+    \ state=, mergedAt=; see supervisor.log) \u2014 needs manual attention, NOT actually\
+    \ merged: "
+execution_seconds: 420
+restart_count: 0
+token_usage:
+  input_tokens: 96
+  cache_creation_input_tokens: 83320
+  cache_read_input_tokens: 3720045
+  output_tokens: 36233
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 83320
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 580
+    cache_read_input_tokens: 106437
+    cache_creation_input_tokens: 567
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 567
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T10:00:09.717982+00:00'
+status_corrected_at: '2026-07-27T03:38:37.967151+00:00'
+status_correction_reason: 'Real PR #79 already merged -- patch task.yaml status to
+  completed, no redispatch.'
+real_pr_evidence:
+  mergeable: UNKNOWN
+  mergedAt: '2026-07-26T11:59:10Z'
+  reviewDecision: ''
+  state: MERGED
+  title: Add DDL pre-flight authorization gate to task dispatch
+  url: https://github.com/FChecklist/claude-control/pull/79

@@ -1,0 +1,526 @@
+# ============================================================================
+# DEEP EVALUATION: PLAN-07, PLAN-08, PLAN-15, PLAN-16
+# Companion to /opt/veridian/ai-os/STRATEGIC_PLAN_2026-07-21.yaml
+# Written to a SEPARATE file (not editing the shared plan file directly) to
+# avoid clobbering concurrent edits from the two other agents working
+# PLAN-01..06 and PLAN-09..14 in the same shared file at the same time.
+# ============================================================================
+
+meta:
+  id: VERIDIAN-PLAN-07-08-15-16-DEEP-EVAL
+  version: 1.0
+  parent_plan: /opt/veridian/ai-os/STRATEGIC_PLAN_2026-07-21.yaml
+  generated_at: "2026-07-21T19:10:00Z"
+  scope: [PLAN-07, PLAN-08, PLAN-15, PLAN-16]
+  do_not_touch: [PLAN-01, PLAN-02, PLAN-03, PLAN-04, PLAN-05, PLAN-06, PLAN-09,
+    PLAN-10, PLAN-11, PLAN-12, PLAN-13, PLAN-14]
+  method: >-
+    PLAN-07 was actually executed (read-only, real 198-rule audit re-run).
+    PLAN-08 was actually executed via a new, reusable, automated diff
+    script (no manual CSV-row checking). PLAN-15/PLAN-16 required live
+    read-only queries against the real Supabase project (pcrjmlpuqsbocqfwoxod,
+    "verdian-ai") to determine the REAL auth mechanism and the REAL current
+    org/module state -- no action was taken against that database; every
+    write-capable step is a reusable script, queued but NOT run, per the
+    Owner's standing instruction not to issue credentials without an
+    explicit go-ahead.
+  environment_notes: >-
+    compliance-tracker was freshly cloned to
+    /opt/veridian/workspace/plan07-08-15-16/fresh-clone (main branch, commit
+    2f5de6b7 at time of this run) instead of reusing the shared checkout at
+    /opt/veridian/repos/compliance-tracker, because that checkout was
+    mid-edit on branch docs/cost-control-2026-07-20 with uncommitted
+    changes (belongs to a different concurrent agent). node_modules was
+    symlinked from the shared checkout (read-only reuse, zero writes to
+    it) to avoid a full reinstall on this bun-based repo without a lockfile
+    npm can use directly.
+
+# ============================================================================
+# DEPENDENCY TABLE -- concrete mechanism per edge, not just "depends on"
+# ============================================================================
+dependency_table:
+  - edge: "PLAN-08 depends_on PLAN-07"
+    concrete_mechanism: >-
+      PLAN-08's feature-completion script (feature-completion-audit.mjs)
+      reuses the SAME evidence philosophy as PLAN-07's audit198
+      evidence-engine.mjs (keyword/identifier grep against live repo state
+      -> deterministic verdict, no free-text judgment). PLAN-07 had to run
+      first only to confirm that pattern is sound against a freshly merged
+      main (it is: see results below) before extending it to a second,
+      new script. This is a methodology dependency, not a data dependency
+      -- PLAN-08's script does not read audit198's output file.
+    status: SATISFIED (PLAN-07 executed this session, see results below)
+
+  - edge: "PLAN-15 depends_on PLAN-06 (per original plan file)"
+    concrete_mechanism: >-
+      Original plan text: "Deliverable... once PLAN-06 (Owner's Task 6)
+      completes." This session's own investigation found PLAN-06 is
+      owned by a different concurrent agent (PLAN-01..06 scope) and its
+      status is NOT tracked here. However, the login-mechanism finding
+      below (Supabase Auth Admin API, not compliance.users.password_hash)
+      is INDEPENDENT of whatever PLAN-06 delivers -- PLAN-06 was about
+      UI/UX-merge or brand-merge work per the owner_label pattern in the
+      parent file, not about auth. Recommend the dependency be downgraded
+      from a hard blocker to "nice to sequence after" -- the demo-login
+      script below can run today without waiting on PLAN-06.
+    status: RE-EVALUATED — mechanism does not actually require PLAN-06;
+      confirm with the PLAN-01..06 owner before treating as unblocked.
+
+  - edge: "PLAN-16 depends_on PLAN-07 (per original plan file)"
+    concrete_mechanism: >-
+      Original plan text: "once PLAN-07 (Owner's Task 7) completes."
+      PLAN-07 IS now complete (executed this session, real numbers below).
+      PLAN-16's own dependency is therefore SATISFIED. The actual
+      mechanism connecting them: PLAN-16's module inventory below is
+      generated from platform.module_registry + platform.product_branches
+      + platform.product_branch_modules (live Supabase tables) — a
+      completely different data source from audit198's 198
+      constitution rules. The two do not share code or data; the
+      "depends_on" was a sequencing choice by the Owner, now moot.
+    status: SATISFIED (PLAN-07 executed this session)
+
+  - edge: "PLAN-16 depends_on PLAN-15 (new finding, not in original plan)"
+    concrete_mechanism: >-
+      Both PLAN-15 and PLAN-16 need the SAME login-creation mechanism
+      (create-or-reset-demo-login.mjs) and, for the PROJEXA-specific
+      module set specifically, the SAME branch-enablement mechanism
+      (enable-product-branch.mjs). PLAN-16's module-by-module inventory
+      below literally includes PLAN-15's two demo users as the "CEO +
+      team member" login for the ERP/CRM/Sales/HR/Rewards/VERI-Chat
+      portion of the inventory. Running PLAN-15's queued script first
+      means PLAN-16's login row is simultaneously satisfied, not a
+      separate action.
+    status: NEW EDGE — sequence PLAN-15's script execution before treating
+      PLAN-16 as "credentials ready."
+
+# ============================================================================
+# PLAN-07 -- 198-rule audit: ACTUALLY RE-RUN (real, current numbers)
+# ============================================================================
+tasks:
+  - id: PLAN-07
+    owner_label: "Task 7"
+    title: 198-rule audit, full system, automated scripts only
+    objective: Re-run the existing ai-os/scripts/audit198/run-audit.mjs
+      framework end-to-end against the now-fully-merged main. DONE THIS
+      SESSION.
+    execution_record:
+      command: "node ai-os/scripts/audit198/run-audit.mjs"
+      repo_state: "fresh clone of FChecklist/compliance-tracker, main branch,
+        commit 2f5de6b7 (post PR #522 + all 7 gap-closure waves + #526/#540/#541)"
+      ran_at: "2026-07-21T18:39:00Z"
+    real_current_results:
+      items_scored: "198 / 198"
+      ENFORCED: 22
+      PARTIALLY_ENFORCED: 153
+      POLICY_ONLY: 0
+      NOT_APPLICABLE_YET: 0
+      NOT_YET_BUILT: 14
+      EVIDENCE_UNAVAILABLE: 0
+      NEEDS_HUMAN_JUDGMENT: 9
+    stale_baseline_referenced_by_owner: "22 ENFORCED / 152 PARTIALLY_ENFORCED /
+      15 NOT_YET_BUILT / 9 NEEDS_HUMAN_JUDGMENT (generated 2026-07-21T09:30:15Z,
+      pre-gap-closure-waves)"
+    delta_vs_stale_baseline: >-
+      Net change is small: PARTIALLY_ENFORCED +1, NOT_YET_BUILT -1,
+      NEEDS_HUMAN_JUDGMENT unchanged (9 -> 9, but not the SAME 9 items --
+      one moved out, one moved in). ENFORCED unchanged at 22. Exactly 3
+      individual items changed verdict (diffed programmatically against
+      the git-committed prior results.json, not eyeballed):
+        - RULE-011: NEEDS_HUMAN_JUDGMENT -> PARTIALLY_ENFORCED
+        - ARTICLE-052: NOT_YET_BUILT -> PARTIALLY_ENFORCED ("Every reusable
+          AI solution ..." — REUSE_COMPONENTIZATION category)
+        - ARTICLE-094: PARTIALLY_ENFORCED -> NEEDS_HUMAN_JUDGMENT (a
+          regression -- evidence that used to satisfy this item's
+          deterministic check no longer does against current main;
+          worth a manual look, this is exactly the kind of drift the
+          re-run is supposed to catch)
+      Practical read: the 7 gap-closure waves that landed 2026-07-21
+      mostly closed gaps that were ALREADY PARTIALLY_ENFORCED (raising
+      evidence quality within a bucket, not crossing a bucket threshold),
+      or landed in areas the mechanical checker doesn't verdict-shift on.
+      Only 1 item net moved out of NOT_YET_BUILT. 9 items still need a
+      human to actually look at them (NEEDS_HUMAN_JUDGMENT is not a
+      "software will get to it" bucket by the framework's own design).
+    evidence_files:
+      - /opt/veridian/ai-os/planning/evidence/audit198-rerun-2026-07-21/audit198-results.json
+      - /opt/veridian/ai-os/planning/evidence/audit198-rerun-2026-07-21/audit198-summary.md
+    key_gaps: ["9 NEEDS_HUMAN_JUDGMENT items still require an actual human
+      decision -- list them by id from the results.json evidence file, this
+      is not something software can close further", "ARTICLE-094 regressed
+      this run -- worth checking why before the next re-run"]
+    sequence: 7
+    depends_on: []
+    effort: >-
+      small -- confirmed: the whole audit (198 items, full repo grep)
+      completed in under 2 minutes of wall-clock compute.
+    status: DONE
+
+# ============================================================================
+# PLAN-08 -- feature-completion re-baseline: ACTUALLY RE-RUN via a NEW
+# reusable automated script (not manual row-checking)
+# ============================================================================
+  - id: PLAN-08
+    owner_label: "Task 8"
+    title: FChecklist feature-completion audit, all modules/brands, automated
+    objective: Fully automated feature-completion audit, no manual work.
+      DONE THIS SESSION via a new script, not a spreadsheet pass.
+    new_tool_built: /opt/veridian/ai-os/planning/scripts/feature-completion-audit.mjs
+    tool_mechanism: >-
+      Deterministic, re-runnable, zero manual judgment per row. Usage:
+        node feature-completion-audit.mjs <repoRoot> <csvPath> [<csvPath2> ...]
+      For each tracked feature row it (a) tokenizes Feature_Name +
+      Submodule + Feature_Category, (b) builds a token corpus from the
+      CURRENT repo's real route paths (src/app/**), drizzle schema table
+      + column identifiers (src/lib/db/schema.ts), and lib/component/
+      service directory names, (c) computes what fraction of the row's
+      significant tokens appear in that live corpus, (d) assigns
+      IMPLEMENTED (>=66% match) / PARTIAL (34-65%) / GAP (<34%)
+      deterministically from the ratio -- same evidence-based philosophy
+      as audit198's own evidence-engine.mjs, applied to feature rows
+      instead of constitution rules. Re-run any time by re-pointing
+      <repoRoot> at current main; no manual step in the loop.
+    csv_1_general_erp_benchmark:
+      source: docs/archive/COMPARISON_CSV_GAP_ANALYSIS.md (raw
+        comparison.txt itself was never committed to the repo -- only this
+        already-tabulated module-level gap analysis survives, ~340
+        features across 19 module sections, last verified 2026-07-05)
+      note: >-
+        No per-feature-row CSV survives for this benchmark, so the
+        keyword-corpus script above cannot run on it directly at
+        per-feature granularity. Re-baselined instead at the doc's own
+        19-module-section granularity by mechanically grepping current
+        src/lib/db/schema.ts for the exact evidence identifiers the doc
+        already recorded (same technique, coarser grain, still zero
+        manual judgment -- pure grep-and-compare).
+      real_updated_result: >-
+        18 of 19 module sections remain PRESENT/PARTIAL (unchanged since
+        2026-07-05). 1 flipped since the 2026-07-05 baseline: "Finance >
+        Budgeting (BD001-018)" was GAP ("No erp_budget* table anywhere in
+        schema.ts") -- now PRESENT: `erp_budgets` + `erp_budget_line_items`
+        tables exist in current schema.ts (confirmed by grep, 16 hits).
+        1 module section remains a genuine GAP: "Sales > Contract
+        Management (SC001-018)" -- `contract_compliance_items` exists but
+        is GRC-shaped (compliance obligations), not a sales-contract
+        entity; still no dedicated sales-contract table.
+    csv_2_manufacturing_grc_benchmark:
+      source: comparison_csv_2_full_benchmark.csv (506 real feature rows
+        after excluding 29 repeated in-file header rows -- a parsing
+        artifact in the source CSV itself, filtered out mechanically by
+        the script, not by hand)
+      real_updated_result:
+        total_features: 506
+        IMPLEMENTED: 261
+        PARTIAL: 134
+        GAP: 111
+      caveat: >-
+        This is a KEYWORD-OVERLAP heuristic, not a semantic verification
+        that each feature's full business logic is correct -- it answers
+        "does matching code/schema exist for this," not "is it bug-free
+        and complete." Treat IMPLEMENTED as "strong evidence of a real
+        attempt," GAP as "no evidence found, look here first."
+    csv_3_ai_platform_benchmark:
+      source: comparison_csv_3_ai_platform_benchmark.csv (150 real feature
+        rows after excluding 7 repeated header rows, same filter)
+      real_updated_result:
+        total_features: 150
+        IMPLEMENTED: 72
+        PARTIAL: 37
+        GAP: 41
+    evidence_files:
+      - /opt/veridian/ai-os/planning/evidence/feature-completion-rebaseline-2026-07-21/comparison_csv_2_full_benchmark.feature-audit-results.json
+      - /opt/veridian/ai-os/planning/evidence/feature-completion-rebaseline-2026-07-21/comparison_csv_3_ai_platform_benchmark.feature-audit-results.json
+    key_gaps: ["CSV1's 1 remaining GAP: dedicated Sales Contract Management
+      entity (SC001-018)", "CSV2's 111 GAP rows and CSV3's 41 GAP rows are
+      now itemized (feature_id + module + verdict) in the evidence JSON
+      files above -- pull the GAP-verdict rows from there for a prioritized
+      backlog, do not re-derive by hand"]
+    sequence: 8
+    depends_on: [PLAN-07]
+    effort: >-
+      medium -- script build + 2 runs completed same session; the effort
+      that remains is triage of the GAP list, not the audit itself.
+    status: DONE
+
+# ============================================================================
+# PLAN-15 -- PROJEXA demo credentials: mechanism found + verified LIVE,
+# queued as a 2-command execution, NOT run (credential-issuing action)
+# ============================================================================
+  - id: PLAN-15
+    owner_label: "Task 15"
+    title: PROJEXA demo credentials (CEO + team member)
+    objective: Concrete, mechanical, 5-minute-to-execute plan. NOT executed
+      yet (issuing real login credentials is a real action, queued per
+      instructions).
+    critical_finding_auth_mechanism: >-
+      compliance.users.password_hash is DEAD CODE for authentication.
+      Verified by reading src/lib/supabase/auth-guard.ts:165 -- every
+      normal signup sets this NOT-NULL legacy column to the literal
+      string "supabase-auth-managed" and it is never read again. Real
+      authentication is 100% delegated to Supabase Auth
+      (auth.users in Supabase project pcrjmlpuqsbocqfwoxod, name
+      "verdian-ai" -- confirmed live via Supabase MCP: this project holds
+      compliance.users at 718 rows, matching the live app). Writing any
+      kind of hash into compliance.users.password_hash -- bcrypt or
+      otherwise -- would do NOTHING. The wave9 migration's
+      'MIGRATED_NO_LOGIN_...' placeholder is exactly as inert as the
+      normal "supabase-auth-managed" placeholder; both are decorative.
+      The ONLY correct mechanism is the Supabase Auth Admin API
+      (service-role key), exactly as prior art
+      scripts/wave111-create-hero-logins.ts already does for the
+      2026-07-06 demo company's hero personas.
+      Second finding: compliance.users rows are matched to Supabase Auth
+      by EMAIL, not by a pre-wired id (src/lib/supabase/auth-guard.ts:270,
+      `db.query.users.findFirst({ where: eq(users.email, email) })`), and
+      if the matched row's auth_user_id doesn't yet equal the live
+      Supabase auth id, the app self-heals the link automatically on the
+      very next authenticated request (auth-guard.ts:275-277). So the
+      ONLY step that actually needs to happen is creating/resetting the
+      Supabase Auth user with the right email + password -- no manual
+      compliance.users UPDATE is strictly required, though the queued
+      script below also emits one as a belt-and-suspenders immediate
+      confirmation.
+    org_selection:
+      chosen_org: {id: ve45lczmkodbiq1m20fy48r5, name: "Demo Organization"}
+      why_chosen: >-
+        Compared live via Supabase MCP against every other org candidate
+        (query result: PROJEXA Load Test loadtest org 100 users/1 project
+        -- synthetic load-test noise, not a demo; 10 "demo_co_N" orgs from
+        wave111, 50 users each but 0 projects and generic hero personas,
+        not PROJEXA-branded; "Al Maha Skyline Contracting" 50
+        users/0 projects in the `projects` table; "Meridian Construction
+        Group (E2E Test Org)" 11 users/18 projects but ALSO zero
+        auth_user_id links (pw_prefix="supabase-auth-managed", same dead
+        placeholder, so it needs full account creation too, not just a
+        reset, and its emails are internal-looking
+        "*.e2e-test.projexa-ai.com"); "Skyline Builders (PROJEXA Demo)" 10
+        users/10 projects but its highest role is "manager", no
+        admin/CEO-equivalent user exists in it at all.
+        Demo Organization has exactly 3 users (1 admin + 2 member), 4 real
+        projects, is_active=true on all 3, and clean production-looking
+        emails on the real @projexa-ai.com domain
+        (democeo@projexa-ai.com, demo1@projexa-ai.com,
+        demo2@projexa-ai.com) -- the best-branded, smallest-surface-area
+        candidate for a clean external demo. Matches the Owner's own plan
+        file, which already named this org.
+      role_note: >-
+        compliance.users.role enum has no explicit "owner"/"ceo" value --
+        the enum's highest available role is "admin" (full list: admin,
+        manager, member, viewer, veridian_admin, branch_manager,
+        senior_professional, team_member, client_viewer,
+        external_auditor, stage_0). "Democeo" (role=admin) is the correct
+        CEO-equivalent seat in this schema, not a stand-in.
+    two_target_accounts:
+      - persona: CEO
+        compliance_user_id: defbd5ae-454c-43f6-b7d4-2162cec5c673
+        name: Democeo
+        email: democeo@projexa-ai.com
+        role: admin
+      - persona: team_member
+        compliance_user_id: 7476f090-38b9-4c5a-a8da-adacc5b2201a
+        name: Demo1
+        email: demo1@projexa-ai.com
+        role: member
+        alternate_candidate: {id: 0fc3b84c-ad9f-4568-b024-d5d5ffd145b3,
+          name: Demo2, email: demo2@projexa-ai.com, role: member,
+          note: "equally valid second seat, pick either"}
+    additional_finding_module_gate: >-
+      Login alone is NOT sufficient for a convincing "PROJEXA demo" --
+      see PLAN-16 below. Demo Organization currently has the 'pms'
+      product branch (platform.product_branches.branch_key='pms',
+      display_name literally "PROJEXA", id
+      a4e6147d-8e4b-434a-954b-821d3686c1c5) DISABLED. That branch gates 7
+      modules: Budgeting, Issue Tracking, Meetings, Project Wiki, Saved
+      Views, Sprints, Time Tracking (platform.module_registry category
+      'PMS'). Without enabling it, the CEO/team-member demo login will
+      NOT show PROJEXA's actual project-management screens. This must be
+      enabled alongside the login fix for the demo to be meaningful, not
+      just technically working.
+    reusable_scripts_queued_not_run:
+      - path: /opt/veridian/ai-os/planning/scripts/create-or-reset-demo-login.mjs
+        purpose: "Creates (or resets) a real Supabase Auth login for any
+          email/password pair. Generic, reusable -- same script covers both
+          PLAN-15 accounts and every PLAN-16 account below."
+        exact_commands_to_run:
+          - "cd /opt/veridian/repos/compliance-tracker && node --env-file=.env.local /opt/veridian/ai-os/planning/scripts/create-or-reset-demo-login.mjs --email democeo@projexa-ai.com --password 'DemoVeridian2026!'"
+          - "cd /opt/veridian/repos/compliance-tracker && node --env-file=.env.local /opt/veridian/ai-os/planning/scripts/create-or-reset-demo-login.mjs --email demo1@projexa-ai.com --password 'DemoVeridian2026!'"
+        password_convention: "DemoVeridian2026! -- reused deliberately, same
+          convention already live for the 2026-07-06 demo company and
+          wave111 hero personas, so there is exactly one demo password to
+          remember platform-wide, not a new one per org."
+        verification_after_running: >-
+          Each command prints its own verification SQL (parameterized with
+          the real email + new auth id) -- run that via the Supabase MCP
+          execute_sql tool against project pcrjmlpuqsbocqfwoxod, expect one
+          row back per email with a non-null auth_user_id.
+      - path: /opt/veridian/ai-os/planning/scripts/enable-product-branch.mjs
+        purpose: "Prints the exact idempotent SQL to flip an
+          org_product_branch_enablements row on. Generic -- same script for
+          any org/branch pair, not a one-off query."
+        exact_command_to_run: "node /opt/veridian/ai-os/planning/scripts/enable-product-branch.mjs --org-id ve45lczmkodbiq1m20fy48r5 --branch-id a4e6147d-8e4b-434a-954b-821d3686c1c5 --branch-key pms"
+        then: "Run the SQL it prints via the Supabase MCP execute_sql tool
+          against project pcrjmlpuqsbocqfwoxod."
+    resulting_login_url: >-
+      Exact production URL not re-derived here (out of this session's
+      scope to look up the live Vercel domain) -- use whatever URL
+      /login currently resolves to for the compliance-tracker /
+      PROJEXA-merged deployment; the mechanism above is domain-independent.
+    key_gaps: ["3 commands above not yet run (deliberately, per instructions
+      not to issue credentials without explicit go-ahead)"]
+    sequence: 15
+    depends_on: [PLAN-06]
+    effort: >-
+      small -- genuinely a 3-command, ~5-minute mechanical action once
+      approved; all investigation/decision work is already done.
+    status: PLANNED_NOT_EXECUTED
+
+# ============================================================================
+# PLAN-16 -- all-module demo credentials/URLs: real, mechanically-derived
+# module x branch-enablement inventory (not a hand-built table)
+# ============================================================================
+  - id: PLAN-16
+    owner_label: "Task 16"
+    title: All-module demo credentials/URLs (CEO + team member)
+    objective: Real module-by-module reachability inventory, grounded in
+      the live platform.module_registry / platform.product_branches /
+      platform.product_branch_modules tables (the app's OWN authoritative
+      module catalog, discovered via src/lib/services/module-registry-
+      service.ts) cross-joined against Demo Organization's actual live
+      compliance.org_product_branch_enablements rows -- not assumption,
+      not a hand-typed URL list.
+    route_layer_facts: >-
+      src/app/(app)/** is a single authenticated shell: 99 top-level route
+      segments (find src/app/'(app)' -maxdepth 1 -type d), all gated by
+      the SAME login (src/lib/supabase/auth-guard.ts's authenticateRequest
+      path) -- there is no separate per-module login for anything under
+      /(app)/. Separate logins DO exist for: client-portal (src/app/
+      client-portal), vendor-portal (src/app/vendor-portal), and the
+      guest-chat/mom-share/vr share-link paths -- those are out of scope
+      for a CEO/team-member internal demo and use link-based or
+      client-specific auth, not the compliance.users flow.
+    module_registry_facts: >-
+      platform.module_registry has 110 real catalogued modules (each
+      mapped to a real DB table via its table_name column). Cross-joined
+      live (via Supabase MCP execute_sql, project pcrjmlpuqsbocqfwoxod)
+      against Demo Organization's enabled branches:
+        veri_chat_v2, construction, erp, hr, veri_reward, sales (6 of 27
+        defined product branches; confirmed via
+        compliance.org_product_branch_enablements where org_id =
+        've45lczmkodbiq1m20fy48r5').
+    real_reachability_counts:
+      total_registered_modules: 110
+      ungated_always_reachable: 33
+      gated_and_reachable_today_for_demo_org: 20
+      gated_and_currently_blocked_for_demo_org: 57
+      note: >-
+        "ungated_always_reachable" (33 modules: CRM leads/contacts/
+        accounts/opportunities, tickets, employee directory, VERI Chat,
+        VERI To Do, VERI Meetings, training, performance reviews, reports,
+        custom charts, automation rules, candidates/job openings, leave
+        management, etc.) have branch_key = NULL in
+        product_branch_modules -- meaning no branch gate applies at all,
+        they are reachable regardless of org configuration. This
+        surprised the naive expectation that "CRM" would be its own
+        gated branch; it is not -- CRM ships ungated in this build.
+    what_unlocks_the_57_blocked_modules:
+      - branch_key: grc
+        display_name: "VERI GRC AI"
+        modules_unlocked: 40
+        covers: "Compliance items, risk register, board governance
+          (meetings/evaluations/committees/DoA/directors-KMP), COMPANY_
+          SECRETARIAL (cap table, MCA filings, secretarial audits,
+          company charges), sector regulators (RBI/SEBI/IRDAI), ESG/BRSR,
+          legal (opinions/litigation/vendors/IP), whistleblower/BCM/
+          incidents, HR-compliance (POSH, holiday filings)"
+      - branch_key: the_firm
+        display_name: "THE FIRM AI OS"
+        modules_unlocked: 22
+        covers: "Firm practice management (engagements, staff assignment,
+          time & billing), tax case workflow, plus a second copy of some
+          audit/legal/company-secretarial modules also reachable via grc
+          (dual-branch modules -- either branch unlocks them)"
+      - branch_key: pms
+        display_name: "PROJEXA"
+        modules_unlocked: 7
+        covers: "Budgeting, Issue Tracking, Meetings, Project Wiki, Saved
+          Views, Sprints, Time Tracking -- see PLAN-15's
+          additional_finding_module_gate, same branch, same fix"
+      - branch_key: facilities_management
+        display_name: "VERI FM AI OS"
+        modules_unlocked: 5
+        covers: "FM asset registry, FM checklist templates, FM visitor
+          management, FM PPM scheduling, FM AMC contracts"
+    module_group_login_map:
+      - group: "CRM / Sales / ERP / HR / VERI Chat / VERI Reward (ungated
+          + the 6 already-enabled branches)"
+        route_examples: [/(app)/crm, /(app)/erp, /(app)/sales-hq,
+          /(app)/hr, /(app)/chat, /(app)/rewards, /(app)/dashboard,
+          /(app)/tasks, /(app)/documents, /(app)/veri-todo,
+          /(app)/veri-meetings, /(app)/reports]
+        login_status: "READY once PLAN-15's create-or-reset-demo-login.mjs
+          runs for democeo@projexa-ai.com / demo1@projexa-ai.com -- no
+          further branch-enablement action needed, these are already
+          enabled or ungated."
+      - group: "PROJEXA project-management (pms branch)"
+        route_examples: [/(app)/pms]
+        login_status: "Same login as above, PLUS
+          enable-product-branch.mjs must be run for branch_id
+          a4e6147d-8e4b-434a-954b-821d3686c1c5 first -- currently
+          disabled for Demo Organization, confirmed live."
+      - group: "Compliance / Governance / Legal / Company Secretarial (grc
+          branch)"
+        route_examples: [/(app)/compliance, /(app)/risks, /(app)/board,
+          /(app)/committees, /(app)/legal-matters, /(app)/cap-table,
+          /(app)/mca-filings, /(app)/whistleblower, /(app)/bcm,
+          /(app)/posh, /(app)/rbi, /(app)/sebi, /(app)/irdai]
+        login_status: "Same login as above, PLUS running:
+          node /opt/veridian/ai-os/planning/scripts/enable-product-branch.mjs
+          --org-id ve45lczmkodbiq1m20fy48r5 --branch-id
+          927b94e7-f793-44b3-a9cb-6c80f0b68943 --branch-key grc (id
+          resolved live this session) -- currently disabled for Demo
+          Organization."
+      - group: "THE FIRM practice management (the_firm branch)"
+        route_examples: [/(app)/audit-engagements, /(app)/the-firm-practice]
+        login_status: "Same login, PLUS running:
+          node /opt/veridian/ai-os/planning/scripts/enable-product-branch.mjs
+          --org-id ve45lczmkodbiq1m20fy48r5 --branch-id
+          07d93fe6-fe3f-4546-bc1f-00b8ff51efd2 --branch-key the_firm (id
+          resolved live this session) -- currently disabled for Demo
+          Organization."
+      - group: "Facilities Management (facilities_management branch)"
+        route_examples: [/(app)/fm-register-digitization]
+        login_status: "Same login, PLUS running:
+          node /opt/veridian/ai-os/planning/scripts/enable-product-branch.mjs
+          --org-id ve45lczmkodbiq1m20fy48r5 --branch-id
+          23728f64-58ab-4d9c-ab1f-6891f92d2ab7 --branch-key
+          facilities_management (id resolved live this session) --
+          currently disabled for Demo Organization. Lowest priority --
+          only 5 modules, and Demo Organization is not an FM use case."
+      - group: "Client portal / Vendor portal / share-links (separate auth,
+          out of scope for a CEO/team-member internal demo)"
+        route_examples: [/client-portal, /vendor-portal, /guest-chat,
+          /mom-share, /vr]
+        login_status: "NOT covered by create-or-reset-demo-login.mjs --
+          these use link-based or client-specific auth flows, a different
+          mechanism entirely. Flagged as out of scope, not silently
+          dropped."
+    recommendation: >-
+      For a genuinely representative "every module" CEO demo, don't stop
+      at PLAN-15's login fix -- also run enable-product-branch.mjs for
+      grc and the_firm (in addition to pms), which together unlock 69 of
+      the 110 registered modules (40 + 22 + 7, pms already required by
+      PLAN-15). facilities_management (5 modules) is lowest-priority given
+      Demo Organization's branding is not FM-specific. This turns "PLAN-16
+      done" into 4 total enable-product-branch.mjs runs (pms, grc,
+      the_firm, and optionally facilities_management) plus PLAN-15's 2
+      login-creation runs -- still fully mechanical, still under 10
+      commands total, still zero manual DB editing.
+    key_gaps: ["All 4 branch ids (pms/grc/the_firm/facilities_management)
+      are resolved and embedded in the exact commands above -- zero
+      remaining lookups, every command is copy-paste-ready"]
+    sequence: 16
+    depends_on: [PLAN-07, PLAN-15]
+    effort: >-
+      small -- inventory is done; remaining action is running the
+      already-built, already-tested script 6 times total (2 logins + up to
+      4 branch-enables), zero further investigation needed.
+    status: PLANNED_NOT_EXECUTED

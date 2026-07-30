@@ -1,0 +1,32 @@
+TASK: V2-25 -- Continue the autonomous gap_queue (system-driven, NOT a manual dispatch)
+
+### V2-25 — Continue the autonomous gap_queue (system-driven, NOT a manual dispatch) [from v1]
+- READY: yes (monitor, don't dispatch)
+- SOFTWARE TEAM LEVEL: L4 Coding Supervisor (monitoring)
+- TASK ID: V2-25-GAP-QUEUE-MONITOR
+- MODULE: compliance-tracker
+- OBJECTIVE: The `REVIEW-FRAMEWORK-GAPS-QUEUE-01` autonomous dispatcher (`gap_queue.yaml` + `queue-dispatcher.py` cron) is live and self-fills the 3-worker cap from the remaining ~170 genuinely-open rows. This task is to MONITOR it (throughput, failures, decision-blocked skip rate) and feed it the §3 re-decisions so it stops skipping rows that are now decidable. NOT a manual duplicate dispatch.
+- READ FIRST: `gap_queue.yaml` + `queue-dispatcher.py`; the §3 decisions to un-skip.
+- WHAT TO BUILD: Apply the §3 status flips to `gap_queue.yaml` so decidable rows re-enter the queue; a monitoring note.
+- CONSTRAINTS: Do not duplicate-queue. Register claim.
+- DONE CRITERIA: Queue updated with §3 decisions; monitoring note written; PR open.
+
+---
+
+## 5. NOTES / HONEST LIMITATIONS
+
+- **This plan is grounded in live state read 2026-07-19 ~17:15 UTC.** It drifts as in-flight PRs merge; a supervisor re-reads `ACTIVE-CLAIMS.yaml` + `gh pr list` before each dispatch.
+- **The biggest correction to v1:** the 9-workstream "redo fresh" directive is already satisfied for 6 of 9 areas by complete server-side implementations (§1.1). v1 marked them BLOCKED on laptop work that, per the Owner's own no-laptop rule, was never going to merge; the server already built the full-depth versions. v2 records this and schedules only the genuinely-missing pieces (CRM Contacts surface V2-24, BYOB AI-model V2-5) plus verify-and-close (V2-3) — not wasteful full re-builds. This is a disclosed decision with a real cost.
+- **Decision authority used here, plainly disclosed (§2):** the Owner pre-authorized every non-money decision. v2 makes ~13 scope/design decisions (D1-D12) and ~40 code-closable/record decisions (C1-C19) under that authority. The ~22 rows that genuinely need real money (SOC2 audit, external pentest, live payment-gateway merchant account, paid training-content licensing, Supabase IPv4 add-on) are explicitly KEPT deferred — decision authority does not extend to spending. The OPENAI_API_KEY rows are neither money nor code — they're an Owner config action, formally requested via V2-6/C17.
+- **projexa has no `ai-os/` tree / ACTIVE-CLAIMS.yaml** (verified this session). Cross-registration in compliance-tracker's ACTIVE-CLAIMS satisfies the "both repos" instruction per the established precedent; documented in §3, not silently skipped.
+- **`ai-os/SOFTWARE_TEAM.md` now exists (PR #483 merged)** — the v1 "honest limitation" that it didn't exist yet is resolved. All V2 tasks route through the real L1-L4 ladder documented there.
+- **Tier2 sign-off** still applies to any task touching schema/`drizzle/` (V2-1, V2-5, V2-7, V2-15, V2-16, V2-17, V2-18, V2-19, V2-20, V2-21, V2-22) — supervisor holds for Owner sign-off per the tiered trust model; do not self-merge.
+- **gh-token `workflow` scope limitation** (memory: `gh-token-lacks-workflow-scope`) affects V2-7 and v1 TASK 1/10 — any PR touching `.github/workflows/*.yml` cannot be pushed by this token; document the limitation in the PR and stage the workflow change for an Owner push.
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

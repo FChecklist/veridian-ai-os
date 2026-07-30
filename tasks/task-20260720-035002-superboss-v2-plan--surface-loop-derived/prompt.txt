@@ -1,0 +1,20 @@
+TASK: V2-9 -- Surface loop-derived insights conversationally
+
+### V2-9 — Surface loop-derived insights conversationally [D12]
+- READY: yes
+- SOFTWARE TEAM LEVEL: L3 Feature Worker
+- TASK ID: V2-9-LOOP-INSIGHTS-NOTIFY
+- MODULE: compliance-tracker
+- OBJECTIVE: Surface relevant loop-derived insights to affected users via the existing notification channels. Closes CSV row #18.
+- READ FIRST: the loop/insight service; `src/lib/services/` notification paths; the CSV row.
+- WHAT TO BUILD: A notification-emission hook from the loop service to existing channels + tests.
+- CONSTRAINTS: Reuse existing notification infra. Register claim.
+- DONE CRITERIA: Insights surface to affected users; tests; row re-scored; PR open.
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

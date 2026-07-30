@@ -1,0 +1,58 @@
+{
+  "id": "AUDIT-RECHECK-2026-07-22",
+  "status": "PARTIAL_CORRECTED_TWICE",
+  "correction_note": "First pass of this recheck wrongly reported the 198-rule verdict source as unfindable/status-field-missing -- that was a bug in an ad-hoc script (wrong field name guessed: status vs verdict), not a real gap. Corrected below after locating the real evidence file.",
+  "findings": {
+    "STANDING_DIRECTIVE_path_mismatch": {
+      "directive_names": "ai-os/scripts/audit198/run-audit.mjs",
+      "real_canonical_script": "ai-os/audit198/run-audit.mjs",
+      "verdict": "CORRECTED 2026-07-22: an earlier pass in this same session wrongly reported this script as MISSING entirely -- that was checking only the exact literal path, not path variants. The script is REAL, committed (git 1fde5a06 Add audit198 framework; later registered as a live system-wide guardrail). STANDING_DIRECTIVE.yaml has an extra erroneous scripts/ path segment, not a reference to a nonexistent tool.",
+      "duplicate_copies_found": 13,
+      "duplicate_locations": "stale workspace/audit198-*/ and ai-os/tasks/*/workspace/ directories"
+    },
+    "audit198_results_verified_genuine": {
+      "real_current_file": "ai-os/planning/evidence/audit198-rerun-2026-07-21/audit198-results.json",
+      "verdict_counts": {
+        "ENFORCED": 22,
+        "PARTIALLY_ENFORCED": 153,
+        "NOT_YET_BUILT": 14,
+        "NEEDS_HUMAN_JUDGMENT": 9
+      },
+      "matches_STRATEGIC_PLAN_citation": true,
+      "verdict": "CONFIRMED_REAL -- this is an actual generated evidence file (198 scored items, verdict field), not a fabricated number. The 22/153/14/9 figure cited throughout the plan is a genuine transcription of real output, not hallucinated."
+    },
+    "stale_duplicate_found": {
+      "path": "ai-os/audit198/results/audit198-results.json",
+      "verdict_counts": {
+        "ENFORCED": 22,
+        "PARTIALLY_ENFORCED": 152,
+        "NOT_YET_BUILT": 15,
+        "NEEDS_HUMAN_JUDGMENT": 9
+      },
+      "verdict": "This is the OLD pre-gap-closure-wave baseline (2026-07-21T09:30:15Z), sitting uncleaned at a separate path -- recurrence of the duplicated-register pattern MASTER_INDEX.yaml exists to prevent."
+    },
+    "audit_currency_check": {
+      "audit_ran_against_commit": "2f5de6b7",
+      "current_origin_main_commit": "42a9e09cb4223298fc8c6c6386942ebaf76036eb",
+      "commits_since_audit": 2,
+      "verdict": "STALE_BY_2_COMMITS -- the 22/153/14/9 figure is real but was computed against a commit that is no longer HEAD. Whether those 2 commits touch anything audit-relevant was not checked this session (budget). A fresh re-run against current main is needed before treating 22/153/14/9 as current truth, not just genuine-at-the-time truth."
+    },
+    "mother_router_bypass_recheck": {
+      "status": "STILL_INCONCLUSIVE",
+      "dispatchTool_caller_files": 10,
+      "direct_llm_provider_string_match_files": 16,
+      "note": "original ~35/~20 methodology never located this session; not reconciled"
+    }
+  },
+  "explicit_non_claims": [
+    "does NOT confirm the 22/153/14/9 breakdown is accurate against the CURRENT commit (only confirms it is genuine, real output from 2 commits ago)",
+    "does NOT confirm which of the 2 newer commits, if any, affect audit-scored code",
+    "does NOT resolve the Mother Router bypass count"
+  ],
+  "next_steps": [
+    "re-run ai-os/planning/scripts/feature-completion-audit.mjs against current origin/main (42a9e09) for a truly current verdict count",
+    "fix STANDING_DIRECTIVE.yaml verification.mechanism path to match the real script, or build a real script at the path it names",
+    "delete or clearly mark ai-os/audit198/results/audit198-results.json as superseded (stale duplicate)",
+    "reconcile Mother Router bypass methodology"
+  ]
+}

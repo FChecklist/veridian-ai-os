@@ -1,0 +1,17 @@
+Produce a cost guesstimate for running VERIDIAN AI OS (including PROJEXA and compliance-tracker -- they are the same codebase, PROJEXA is an alias layer within compliance-tracker) at a specific scale: 5 organizations, 10 users per organization = 50 total users, using all modules and functionality that exist in this repository.
+
+Deliverable: a markdown report, docs/analysis/cost-estimate-5org-50user.md, with your full reasoning and a final per-user monthly cost figure (infra + AI combined, and broken out separately).
+
+Methodology -- ground this in the real codebase and real current pricing, not generic guesses:
+
+1. ENUMERATE REAL SCOPE: read the actual module/feature set in this repo (ERP & Finance, CRM & Sales, HR & Workforce, PROJEXA construction modules, VERI Chat/AI assistant, Worker Agent dispatches, Reports & Analytics, document/OCR processing, etc.) -- list what you find, don't assume a feature exists without checking.
+
+2. CHECK FOR REAL USAGE DATA FIRST: this repo has a Token Usage Ledger (search for it -- likely under src/lib or an admin/finance area) intended to track real AI spend. If it has any real recorded data, use it to ground your per-interaction cost assumptions instead of guessing from scratch. Also check ai-os/CONTROLLER.yaml and ai-os/MASTER-TRACKER.yaml for any prior cost-related findings or decisions (e.g. AI_COST_GOVERNANCE entries) that should inform this estimate rather than being ignored.
+
+3. AI COST: identify which AI providers/models are actually configured (check the model-resolver / orchestra-model-resolver.ts or equivalent routing logic -- likely a Groq floor-tier + Cerebras failover + OpenRouter for premium models, per this repo's own architecture). Look up CURRENT real pricing for whichever specific models are actually wired in (web search/fetch current pricing pages -- do not use stale training-data prices). Model a realistic monthly interaction volume per active user (chat messages, report generations, document processing, worker-agent dispatches) based on what the actual feature set supports, and account for this repo's existing prompt-caching/response-caching framework reducing effective token cost (check for it -- do not assume zero caching benefit if a real caching layer already exists).
+
+4. INFRA COST: this app runs on Vercel (hosting/functions) + Supabase (Postgres + storage + auth). Look up current real Vercel and Supabase pricing tiers appropriate for 50 active users with this app's real database size/complexity (429+ tables, real query patterns from ERP/CRM/HR/construction modules) -- do not assume Hobby/free tier is sufficient at this scale, reason about what tier is actually required and why.
+
+5. SHOW YOUR WORK: the final report must show the assumptions, the per-user usage model, the pricing sources/tiers used, the math, and clearly label this as a guesstimate with a stated confidence/uncertainty range -- not a false-precision single number with no reasoning shown.
+
+This is an analysis deliverable, not application code -- no tests/lint/build changes expected beyond the new markdown file. Maintain PROGRESS.md as usual.

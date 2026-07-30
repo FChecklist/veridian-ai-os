@@ -1,0 +1,20 @@
+TASK: V2-23 -- Remove ANTHROPIC_API_KEY dead code path
+
+### V2-23 — Remove ANTHROPIC_API_KEY dead code path [C15]
+- READY: yes
+- SOFTWARE TEAM LEVEL: L1 Code Worker
+- TASK ID: V2-23-REMOVE-DEAD-ANTHROPIC-PATH
+- MODULE: compliance-tracker
+- OBJECTIVE: Remove the dead `ANTHROPIC_API_KEY` code path (the secondary `claude-task` dispatch path "has never had a working job behind it" per AGENTS.md + `Study_by_Claude.md`). Closes CSV row #01.
+- READ FIRST: the `claude-task`/`ANTHROPIC_API_KEY` call sites; AGENTS.md Claude Code (Secondary Agent) note; `Study_by_Claude.md` ANTHROPIC_API_KEY discussion.
+- WHAT TO BUILD: Remove the dead path (or gate it behind an explicit opt-in flag with a deprecation note); keep `CLAUDE_CODE_OAUTH_TOKEN` path intact; tests.
+- CONSTRAINTS: Do NOT remove the legitimate `CLAUDE_CODE_OAUTH_TOKEN`-based path. Register claim.
+- DONE CRITERIA: Dead path removed/gated; tests green; row re-scored; PR open.
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

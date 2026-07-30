@@ -1,0 +1,270 @@
+id: task-20260718-230822-rescue-pr--432
+title: 'Rescue PR #432'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260718-230822-rescue-pr--432
+workspace: /opt/veridian/ai-os/tasks/task-20260718-230822-rescue-pr--432/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-230822-rescue-pr--432
+service: veridian-worker@task-20260718-230822-rescue-pr--432.service
+created_at: '2026-07-18T23:08:24.012502+00:00'
+last_checkpoint_at: '2026-07-18T23:18:38.445890+00:00'
+completed_steps: &id002
+- 'Located PR #432''s real head branch worktree (already existed, branch-name collision
+  confirmed it''s the same branch)'
+- '`git fetch origin main && git merge origin/main --no-edit` -- 3-way conflicts in
+  PROGRESS.md (kept ours), ai-os/boss/ACTIVE-CLAIMS.yaml, ai-os/registry/asset-registry-coverage.yaml
+  (both real: independent list entries added by parallel sessions, resolved by keeping
+  both sides'' entries, no data lost)'
+- 'Found + fixed a real migration-number collision: this PR''s `drizzle/0225_risk_anomaly_detection.sql`
+  collided with main''s now-real `drizzle/0225_support_sessions.sql` (main advanced
+  through 0235 while this PR was stale) -- renumbered to `drizzle/0236_risk_anomaly_detection.sql`
+  via `git mv`, updated the two internal references to the old number (PROGRESS.md
+  and asset-registry-coverage.yaml exemption reasons); no self-referencing filename
+  inside the SQL itself'
+- '`bun install --frozen-lockfile` -- clean'
+- '`bunx tsc --noEmit` -- clean, 0 errors'
+- '`bun run lint` -- 0 errors, 3 pre-existing unrelated warnings'
+- '`bun test` -- 1632 pass / 0 fail across 125 files (the CI "Unit Tests" failure
+  on the stale PR head was the already-known-and-fixed `createJournalEntry` mock-leak
+  flake documented in ACTIVE-CLAIMS.yaml, fixed on main by PR #434 before this merge
+  -- confirmed gone after merging main)'
+- '`bun run db:generate` / live migration apply -- SKIPPED: no DATABASE_URL/live DB
+  configured in this environment (consistent with prior rescue sessions'' documented
+  limitation in ACTIVE-CLAIMS.yaml); manually reviewed the renumbered SQL file instead
+  -- additive-only (2x `CREATE TABLE IF NOT EXISTS` + RLS policies matching the established
+  org-scoped/service-role-bypass pattern, 3x `CREATE INDEX IF NOT EXISTS` on pre-existing
+  tables), no destructive statements'
+- Pushed merged branch to origin
+- 'Posted structured `AUDIT: PASS` comment on PR #432'
+- Watched CI to green on the merged commit
+- 'Classified tier: TIER2 (touches drizzle/*.sql + src/lib/db/schema.ts) -- did NOT
+  merge, left for Owner sign-off'
+remaining_steps: &id003
+- None -- rescue complete, PR left open awaiting Owner sign-off (TIER2)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T23:08:25.038447+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  - f1cc217f AI Architecture / AI Interaction Efficiency gap closure (11 findings)
+    (#414)
+  - f91a24f8 Support session impersonation (#412)
+  - 'ff480283 chore: close active claim for PR #425 rescue (#453)'
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  note: worker started (resume=0)
+- at: '2026-07-18T23:13:25.381514+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Located PR #432''s real head branch worktree (already existed, branch-name collision
+    confirmed it''s the same branch)'
+  - '`git fetch origin main && git merge origin/main --no-edit` -- 3-way conflicts
+    in PROGRESS.md (kept ours), ai-os/boss/ACTIVE-CLAIMS.yaml, ai-os/registry/asset-registry-coverage.yaml
+    (both real: independent list entries added by parallel sessions, resolved by keeping
+    both sides'' entries, no data lost)'
+  - 'Found + fixed a real migration-number collision: this PR''s `drizzle/0225_risk_anomaly_detection.sql`
+    collided with main''s now-real `drizzle/0225_support_sessions.sql` (main advanced
+    through 0235 while this PR was stale) -- renumbered to `drizzle/0236_risk_anomaly_detection.sql`
+    via `git mv`, updated the two internal references to the old number (PROGRESS.md
+    and asset-registry-coverage.yaml exemption reasons); no self-referencing filename
+    inside the SQL itself'
+  - '`bun install --frozen-lockfile` -- clean'
+  - '`bunx tsc --noEmit` -- clean, 0 errors'
+  - '`bun run lint` -- 0 errors, 3 pre-existing unrelated warnings'
+  - '`bun test` -- 1632 pass / 0 fail across 125 files (the CI "Unit Tests" failure
+    on the stale PR head was the already-known-and-fixed `createJournalEntry` mock-leak
+    flake documented in ACTIVE-CLAIMS.yaml, fixed on main by PR #434 before this merge
+    -- confirmed gone after merging main)'
+  - '`bun run db:generate` / live migration apply -- SKIPPED: no DATABASE_URL/live
+    DB configured in this environment (consistent with prior rescue sessions'' documented
+    limitation in ACTIVE-CLAIMS.yaml); manually reviewed the renumbered SQL file instead
+    -- additive-only (2x `CREATE TABLE IF NOT EXISTS` + RLS policies matching the
+    established org-scoped/service-role-bypass pattern, 3x `CREATE INDEX IF NOT EXISTS`
+    on pre-existing tables), no destructive statements'
+  - Pushed merged branch to origin
+  - 'Posted structured `AUDIT: PASS` comment on PR #432'
+  - Watched CI to green on the merged commit
+  - 'Classified tier: TIER2 (touches drizzle/*.sql + src/lib/db/schema.ts) -- did
+    NOT merge, left for Owner sign-off'
+  remaining_steps:
+  - None -- rescue complete, PR left open awaiting Owner sign-off (TIER2)
+  recent_commits:
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  - f1cc217f AI Architecture / AI Interaction Efficiency gap closure (11 findings)
+    (#414)
+  - f91a24f8 Support session impersonation (#412)
+  - 'ff480283 chore: close active claim for PR #425 rescue (#453)'
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  note: periodic checkpoint
+- at: '2026-07-18T23:17:28.782630+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Located PR #432''s real head branch worktree (already existed, branch-name collision
+    confirmed it''s the same branch)'
+  - '`git fetch origin main && git merge origin/main --no-edit` -- 3-way conflicts
+    in PROGRESS.md (kept ours), ai-os/boss/ACTIVE-CLAIMS.yaml, ai-os/registry/asset-registry-coverage.yaml
+    (both real: independent list entries added by parallel sessions, resolved by keeping
+    both sides'' entries, no data lost)'
+  - 'Found + fixed a real migration-number collision: this PR''s `drizzle/0225_risk_anomaly_detection.sql`
+    collided with main''s now-real `drizzle/0225_support_sessions.sql` (main advanced
+    through 0235 while this PR was stale) -- renumbered to `drizzle/0236_risk_anomaly_detection.sql`
+    via `git mv`, updated the two internal references to the old number (PROGRESS.md
+    and asset-registry-coverage.yaml exemption reasons); no self-referencing filename
+    inside the SQL itself'
+  - '`bun install --frozen-lockfile` -- clean'
+  - '`bunx tsc --noEmit` -- clean, 0 errors'
+  - '`bun run lint` -- 0 errors, 3 pre-existing unrelated warnings'
+  - '`bun test` -- 1632 pass / 0 fail across 125 files (the CI "Unit Tests" failure
+    on the stale PR head was the already-known-and-fixed `createJournalEntry` mock-leak
+    flake documented in ACTIVE-CLAIMS.yaml, fixed on main by PR #434 before this merge
+    -- confirmed gone after merging main)'
+  - '`bun run db:generate` / live migration apply -- SKIPPED: no DATABASE_URL/live
+    DB configured in this environment (consistent with prior rescue sessions'' documented
+    limitation in ACTIVE-CLAIMS.yaml); manually reviewed the renumbered SQL file instead
+    -- additive-only (2x `CREATE TABLE IF NOT EXISTS` + RLS policies matching the
+    established org-scoped/service-role-bypass pattern, 3x `CREATE INDEX IF NOT EXISTS`
+    on pre-existing tables), no destructive statements'
+  - Pushed merged branch to origin
+  - 'Posted structured `AUDIT: PASS` comment on PR #432'
+  - Watched CI to green on the merged commit
+  - 'Classified tier: TIER2 (touches drizzle/*.sql + src/lib/db/schema.ts) -- did
+    NOT merge, left for Owner sign-off'
+  remaining_steps:
+  - None -- rescue complete, PR left open awaiting Owner sign-off (TIER2)
+  recent_commits:
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  - f1cc217f AI Architecture / AI Interaction Efficiency gap closure (11 findings)
+    (#414)
+  - f91a24f8 Support session impersonation (#412)
+  - 'ff480283 chore: close active claim for PR #425 rescue (#453)'
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-18T23:17:56.090465+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Located PR #432''s real head branch worktree (already existed, branch-name collision
+    confirmed it''s the same branch)'
+  - '`git fetch origin main && git merge origin/main --no-edit` -- 3-way conflicts
+    in PROGRESS.md (kept ours), ai-os/boss/ACTIVE-CLAIMS.yaml, ai-os/registry/asset-registry-coverage.yaml
+    (both real: independent list entries added by parallel sessions, resolved by keeping
+    both sides'' entries, no data lost)'
+  - 'Found + fixed a real migration-number collision: this PR''s `drizzle/0225_risk_anomaly_detection.sql`
+    collided with main''s now-real `drizzle/0225_support_sessions.sql` (main advanced
+    through 0235 while this PR was stale) -- renumbered to `drizzle/0236_risk_anomaly_detection.sql`
+    via `git mv`, updated the two internal references to the old number (PROGRESS.md
+    and asset-registry-coverage.yaml exemption reasons); no self-referencing filename
+    inside the SQL itself'
+  - '`bun install --frozen-lockfile` -- clean'
+  - '`bunx tsc --noEmit` -- clean, 0 errors'
+  - '`bun run lint` -- 0 errors, 3 pre-existing unrelated warnings'
+  - '`bun test` -- 1632 pass / 0 fail across 125 files (the CI "Unit Tests" failure
+    on the stale PR head was the already-known-and-fixed `createJournalEntry` mock-leak
+    flake documented in ACTIVE-CLAIMS.yaml, fixed on main by PR #434 before this merge
+    -- confirmed gone after merging main)'
+  - '`bun run db:generate` / live migration apply -- SKIPPED: no DATABASE_URL/live
+    DB configured in this environment (consistent with prior rescue sessions'' documented
+    limitation in ACTIVE-CLAIMS.yaml); manually reviewed the renumbered SQL file instead
+    -- additive-only (2x `CREATE TABLE IF NOT EXISTS` + RLS policies matching the
+    established org-scoped/service-role-bypass pattern, 3x `CREATE INDEX IF NOT EXISTS`
+    on pre-existing tables), no destructive statements'
+  - Pushed merged branch to origin
+  - 'Posted structured `AUDIT: PASS` comment on PR #432'
+  - Watched CI to green on the merged commit
+  - 'Classified tier: TIER2 (touches drizzle/*.sql + src/lib/db/schema.ts) -- did
+    NOT merge, left for Owner sign-off'
+  remaining_steps:
+  - None -- rescue complete, PR left open awaiting Owner sign-off (TIER2)
+  recent_commits:
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  - f1cc217f AI Architecture / AI Interaction Efficiency gap closure (11 findings)
+    (#414)
+  - f91a24f8 Support session impersonation (#412)
+  - 'ff480283 chore: close active claim for PR #425 rescue (#453)'
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  note: quality gate failed, attempting auto-fix (2/2)
+- at: '2026-07-18T23:18:38.445890+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '924a7292 Worker task-20260718-230822-rescue-pr--432: automated checkpoint commit'
+  - 'a223ff8d Rescue PR #415 (CI-trigger workaround, supersedes #415) (#454)'
+  - '65cb018e Mother Router Phase 1 (AIROUTER-01): unified AI model/provider registry
+    + policy + audit log (#433)'
+  - 'd5ca2050 AI Architecture / Governance & Audit: ABAC, audit-trail TTL, unified
+    search, maintainability score, GP-06/09/26 (#419)'
+  - f1cc217f AI Architecture / AI Interaction Efficiency gap closure (11 findings)
+    (#414)
+  - f91a24f8 Support session impersonation (#412)
+  - 'ff480283 chore: close active claim for PR #425 rescue (#453)'
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  note: quality gates still failing after 3 auto-fix attempts; branch worker/task-20260718-230822-rescue-pr--432
+    pushed with failing state for human review, see quality-gate-*.json
+execution_seconds: 541
+restart_count: 2
+token_usage:
+  input_tokens: 186
+  cache_creation_input_tokens: 135580
+  cache_read_input_tokens: 9552686
+  output_tokens: 32540
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 135580
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 55
+    cache_read_input_tokens: 158747
+    cache_creation_input_tokens: 371
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 371
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T23:30:04.778581+00:00'

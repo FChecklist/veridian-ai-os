@@ -1,0 +1,747 @@
+id: task-20260730-041950-build-extend-calculation-track-engines
+title: Build/extend calculation-track engines
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260730-041950-build-extend-calculation-track-engines
+workspace: /opt/veridian/ai-os/tasks/task-20260730-041950-build-extend-calculation-track-engines/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260730-041950-build-extend-calculation-track-engines
+service: veridian-worker@task-20260730-041950-build-extend-calculation-track-engines.service
+created_at: '2026-07-30T04:19:51.585170+00:00'
+last_checkpoint_at: '2026-07-30T05:08:17.475134+00:00'
+completed_steps: &id002
+- Registered ACTIVE-CLAIMS.yaml claim (commit 9aceb225, pushed)
+- 'Rescued from dead attempt `task-20260729-092858` (stranded, uncommitted):'
+- FI-AR-006 `customerPaymentBehaviorReport` + FI-AP-006 `vendorPaymentBehaviorReport`
+  (erp-payment-entries-service.ts) -- registered in wiring_registry (function-5fb91bd7c670,
+  function-0e0fd5608ed1)
+- FI-AA-006 `assetToGlReconciliation` (erp-fixed-assets-service.ts) -- registered
+  (function-f081fa3ea44c)
+- '`findControlAccount` accountType union widened to include `fixed_asset` (erp-invoicing-service.ts)
+  -- kept as FI-AA-006''s real prerequisite; dropped that same attempt''s duplicate
+  `subledgerToGlReconciliation` (see FI-GL-007 below -- also would not have compiled,
+  it called an undefined `round2()`)'
+- 'Rescued from dead attempt `task-20260730-040810` (stranded, uncommitted):'
+- CO-001 `listJournalEntryLinesByCostCenter` + CO-003 `costCenterHierarchyReport`
+  (erp-accounting-service.ts) -- registered (function-b5c204830e26, function-d713fcf6a9ce)
+- FI-GL-002 `glAccountBalanceDisplay` + FI-GL-007 `subledgerReconciliationToGl` +
+  FI-GL-008 `glAccountGroupBalancesSummary` (erp-financial-report-service.ts) -- registered
+  (function-91bd0f4a4758, function-9396cd32a905, function-a0cdcd75e9dd)
+- '`tsc --noEmit` clean (found + fixed 1 real error: union-type `Map` inference in
+  `partyPaymentBehaviorReport`, commit 8628305e). `bun test` NOT run -- bun is not
+  installed in this sandbox and its install script fails partway here (`... command
+  not found`, root cause not chased given budget); CI runs the real bun suite on the
+  PR regardless. Manually re-read the rescued test file (`erp-payment-entries-service.test.ts`)
+  against the implementation and the logic checks out (see commit c49eceba''s tests
+  for computePaymentTimingVariance/summarizePartyPaymentBehavior/calculateDaysOutstanding).'
+- Opened PR (see below)
+remaining_steps: &id003
+- FI-AR-001 Customer Line Item Display (EXTEND erpJournalEntryLines partyType=customer)
+- FI-AR-002 Customer Balances (EXTEND erpCustomers + outstandingAmount)
+- FI-AR-005 Customer Credit Exposure (EXTEND erp-invoicing-service.ts creditLimit
+  gate)
+- FI-AR-007 Customer Account Balance Display (EXTEND getCustomerOverview)
+- FI-AP-001 Vendor Line Item Display (EXTEND erpJournalEntryLines partyType=supplier)
+- FI-AP-002 Vendor Balances (EXTEND erpSuppliers.creditLimit pattern)
+- FI-AP-003 Vendor Items Aging Report (EXTEND arAgingReport pattern -> apAgingReport)
+- FI-AP-004 Vendor Account Balance Display (EXTEND erpSuppliers + outstandingAmount)
+- FI-AP-005 Payment Run / Payment Proposal (BUILD_NEW)
+- FI-AP-007 Subcontractor Retention Summary (BUILD_NEW -- new vendor-side retention
+  tracking)
+- FI-AA-004 Asset History Sheet (EXTEND erpFixedAssets+schedules+movements+disposals)
+- FI-AA-007 Asset Depreciation Forecast (EXTEND generateDepreciationSchedule)
+- Treasury-004 Liquidity Forecast (EXTEND banking-engine.ts:projectCashFlow + arAgingReport)
+- Treasury-005 Bank Account Transaction List (EXTEND erp-cash-service.ts:listCashVouchers
+  + erpJournalEntryLines)
+- CO-005 Sender/Receiver Cost Allocation Report (EXTEND costing-engine.ts:allocateCostPool)
+- CO-006 Statistical Key Figure Report (BUILD_NEW, lightweight per implementation_notes)
+- PS-001 Project Line Item Display (EXTEND erpJournalEntryLines + construction-expense-service.ts)
+- PS-005 Project Commitments Report (EXTEND erp-buying-service.ts open-PO fields)
+- PS-007 Project Cash Flow Report (EXTEND banking-engine.ts:projectCashFlow)
+- SD-004 Open Sales Order Backlog Report (EXTEND erpSalesOrders + erpSalesInvoices)
+- SD-005 Customer Sales Analysis (EXTEND listSalesInvoicesPaged + revenueReport)
+- SD-006 Sales by Material/Service Type (BUILD_NEW)
+- SD-008 Cancelled and Rejected Billing Analysis (EXTEND cancelSalesInvoice + erpSalesReturns)
+- MM-004 Purchase Orders by Project/WBS (EXTEND listPurchaseOrders)
+- MM-008 Vendor Purchasing History Report (EXTEND getSupplierScorecard)
+- CRM-006 Win/Loss Analysis Report (EXTEND crmLostReasons)
+- HCM-005 Overtime and Absence Analysis (EXTEND hrAttendanceRecords + payroll-engine.ts:calculateOvertime)
+- HCM-006 Certified Payroll Report (BUILD_NEW -- US WH-347 format)
+files_modified: &id001
+- package-lock.json
+checkpoints:
+- at: '2026-07-30T04:19:53.362983+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '81b461be Merge pull request #640 from FChecklist/task-20260730-master-index-central-entrypoint-confirmation'
+  - '3d2e25ba fix(ai-os): stop wholesale-replacing repo-tracked MASTER_INDEX.yaml
+    with the live file'
+  - 'a901abb1 MASTER_INDEX.yaml: close 7 real coverage gaps + clarify knowledge_engine/wiring_registry
+    relationship'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-30T04:24:54.789998+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '81b461be Merge pull request #640 from FChecklist/task-20260730-master-index-central-entrypoint-confirmation'
+  - '3d2e25ba fix(ai-os): stop wholesale-replacing repo-tracked MASTER_INDEX.yaml
+    with the live file'
+  - 'a901abb1 MASTER_INDEX.yaml: close 7 real coverage gaps + clarify knowledge_engine/wiring_registry
+    relationship'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  note: periodic checkpoint
+- at: '2026-07-30T04:29:56.236393+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '81b461be Merge pull request #640 from FChecklist/task-20260730-master-index-central-entrypoint-confirmation'
+  - '3d2e25ba fix(ai-os): stop wholesale-replacing repo-tracked MASTER_INDEX.yaml
+    with the live file'
+  - 'a901abb1 MASTER_INDEX.yaml: close 7 real coverage gaps + clarify knowledge_engine/wiring_registry
+    relationship'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  note: periodic checkpoint
+- at: '2026-07-30T04:34:59.395991+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '81b461be Merge pull request #640 from FChecklist/task-20260730-master-index-central-entrypoint-confirmation'
+  - '3d2e25ba fix(ai-os): stop wholesale-replacing repo-tracked MASTER_INDEX.yaml
+    with the live file'
+  - 'a901abb1 MASTER_INDEX.yaml: close 7 real coverage gaps + clarify knowledge_engine/wiring_registry
+    relationship'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  note: periodic checkpoint
+- at: '2026-07-30T04:40:05.910857+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/services/erp-accounting-service.ts
+  - src/lib/services/erp-financial-report-service.ts
+  - src/lib/services/erp-fixed-assets-service.ts
+  - src/lib/services/erp-invoicing-service.ts
+  - src/lib/services/erp-payment-entries-service.test.ts
+  - src/lib/services/erp-payment-entries-service.ts
+  completed_steps:
+  - Registered ACTIVE-CLAIMS.yaml claim (commit 9aceb225, pushed)
+  - 'Rescuing from dead attempt `task-20260729-092858` (stranded, uncommitted):'
+  - FI-AR-006 `customerPaymentBehaviorReport` + FI-AP-006 `vendorPaymentBehaviorReport`
+    (erp-payment-entries-service.ts)
+  - FI-AA-006 `assetToGlReconciliation` (erp-fixed-assets-service.ts)
+  - '`findControlAccount` accountType union widened to include `fixed_asset` (erp-invoicing-service.ts)
+    -- kept as FI-AA-006''s real prerequisite; dropped that same attempt''s duplicate
+    `subledgerToGlReconciliation` (see FI-GL-007 below)'
+  - 'Rescuing from dead attempt `task-20260730-040810` (stranded, uncommitted):'
+  - CO-001 `listJournalEntryLinesByCostCenter` + CO-003 `costCenterHierarchyReport`
+    (erp-accounting-service.ts)
+  - FI-GL-002 `glAccountBalanceDisplay` + FI-GL-007 `subledgerReconciliationToGl`
+    + FI-GL-008 `glAccountGroupBalancesSummary` (erp-financial-report-service.ts)
+  remaining_steps:
+  - FI-AR-001 Customer Line Item Display (EXTEND erpJournalEntryLines partyType=customer)
+  - FI-AR-002 Customer Balances (EXTEND erpCustomers + outstandingAmount)
+  - FI-AR-005 Customer Credit Exposure (EXTEND erp-invoicing-service.ts creditLimit
+    gate)
+  - FI-AR-007 Customer Account Balance Display (EXTEND getCustomerOverview)
+  - FI-AP-001 Vendor Line Item Display (EXTEND erpJournalEntryLines partyType=supplier)
+  - FI-AP-002 Vendor Balances (EXTEND erpSuppliers.creditLimit pattern)
+  - FI-AP-003 Vendor Items Aging Report (EXTEND arAgingReport pattern -> apAgingReport)
+  - FI-AP-004 Vendor Account Balance Display (EXTEND erpSuppliers + outstandingAmount)
+  - FI-AP-005 Payment Run / Payment Proposal (BUILD_NEW)
+  - FI-AP-007 Subcontractor Retention Summary (BUILD_NEW -- new vendor-side retention
+    tracking)
+  - FI-AA-004 Asset History Sheet (EXTEND erpFixedAssets+schedules+movements+disposals)
+  - FI-AA-007 Asset Depreciation Forecast (EXTEND generateDepreciationSchedule)
+  - Treasury-004 Liquidity Forecast (EXTEND banking-engine.ts:projectCashFlow + arAgingReport)
+  - Treasury-005 Bank Account Transaction List (EXTEND erp-cash-service.ts:listCashVouchers
+    + erpJournalEntryLines)
+  - CO-005 Sender/Receiver Cost Allocation Report (EXTEND costing-engine.ts:allocateCostPool)
+  - CO-006 Statistical Key Figure Report (BUILD_NEW, lightweight per implementation_notes)
+  - PS-001 Project Line Item Display (EXTEND erpJournalEntryLines + construction-expense-service.ts)
+  - PS-005 Project Commitments Report (EXTEND erp-buying-service.ts open-PO fields)
+  - PS-007 Project Cash Flow Report (EXTEND banking-engine.ts:projectCashFlow)
+  - SD-004 Open Sales Order Backlog Report (EXTEND erpSalesOrders + erpSalesInvoices)
+  - SD-005 Customer Sales Analysis (EXTEND listSalesInvoicesPaged + revenueReport)
+  - SD-006 Sales by Material/Service Type (BUILD_NEW)
+  - SD-008 Cancelled and Rejected Billing Analysis (EXTEND cancelSalesInvoice + erpSalesReturns)
+  - MM-004 Purchase Orders by Project/WBS (EXTEND listPurchaseOrders)
+  - MM-008 Vendor Purchasing History Report (EXTEND getSupplierScorecard)
+  - CRM-006 Win/Loss Analysis Report (EXTEND crmLostReasons)
+  - HCM-005 Overtime and Absence Analysis (EXTEND hrAttendanceRecords + payroll-engine.ts:calculateOvertime)
+  - HCM-006 Certified Payroll Report (BUILD_NEW -- US WH-347 format)
+  recent_commits:
+  - '9aceb225 chore: register ACTIVE-CLAIMS entry for DIRECTIVE-001-PHASE-3-BUILD-CALC'
+  - '81b461be Merge pull request #640 from FChecklist/task-20260730-master-index-central-entrypoint-confirmation'
+  - '3d2e25ba fix(ai-os): stop wholesale-replacing repo-tracked MASTER_INDEX.yaml
+    with the live file'
+  - 'a901abb1 MASTER_INDEX.yaml: close 7 real coverage gaps + clarify knowledge_engine/wiring_registry
+    relationship'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  note: periodic checkpoint
+- at: '2026-07-30T04:45:11.280377+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/services/erp-accounting-service.ts
+  - src/lib/services/erp-financial-report-service.ts
+  - src/lib/services/erp-fixed-assets-service.ts
+  - src/lib/services/erp-invoicing-service.ts
+  - src/lib/services/erp-payment-entries-service.test.ts
+  - src/lib/services/erp-payment-entries-service.ts
+  completed_steps:
+  - Registered ACTIVE-CLAIMS.yaml claim (commit 9aceb225, pushed)
+  - 'Rescuing from dead attempt `task-20260729-092858` (stranded, uncommitted):'
+  - FI-AR-006 `customerPaymentBehaviorReport` + FI-AP-006 `vendorPaymentBehaviorReport`
+    (erp-payment-entries-service.ts)
+  - FI-AA-006 `assetToGlReconciliation` (erp-fixed-assets-service.ts)
+  - '`findControlAccount` accountType union widened to include `fixed_asset` (erp-invoicing-service.ts)
+    -- kept as FI-AA-006''s real prerequisite; dropped that same attempt''s duplicate
+    `subledgerToGlReconciliation` (see FI-GL-007 below)'
+  - 'Rescuing from dead attempt `task-20260730-040810` (stranded, uncommitted):'
+  - CO-001 `listJournalEntryLinesByCostCenter` + CO-003 `costCenterHierarchyReport`
+    (erp-accounting-service.ts)
+  - FI-GL-002 `glAccountBalanceDisplay` + FI-GL-007 `subledgerReconciliationToGl`
+    + FI-GL-008 `glAccountGroupBalancesSummary` (erp-financial-report-service.ts)
+  remaining_steps:
+  - FI-AR-001 Customer Line Item Display (EXTEND erpJournalEntryLines partyType=customer)
+  - FI-AR-002 Customer Balances (EXTEND erpCustomers + outstandingAmount)
+  - FI-AR-005 Customer Credit Exposure (EXTEND erp-invoicing-service.ts creditLimit
+    gate)
+  - FI-AR-007 Customer Account Balance Display (EXTEND getCustomerOverview)
+  - FI-AP-001 Vendor Line Item Display (EXTEND erpJournalEntryLines partyType=supplier)
+  - FI-AP-002 Vendor Balances (EXTEND erpSuppliers.creditLimit pattern)
+  - FI-AP-003 Vendor Items Aging Report (EXTEND arAgingReport pattern -> apAgingReport)
+  - FI-AP-004 Vendor Account Balance Display (EXTEND erpSuppliers + outstandingAmount)
+  - FI-AP-005 Payment Run / Payment Proposal (BUILD_NEW)
+  - FI-AP-007 Subcontractor Retention Summary (BUILD_NEW -- new vendor-side retention
+    tracking)
+  - FI-AA-004 Asset History Sheet (EXTEND erpFixedAssets+schedules+movements+disposals)
+  - FI-AA-007 Asset Depreciation Forecast (EXTEND generateDepreciationSchedule)
+  - Treasury-004 Liquidity Forecast (EXTEND banking-engine.ts:projectCashFlow + arAgingReport)
+  - Treasury-005 Bank Account Transaction List (EXTEND erp-cash-service.ts:listCashVouchers
+    + erpJournalEntryLines)
+  - CO-005 Sender/Receiver Cost Allocation Report (EXTEND costing-engine.ts:allocateCostPool)
+  - CO-006 Statistical Key Figure Report (BUILD_NEW, lightweight per implementation_notes)
+  - PS-001 Project Line Item Display (EXTEND erpJournalEntryLines + construction-expense-service.ts)
+  - PS-005 Project Commitments Report (EXTEND erp-buying-service.ts open-PO fields)
+  - PS-007 Project Cash Flow Report (EXTEND banking-engine.ts:projectCashFlow)
+  - SD-004 Open Sales Order Backlog Report (EXTEND erpSalesOrders + erpSalesInvoices)
+  - SD-005 Customer Sales Analysis (EXTEND listSalesInvoicesPaged + revenueReport)
+  - SD-006 Sales by Material/Service Type (BUILD_NEW)
+  - SD-008 Cancelled and Rejected Billing Analysis (EXTEND cancelSalesInvoice + erpSalesReturns)
+  - MM-004 Purchase Orders by Project/WBS (EXTEND listPurchaseOrders)
+  - MM-008 Vendor Purchasing History Report (EXTEND getSupplierScorecard)
+  - CRM-006 Win/Loss Analysis Report (EXTEND crmLostReasons)
+  - HCM-005 Overtime and Absence Analysis (EXTEND hrAttendanceRecords + payroll-engine.ts:calculateOvertime)
+  - HCM-006 Certified Payroll Report (BUILD_NEW -- US WH-347 format)
+  recent_commits:
+  - '9aceb225 chore: register ACTIVE-CLAIMS entry for DIRECTIVE-001-PHASE-3-BUILD-CALC'
+  - '81b461be Merge pull request #640 from FChecklist/task-20260730-master-index-central-entrypoint-confirmation'
+  - '3d2e25ba fix(ai-os): stop wholesale-replacing repo-tracked MASTER_INDEX.yaml
+    with the live file'
+  - 'a901abb1 MASTER_INDEX.yaml: close 7 real coverage gaps + clarify knowledge_engine/wiring_registry
+    relationship'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  note: periodic checkpoint
+- at: '2026-07-30T04:50:16.336290+00:00'
+  status: in_progress
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Registered ACTIVE-CLAIMS.yaml claim (commit 9aceb225, pushed)
+  - 'Rescued from dead attempt `task-20260729-092858` (stranded, uncommitted):'
+  - FI-AR-006 `customerPaymentBehaviorReport` + FI-AP-006 `vendorPaymentBehaviorReport`
+    (erp-payment-entries-service.ts) -- registered in wiring_registry (function-5fb91bd7c670,
+    function-0e0fd5608ed1)
+  - FI-AA-006 `assetToGlReconciliation` (erp-fixed-assets-service.ts) -- registered
+    (function-f081fa3ea44c)
+  - '`findControlAccount` accountType union widened to include `fixed_asset` (erp-invoicing-service.ts)
+    -- kept as FI-AA-006''s real prerequisite; dropped that same attempt''s duplicate
+    `subledgerToGlReconciliation` (see FI-GL-007 below -- also would not have compiled,
+    it called an undefined `round2()`)'
+  - 'Rescued from dead attempt `task-20260730-040810` (stranded, uncommitted):'
+  - CO-001 `listJournalEntryLinesByCostCenter` + CO-003 `costCenterHierarchyReport`
+    (erp-accounting-service.ts) -- registered (function-b5c204830e26, function-d713fcf6a9ce)
+  - FI-GL-002 `glAccountBalanceDisplay` + FI-GL-007 `subledgerReconciliationToGl`
+    + FI-GL-008 `glAccountGroupBalancesSummary` (erp-financial-report-service.ts)
+    -- registered (function-91bd0f4a4758, function-9396cd32a905, function-a0cdcd75e9dd)
+  - 'Verify: `tsc --noEmit` + `bun test` on the rescued files (bun not installed in
+    this sandbox -- `npm install --legacy-peer-deps` running to fall back to tsc via
+    npm; CI will run the real bun suite regardless)'
+  remaining_steps:
+  - FI-AR-001 Customer Line Item Display (EXTEND erpJournalEntryLines partyType=customer)
+  - FI-AR-002 Customer Balances (EXTEND erpCustomers + outstandingAmount)
+  - FI-AR-005 Customer Credit Exposure (EXTEND erp-invoicing-service.ts creditLimit
+    gate)
+  - FI-AR-007 Customer Account Balance Display (EXTEND getCustomerOverview)
+  - FI-AP-001 Vendor Line Item Display (EXTEND erpJournalEntryLines partyType=supplier)
+  - FI-AP-002 Vendor Balances (EXTEND erpSuppliers.creditLimit pattern)
+  - FI-AP-003 Vendor Items Aging Report (EXTEND arAgingReport pattern -> apAgingReport)
+  - FI-AP-004 Vendor Account Balance Display (EXTEND erpSuppliers + outstandingAmount)
+  - FI-AP-005 Payment Run / Payment Proposal (BUILD_NEW)
+  - FI-AP-007 Subcontractor Retention Summary (BUILD_NEW -- new vendor-side retention
+    tracking)
+  - FI-AA-004 Asset History Sheet (EXTEND erpFixedAssets+schedules+movements+disposals)
+  - FI-AA-007 Asset Depreciation Forecast (EXTEND generateDepreciationSchedule)
+  - Treasury-004 Liquidity Forecast (EXTEND banking-engine.ts:projectCashFlow + arAgingReport)
+  - Treasury-005 Bank Account Transaction List (EXTEND erp-cash-service.ts:listCashVouchers
+    + erpJournalEntryLines)
+  - CO-005 Sender/Receiver Cost Allocation Report (EXTEND costing-engine.ts:allocateCostPool)
+  - CO-006 Statistical Key Figure Report (BUILD_NEW, lightweight per implementation_notes)
+  - PS-001 Project Line Item Display (EXTEND erpJournalEntryLines + construction-expense-service.ts)
+  - PS-005 Project Commitments Report (EXTEND erp-buying-service.ts open-PO fields)
+  - PS-007 Project Cash Flow Report (EXTEND banking-engine.ts:projectCashFlow)
+  - SD-004 Open Sales Order Backlog Report (EXTEND erpSalesOrders + erpSalesInvoices)
+  - SD-005 Customer Sales Analysis (EXTEND listSalesInvoicesPaged + revenueReport)
+  - SD-006 Sales by Material/Service Type (BUILD_NEW)
+  - SD-008 Cancelled and Rejected Billing Analysis (EXTEND cancelSalesInvoice + erpSalesReturns)
+  - MM-004 Purchase Orders by Project/WBS (EXTEND listPurchaseOrders)
+  - MM-008 Vendor Purchasing History Report (EXTEND getSupplierScorecard)
+  - CRM-006 Win/Loss Analysis Report (EXTEND crmLostReasons)
+  - HCM-005 Overtime and Absence Analysis (EXTEND hrAttendanceRecords + payroll-engine.ts:calculateOvertime)
+  - HCM-006 Certified Payroll Report (BUILD_NEW -- US WH-347 format)
+  recent_commits:
+  - 'c49eceba feat(erp): rescue 8 calculation-track engine functions stranded in dead
+    PHASE-3-BUILD-CALC attempts'
+  - '9aceb225 chore: register ACTIVE-CLAIMS entry for DIRECTIVE-001-PHASE-3-BUILD-CALC'
+  - '81b461be Merge pull request #640 from FChecklist/task-20260730-master-index-central-entrypoint-confirmation'
+  - '3d2e25ba fix(ai-os): stop wholesale-replacing repo-tracked MASTER_INDEX.yaml
+    with the live file'
+  - 'a901abb1 MASTER_INDEX.yaml: close 7 real coverage gaps + clarify knowledge_engine/wiring_registry
+    relationship'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  note: periodic checkpoint
+- at: '2026-07-30T04:57:10.356083+00:00'
+  status: in_progress
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Registered ACTIVE-CLAIMS.yaml claim (commit 9aceb225, pushed)
+  - 'Rescued from dead attempt `task-20260729-092858` (stranded, uncommitted):'
+  - FI-AR-006 `customerPaymentBehaviorReport` + FI-AP-006 `vendorPaymentBehaviorReport`
+    (erp-payment-entries-service.ts) -- registered in wiring_registry (function-5fb91bd7c670,
+    function-0e0fd5608ed1)
+  - FI-AA-006 `assetToGlReconciliation` (erp-fixed-assets-service.ts) -- registered
+    (function-f081fa3ea44c)
+  - '`findControlAccount` accountType union widened to include `fixed_asset` (erp-invoicing-service.ts)
+    -- kept as FI-AA-006''s real prerequisite; dropped that same attempt''s duplicate
+    `subledgerToGlReconciliation` (see FI-GL-007 below -- also would not have compiled,
+    it called an undefined `round2()`)'
+  - 'Rescued from dead attempt `task-20260730-040810` (stranded, uncommitted):'
+  - CO-001 `listJournalEntryLinesByCostCenter` + CO-003 `costCenterHierarchyReport`
+    (erp-accounting-service.ts) -- registered (function-b5c204830e26, function-d713fcf6a9ce)
+  - FI-GL-002 `glAccountBalanceDisplay` + FI-GL-007 `subledgerReconciliationToGl`
+    + FI-GL-008 `glAccountGroupBalancesSummary` (erp-financial-report-service.ts)
+    -- registered (function-91bd0f4a4758, function-9396cd32a905, function-a0cdcd75e9dd)
+  - '`tsc --noEmit` clean (found + fixed 1 real error: union-type `Map` inference
+    in `partyPaymentBehaviorReport`, commit 8628305e). `bun test` NOT run -- bun is
+    not installed in this sandbox and its install script fails partway here (`...
+    command not found`, root cause not chased given budget); CI runs the real bun
+    suite on the PR regardless. Manually re-read the rescued test file (`erp-payment-entries-service.test.ts`)
+    against the implementation and the logic checks out (see commit c49eceba''s tests
+    for computePaymentTimingVariance/summarizePartyPaymentBehavior/calculateDaysOutstanding).'
+  - Opened PR (see below)
+  remaining_steps:
+  - FI-AR-001 Customer Line Item Display (EXTEND erpJournalEntryLines partyType=customer)
+  - FI-AR-002 Customer Balances (EXTEND erpCustomers + outstandingAmount)
+  - FI-AR-005 Customer Credit Exposure (EXTEND erp-invoicing-service.ts creditLimit
+    gate)
+  - FI-AR-007 Customer Account Balance Display (EXTEND getCustomerOverview)
+  - FI-AP-001 Vendor Line Item Display (EXTEND erpJournalEntryLines partyType=supplier)
+  - FI-AP-002 Vendor Balances (EXTEND erpSuppliers.creditLimit pattern)
+  - FI-AP-003 Vendor Items Aging Report (EXTEND arAgingReport pattern -> apAgingReport)
+  - FI-AP-004 Vendor Account Balance Display (EXTEND erpSuppliers + outstandingAmount)
+  - FI-AP-005 Payment Run / Payment Proposal (BUILD_NEW)
+  - FI-AP-007 Subcontractor Retention Summary (BUILD_NEW -- new vendor-side retention
+    tracking)
+  - FI-AA-004 Asset History Sheet (EXTEND erpFixedAssets+schedules+movements+disposals)
+  - FI-AA-007 Asset Depreciation Forecast (EXTEND generateDepreciationSchedule)
+  - Treasury-004 Liquidity Forecast (EXTEND banking-engine.ts:projectCashFlow + arAgingReport)
+  - Treasury-005 Bank Account Transaction List (EXTEND erp-cash-service.ts:listCashVouchers
+    + erpJournalEntryLines)
+  - CO-005 Sender/Receiver Cost Allocation Report (EXTEND costing-engine.ts:allocateCostPool)
+  - CO-006 Statistical Key Figure Report (BUILD_NEW, lightweight per implementation_notes)
+  - PS-001 Project Line Item Display (EXTEND erpJournalEntryLines + construction-expense-service.ts)
+  - PS-005 Project Commitments Report (EXTEND erp-buying-service.ts open-PO fields)
+  - PS-007 Project Cash Flow Report (EXTEND banking-engine.ts:projectCashFlow)
+  - SD-004 Open Sales Order Backlog Report (EXTEND erpSalesOrders + erpSalesInvoices)
+  - SD-005 Customer Sales Analysis (EXTEND listSalesInvoicesPaged + revenueReport)
+  - SD-006 Sales by Material/Service Type (BUILD_NEW)
+  - SD-008 Cancelled and Rejected Billing Analysis (EXTEND cancelSalesInvoice + erpSalesReturns)
+  - MM-004 Purchase Orders by Project/WBS (EXTEND listPurchaseOrders)
+  - MM-008 Vendor Purchasing History Report (EXTEND getSupplierScorecard)
+  - CRM-006 Win/Loss Analysis Report (EXTEND crmLostReasons)
+  - HCM-005 Overtime and Absence Analysis (EXTEND hrAttendanceRecords + payroll-engine.ts:calculateOvertime)
+  - HCM-006 Certified Payroll Report (BUILD_NEW -- US WH-347 format)
+  recent_commits:
+  - 'be9fbb09 docs: ACTIVE-CLAIMS status update -- PR #643, 8/36 rows landed'
+  - '8ea4cf37 docs: finalize PROGRESS.md -- 8/36 calculation-track rows landed this
+    session'
+  - '8628305e fix: resolve tsc union-type Map inference error in payment-behavior
+    report'
+  - 'c49eceba feat(erp): rescue 8 calculation-track engine functions stranded in dead
+    PHASE-3-BUILD-CALC attempts'
+  - '9aceb225 chore: register ACTIVE-CLAIMS entry for DIRECTIVE-001-PHASE-3-BUILD-CALC'
+  - '81b461be Merge pull request #640 from FChecklist/task-20260730-master-index-central-entrypoint-confirmation'
+  - '3d2e25ba fix(ai-os): stop wholesale-replacing repo-tracked MASTER_INDEX.yaml
+    with the live file'
+  - 'a901abb1 MASTER_INDEX.yaml: close 7 real coverage gaps + clarify knowledge_engine/wiring_registry
+    relationship'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  note: periodic checkpoint
+- at: '2026-07-30T05:02:15.054927+00:00'
+  status: in_progress
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Registered ACTIVE-CLAIMS.yaml claim (commit 9aceb225, pushed)
+  - 'Rescued from dead attempt `task-20260729-092858` (stranded, uncommitted):'
+  - FI-AR-006 `customerPaymentBehaviorReport` + FI-AP-006 `vendorPaymentBehaviorReport`
+    (erp-payment-entries-service.ts) -- registered in wiring_registry (function-5fb91bd7c670,
+    function-0e0fd5608ed1)
+  - FI-AA-006 `assetToGlReconciliation` (erp-fixed-assets-service.ts) -- registered
+    (function-f081fa3ea44c)
+  - '`findControlAccount` accountType union widened to include `fixed_asset` (erp-invoicing-service.ts)
+    -- kept as FI-AA-006''s real prerequisite; dropped that same attempt''s duplicate
+    `subledgerToGlReconciliation` (see FI-GL-007 below -- also would not have compiled,
+    it called an undefined `round2()`)'
+  - 'Rescued from dead attempt `task-20260730-040810` (stranded, uncommitted):'
+  - CO-001 `listJournalEntryLinesByCostCenter` + CO-003 `costCenterHierarchyReport`
+    (erp-accounting-service.ts) -- registered (function-b5c204830e26, function-d713fcf6a9ce)
+  - FI-GL-002 `glAccountBalanceDisplay` + FI-GL-007 `subledgerReconciliationToGl`
+    + FI-GL-008 `glAccountGroupBalancesSummary` (erp-financial-report-service.ts)
+    -- registered (function-91bd0f4a4758, function-9396cd32a905, function-a0cdcd75e9dd)
+  - '`tsc --noEmit` clean (found + fixed 1 real error: union-type `Map` inference
+    in `partyPaymentBehaviorReport`, commit 8628305e). `bun test` NOT run -- bun is
+    not installed in this sandbox and its install script fails partway here (`...
+    command not found`, root cause not chased given budget); CI runs the real bun
+    suite on the PR regardless. Manually re-read the rescued test file (`erp-payment-entries-service.test.ts`)
+    against the implementation and the logic checks out (see commit c49eceba''s tests
+    for computePaymentTimingVariance/summarizePartyPaymentBehavior/calculateDaysOutstanding).'
+  - Opened PR (see below)
+  remaining_steps:
+  - FI-AR-001 Customer Line Item Display (EXTEND erpJournalEntryLines partyType=customer)
+  - FI-AR-002 Customer Balances (EXTEND erpCustomers + outstandingAmount)
+  - FI-AR-005 Customer Credit Exposure (EXTEND erp-invoicing-service.ts creditLimit
+    gate)
+  - FI-AR-007 Customer Account Balance Display (EXTEND getCustomerOverview)
+  - FI-AP-001 Vendor Line Item Display (EXTEND erpJournalEntryLines partyType=supplier)
+  - FI-AP-002 Vendor Balances (EXTEND erpSuppliers.creditLimit pattern)
+  - FI-AP-003 Vendor Items Aging Report (EXTEND arAgingReport pattern -> apAgingReport)
+  - FI-AP-004 Vendor Account Balance Display (EXTEND erpSuppliers + outstandingAmount)
+  - FI-AP-005 Payment Run / Payment Proposal (BUILD_NEW)
+  - FI-AP-007 Subcontractor Retention Summary (BUILD_NEW -- new vendor-side retention
+    tracking)
+  - FI-AA-004 Asset History Sheet (EXTEND erpFixedAssets+schedules+movements+disposals)
+  - FI-AA-007 Asset Depreciation Forecast (EXTEND generateDepreciationSchedule)
+  - Treasury-004 Liquidity Forecast (EXTEND banking-engine.ts:projectCashFlow + arAgingReport)
+  - Treasury-005 Bank Account Transaction List (EXTEND erp-cash-service.ts:listCashVouchers
+    + erpJournalEntryLines)
+  - CO-005 Sender/Receiver Cost Allocation Report (EXTEND costing-engine.ts:allocateCostPool)
+  - CO-006 Statistical Key Figure Report (BUILD_NEW, lightweight per implementation_notes)
+  - PS-001 Project Line Item Display (EXTEND erpJournalEntryLines + construction-expense-service.ts)
+  - PS-005 Project Commitments Report (EXTEND erp-buying-service.ts open-PO fields)
+  - PS-007 Project Cash Flow Report (EXTEND banking-engine.ts:projectCashFlow)
+  - SD-004 Open Sales Order Backlog Report (EXTEND erpSalesOrders + erpSalesInvoices)
+  - SD-005 Customer Sales Analysis (EXTEND listSalesInvoicesPaged + revenueReport)
+  - SD-006 Sales by Material/Service Type (BUILD_NEW)
+  - SD-008 Cancelled and Rejected Billing Analysis (EXTEND cancelSalesInvoice + erpSalesReturns)
+  - MM-004 Purchase Orders by Project/WBS (EXTEND listPurchaseOrders)
+  - MM-008 Vendor Purchasing History Report (EXTEND getSupplierScorecard)
+  - CRM-006 Win/Loss Analysis Report (EXTEND crmLostReasons)
+  - HCM-005 Overtime and Absence Analysis (EXTEND hrAttendanceRecords + payroll-engine.ts:calculateOvertime)
+  - HCM-006 Certified Payroll Report (BUILD_NEW -- US WH-347 format)
+  recent_commits:
+  - 'be9fbb09 docs: ACTIVE-CLAIMS status update -- PR #643, 8/36 rows landed'
+  - '8ea4cf37 docs: finalize PROGRESS.md -- 8/36 calculation-track rows landed this
+    session'
+  - '8628305e fix: resolve tsc union-type Map inference error in payment-behavior
+    report'
+  - 'c49eceba feat(erp): rescue 8 calculation-track engine functions stranded in dead
+    PHASE-3-BUILD-CALC attempts'
+  - '9aceb225 chore: register ACTIVE-CLAIMS entry for DIRECTIVE-001-PHASE-3-BUILD-CALC'
+  - '81b461be Merge pull request #640 from FChecklist/task-20260730-master-index-central-entrypoint-confirmation'
+  - '3d2e25ba fix(ai-os): stop wholesale-replacing repo-tracked MASTER_INDEX.yaml
+    with the live file'
+  - 'a901abb1 MASTER_INDEX.yaml: close 7 real coverage gaps + clarify knowledge_engine/wiring_registry
+    relationship'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  note: periodic checkpoint
+- at: '2026-07-30T05:07:20.266879+00:00'
+  status: in_progress
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Registered ACTIVE-CLAIMS.yaml claim (commit 9aceb225, pushed)
+  - 'Rescued from dead attempt `task-20260729-092858` (stranded, uncommitted):'
+  - FI-AR-006 `customerPaymentBehaviorReport` + FI-AP-006 `vendorPaymentBehaviorReport`
+    (erp-payment-entries-service.ts) -- registered in wiring_registry (function-5fb91bd7c670,
+    function-0e0fd5608ed1)
+  - FI-AA-006 `assetToGlReconciliation` (erp-fixed-assets-service.ts) -- registered
+    (function-f081fa3ea44c)
+  - '`findControlAccount` accountType union widened to include `fixed_asset` (erp-invoicing-service.ts)
+    -- kept as FI-AA-006''s real prerequisite; dropped that same attempt''s duplicate
+    `subledgerToGlReconciliation` (see FI-GL-007 below -- also would not have compiled,
+    it called an undefined `round2()`)'
+  - 'Rescued from dead attempt `task-20260730-040810` (stranded, uncommitted):'
+  - CO-001 `listJournalEntryLinesByCostCenter` + CO-003 `costCenterHierarchyReport`
+    (erp-accounting-service.ts) -- registered (function-b5c204830e26, function-d713fcf6a9ce)
+  - FI-GL-002 `glAccountBalanceDisplay` + FI-GL-007 `subledgerReconciliationToGl`
+    + FI-GL-008 `glAccountGroupBalancesSummary` (erp-financial-report-service.ts)
+    -- registered (function-91bd0f4a4758, function-9396cd32a905, function-a0cdcd75e9dd)
+  - '`tsc --noEmit` clean (found + fixed 1 real error: union-type `Map` inference
+    in `partyPaymentBehaviorReport`, commit 8628305e). `bun test` NOT run -- bun is
+    not installed in this sandbox and its install script fails partway here (`...
+    command not found`, root cause not chased given budget); CI runs the real bun
+    suite on the PR regardless. Manually re-read the rescued test file (`erp-payment-entries-service.test.ts`)
+    against the implementation and the logic checks out (see commit c49eceba''s tests
+    for computePaymentTimingVariance/summarizePartyPaymentBehavior/calculateDaysOutstanding).'
+  - Opened PR (see below)
+  remaining_steps:
+  - FI-AR-001 Customer Line Item Display (EXTEND erpJournalEntryLines partyType=customer)
+  - FI-AR-002 Customer Balances (EXTEND erpCustomers + outstandingAmount)
+  - FI-AR-005 Customer Credit Exposure (EXTEND erp-invoicing-service.ts creditLimit
+    gate)
+  - FI-AR-007 Customer Account Balance Display (EXTEND getCustomerOverview)
+  - FI-AP-001 Vendor Line Item Display (EXTEND erpJournalEntryLines partyType=supplier)
+  - FI-AP-002 Vendor Balances (EXTEND erpSuppliers.creditLimit pattern)
+  - FI-AP-003 Vendor Items Aging Report (EXTEND arAgingReport pattern -> apAgingReport)
+  - FI-AP-004 Vendor Account Balance Display (EXTEND erpSuppliers + outstandingAmount)
+  - FI-AP-005 Payment Run / Payment Proposal (BUILD_NEW)
+  - FI-AP-007 Subcontractor Retention Summary (BUILD_NEW -- new vendor-side retention
+    tracking)
+  - FI-AA-004 Asset History Sheet (EXTEND erpFixedAssets+schedules+movements+disposals)
+  - FI-AA-007 Asset Depreciation Forecast (EXTEND generateDepreciationSchedule)
+  - Treasury-004 Liquidity Forecast (EXTEND banking-engine.ts:projectCashFlow + arAgingReport)
+  - Treasury-005 Bank Account Transaction List (EXTEND erp-cash-service.ts:listCashVouchers
+    + erpJournalEntryLines)
+  - CO-005 Sender/Receiver Cost Allocation Report (EXTEND costing-engine.ts:allocateCostPool)
+  - CO-006 Statistical Key Figure Report (BUILD_NEW, lightweight per implementation_notes)
+  - PS-001 Project Line Item Display (EXTEND erpJournalEntryLines + construction-expense-service.ts)
+  - PS-005 Project Commitments Report (EXTEND erp-buying-service.ts open-PO fields)
+  - PS-007 Project Cash Flow Report (EXTEND banking-engine.ts:projectCashFlow)
+  - SD-004 Open Sales Order Backlog Report (EXTEND erpSalesOrders + erpSalesInvoices)
+  - SD-005 Customer Sales Analysis (EXTEND listSalesInvoicesPaged + revenueReport)
+  - SD-006 Sales by Material/Service Type (BUILD_NEW)
+  - SD-008 Cancelled and Rejected Billing Analysis (EXTEND cancelSalesInvoice + erpSalesReturns)
+  - MM-004 Purchase Orders by Project/WBS (EXTEND listPurchaseOrders)
+  - MM-008 Vendor Purchasing History Report (EXTEND getSupplierScorecard)
+  - CRM-006 Win/Loss Analysis Report (EXTEND crmLostReasons)
+  - HCM-005 Overtime and Absence Analysis (EXTEND hrAttendanceRecords + payroll-engine.ts:calculateOvertime)
+  - HCM-006 Certified Payroll Report (BUILD_NEW -- US WH-347 format)
+  recent_commits:
+  - 'be9fbb09 docs: ACTIVE-CLAIMS status update -- PR #643, 8/36 rows landed'
+  - '8ea4cf37 docs: finalize PROGRESS.md -- 8/36 calculation-track rows landed this
+    session'
+  - '8628305e fix: resolve tsc union-type Map inference error in payment-behavior
+    report'
+  - 'c49eceba feat(erp): rescue 8 calculation-track engine functions stranded in dead
+    PHASE-3-BUILD-CALC attempts'
+  - '9aceb225 chore: register ACTIVE-CLAIMS entry for DIRECTIVE-001-PHASE-3-BUILD-CALC'
+  - '81b461be Merge pull request #640 from FChecklist/task-20260730-master-index-central-entrypoint-confirmation'
+  - '3d2e25ba fix(ai-os): stop wholesale-replacing repo-tracked MASTER_INDEX.yaml
+    with the live file'
+  - 'a901abb1 MASTER_INDEX.yaml: close 7 real coverage gaps + clarify knowledge_engine/wiring_registry
+    relationship'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  note: periodic checkpoint
+- at: '2026-07-30T05:08:14.992398+00:00'
+  status: in_progress
+  files_modified:
+  - package-lock.json
+  completed_steps:
+  - Registered ACTIVE-CLAIMS.yaml claim (commit 9aceb225, pushed)
+  - 'Rescued from dead attempt `task-20260729-092858` (stranded, uncommitted):'
+  - FI-AR-006 `customerPaymentBehaviorReport` + FI-AP-006 `vendorPaymentBehaviorReport`
+    (erp-payment-entries-service.ts) -- registered in wiring_registry (function-5fb91bd7c670,
+    function-0e0fd5608ed1)
+  - FI-AA-006 `assetToGlReconciliation` (erp-fixed-assets-service.ts) -- registered
+    (function-f081fa3ea44c)
+  - '`findControlAccount` accountType union widened to include `fixed_asset` (erp-invoicing-service.ts)
+    -- kept as FI-AA-006''s real prerequisite; dropped that same attempt''s duplicate
+    `subledgerToGlReconciliation` (see FI-GL-007 below -- also would not have compiled,
+    it called an undefined `round2()`)'
+  - 'Rescued from dead attempt `task-20260730-040810` (stranded, uncommitted):'
+  - CO-001 `listJournalEntryLinesByCostCenter` + CO-003 `costCenterHierarchyReport`
+    (erp-accounting-service.ts) -- registered (function-b5c204830e26, function-d713fcf6a9ce)
+  - FI-GL-002 `glAccountBalanceDisplay` + FI-GL-007 `subledgerReconciliationToGl`
+    + FI-GL-008 `glAccountGroupBalancesSummary` (erp-financial-report-service.ts)
+    -- registered (function-91bd0f4a4758, function-9396cd32a905, function-a0cdcd75e9dd)
+  - '`tsc --noEmit` clean (found + fixed 1 real error: union-type `Map` inference
+    in `partyPaymentBehaviorReport`, commit 8628305e). `bun test` NOT run -- bun is
+    not installed in this sandbox and its install script fails partway here (`...
+    command not found`, root cause not chased given budget); CI runs the real bun
+    suite on the PR regardless. Manually re-read the rescued test file (`erp-payment-entries-service.test.ts`)
+    against the implementation and the logic checks out (see commit c49eceba''s tests
+    for computePaymentTimingVariance/summarizePartyPaymentBehavior/calculateDaysOutstanding).'
+  - Opened PR (see below)
+  remaining_steps:
+  - FI-AR-001 Customer Line Item Display (EXTEND erpJournalEntryLines partyType=customer)
+  - FI-AR-002 Customer Balances (EXTEND erpCustomers + outstandingAmount)
+  - FI-AR-005 Customer Credit Exposure (EXTEND erp-invoicing-service.ts creditLimit
+    gate)
+  - FI-AR-007 Customer Account Balance Display (EXTEND getCustomerOverview)
+  - FI-AP-001 Vendor Line Item Display (EXTEND erpJournalEntryLines partyType=supplier)
+  - FI-AP-002 Vendor Balances (EXTEND erpSuppliers.creditLimit pattern)
+  - FI-AP-003 Vendor Items Aging Report (EXTEND arAgingReport pattern -> apAgingReport)
+  - FI-AP-004 Vendor Account Balance Display (EXTEND erpSuppliers + outstandingAmount)
+  - FI-AP-005 Payment Run / Payment Proposal (BUILD_NEW)
+  - FI-AP-007 Subcontractor Retention Summary (BUILD_NEW -- new vendor-side retention
+    tracking)
+  - FI-AA-004 Asset History Sheet (EXTEND erpFixedAssets+schedules+movements+disposals)
+  - FI-AA-007 Asset Depreciation Forecast (EXTEND generateDepreciationSchedule)
+  - Treasury-004 Liquidity Forecast (EXTEND banking-engine.ts:projectCashFlow + arAgingReport)
+  - Treasury-005 Bank Account Transaction List (EXTEND erp-cash-service.ts:listCashVouchers
+    + erpJournalEntryLines)
+  - CO-005 Sender/Receiver Cost Allocation Report (EXTEND costing-engine.ts:allocateCostPool)
+  - CO-006 Statistical Key Figure Report (BUILD_NEW, lightweight per implementation_notes)
+  - PS-001 Project Line Item Display (EXTEND erpJournalEntryLines + construction-expense-service.ts)
+  - PS-005 Project Commitments Report (EXTEND erp-buying-service.ts open-PO fields)
+  - PS-007 Project Cash Flow Report (EXTEND banking-engine.ts:projectCashFlow)
+  - SD-004 Open Sales Order Backlog Report (EXTEND erpSalesOrders + erpSalesInvoices)
+  - SD-005 Customer Sales Analysis (EXTEND listSalesInvoicesPaged + revenueReport)
+  - SD-006 Sales by Material/Service Type (BUILD_NEW)
+  - SD-008 Cancelled and Rejected Billing Analysis (EXTEND cancelSalesInvoice + erpSalesReturns)
+  - MM-004 Purchase Orders by Project/WBS (EXTEND listPurchaseOrders)
+  - MM-008 Vendor Purchasing History Report (EXTEND getSupplierScorecard)
+  - CRM-006 Win/Loss Analysis Report (EXTEND crmLostReasons)
+  - HCM-005 Overtime and Absence Analysis (EXTEND hrAttendanceRecords + payroll-engine.ts:calculateOvertime)
+  - HCM-006 Certified Payroll Report (BUILD_NEW -- US WH-347 format)
+  recent_commits:
+  - 'be9fbb09 docs: ACTIVE-CLAIMS status update -- PR #643, 8/36 rows landed'
+  - '8ea4cf37 docs: finalize PROGRESS.md -- 8/36 calculation-track rows landed this
+    session'
+  - '8628305e fix: resolve tsc union-type Map inference error in payment-behavior
+    report'
+  - 'c49eceba feat(erp): rescue 8 calculation-track engine functions stranded in dead
+    PHASE-3-BUILD-CALC attempts'
+  - '9aceb225 chore: register ACTIVE-CLAIMS entry for DIRECTIVE-001-PHASE-3-BUILD-CALC'
+  - '81b461be Merge pull request #640 from FChecklist/task-20260730-master-index-central-entrypoint-confirmation'
+  - '3d2e25ba fix(ai-os): stop wholesale-replacing repo-tracked MASTER_INDEX.yaml
+    with the live file'
+  - 'a901abb1 MASTER_INDEX.yaml: close 7 real coverage gaps + clarify knowledge_engine/wiring_registry
+    relationship'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-30T05:08:17.475134+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'be9fbb09 docs: ACTIVE-CLAIMS status update -- PR #643, 8/36 rows landed'
+  - '8ea4cf37 docs: finalize PROGRESS.md -- 8/36 calculation-track rows landed this
+    session'
+  - '8628305e fix: resolve tsc union-type Map inference error in payment-behavior
+    report'
+  - 'c49eceba feat(erp): rescue 8 calculation-track engine functions stranded in dead
+    PHASE-3-BUILD-CALC attempts'
+  - '9aceb225 chore: register ACTIVE-CLAIMS entry for DIRECTIVE-001-PHASE-3-BUILD-CALC'
+  - '81b461be Merge pull request #640 from FChecklist/task-20260730-master-index-central-entrypoint-confirmation'
+  - '3d2e25ba fix(ai-os): stop wholesale-replacing repo-tracked MASTER_INDEX.yaml
+    with the live file'
+  - 'a901abb1 MASTER_INDEX.yaml: close 7 real coverage gaps + clarify knowledge_engine/wiring_registry
+    relationship'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 1, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+execution_seconds: 1964
+restart_count: 1
+token_usage:
+  input_tokens: 276
+  cache_creation_input_tokens: 230323
+  cache_read_input_tokens: 23171820
+  output_tokens: 66219
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 230323
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 626
+    cache_read_input_tokens: 253362
+    cache_creation_input_tokens: 645
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 645
+    type: message
+  speed: standard
+hold_for_owner_signoff: false

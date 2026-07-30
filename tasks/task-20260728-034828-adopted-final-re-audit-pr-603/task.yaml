@@ -1,0 +1,64 @@
+id: task-20260728-034828-adopted-final-re-audit-pr-603
+title: Final re-audit PR 603
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260727-153107-re-audit-projexa-erp-e2e-for-100pct-comp
+workspace: /opt/veridian/ai-os/tasks/task-20260728-034828-adopted-final-re-audit-pr-603/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-034828-adopted-final-re-audit-pr-603
+service: veridian-supervisor@task-20260728-034828-adopted-final-re-audit-pr-603.service
+created_at: '2026-07-28T03:48:29.856731+00:00'
+last_checkpoint_at: '2026-07-28T03:51:09.691908+00:00'
+completed_steps: &id002
+- Read ai-os/boss/ACTIVE-CLAIMS.yaml, registered this session's claim, committed+pushed
+- 'Located both repos: /opt/veridian/repos/projexa, this workspace (compliance-tracker)'
+- 'Confirmed projexa main HEAD includes PR #52, #54, #56 merges + fix-forward commits'
+- 'Verified projexa PR #52 (AppShellFrame/homeThreadSlot header fix) -- COMPLETE'
+- 'Verified projexa PR #54 (PWA/SW/IndexedDB sync queue) incl. per-user scoping +'
+- 'Verified projexa PR #56 (role gating) incl. full-codebase PATCH/DELETE endpoint'
+- 'Verified compliance-tracker PR #596 (BoQ/valuation) incl. nonzero-tax and'
+- 'Verified compliance-tracker PR #597 (timesheet budget-vs-actual) -- COMPLETE'
+- Ran npx tsc --noEmit in both repos -- clean in both
+- 'Ran bun test scoped to touched files in both repos -- projexa: 10+10+9 pass/0 fail'
+- Collected real supervisor PASS/FAIL verdicts (PR comments) for all 5 PRs, quoted
+- Wrote ai-os/audits/projexa_erp_e2e_reaudit_2026-07-27.md -- all 5 PRs COMPLETE
+remaining_steps: &id003
+- Commit report + PROGRESS.md, push, open PR (report-only, no other file changes)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T03:48:29.856731+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'worker/task-20260727-153107-re-audit-projexa-erp-e2e-for-100pct-comp'
+    (https://github.com/FChecklist/compliance-tracker/pull/603) -- registered for
+    real audit, not a fresh worker dispatch
+- at: '2026-07-28T03:51:09.691908+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'fe3f7a6f merge: resolve conflicts with current main (keep-both, append-only)'
+  - 08ea5082 Merge remote-tracking branch 'origin/main' into worker/task-20260727-153107-re-audit-projexa-erp-e2e-for-100pct-comp
+  - '64a68087 Merge pull request #608 from FChecklist/feat/boq-line-items-in-v1-list'
+  - 2ecc89ab Merge remote-tracking branch 'origin/main' into feat/boq-line-items-in-v1-list
+  - '31a90755 Merge pull request #605 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - cade1f5d Enrich GET .../work-progress/activities with categories (PROJEXA WPR
+    needs category names)
+  - 1a935132 Enrich GET /api/v1/construction/boq with line items (PROJEXA WPR needs
+    rate/amount)
+  - '2d485e2c Claim scope: enrich GET /api/v1/construction/boq with lineItems for
+    PROJEXA WPR'
+  - 'ead437a0 Scope-of-Works revision/variation: hard-block descoping completed work'
+  - '79e296d8 ai-os: note re-audit claim status update, PR #603 open'
+  note: "Superboss rejected: https://github.com/FChecklist/compliance-tracker/pull/603\
+    \ \u2014 see review.json for issues"
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/603
+master_synced_at: '2026-07-29T21:04:26.328765+00:00'

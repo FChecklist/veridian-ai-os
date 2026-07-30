@@ -1,0 +1,25 @@
+## OBJECTIVE
+Resolve compliance-tracker PR #563's real merge conflict against origin/main -- this is real, unfinished work: a prior task in this same session (the Supabase schema/migration analysis, PR #567, already merged) was asked to resolve this but only completed the DATABASE_CATALOG.json regeneration and skipped this conflict resolution. Finish the remaining real scope now.
+
+## KNOWN_CONTEXT
+`gh pr view 563 --repo FChecklist/compliance-tracker --json mergeable,mergeStateStatus` currently shows CONFLICTING/DIRTY. PR #563 is the real migration-drift audit (ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml, real findings: drizzle.__drizzle_migrations had 0 rows despite hundreds of real applied tables, now populated with 261 rows after applying missing migrations; 3 stale migration files identified referencing relocated/misnamed tables). A separate follow-up (PR #565, already merged to main) fixed CI issues on a different branch, likely causing this conflict since both touched overlapping files (PROGRESS.md, ai-os/boss/ACTIVE-CLAIMS.yaml, and possibly the migration-drift audit doc itself).
+
+## SCOPE
+1. Check out PR #563's branch, fetch and merge origin/main, identify the real conflicting file(s).
+2. Resolve conflicts: for ai-os/boss/ACTIVE-CLAIMS.yaml, keep both sides' real entries (union-merge, same pattern used repeatedly this session for this exact file). For PROGRESS.md, take the more current/complete narrative rather than silently dropping either side's real findings. For any drizzle/*.sql or schema-related conflicts, read both sides carefully -- do not silently drop either side's real migration content.
+3. After resolving, confirm `SELECT COUNT(*) FROM drizzle.__drizzle_migrations` on the real live pcrjmlpuqsbocqfwoxod Supabase project still returns the real, previously-confirmed non-zero count (do not re-run any migration or DDL -- this is read-only verification only, per the standing rule that live database actions require separate explicit authorization).
+4. Push the resolved merge to the existing PR #563 branch.
+
+## SUCCESS_CRITERIA
+- `gh pr view 563 --repo FChecklist/compliance-tracker --json mergeable -q '.mergeable'` returns MERGEABLE after the push.
+- `python3 -c "import yaml; yaml.safe_load(open('ai-os/boss/ACTIVE-CLAIMS.yaml'))"` succeeds (valid YAML after merge).
+- A real, read-only `SELECT COUNT(*) FROM drizzle.__drizzle_migrations` query against the live project (via Supabase MCP or equivalent read-only path) is reported in the PR body confirming the count is still real and non-zero.
+
+## EXPECTED_OUTPUT
+Push the resolved merge directly to the existing PR #563 branch. Do not open a new PR.
+
+## CONSTRAINTS
+Do not execute any DDL, migration, or write action against the live Supabase database in this task -- read-only verification only. Do not merge yourself.
+
+## COMPLEXITY_TIER
+integrative

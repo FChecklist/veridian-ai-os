@@ -1,0 +1,1108 @@
+id: task-20260726-171954-storage-rls---backup-pitr---supabase-mon
+title: Storage RLS + backup PITR + Supabase monitoring audit
+status: superseded
+repo: compliance-tracker
+branch: worker/task-20260726-171954-storage-rls---backup-pitr---supabase-mon
+workspace: /opt/veridian/ai-os/tasks/task-20260726-171954-storage-rls---backup-pitr---supabase-mon/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-171954-storage-rls---backup-pitr---supabase-mon
+service: veridian-worker@task-20260726-171954-storage-rls---backup-pitr---supabase-mon.service
+created_at: '2026-07-26T17:19:54.928549+00:00'
+last_checkpoint_at: '2026-07-26T19:53:09.564643+00:00'
+completed_steps: &id002
+- Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+  no collision found)
+- '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against the
+  live project'
+- Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on `storage.objects`
+- Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+- '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+  verification;'
+- PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk` is
+  on the **Free**
+- RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+  + PITR add-on
+- 'Sentry monitoring activation re-confirmed still unconfirmed (code done since V2-10/PR
+  #497; DSN'
+- Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+  doc, RTO/RPO statement,
+- Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+- 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+  docs-only,'
+- 'Found PR #575''s CI red on 2 jobs: `audit-check` (missing the mandatory structured
+  audit-verdict'
+- Investigated `Metadata Index Coverage Check`'s failure directly (ran
+- 'Re-checked `gh pr checks 575`: all required checks now pass (`mergeable: MERGEABLE`).
+  PR is'
+remaining_steps: &id003
+- 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+  -- out of this'
+- 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR add-on
+  for real'
+- 'PR #575 itself needs a supervising session/Owner to merge it (this session is constrained
+  from'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T17:19:56.597733+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  - 'aedcbb06 PROGRESS.md: start task-20260726-102520 (resolve PR #563 conflict, refresh
+    DB catalog)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T17:24:57.907389+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T17:29:59.241787+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  remaining_steps:
+  - Open PR (WIP if needed) -- docs-only, Tier1, no schema/auth/RLS/.env changes;
+    do not merge
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  recent_commits:
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: periodic checkpoint
+- at: '2026-07-26T17:48:01.131299+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  remaining_steps:
+  - Open PR (WIP if needed) -- docs-only, Tier1, no schema/auth/RLS/.env changes;
+    do not merge
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  recent_commits:
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: worker started (resume=1, lifetime invocation 2/20, pre-flight passed)
+- at: '2026-07-26T17:59:45.922700+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  remaining_steps:
+  - Open PR (WIP if needed) -- docs-only, Tier1, no schema/auth/RLS/.env changes;
+    do not merge
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  recent_commits:
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: periodic checkpoint
+- at: '2026-07-26T18:05:26.153313+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  recent_commits:
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: periodic checkpoint
+- at: '2026-07-26T18:23:32.061422+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  recent_commits:
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  note: worker started (resume=1, lifetime invocation 3/20, pre-flight passed)
+- at: '2026-07-26T18:31:52.017643+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  recent_commits:
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  note: periodic checkpoint
+- at: '2026-07-26T18:37:11.798020+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  recent_commits:
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  note: periodic checkpoint
+- at: '2026-07-26T18:51:00.598652+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  recent_commits:
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  note: periodic checkpoint
+- at: '2026-07-26T19:12:44.477789+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  - 'Found PR #575''s CI red on 2 jobs: `audit-check` (missing the mandatory structured
+    audit-verdict'
+  - Investigated `Metadata Index Coverage Check`'s failure directly (ran
+  - 'Re-checked `gh pr checks 575`: all required checks now pass (`mergeable: MERGEABLE`).
+    PR is'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  - 'PR #575 itself needs a supervising session/Owner to merge it (this session is
+    constrained from'
+  recent_commits:
+  - '7ac3fddd PROGRESS.md: record PR #575 audit-check fix (posted mandatory audit
+    verdict comment)'
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: worker started (resume=1, lifetime invocation 4/20, pre-flight passed)
+- at: '2026-07-26T19:19:58.117779+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  - 'Found PR #575''s CI red on 2 jobs: `audit-check` (missing the mandatory structured
+    audit-verdict'
+  - Investigated `Metadata Index Coverage Check`'s failure directly (ran
+  - 'Re-checked `gh pr checks 575`: all required checks now pass (`mergeable: MERGEABLE`).
+    PR is'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  - 'PR #575 itself needs a supervising session/Owner to merge it (this session is
+    constrained from'
+  recent_commits:
+  - '7ac3fddd PROGRESS.md: record PR #575 audit-check fix (posted mandatory audit
+    verdict comment)'
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: periodic checkpoint
+- at: '2026-07-26T19:36:12.824457+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  - 'Found PR #575''s CI red on 2 jobs: `audit-check` (missing the mandatory structured
+    audit-verdict'
+  - Investigated `Metadata Index Coverage Check`'s failure directly (ran
+  - 'Re-checked `gh pr checks 575`: all required checks now pass (`mergeable: MERGEABLE`).
+    PR is'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  - 'PR #575 itself needs a supervising session/Owner to merge it (this session is
+    constrained from'
+  recent_commits:
+  - '7ac3fddd PROGRESS.md: record PR #575 audit-check fix (posted mandatory audit
+    verdict comment)'
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:36:57.657423+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  - 'Found PR #575''s CI red on 2 jobs: `audit-check` (missing the mandatory structured
+    audit-verdict'
+  - Investigated `Metadata Index Coverage Check`'s failure directly (ran
+  - 'Re-checked `gh pr checks 575`: all required checks now pass (`mergeable: MERGEABLE`).
+    PR is'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  - 'PR #575 itself needs a supervising session/Owner to merge it (this session is
+    constrained from'
+  recent_commits:
+  - '7ac3fddd PROGRESS.md: record PR #575 audit-check fix (posted mandatory audit
+    verdict comment)'
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:37:31.902202+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  - 'Found PR #575''s CI red on 2 jobs: `audit-check` (missing the mandatory structured
+    audit-verdict'
+  - Investigated `Metadata Index Coverage Check`'s failure directly (ran
+  - 'Re-checked `gh pr checks 575`: all required checks now pass (`mergeable: MERGEABLE`).
+    PR is'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  - 'PR #575 itself needs a supervising session/Owner to merge it (this session is
+    constrained from'
+  recent_commits:
+  - '7ac3fddd PROGRESS.md: record PR #575 audit-check fix (posted mandatory audit
+    verdict comment)'
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:48:20.425777+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  - 'Found PR #575''s CI red on 2 jobs: `audit-check` (missing the mandatory structured
+    audit-verdict'
+  - Investigated `Metadata Index Coverage Check`'s failure directly (ran
+  - 'Re-checked `gh pr checks 575`: all required checks now pass (`mergeable: MERGEABLE`).
+    PR is'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  - 'PR #575 itself needs a supervising session/Owner to merge it (this session is
+    constrained from'
+  recent_commits:
+  - '7ac3fddd PROGRESS.md: record PR #575 audit-check fix (posted mandatory audit
+    verdict comment)'
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:49:04.244798+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  - 'Found PR #575''s CI red on 2 jobs: `audit-check` (missing the mandatory structured
+    audit-verdict'
+  - Investigated `Metadata Index Coverage Check`'s failure directly (ran
+  - 'Re-checked `gh pr checks 575`: all required checks now pass (`mergeable: MERGEABLE`).
+    PR is'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  - 'PR #575 itself needs a supervising session/Owner to merge it (this session is
+    constrained from'
+  recent_commits:
+  - '7ac3fddd PROGRESS.md: record PR #575 audit-check fix (posted mandatory audit
+    verdict comment)'
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:49:38.972059+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  - 'Found PR #575''s CI red on 2 jobs: `audit-check` (missing the mandatory structured
+    audit-verdict'
+  - Investigated `Metadata Index Coverage Check`'s failure directly (ran
+  - 'Re-checked `gh pr checks 575`: all required checks now pass (`mergeable: MERGEABLE`).
+    PR is'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  - 'PR #575 itself needs a supervising session/Owner to merge it (this session is
+    constrained from'
+  recent_commits:
+  - '7ac3fddd PROGRESS.md: record PR #575 audit-check fix (posted mandatory audit
+    verdict comment)'
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:51:49.294791+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  - 'Found PR #575''s CI red on 2 jobs: `audit-check` (missing the mandatory structured
+    audit-verdict'
+  - Investigated `Metadata Index Coverage Check`'s failure directly (ran
+  - 'Re-checked `gh pr checks 575`: all required checks now pass (`mergeable: MERGEABLE`).
+    PR is'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  - 'PR #575 itself needs a supervising session/Owner to merge it (this session is
+    constrained from'
+  recent_commits:
+  - '7ac3fddd PROGRESS.md: record PR #575 audit-check fix (posted mandatory audit
+    verdict comment)'
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:52:37.137063+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (pushed ahead of real work,
+    no collision found)
+  - '`get_advisors` (security) audit on `storage.objects` via Supabase MCP against
+    the live project'
+  - Direct `pg_catalog`/`pg_policies`/`pg_roles` verification of the RLS state on
+    `storage.objects`
+  - Code-level grep of every call site touching either bucket -- confirmed 100% service-role-only,
+  - '**Finding: no RLS policy fix needed** -- the assumed gap does not hold up under
+    verification;'
+  - PITR/backup verification via `get_organization` -- org `gycrthstsbvkojggzkjk`
+    is on the **Free**
+  - RTO/RPO statement written (both effectively undefined today; what a Pro upgrade
+    + PITR add-on
+  - 'Sentry monitoring activation re-confirmed still unconfirmed (code done since
+    V2-10/PR #497; DSN'
+  - Wrote `ai-os/V2_15_SUPABASE_STORAGE_RLS_PITR_RTO_AUDIT_2026-07-26.md` (full audit
+    doc, RTO/RPO statement,
+  - Registered the new doc in `ai-os/OS.yaml`'s `health_and_compliance` index
+  - 'Opened PR #575 (`V2-15: Storage RLS + backup PITR + Supabase monitoring audit`),
+    docs-only,'
+  - 'Found PR #575''s CI red on 2 jobs: `audit-check` (missing the mandatory structured
+    audit-verdict'
+  - Investigated `Metadata Index Coverage Check`'s failure directly (ran
+  - 'Re-checked `gh pr checks 575`: all required checks now pass (`mergeable: MERGEABLE`).
+    PR is'
+  remaining_steps:
+  - 'CSV rows #40/#41/#42 re-score itself lives in the separate `claude-control` repo
+    -- out of this'
+  - 'Owner decision needed on: (a) Supabase org plan upgrade (Free -> Pro) + PITR
+    add-on for real'
+  - 'PR #575 itself needs a supervising session/Owner to merge it (this session is
+    constrained from'
+  recent_commits:
+  - '7ac3fddd PROGRESS.md: record PR #575 audit-check fix (posted mandatory audit
+    verdict comment)'
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:53:09.564643+00:00'
+  status: failed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '7ac3fddd PROGRESS.md: record PR #575 audit-check fix (posted mandatory audit
+    verdict comment)'
+  - 'c1743c71 Merge origin/main, resolve PROGRESS.md conflict; PR #575 already open'
+  - 'a8beb6c2 ai-os/boss/ACTIVE-CLAIMS.yaml: move V2-15 storage RLS/PITR/Sentry audit
+    claim to recently_completed'
+  - 'b087c92f V2-15: Storage RLS + backup PITR + Supabase monitoring audit'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '93182d90 ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-15 storage RLS/PITR/Sentry
+    audit claim'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+execution_seconds: 3639
+restart_count: 3
+token_usage:
+  input_tokens: 124
+  cache_creation_input_tokens: 138509
+  cache_read_input_tokens: 6755636
+  output_tokens: 41596
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 138509
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 505
+    cache_read_input_tokens: 161871
+    cache_creation_input_tokens: 322
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 322
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+duplicate_of: task-20260726-195243-rca-task-20260726-171954-storage-rls---b
+superseded_reason: Collapsed by plan_backlog_completion.py dedup 2026-07-27 -- same
+  underlying issue as task-20260726-195243-rca-task-20260726-171954-storage-rls---b
+  (2 total attempts in chain).
+superseded_at: '2026-07-27T03:38:37.587713+00:00'

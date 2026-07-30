@@ -1,0 +1,262 @@
+id: task-20260727-130122-fix-pr-53-audit-findings--punch-list-pat
+title: 'Fix PR 53 audit findings: punch-list PATCH gate + real role-assignment mechanism'
+status: blocked
+repo: projexa
+branch: worker/task-20260727-130122-fix-pr-53-audit-findings--punch-list-pat
+workspace: /opt/veridian/ai-os/tasks/task-20260727-130122-fix-pr-53-audit-findings--punch-list-pat/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-130122-fix-pr-53-audit-findings--punch-list-pat
+service: veridian-worker@task-20260727-130122-fix-pr-53-audit-findings--punch-list-pat.service
+created_at: '2026-07-27T13:01:23.211614+00:00'
+last_checkpoint_at: '2026-07-27T13:15:31.496560+00:00'
+completed_steps: &id002
+- 'Read full audit verdict on PR #53 (FAIL, medium severity) -- confirmed matches
+  KNOWN_CONTEXT exactly: (1) punch-list/[id] PATCH missing requireRole gate, (2) no
+  role-assignment mechanism exists, defaulting ''member'' role would 403-lock existing
+  users on merge.'
+- 'Located actual PR branch checked out in a separate task worktree: /opt/veridian/ai-os/tasks/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model/workspace
+  (branch worker/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model). Worked
+  there directly since the fix had to land on PR #53, not a new PR.'
+- 'Fix 1: added `requireRole(ctx, ROLE_GROUPS.FIELD)` gate to punch-list/[id]/route.ts
+  PATCH, matching sibling POST route exactly.'
+- 'Fix 2: added `ROLE_GROUPS.ORG_ADMIN = ["owner","admin"]` to auth-guard.ts, `PATCH
+  /api/org-members/[id]` route (gated to ORG_ADMIN) letting an owner/admin reassign
+  any member''s role, plus a role-select control in SettingsClient.tsx''s existing
+  Team table (visible only to owner/admin viewers).'
+- 'Item 3 decided: did NOT add ''member'' back into either ROLE_GROUP transitionally
+  -- owner/admin are unaffected by the regression and can immediately self-serve promote
+  members via the new mechanism on merge, so no user is silently locked out with zero
+  recovery path. Loosening enforcement was explicitly avoided per the task''s constraints.
+  Justification is now in the PR description''s new "Audit-fix round" section.'
+- 'New tests: src/app/api/punch-list/[id]/route.test.ts (3/3, client_viewer/member
+  403, site_engineer 200) and src/app/api/org-members/[id]/route.test.ts (5/5, owner/admin
+  can reassign, non-admins 403, invalid role 400).'
+- '`npx tsc --noEmit` clean. `find src -name "*.test.ts" | xargs bun test`: 35/35
+  pass. `bun run lint`: 0 errors (1 pre-existing unrelated warning). Full unqualified
+  `bun test` still hits the branch''s pre-existing, documented e2e/*.spec.ts-vs-bun-glob
+  collision -- unrelated, unchanged, not introduced by this fix.'
+- Updated the PR-branch's own repo PROGRESS.md with an "Audit-fix round" entry.
+- Committed (77de705) and pushed to worker/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model.
+- 'Updated PR #53''s description (via `gh api ... -X PATCH`, since `gh pr edit` errored
+  on an unrelated Projects-classic GraphQL deprecation bug) with an explicit "Audit-fix
+  round" section covering both findings and the regression-recovery justification.'
+remaining_steps: &id003
+- 'None for this task''s scope. Do NOT merge -- requires a fresh supervisor audit
+  per AGENTS.md Rule 7c before PR #53 can land.'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T13:02:49.720493+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '91cf239 Merge pull request #52 from FChecklist/worker/task-20260727-122445-projexa--fix-veridian-ui-kit-appheader-e'
+  - 'a1a3ac2 Mark PR #52 opened in progress log'
+  - f4031d9 Wire homeThreadSlot into AppShellFrame; correct stale AppHeader-bug premise
+  - '5441c50 Merge pull request #51 from FChecklist/worker/task-20260727-101157-projexa-pivot-table---chart-ui-for-repor'
+  - 8cf5cab Add pivot/chart E2E test; document real-data verification + a discovered
+    prod login-routing issue
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  - 1d6fc9c Merge remote-tracking branch 'origin/main' into worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d
+  - '0ce522f Worker task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d:
+    automated checkpoint commit'
+  - '1dceb4e Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules (#48)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T13:07:50.989891+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read full audit verdict on PR #53 (FAIL, medium severity) -- confirmed matches
+    KNOWN_CONTEXT exactly: (1) punch-list/[id] PATCH missing requireRole gate, (2)
+    no role-assignment mechanism exists, defaulting ''member'' role would 403-lock
+    existing users on merge.'
+  - 'Located actual PR branch checked out in a separate task worktree: /opt/veridian/ai-os/tasks/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model/workspace
+    (branch worker/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model).
+    Working there directly since the fix must land on PR #53, not a new PR.'
+  - 'Fix 1: added `requireRole(ctx, ROLE_GROUPS.FIELD)` gate to punch-list/[id]/route.ts
+    PATCH, matching sibling POST route exactly.'
+  remaining_steps:
+  - 'Fix 2: build PATCH /api/org-members/[id] role-assignment route, gated to owner/admin
+    only.'
+  - Decide/justify item 3 (recovery path vs. keeping 'member' transitionally in a
+    ROLE_GROUP) and state explicitly in PR description.
+  - 'Add/extend tests: punch-list PATCH rejects client_viewer/accepts site_engineer;
+    org-members PATCH allows owner/admin, rejects others.'
+  - Maybe add minimal Settings UI role-select (Team table already exists in SettingsClient.tsx
+    with a Select component available in the design system).
+  - '`npx tsc --noEmit` clean, `bun test` passing.'
+  - Update repo PROGRESS.md (in the PR branch) with new entries documenting this fix.
+  - Commit + push to worker/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model.
+  - Do NOT merge -- requires fresh supervisor audit per AGENTS.md Rule 7c.
+  recent_commits:
+  - '35bc786 Track progress for PR #53 audit-fix task'
+  - '91cf239 Merge pull request #52 from FChecklist/worker/task-20260727-122445-projexa--fix-veridian-ui-kit-appheader-e'
+  - 'a1a3ac2 Mark PR #52 opened in progress log'
+  - f4031d9 Wire homeThreadSlot into AppShellFrame; correct stale AppHeader-bug premise
+  - '5441c50 Merge pull request #51 from FChecklist/worker/task-20260727-101157-projexa-pivot-table---chart-ui-for-repor'
+  - 8cf5cab Add pivot/chart E2E test; document real-data verification + a discovered
+    prod login-routing issue
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  - 1d6fc9c Merge remote-tracking branch 'origin/main' into worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d
+  - '0ce522f Worker task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d:
+    automated checkpoint commit'
+  note: periodic checkpoint
+- at: '2026-07-27T13:12:52.280866+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read full audit verdict on PR #53 (FAIL, medium severity) -- confirmed matches
+    KNOWN_CONTEXT exactly: (1) punch-list/[id] PATCH missing requireRole gate, (2)
+    no role-assignment mechanism exists, defaulting ''member'' role would 403-lock
+    existing users on merge.'
+  - 'Located actual PR branch checked out in a separate task worktree: /opt/veridian/ai-os/tasks/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model/workspace
+    (branch worker/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model).
+    Worked there directly since the fix had to land on PR #53, not a new PR.'
+  - 'Fix 1: added `requireRole(ctx, ROLE_GROUPS.FIELD)` gate to punch-list/[id]/route.ts
+    PATCH, matching sibling POST route exactly.'
+  - 'Fix 2: added `ROLE_GROUPS.ORG_ADMIN = ["owner","admin"]` to auth-guard.ts, `PATCH
+    /api/org-members/[id]` route (gated to ORG_ADMIN) letting an owner/admin reassign
+    any member''s role, plus a role-select control in SettingsClient.tsx''s existing
+    Team table (visible only to owner/admin viewers).'
+  - 'Item 3 decided: did NOT add ''member'' back into either ROLE_GROUP transitionally
+    -- owner/admin are unaffected by the regression and can immediately self-serve
+    promote members via the new mechanism on merge, so no user is silently locked
+    out with zero recovery path. Loosening enforcement was explicitly avoided per
+    the task''s constraints. Justification is now in the PR description''s new "Audit-fix
+    round" section.'
+  - 'New tests: src/app/api/punch-list/[id]/route.test.ts (3/3, client_viewer/member
+    403, site_engineer 200) and src/app/api/org-members/[id]/route.test.ts (5/5, owner/admin
+    can reassign, non-admins 403, invalid role 400).'
+  - '`npx tsc --noEmit` clean. `find src -name "*.test.ts" | xargs bun test`: 35/35
+    pass. `bun run lint`: 0 errors (1 pre-existing unrelated warning). Full unqualified
+    `bun test` still hits the branch''s pre-existing, documented e2e/*.spec.ts-vs-bun-glob
+    collision -- unrelated, unchanged, not introduced by this fix.'
+  - Updated the PR-branch's own repo PROGRESS.md with an "Audit-fix round" entry.
+  - Committed (77de705) and pushed to worker/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model.
+  - 'Updated PR #53''s description (via `gh api ... -X PATCH`, since `gh pr edit`
+    errored on an unrelated Projects-classic GraphQL deprecation bug) with an explicit
+    "Audit-fix round" section covering both findings and the regression-recovery justification.'
+  remaining_steps:
+  - 'None for this task''s scope. Do NOT merge -- requires a fresh supervisor audit
+    per AGENTS.md Rule 7c before PR #53 can land.'
+  recent_commits:
+  - 'a395512 Record completion: PR #53 audit findings fixed and pushed'
+  - '35bc786 Track progress for PR #53 audit-fix task'
+  - '91cf239 Merge pull request #52 from FChecklist/worker/task-20260727-122445-projexa--fix-veridian-ui-kit-appheader-e'
+  - 'a1a3ac2 Mark PR #52 opened in progress log'
+  - f4031d9 Wire homeThreadSlot into AppShellFrame; correct stale AppHeader-bug premise
+  - '5441c50 Merge pull request #51 from FChecklist/worker/task-20260727-101157-projexa-pivot-table---chart-ui-for-repor'
+  - 8cf5cab Add pivot/chart E2E test; document real-data verification + a discovered
+    prod login-routing issue
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  - 1d6fc9c Merge remote-tracking branch 'origin/main' into worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d
+  note: periodic checkpoint
+- at: '2026-07-27T13:12:52.765242+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Read full audit verdict on PR #53 (FAIL, medium severity) -- confirmed matches
+    KNOWN_CONTEXT exactly: (1) punch-list/[id] PATCH missing requireRole gate, (2)
+    no role-assignment mechanism exists, defaulting ''member'' role would 403-lock
+    existing users on merge.'
+  - 'Located actual PR branch checked out in a separate task worktree: /opt/veridian/ai-os/tasks/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model/workspace
+    (branch worker/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model).
+    Worked there directly since the fix had to land on PR #53, not a new PR.'
+  - 'Fix 1: added `requireRole(ctx, ROLE_GROUPS.FIELD)` gate to punch-list/[id]/route.ts
+    PATCH, matching sibling POST route exactly.'
+  - 'Fix 2: added `ROLE_GROUPS.ORG_ADMIN = ["owner","admin"]` to auth-guard.ts, `PATCH
+    /api/org-members/[id]` route (gated to ORG_ADMIN) letting an owner/admin reassign
+    any member''s role, plus a role-select control in SettingsClient.tsx''s existing
+    Team table (visible only to owner/admin viewers).'
+  - 'Item 3 decided: did NOT add ''member'' back into either ROLE_GROUP transitionally
+    -- owner/admin are unaffected by the regression and can immediately self-serve
+    promote members via the new mechanism on merge, so no user is silently locked
+    out with zero recovery path. Loosening enforcement was explicitly avoided per
+    the task''s constraints. Justification is now in the PR description''s new "Audit-fix
+    round" section.'
+  - 'New tests: src/app/api/punch-list/[id]/route.test.ts (3/3, client_viewer/member
+    403, site_engineer 200) and src/app/api/org-members/[id]/route.test.ts (5/5, owner/admin
+    can reassign, non-admins 403, invalid role 400).'
+  - '`npx tsc --noEmit` clean. `find src -name "*.test.ts" | xargs bun test`: 35/35
+    pass. `bun run lint`: 0 errors (1 pre-existing unrelated warning). Full unqualified
+    `bun test` still hits the branch''s pre-existing, documented e2e/*.spec.ts-vs-bun-glob
+    collision -- unrelated, unchanged, not introduced by this fix.'
+  - Updated the PR-branch's own repo PROGRESS.md with an "Audit-fix round" entry.
+  - Committed (77de705) and pushed to worker/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model.
+  - 'Updated PR #53''s description (via `gh api ... -X PATCH`, since `gh pr edit`
+    errored on an unrelated Projects-classic GraphQL deprecation bug) with an explicit
+    "Audit-fix round" section covering both findings and the regression-recovery justification.'
+  remaining_steps:
+  - 'None for this task''s scope. Do NOT merge -- requires a fresh supervisor audit
+    per AGENTS.md Rule 7c before PR #53 can land.'
+  recent_commits:
+  - 'a395512 Record completion: PR #53 audit findings fixed and pushed'
+  - '35bc786 Track progress for PR #53 audit-fix task'
+  - '91cf239 Merge pull request #52 from FChecklist/worker/task-20260727-122445-projexa--fix-veridian-ui-kit-appheader-e'
+  - 'a1a3ac2 Mark PR #52 opened in progress log'
+  - f4031d9 Wire homeThreadSlot into AppShellFrame; correct stale AppHeader-bug premise
+  - '5441c50 Merge pull request #51 from FChecklist/worker/task-20260727-101157-projexa-pivot-table---chart-ui-for-repor'
+  - 8cf5cab Add pivot/chart E2E test; document real-data verification + a discovered
+    prod login-routing issue
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  - 1d6fc9c Merge remote-tracking branch 'origin/main' into worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d
+  note: quality gates passed, pushed branch worker/task-20260727-130122-fix-pr-53-audit-findings--punch-list-pat,
+    awaiting review
+- at: '2026-07-27T13:15:31.496560+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'a395512 Record completion: PR #53 audit findings fixed and pushed'
+  - '35bc786 Track progress for PR #53 audit-fix task'
+  - '91cf239 Merge pull request #52 from FChecklist/worker/task-20260727-122445-projexa--fix-veridian-ui-kit-appheader-e'
+  - 'a1a3ac2 Mark PR #52 opened in progress log'
+  - f4031d9 Wire homeThreadSlot into AppShellFrame; correct stale AppHeader-bug premise
+  - '5441c50 Merge pull request #51 from FChecklist/worker/task-20260727-101157-projexa-pivot-table---chart-ui-for-repor'
+  - 8cf5cab Add pivot/chart E2E test; document real-data verification + a discovered
+    prod login-routing issue
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  - 1d6fc9c Merge remote-tracking branch 'origin/main' into worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d
+  note: "Superboss rejected: https://github.com/FChecklist/projexa/pull/55 \u2014\
+    \ see review.json for issues"
+execution_seconds: 562
+restart_count: 0
+token_usage:
+  input_tokens: 166
+  cache_creation_input_tokens: 110744
+  cache_read_input_tokens: 7146568
+  output_tokens: 39753
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 110744
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 490
+    cache_read_input_tokens: 134176
+    cache_creation_input_tokens: 252
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 252
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:25.998210+00:00'

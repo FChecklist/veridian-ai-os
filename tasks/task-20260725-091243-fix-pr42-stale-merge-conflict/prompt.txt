@@ -1,0 +1,28 @@
+## OBJECTIVE
+Resolve a real, stale merge conflict blocking claude-control PR #42 (already AUDIT: PASS / tier1-approved on 2026-07-24, never merged since master has moved through ~25 more merges) and merge it.
+
+## KNOWN_CONTEXT
+- PR #42's branch is worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg. It is genuinely approved (real AUDIT: PASS comment already posted) -- do not re-review the original content's correctness, only resolve the conflict and confirm the resolution itself is correct.
+- `gh pr merge 42 --repo FChecklist/claude-control --merge --delete-branch` fails with "the merge commit cannot be cleanly created". Real conflicts confirmed in 4 files when merging origin/master into the PR branch: ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml, ai-os/MASTER_INDEX.yaml, ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml, scripts/knowledge_registry_multisource.py.
+- Three of the four are almost certainly the same recurring pattern already resolved many times this session in this exact repo: two independent tasks each appended their own new entry to the same YAML list (registries:, decisions:, phases:) -- the correct resolution is keeping BOTH sides' real entries (union), never dropping either.
+- scripts/knowledge_registry_multisource.py is NOT a simple union case -- read it carefully. One conflict block (two functions: notify_owner_supabase_token_degraded from this PR's branch, vs read_env_file + supabase_project_healthcheck_fallback from origin/master) is a safe keep-both (different function names, no collision). The OTHER conflict block, inside the `if not api_ok:` branch of the same file's main flow, is a REAL semantic conflict: this PR's branch calls notify_owner_supabase_token_degraded(status, projects) there, while origin/master instead prints a different message implying it goes on to call the anon-key fallback health check later in that same function's loop. These are two different concurrent fixes for the same "Supabase credential broken" gap, addressing it two different ways (email the Owner vs. degrade gracefully with a live fallback signal) -- the correct resolution most likely keeps BOTH real behaviors (notify the Owner AND still attempt the anon-key fallback), not silently drop one. Read the full function and the rest of the file (the fallback loop that follows) before deciding exactly how to combine them so the resulting code is coherent and actually runs, not just textually merged.
+
+## SCOPE
+1. Clone worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg fresh, merge origin/master into it, and resolve all 4 real conflicts -- union-merge the 3 YAML files (verify each still parses as valid YAML afterward and that no real entry from either side was lost, same verification pattern used elsewhere this session: parse the file, count list entries, confirm the specific new entry from each side is present).
+2. For scripts/knowledge_registry_multisource.py: resolve both conflict blocks so the file is syntactically valid Python (`python3 -m py_compile`) AND semantically correct -- the notify-owner path and the anon-key-fallback path must both actually run when the Supabase Management API call fails, not just one of them silently winning.
+3. Commit the resolution, push, and merge the PR for real (`gh pr merge 42 --repo FChecklist/claude-control --merge --delete-branch`), then confirm via a fresh `gh pr view 42 --json state,mergedAt` that state is MERGED.
+4. Do a real smoke-test run of scripts/knowledge_registry_multisource.py after the merge (it is safe to run -- confirm this from its own code/docs first) and confirm it doesn't crash on the newly-merged code path.
+
+## SUCCESS_CRITERIA
+- `gh pr view 42 --repo FChecklist/claude-control --json state,mergedAt` shows state MERGED.
+- `python3 -m py_compile scripts/knowledge_registry_multisource.py` exits 0 on the merged master.
+- All 3 merged YAML files parse cleanly with `python3 -c "import yaml; yaml.safe_load(open('<path>'))"` and each real entry from both the PR branch and origin/master's concurrent additions is present (name them explicitly and grep-confirm each one in your final checkpoint).
+
+## EXPECTED_OUTPUT
+A real merged PR #42, the real py_compile and YAML-parse verification output pasted verbatim, and a final checkpoint stating explicitly how the two Supabase-gap fixes were combined in the semantic conflict and why that combination is correct.
+
+## CONSTRAINTS
+If a genuine choice must be made anywhere in these 4 files between two behaviors that truly cannot coexist, state your reasoning explicitly in the final checkpoint for that specific spot.
+
+## COMPLEXITY_TIER
+judgment

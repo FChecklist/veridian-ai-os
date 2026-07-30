@@ -1,0 +1,27 @@
+## OBJECTIVE
+Fix the two real, unresolved gaps that got PR #563 (https://github.com/FChecklist/compliance-tracker/pull/563, branch worker/task-20260726-071400-migration-drift-audit-and-reconciliation) a real AUDIT: REJECT verdict from task-20260726-071400-migration-drift-audit-and-reconciliation's own review.json, and push the fix to that same existing branch/PR. Do not blindly re-run the original migration-drift-audit prompt -- the audit's factual findings (261 drizzle.__drizzle_migrations rows, the previously-missing tables now present, crm_activities rebuilt correctly) were independently re-verified by the reviewer and are real; only the two items below are the actual, still-open defects.
+
+## KNOWN_CONTEXT
+Verbatim from ai-os/tasks/task-20260726-071400-migration-drift-audit-and-reconciliation/review.json (verdict: reject):
+- Issue 1: "CI check 'Metadata Index Coverage Check' is currently FAILING on PR #563 (verified via gh run logs) -- this diff adds ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml without a corresponding entry in ai-os/OS.yaml's governance index, which is required by scripts/check-metadata-index-coverage.mjs."
+- Issue 2: "Migration files 0140, 0199 (reference compliance.dynamic_chains, which migration 0245 relocated to platform.dynamic_chains) and 0253 (references an unqualified ai_provider enum) were only corrected live against production during this audit -- the .sql files in the repo were not updated to match, so a fresh/new-environment bootstrap replaying these files verbatim would still fail. The audit doc's 'known_limitation_not_fixed_this_pass' section discloses the db:generate/snapshot gap but not this one."
+Re-verified live on 2026-07-26 (this dispatch): `gh pr checks 563 --repo FChecklist/compliance-tracker` still shows "Metadata Index Coverage Check" and "audit-check" both FAIL, confirming issue 1 is still live and unresolved as of this dispatch. Do not assume anything else in the PR needs touching -- the reviewer explicitly confirmed the rest of the diff's factual claims are real and independently verified.
+
+## SCOPE
+1. Check out branch worker/task-20260726-071400-migration-drift-audit-and-reconciliation in the compliance-tracker repo (this PR's real existing branch -- push your fix here, do not open a new PR unless the branch is unrecoverable).
+2. Fix issue 1: add a real entry for ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml to whatever governance index scripts/check-metadata-index-coverage.mjs actually requires (read that script first to find the exact required index file/key -- do not guess the schema). Re-run the real check locally (however that script is invoked, e.g. `node scripts/check-metadata-index-coverage.mjs` or the equivalent npm script) and confirm it passes before pushing.
+3. Fix issue 2: update the actual migration .sql files in the repo (migrations 0140 and 0199 referencing compliance.dynamic_chains, and 0253's unqualified ai_provider enum) so they match what's now true in production (platform.dynamic_chains; correctly qualified ai_provider enum), so that replaying the migration files verbatim against a fresh/new environment bootstraps to the same correct state as the live database. Do this via the project's real migration-generation tooling if there is one (e.g. drizzle-kit) rather than hand-editing generated SQL if a generator flow exists and is safer -- read how the existing migrations were generated first.
+4. Do not touch or re-relitigate the live-DDL-before-PR governance/tiering concern from the review (issue 3 in the original rejection) -- that is a process/Owner-decision question about how future migration tasks should be gated, not a content defect in this diff; leave it for a separate Owner-level process decision, not this task.
+5. Push the fix to the existing branch and confirm CI is green on PR #563.
+
+## SUCCESS_CRITERIA
+`gh pr checks 563 --repo FChecklist/compliance-tracker` shows both "Metadata Index Coverage Check" and "audit-check" as pass (not fail), run and pasted into your final report as real command output.
+
+## EXPECTED_OUTPUT
+A real, pushed commit to the existing branch worker/task-20260726-071400-migration-drift-audit-and-reconciliation, updating PR #563 (do not open a new PR -- this branch and PR already exist and are open).
+
+## CONSTRAINTS
+Only fix the two disclosed, still-open defects above -- do not touch, re-verify, or redo the audit's already-confirmed data/schema findings (row counts, previously-missing tables, crm_activities shape). Do not perform any further live DDL against the production Supabase project as part of this task; only fix the repo's own .sql/YAML files and CI gating. Do not merge the PR yourself.
+
+## COMPLEXITY_TIER
+integrative

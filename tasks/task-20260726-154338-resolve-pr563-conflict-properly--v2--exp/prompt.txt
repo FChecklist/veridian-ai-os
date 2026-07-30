@@ -1,0 +1,25 @@
+## OBJECTIVE
+Resolve compliance-tracker PR #563's real merge conflict against origin/main. A prior attempt at this exact task (this session, same PR) failed to follow instructions: instead of pushing the resolution to PR #563's own branch (worker/task-20260726-071400-migration-drift-audit-and-reconciliation), it created a brand new branch/PR (#569, touching only PROGRESS.md) and merged that instead, leaving PR #563 itself still real and unresolved. Do not repeat that mistake.
+
+## KNOWN_CONTEXT
+`gh pr view 563 --repo FChecklist/compliance-tracker --json headRefName,mergeable,mergeStateStatus` currently shows headRefName=worker/task-20260726-071400-migration-drift-audit-and-reconciliation, mergeable=CONFLICTING, mergeStateStatus=DIRTY. This is the exact, real, existing branch you must check out and push to -- not a new branch, not a locally-renamed alias without a real upstream tracking relationship to THIS branch specifically. PR #563 is the real migration-drift audit (ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml, drizzle.__drizzle_migrations populated with 261 rows, 3 stale migration files identified). The conflict is against files also touched by two other, already-merged PRs this session (#565 CI fixes, #567/#569 catalog work) -- likely PROGRESS.md and ai-os/boss/ACTIVE-CLAIMS.yaml.
+
+## SCOPE
+1. Run `git clone -b worker/task-20260726-071400-migration-drift-audit-and-reconciliation https://github.com/FChecklist/compliance-tracker.git <local-dir>` (a fresh clone checked out directly to the real branch name, not a local alias) -- do not use `git checkout -b <any-other-name>` for this work; stay on the branch named exactly as above throughout.
+2. Merge origin/main into this branch. Resolve the real conflicts: for ai-os/boss/ACTIVE-CLAIMS.yaml, keep both sides' real entries (union-merge). For PROGRESS.md, take the more current/complete narrative. Do not silently drop either side's real content anywhere.
+3. Commit the merge resolution directly on this same branch (worker/task-20260726-071400-migration-drift-audit-and-reconciliation) and `git push origin worker/task-20260726-071400-migration-drift-audit-and-reconciliation` -- push to that exact remote ref, not a new one.
+4. Verify: after pushing, `gh pr view 563 --repo FChecklist/compliance-tracker --json mergeable -q '.mergeable'` must return MERGEABLE. If it does not, the push went to the wrong place -- fix that before considering this done.
+
+## SUCCESS_CRITERIA
+- `gh pr view 563 --repo FChecklist/compliance-tracker --json mergeable -q '.mergeable'` returns MERGEABLE.
+- `gh pr view 563 --repo FChecklist/compliance-tracker --json commits -q '.commits[-1].messageHeadline'` shows a real merge-resolution commit message, not an unrelated checkpoint.
+- No new PR is opened by this task -- `gh pr list --repo FChecklist/compliance-tracker --search "in:title resolve pr563" ` (or similar) shows only PR #563 itself, no duplicate.
+
+## EXPECTED_OUTPUT
+PR #563 itself, on its own existing branch, becomes MERGEABLE. No new PR.
+
+## CONSTRAINTS
+Do not open a new PR under any circumstance -- push only to the exact branch name given above. Do not merge yourself.
+
+## COMPLEXITY_TIER
+mechanical

@@ -1,0 +1,23 @@
+## OBJECTIVE
+Independently re-verify, from real current `main`-branch code and real CI/test output (not from PROGRESS.md self-reports or prior audit comments), whether OWNER_ENGINE (phases 4, 5, 8, 9) is genuinely 100% complete: every phase's stated deliverable exists in code, has passing tests, and was covered by a real supervisor audit verdict before merging. This is a verification-only task — you do not fix anything you find broken, you report it.
+
+## KNOWN_CONTEXT
+Do not re-derive the phase list; verify against it. Real, previously-merged PRs claimed to cover OWNER_ENGINE: PR #562 (phase 4 defense-in-depth prompt security, 4 layers under src/lib/prompt-security/), PR #586 and #590 (phase 5 browser-execution increments 1-2), PR #589 (phase 8 increment 1, dspy-e), PR #588 (phase 9, gateway/knowledge-sync wiring). Phase 5 was documented as having only increments 1-2 of an unknown total N complete — treat "is phase 5 actually fully done or only partially done" as an open question this audit must answer, not an assumption.
+
+## SCOPE
+For each of the 4 phases: (1) pull the real current file contents on `main` for every file each PR claimed to add/change, confirm the code is actually there and not a stub/TODO; (2) run the real test suites for those files (`bun test` scoped to the relevant paths) and report pass/fail counts, not just "tests exist"; (3) run `npx tsc --noEmit` on the repo and report whether it's clean; (4) check whether phase 5's original scope document (search `ai-os/` for the phase 5 planning/scope file) lists any increments beyond 1-2 that were never dispatched, and state explicitly whether phase 5 is fully done or has remaining scope; (5) for each of the 4 phases, confirm a real supervisor audit verdict (PASS) exists in that PR's GitHub comment history before it merged — quote the verdict, don't just note the PR is merged.
+
+## SUCCESS_CRITERIA
+A structured findings report (one section per phase: 4/5/8/9) stating, per phase: files verified present (list), test pass/fail counts, tsc clean yes/no, audit verdict found yes/no with quote, and a final verdict of COMPLETE or INCOMPLETE-WITH-GAPS (list the gaps precisely if any). Verify by actually running:
+`npx tsc --noEmit`
+`bun test src/lib/prompt-security src/lib/services`
+`git log --oneline -1 -- ai-os/audits/owner_engine_reaudit_2026-07-27.md` (proves the report file was actually committed)
+
+## EXPECTED_OUTPUT
+A findings report written to a new file `ai-os/audits/owner_engine_reaudit_2026-07-27.md` on a new branch off current `main`, committed and pushed, with a PR opened containing only this report (no code changes). This PR is documentation-only.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not modify any file outside `ai-os/audits/` — this is a report-only task, not a fix task.
+
+## COMPLEXITY_TIER
+judgment

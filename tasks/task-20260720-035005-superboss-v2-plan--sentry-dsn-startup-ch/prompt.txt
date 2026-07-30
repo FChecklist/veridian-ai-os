@@ -1,0 +1,20 @@
+TASK: V2-10 -- Sentry DSN startup check
+
+### V2-10 — Sentry DSN startup check [C1]
+- READY: yes
+- SOFTWARE TEAM LEVEL: L1 Code Worker
+- TASK ID: V2-10-SENTRY-DSN-CHECK
+- MODULE: compliance-tracker
+- OBJECTIVE: Add a startup check that logs a warning if `SENTRY_DSN`/`NEXT_PUBLIC_SENTRY_DSN` is missing. Closes CSV row #10 (the code half; provisioning the DSN is an Owner-dashboard action recorded in V2-6/C17).
+- READ FIRST: `sentry.server.config.ts`/`sentry.edge.config.ts`; Next.js instrumentation/startup hooks.
+- WHAT TO BUILD: A startup check + a test that asserts the warning fires when unset and is silent when set.
+- CONSTRAINTS: Read-only on Sentry config except the check. Register claim.
+- DONE CRITERIA: Check + test green; row re-scored; PR open.
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

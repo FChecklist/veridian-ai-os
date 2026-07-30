@@ -1,0 +1,11 @@
+[Unit]
+Description=Run veridian-cron-sync-repos on its scheduled cadence (jittered -- see the paired .service for why)
+
+[Timer]
+OnCalendar=*-*-* 0/2:06:00
+RandomizedDelaySec=300
+AccuracySec=30s
+Persistent=false
+
+[Install]
+WantedBy=timers.target

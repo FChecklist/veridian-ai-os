@@ -1,0 +1,929 @@
+# ============================================================================
+# VERIDIAN STRATEGIC PLAN -- PLAN-01..06 DEEP-DIVE EVALUATION
+# Companion to /opt/veridian/ai-os/STRATEGIC_PLAN_2026-07-21.yaml
+# Written 2026-07-22. Replaces the SHALLOW placeholders for PLAN-01..06 only.
+# PLANNING ARTIFACT ONLY -- NOT EXECUTED. No code was written/edited/committed
+# to produce this. Every claim below is tagged VERIFIED (live DB query, real
+# file read, or direct grep with line numbers shown) or INFERRED (reasoned
+# from adjacent evidence, explicitly flagged as such) -- never asserted bare.
+# ============================================================================
+
+meta:
+  id: VERIDIAN-STRATEGIC-PLAN-2026-07-21-DEEPDIVE-01-06
+  parent: VERIDIAN-STRATEGIC-PLAN-2026-07-21
+  scope: PLAN-01 through PLAN-06 only. PLAN-07 onward untouched -- other agents own those.
+  status: PLANNING_ONLY_NOT_EXECUTED
+  methodology: >-
+    Direct SSH to the Hetzner server (167.233.220.35), read-only. Repos read
+    in full at /opt/veridian/repos/compliance-tracker and
+    /opt/veridian/repos/projexa and /opt/veridian/repos/veridian-ui-kit.
+    Live Postgres row counts pulled via Supabase MCP / psql against the real
+    DB (project pcrjmlpuqsbocqfwoxod, schema `compliance`), not inferred from
+    seed scripts alone except where explicitly marked. Four parallel
+    read-only investigation passes were run (module-completeness,
+    templates/reports, VERI escalation architecture, demo-data coverage);
+    findings below are the synthesis, cross-checked against each other.
+  headline_corrections_to_the_2026-07-21_plan:
+    - >-
+      PLAN-01's "known_state" (veridian-ui-kit is a 58KB near-empty
+      placeholder, not consumed anywhere) is STALE. VERIFIED: the kit has
+      grown to 6 commits / v0.3.0 (tag) + 1 unreleased commit, 538MB with
+      node_modules, and compliance-tracker + projexa BOTH already consume it
+      as a real npm dependency (github:FChecklist/veridian-ui-kit#v0.2.2) for
+      AppShellFrame, AppHeader, AppSidebar, PanelShell, and the
+      createVeriChatContext factory. This is a live integration with a
+      version-drift gap (both consumers pinned to v0.2.2; kit is at v0.3.0+),
+      not a "hasn't started" situation.
+    - >-
+      PLAN-02's reference case is WRONG. Prior-session memory claims CRM
+      Leads/Opportunities/Kanban already has real end-to-end dispatchTool()
+      wiring (create_lead/create_opportunity). VERIFIED FALSE: exhaustive
+      grep of task-execution-engine.ts and capability-tree-service.ts for
+      "create_lead"/"create_opportunity" returns zero hits. CRM's real writes
+      happen only via plain REST routes (/api/crm/leads,
+      /api/crm/opportunities) called directly from crm/page.tsx, completely
+      outside the composer/capability-tree/dispatchTool pipeline. The only
+      CRM entries in that pipeline are 5 read-only analytics calculators
+      (customer_lifetime_value_calculator etc., zero DB writes). The ACTUAL
+      only two modules with a proven, live, end-to-end
+      composer->capability-tree->dispatchTool->real-Drizzle-write path are
+      **Compliance** (create_compliance_item, update_compliance_status) and
+      **GST reconciliation/filing** (confirm_gst_batch, generate_gst_return,
+      run_gst_reconciliation). Recommend the memory entry claiming CRM chat
+      wiring is done be corrected.
+    - >-
+      PLAN-03's premise (200 report_definitions rows, "confirm how much maps
+      to actual rendered UI") is now answered precisely: 0 of 200. VERIFIED
+      via live query: the table exists (compliance.report_definitions, 18
+      cols), has exactly 200 live rows (109 built / 85 data_gap / 6
+      planned), but is consumed ONLY by capability-tree-service.ts (the AI
+      assistant's tool list) -- zero .tsx pages fetch this catalog, confirmed
+      by both a repo-wide grep (zero hits) and an explicit in-code comment
+      admitting the same in src/app/api/reports/catalog/route.ts.
+    - >-
+      PLAN-04's premise ("entire escalation-rule taxonomy doesn't exist yet,
+      pure net-new design work") is HALF WRONG. VERIFIED: a formal,
+      code-enforced, production-live 3-bucket classification already exists
+      -- FULL_SOFTWARE / PACKAGE_AVAILABLE / NOVEL, built in Priority 5
+      ("Software Orchestrator") inside software-coverage-service.ts +
+      task-execution-engine.ts:2073 (executeTask). The real gap is narrower
+      than claimed: this classification conflates routing-determinism with
+      token-cost (proven: 2 codeReference leaves flagged "deterministic" in
+      the UI actually call an LLM internally -- generate_construction_
+      progress_summary, detect_construction_budget_schedule_risk). PLAN-04
+      should EXTEND this existing classifier with a second axis, not invent
+      a parallel taxonomy.
+    - >-
+      PLAN-05's premise is confirmed directionally correct but the actual
+      failure mode is different from what was guessed. VERIFIED via live DB:
+      the 2026-07-06 demo_org's OLD tables (compliance_items, crm_leads,
+      crm_opportunities, leave_requests, erp_payroll_runs) are untouched and
+      fine. Every NEW table (all 11 construction/PROJEXA modules, all 3
+      CRM-Kanban-depth tables crm_accounts/crm_contacts/crm_stage_history) is
+      at literally zero rows for demo_org -- but construction/interior demo
+      data DOES exist, just seeded under a DIFFERENT org
+      ("projexa_demo_org" / "Skyline Builders (PROJEXA Demo)"), which none
+      of the 10 documented demo-persona logins can reach. This is a
+      re-pointing/re-seeding fix, not a from-scratch build.
+  what_was_not_fully_verified_in_time_available:
+    - HR/Payroll and Sales-HQ modules' underlying *-service.ts files were
+      confirmed absent from the dispatch/capability-tree pipeline, but their
+      real DB-write service layer (equivalent to crm-service.ts or
+      erp-accounting-service.ts) was not directly read line-by-line to
+      confirm it exists in the same "already built, just unwired" shape
+      Finance/Accounting and CRM are in. Flagged as INFERRED (high
+      confidence, not confirmed) in the completeness table below.
+    - Whether PROJEXA's own duplicate VeriComposer/ChainSelector/
+      VeriChatPanel implementation (found still present in
+      /opt/veridian/repos/projexa/src/components/veri-chat/) is live/rendered
+      or dead code was not determined -- this is the "Wave 8" item the
+      2026-07-21 plan already flagged as unretired; still unretired.
+    - report_definitions' 200 rows have no visible seed script in the repo
+      (only the schema + a consuming service file) -- how they were
+      originally inserted is undocumented. Row content/correctness of the
+      "built" vs "data_gap" self-reported status was not independently
+      re-verified per row.
+
+# ==========================================================================
+# DEPENDENCY TABLE -- concrete mechanism per edge, corrected against the
+# 2026-07-21 plan's guessed dependencies where evidence contradicts them.
+# ==========================================================================
+dependency_table:
+  - edge: "PLAN-01 -> PLAN-02"
+    original_plan_claim: "PLAN-02 depends_on [PLAN-01]"
+    verified_mechanism: >-
+      WEAK/SOFT, not a hard blocker. PLAN-02's new dispatch branches render
+      inside whichever VeriComposer instance is currently mounted in
+      AppShell.tsx:162, imported today as
+      `import { PanelShell } from "@fchecklist/veridian-ui-kit/panel"` (and
+      similar shell/composer imports) at the CURRENT pinned version
+      (github:FChecklist/veridian-ui-kit#v0.2.2). That composer already
+      renders capability-tree leaves correctly today (proven by the
+      Compliance/GST reference case) -- PLAN-02 does not need PLAN-01's
+      kit-version bump to land first. Sequencing PLAN-01 first is a
+      convenience (new capability-tree leaves get the newest chain-selector
+      UX immediately) not a technical dependency. Corrected status: PARALLEL-SAFE.
+  - edge: "PLAN-01 -> PLAN-03"
+    original_plan_claim: "PLAN-03 depends_on [PLAN-01, PLAN-02]"
+    verified_mechanism: >-
+      REAL but narrow: PLAN-03's new generic report-renderer page
+      (src/app/(app)/reports/catalog/[reportId]/page.tsx, see PLAN-03 plan
+      below) should be built as a child route under the same (app) layout
+      that AppShellFrame/AppHeader/AppSidebar (from
+      @fchecklist/veridian-ui-kit/shell) already provide, so it inherits
+      chrome/tokens automatically via existing src/app/(app)/layout.tsx --
+      it needs zero NEW work from PLAN-01, just needs to not be built outside
+      that layout tree. The claimed dependency on PLAN-02 does NOT hold:
+      report_definitions rows are rendered from report_definitions +
+      existing *-service.ts data queries directly, never through
+      dispatchTool(). Corrected: depends only on (app) layout already
+      existing today (it does) -- not blocked on either PLAN-01 or PLAN-02
+      completing.
+  - edge: "PLAN-02 -> PLAN-04"
+    original_plan_claim: "PLAN-04 depends_on [PLAN-02]"
+    verified_mechanism: >-
+      REAL and specific. PLAN-04's extended 2-axis classifier
+      (routing-determinism + token-cost, see PLAN-04 plan below) must
+      classify EVERY codeReference/engineKey leaf that exists in
+      capability-tree-service.ts at the time it runs. Every new leaf PLAN-02
+      adds (one per wired module action) needs the same classification. THE
+      MECHANISM: PLAN-04's audit script
+      (ai-os/scripts/veri-escalation/audit-ai-backed-leaves.mjs) must be
+      RE-RUN once after PLAN-02's codegen lands (not before), specifically
+      against the new codeReference branches PLAN-02 injects into
+      task-execution-engine.ts, so the taxonomy stays accurate. Confirmed
+      hard sequencing: PLAN-04's classifier run happens AFTER PLAN-02's
+      generator run, same session, not a separate wave.
+  - edge: "PLAN-02 -> PLAN-05"
+    original_plan_claim: "PLAN-05 depends_on [PLAN-02] (cannot E2E-test incomplete modules)"
+    verified_mechanism: >-
+      SPLIT FINDING -- the original claim conflates two different
+      sub-activities that have different dependency profiles. (a) Demo-DATA
+      SEEDING (the scripts/seed-demo-org-full-coverage.mjs work, see PLAN-05
+      plan below) has ZERO dependency on PLAN-02 -- it is pure DB row
+      insertion into tables that already exist in the schema today,
+      independent of whether dispatchTool() wiring exists for them. Can run
+      immediately, in parallel with PLAN-01..04. (b) The "3x end-to-end RUN"
+      requirement (click through the UI/chat flow 3 times, fix breakage)
+      genuinely needs PLAN-02's dispatch wiring to exist for any module
+      being tested via the chat/pill/chain path specifically -- CRUD-only
+      modules can still be E2E-tested via their existing REST-backed pages
+      regardless of PLAN-02. Corrected: seeding is PARALLEL-SAFE; only the
+      chat-path E2E coverage of PLAN-02's newly-wired actions has a real
+      sequential dependency.
+  - edge: "PLAN-01..05 -> PLAN-06"
+    original_plan_claim: "PLAN-06 depends_on [PLAN-01, PLAN-02, PLAN-03, PLAN-04, PLAN-05]"
+    verified_mechanism: >-
+      CONFIRMED REAL, hard sequential dependency -- this is a genuine
+      constraint, not a guess. PLAN-06's 3-round-audit process needs actual
+      PRs/diffs/script-run-logs from PLAN-01..05 to exist as artifacts before
+      round 1 can start (you cannot audit work that hasn't landed). MECHANISM:
+      each of PLAN-01..05 must produce a dated entry in
+      ai-os/boss/COMPLETED.yaml (per this repo's existing convention) before
+      PLAN-06 round 1 begins; PLAN-06's checklist template (see below)
+      explicitly requires linking each finding to a COMPLETED.yaml wave
+      number, so the mechanism of "done" is machine-checkable, not a verbal claim.
+
+# ==========================================================================
+tasks:
+  # ------------------------------------------------------------------------
+  - id: PLAN-01
+    title: UI/UX unification across brands -- DEEP-DIVE REPLACEMENT
+    verified_current_state: >-
+      @fchecklist/veridian-ui-kit (github.com/FChecklist/veridian-ui-kit) is
+      real, at 6 commits, tagged v0.1.0 through v0.3.0 plus 1 unreleased
+      commit (81671c0, adds ai-os/FUNCTION_CATALOG.json). Exports (per its
+      package.json "exports" map): ./tokens/tailwind-preset,
+      ./tokens/fonts, ./tokens/globals.css, ./shell, ./composer, ./panel,
+      ./context, ./prompt-patterns. Both compliance-tracker AND projexa
+      repos depend on it, both pinned to `github:FChecklist/veridian-ui-kit#v0.2.2`
+      in their package.json (line 25 in compliance-tracker's, line 15 in
+      projexa's) -- one version behind v0.3.0 (which added
+      src/prompt-patterns/) and two behind unreleased HEAD.
+      compliance-tracker's REAL current consumption (grep-verified, file:line):
+        - src/app/globals.css:14 `@import "@fchecklist/veridian-ui-kit/tokens/globals.css"`
+        - src/app/layout.tsx:9 imports veridianHeadingFont/veridianSansFont from ./tokens/fonts
+        - src/components/AppShell.tsx:3 imports AppShellFrame from ./shell
+        - src/components/AppSidebar.tsx:6 imports SharedAppSidebar from ./shell
+        - src/components/AppTopbar.tsx:15 imports AppHeader from ./shell
+        - src/components/veri-chat/VeriChatPanel.tsx:23 imports PanelShell from ./panel
+        - src/components/veri-chat/HomeThreadSlot.tsx:14 imports ThreadView from ./panel
+        - src/components/veri-chat/veri-chat-context.tsx:19-20 imports createVeriChatContext, FIXED_MODES from ./context
+      compliance-tracker's REMAINING LOCAL (not-yet-kit) files, confirmed
+      real and product-specific (NOT dead duplication -- verified by reading
+      src/components/veri-chat/ChainSelector.tsx header comment, which
+      explicitly imports FIXED_MODES/CapabilityNode from its own
+      veri-chat-context.tsx, ties into task-service.ts's
+      resolveDynamicChainId() and dispatchInstruction(), i.e. business-logic
+      wiring the kit's README explicitly and deliberately excludes from its
+      own scope):
+        - src/components/veri-chat/ChainSelector.tsx (product-specific chain logic)
+        - src/components/veri-chat/VeriComposer.tsx (product-specific composer wrapper)
+        - src/components/ForgeIntakeComposer.tsx (unrelated intake feature, not a UI-kit duplicate)
+      PROJEXA repo mirrors this exact same split (its own local
+      src/components/veri-chat/VeriComposer.tsx/ChainSelector.tsx/
+      VeriChatPanel.tsx alongside the same kit imports) -- confirming the
+      kit-vs-product-layer boundary is a real, intentional, working
+      architecture already, not an unreconciled mess. The kit's own README
+      states this boundary explicitly: "owns the shell... deliberately does
+      NOT own... the real task-dispatch backend."
+      CORRECTED VERDICT: PLAN-01 is not "build veridian-ui-kit from
+      scratch, then merge." It is: (1) close a 2-tag version-drift gap
+      (v0.2.2 -> v0.3.0+), (2) verify no regressions from the newly-added
+      prompt-patterns export, (3) resolve the still-open "Wave 8" item
+      (PROJEXA's duplicate composer -- confirmed still present, not
+      verified live/dead), (4) run a drift-detection script (not manual
+      eyeballing) comparing local product-layer files against the kit's
+      shell/composer contracts.
+    automation_mechanism:
+      script_1:
+        path: ai-os/scripts/ui-kit-sync/detect-kit-drift.mjs
+        purpose: >-
+          Reads @fchecklist/veridian-ui-kit's actual exported TypeScript
+          interfaces (via the `typescript` package's Compiler API, already a
+          devDependency in both consuming repos -- no new dependency needed)
+          from the version currently on disk in node_modules, diffs them
+          against the interfaces consumed by compliance-tracker's and
+          projexa's local product-layer files (AppShell.tsx, AppSidebar.tsx,
+          AppTopbar.tsx, VeriChatPanel.tsx, HomeThreadSlot.tsx,
+          veri-chat-context.tsx). Emits a machine-readable JSON report of any
+          prop/type mismatch BEFORE a version bump, so nothing is manually
+          eyeballed screen-by-screen.
+        exact_command: "node ai-os/scripts/ui-kit-sync/detect-kit-drift.mjs --repo compliance-tracker --against-version v0.3.0"
+        run_again_for: "node ai-os/scripts/ui-kit-sync/detect-kit-drift.mjs --repo projexa --against-version v0.3.0"
+      script_2:
+        path: ai-os/scripts/ui-kit-sync/bump-and-verify.sh
+        purpose: >-
+          One script, run once per consuming repo, that (a) edits
+          package.json's veridian-ui-kit dependency line from #v0.2.2 to
+          #v0.3.0 (sed/jq, not manual edit), (b) reinstalls
+          (bun install / npm install depending on repo's lockfile), (c) runs
+          `tsc --noEmit`, (d) runs the repo's existing test suite filtered to
+          veri-chat/composer-related test files (ChainSelector.test.ts
+          confirmed to exist in compliance-tracker), (e) exits non-zero on
+          any failure so it cannot be silently treated as done.
+        exact_command: "bash ai-os/scripts/ui-kit-sync/bump-and-verify.sh compliance-tracker v0.3.0"
+      script_3:
+        path: ai-os/scripts/ui-kit-sync/find-duplicate-composer-usage.mjs
+        purpose: >-
+          Answers the still-open "Wave 8: is PROJEXA's local VeriComposer
+          live or dead code" question mechanically instead of manual code
+          reading: greps every .tsx file in /opt/veridian/repos/projexa/src
+          for actual JSX usage (`<VeriComposer`, `<ChainSelector`,
+          `<VeriChatPanel`) of the LOCAL import path vs the kit's, cross-
+          references against the Next.js route manifest
+          (.next/server/app-paths-manifest.json after a build) to confirm
+          which routes actually render it in production, not just import it.
+        exact_command: "node ai-os/scripts/ui-kit-sync/find-duplicate-composer-usage.mjs --repo projexa"
+    step_by_step_plan:
+      - "1. Run script_1 (detect-kit-drift.mjs) against both repos at v0.3.0. If it exits non-zero (breaking interface changes found), STOP and read the JSON diff report before proceeding -- do not bump blind."
+      - "2. If script_1 is clean, run script_2 (bump-and-verify.sh) for compliance-tracker, then for projexa. Each run is a single self-contained pass; do not hand-edit package.json."
+      - "3. Run script_3 (find-duplicate-composer-usage.mjs) against projexa to get a definitive live/dead verdict on its local composer. If LIVE: file this as its own small follow-up wave (retire it, re-point to the kit's composer + projexa's own veri-chat-context, same pattern compliance-tracker already completed 2026-07-19 per its own code comments) -- do not fold that retirement into this same pass, since it touches a live user-facing surface (per this session's own risk-sequencing convention: UX-surface changes get their own scoped wave, not a bundled one). If DEAD: delete the dead files in the same PR as the version bump, no separate wave needed."
+      - "4. Tag a new veridian-ui-kit release only if step 1-3 required any fix commits to the kit itself; otherwise v0.3.0 is already the target, no new tag needed."
+      - "5. Verification: `bunx tsc --noEmit` clean in both consuming repos AND the kit repo itself; existing ChainSelector.test.ts passes; script_3's live/dead verdict is recorded in ai-os/boss/COMPLETED.yaml, not left as an open question."
+    effort_reestimate: "small-to-medium (version bump + one drift script + one live/dead determination), not large -- the large 'build the kit from scratch' framing in the original plan is superseded by verified reality."
+
+  # ------------------------------------------------------------------------
+  - id: PLAN-02
+    title: >-
+      Full module completion (Odoo/Zoho-grade) + universal dynamic-pill/chain
+      pattern -- DEEP-DIVE REPLACEMENT (still the single largest item, but
+      now with a real per-module map instead of a guess)
+    verified_module_completeness_table:
+      - module: "Compliance (core compliance_items register)"
+        classification: FULL
+        evidence: >-
+          create_compliance_item (real db.insert, task-execution-engine.ts
+          line ~199) and update_compliance_status (real db.update, line
+          ~169) both dispatchTool()-reachable via codeReference, both
+          registered as workerAgents rows resolved in
+          capability-tree-service.ts:1328-1362, scoped into the composer via
+          MODULE_SCOPE_TOP_LEVEL_KEYS.compliance (line 928).
+        scaffolding_reuse: "N/A -- this IS the reference template every other module's generator entry copies."
+      - module: "GST reconciliation / GST returns"
+        classification: FULL
+        evidence: >-
+          confirm_gst_batch, generate_gst_return, run_gst_reconciliation all
+          real codeReference branches with dynamically-generated
+          capability-tree leaves (one per return period),
+          capability-tree-service.ts lines ~1395-1456.
+        scaffolding_reuse: "N/A -- second proven reference pattern."
+      - module: "CRM (Leads/Opportunities/Kanban)"
+        classification: "NONE for CRUD actions (5 read-only analytics calculators are FULL but irrelevant to task completion)"
+        evidence: >-
+          Zero hits for create_lead/create_opportunity anywhere in
+          task-execution-engine.ts or capability-tree-service.ts (exhaustive
+          grep). Real writes exist only via createLead()/createOpportunity()
+          in src/lib/services/crm-service.ts (lines 66, 168 -- confirmed real
+          Drizzle inserts) called from plain REST routes
+          (src/app/api/crm/leads/route.ts:27,
+          src/app/api/crm/opportunities/route.ts:27) and directly from
+          src/app/(app)/crm/page.tsx:103 via fetch() -- ordinary form CRUD,
+          entirely outside the composer/capability-tree/dispatchTool
+          pipeline. CRM_WIRED_ENGINE_INPUT_FIELDS
+          (capability-tree-service.ts:732-754) + dispatchTool cases
+          (task-execution-engine.ts:1386-1414) exist but only cover
+          customer_lifetime_value_calculator, churn_probability_calculator,
+          rfm_scoring_engine, opportunity_score_calculator,
+          customer_health_score -- all imported from src/lib/engines/
+          crm-engine.ts (47 lines, zero DB references, confirmed
+          read-only).
+        scaffolding_reuse: >-
+          HIGH -- createLead()/createOpportunity() already exist,
+          real, DB-backed, validated. This is the cheapest module to wire:
+          purely a codeReference-branch + capability-tree-category addition,
+          zero new business logic needed.
+      - module: "Finance/Accounting (invoicing, journal-entries)"
+        classification: NONE
+        evidence: >-
+          Explicit code comment, task-execution-engine.ts lines ~702-708:
+          9 core accounting engines (journal_posting_engine,
+          ledger_posting_engine, trial_balance_engine, balance_sheet_engine,
+          etc.) are "deliberately NOT re-dispatched here." Real function
+          createJournalEntry() exists in src/lib/services/
+          erp-accounting-service.ts:229 (confirmed real db.insert(erpJournalEntries)
+          at line 257). Zero capability-tree entries exist for any of these
+          engine names (grep returns 0 hits). create_invoice/generate_invoice:
+          0 hits anywhere. erp/invoicing/page.tsx and erp/journal-entries/page.tsx
+          have no composer/dispatchTool references.
+        scaffolding_reuse: >-
+          VERY HIGH -- full DB-backed service layer already exists
+          (erp-accounting-service.ts, erp-invoicing-service.ts,
+          erp-financial-report-service.ts confirmed present). Second-cheapest
+          module to wire.
+      - module: "HR/Payroll"
+        classification: "NONE for CRUD; calculators only"
+        evidence: >-
+          No create_employee/process_payroll/run_payroll codeReference or
+          capability-tree entry found anywhere. HR_WIRED_ENGINE_INPUT_FIELDS/
+          PAYROLL_WIRED_ENGINE_INPUT_FIELDS (task-execution-engine.ts lines
+          792-997) cover only formula calculators (gratuity, bonus,
+          overtime, attrition, payroll-math). Pages checked (hr/page.tsx,
+          erp/payroll/page.tsx, recruitment/page.tsx,
+          performance-reviews/page.tsx) have zero composer references.
+        scaffolding_reuse: >-
+          INFERRED, NOT CONFIRMED -- whether an hr-service.ts/
+          payroll-service.ts with real DB writes exists in the same shape as
+          crm-service.ts/erp-accounting-service.ts was not read in the time
+          available. Treat as "likely high reuse, verify before estimating
+          effort" rather than assumed.
+      - module: "Sales (Sales-HQ)"
+        classification: "NONE for CRUD; calculators only"
+        evidence: >-
+          SALES_WIRED_ENGINE_INPUT_FIELDS (capability-tree-service.ts:
+          762-783) covers pricing_engine, quote_optimizer,
+          sales_forecast_engine, pipeline_probability_engine,
+          margin_calculator, markup_calculator -- all calculators.
+          sales-hq/page.tsx has zero composer references. No sales CRUD
+          codeReference found.
+        scaffolding_reuse: "INFERRED, NOT CONFIRMED -- same caveat as HR/Payroll."
+      - module: "PROJEXA construction -- labour, materials, permits (3 of 11 checked directly)"
+        classification: NONE
+        evidence: >-
+          LabourClient.tsx and equivalent page shells in
+          /opt/veridian/repos/projexa are pure fetch("/api/labour-roster"),
+          fetch("/api/materials"), fetch("/api/permits") REST CRUD (own
+          Next.js API routes, Supabase-backed). Zero Composer/ChainSelector/
+          dispatchTool references in any of the 3 client components checked.
+          PROJEXA's own src/app/api/capability-tree/route.ts and
+          src/app/api/assistant/route.ts are confirmed THIN PROXIES to
+          compliance-tracker's /api/v1/projexa/* endpoints (explicit
+          in-code comment: keeps the VERIDIAN bearer key server-side) --
+          PROJEXA has no capability-tree-service.ts or
+          task-execution-engine.ts of its own.
+        scaffolding_reuse: >-
+          MEDIUM -- REST CRUD routes already exist and presumably work; the
+          remaining 8 construction modules (site-diary, floor-plans, ffe,
+          mood-boards, procurement, purchase-orders, change-orders,
+          quotations) were NOT individually checked but the 3-of-3 pattern
+          found (pure REST CRUD, zero composer wiring) is a strong,
+          consistent signal -- treat as INFERRED-to-generalize, not
+          separately verified per module.
+      - module: "PROJEXA construction dashboards (read-only, IN compliance-tracker)"
+        classification: PARTIAL
+        evidence: >-
+          get_construction_project_dashboard, list_delayed_activities,
+          get_construction_budget_status, list_over_budget_projects,
+          get_construction_kpi_status, generate_construction_progress_summary,
+          detect_construction_budget_schedule_risk are ALL real dispatchTool
+          codeReference branches (task-execution-engine.ts lines ~299-345+)
+          -- but every one is read-only (dashboard/summary queries), zero
+          create/update actions for labour, materials, permits, POs,
+          change-orders exist in the dispatch pipeline.
+        scaffolding_reuse: "Dashboard-read layer exists; CRUD-write layer entirely absent from dispatch."
+    strategic_priority_ranking_cheapest_to_most_expensive:
+      - "1. Compliance + GST -- already done, use as literal template."
+      - "2. CRM (createLead/createOpportunity already real, DB-backed) -- cheapest net-new wire."
+      - "3. Finance/Accounting (createJournalEntry + full erp-accounting-service.ts already real) -- second cheapest."
+      - "4. PROJEXA construction CRUD (8-11 modules, REST layer already exists, needs new proxy-aware wiring since PROJEXA has no local capability-tree-service.ts) -- medium cost, but same shape repeated many times, hence the codegen approach below matters most here."
+      - "5. HR/Payroll and Sales-HQ -- unverified whether service layer exists; must be confirmed BEFORE estimating, could be cheap (if service layer exists) or expensive (if it needs net-new writes)."
+    automation_mechanism:
+      design_rationale: >-
+        Owner directive: no table-by-table manual wiring. The Compliance
+        reference case shows every module's wiring needs the exact same
+        3-part shape: (a) a CapabilityInputField[] const array (validated
+        form fields), (b) a workerAgents DB row with a codeReference, feeding
+        a buildXNodes() function registered in MODULE_SCOPE_TOP_LEVEL_KEYS,
+        (c) a codeReference branch in dispatchTool()'s if-chain that
+        validates context.inputs and performs the real write (in
+        Compliance's case, inlined rather than calling the service function
+        directly, because dispatch context's shape differs from
+        service-layer ServiceContext -- the generator below produces an
+        adapter shim automatically rather than assuming direct passthrough).
+        This 3-part shape is mechanical enough to generate from a manifest.
+        No new dependency is needed for the codegen itself -- the
+        `typescript` package (already a devDependency, ^6.0.3, confirmed via
+        package.json) provides the Compiler API used for safe AST-based
+        insertion instead of fragile string templating.
+      pipeline:
+        step_A_scaffold_manifest:
+          script: ai-os/scripts/wire-module-dispatch/scaffold-manifest.mjs
+          purpose: >-
+            Introspects a given *-service.ts file's exported functions (via
+            ts.createSourceFile + ts.forEachChild, reading function name,
+            parameter names, and parameter types) and auto-proposes manifest
+            entries (action_id, required_fields with best-guess type/label,
+            target db table inferred from the function body's
+            db.insert(<table>) call). This is NOT the human writing the
+            manifest from scratch -- it's the human reviewing/approving a
+            machine-generated first draft, roughly 5 minutes per module, not
+            hours of manual design.
+          exact_commands:
+            - "node ai-os/scripts/wire-module-dispatch/scaffold-manifest.mjs --service src/lib/services/crm-service.ts --module crm --scope-key crm >> ai-os/scripts/wire-module-dispatch/module-actions-manifest.yaml"
+            - "node ai-os/scripts/wire-module-dispatch/scaffold-manifest.mjs --service src/lib/services/erp-accounting-service.ts --module finance --scope-key erp >> ai-os/scripts/wire-module-dispatch/module-actions-manifest.yaml"
+            - "node ai-os/scripts/wire-module-dispatch/scaffold-manifest.mjs --service <hr-service-file, CONFIRM PATH FIRST -- see verification note below> --module hr --scope-key hr >> ai-os/scripts/wire-module-dispatch/module-actions-manifest.yaml"
+            - "node ai-os/scripts/wire-module-dispatch/scaffold-manifest.mjs --service <sales-service-file, CONFIRM PATH FIRST> --module sales --scope-key sales >> ai-os/scripts/wire-module-dispatch/module-actions-manifest.yaml"
+          precondition_verification_step: >-
+            Before running the HR/sales lines, run:
+            `find src/lib/services -iname '*hr*service*' -o -iname '*payroll*service*' -o -iname '*sales*service*'`
+            to confirm the actual file path/existence first (this was
+            explicitly NOT verified in this deep-dive -- do not assume the
+            path, discover it mechanically).
+          for_projexa_construction_modules: >-
+            Since PROJEXA has no local service-layer file in the same shape
+            (its writes go through its own Next.js API routes directly to
+            Supabase, not through a compliance-tracker-style *-service.ts),
+            run scaffold-manifest.mjs in a second mode against PROJEXA's API
+            route handlers instead:
+            `node ai-os/scripts/wire-module-dispatch/scaffold-manifest.mjs --api-routes /opt/veridian/repos/projexa/src/app/api/{labour-roster,materials,permits,punch-list,floor-plans,ffe,procurement,purchase-orders,change-orders,quotations,mood-boards} --module construction --scope-key construction --target-repo compliance-tracker`
+            (the manifest entries land in compliance-tracker's
+            task-execution-engine.ts, since that's where codeReference
+            dispatch lives; PROJEXA's existing thin-proxy pattern
+            (src/app/api/assistant/route.ts) then reaches them automatically
+            once registered, requiring zero new PROJEXA-side code).
+        step_B_generate_bindings:
+          script: ai-os/scripts/wire-module-dispatch/generate-dispatch-bindings.mjs
+          purpose: >-
+            Reads the FULL manifest (all modules, one pass) and mechanically
+            injects, via the TypeScript Compiler API (not string
+            concatenation): (1) one CapabilityInputField[] const + one
+            buildXNodes() function + one MODULE_SCOPE_TOP_LEVEL_KEYS entry
+            per module into capability-tree-service.ts, anchored
+            immediately after the existing buildComplianceItemNodes()
+            function (capability-tree-service.ts line ~1323) using it as the
+            literal structural template; (2) one codeReference if-branch per
+            manifest action into task-execution-engine.ts, anchored
+            immediately after the existing create_compliance_item branch
+            (line ~185), following its exact validate-then-insert shape.
+            Every module in the manifest is done in ONE script execution,
+            not module-by-module by hand.
+          exact_command: "node ai-os/scripts/wire-module-dispatch/generate-dispatch-bindings.mjs --manifest ai-os/scripts/wire-module-dispatch/module-actions-manifest.yaml --dry-run"
+          then: "node ai-os/scripts/wire-module-dispatch/generate-dispatch-bindings.mjs --manifest ai-os/scripts/wire-module-dispatch/module-actions-manifest.yaml --apply"
+        step_C_seed_worker_agents:
+          script: ai-os/scripts/wire-module-dispatch/seed-worker-agents.mjs
+          purpose: >-
+            buildXNodes() (per the Compliance template) queries
+            db.query.workerAgents.findFirst({ where: eq(codeReference, ...) })
+            -- the row must exist or the leaf silently never appears. This
+            script reads the same manifest and emits+applies one INSERT INTO
+            worker_agents per action, in one batch, instead of manual SQL
+            per module.
+          exact_command: "node ai-os/scripts/wire-module-dispatch/seed-worker-agents.mjs --manifest ai-os/scripts/wire-module-dispatch/module-actions-manifest.yaml --apply"
+        step_D_verify:
+          exact_commands:
+            - "bunx tsc --noEmit"
+            - "bun test src/lib/task-execution-engine.test.ts src/lib/services/capability-tree-service.test.ts"
+            - "node ai-os/scripts/wire-module-dispatch/smoke-test-new-actions.mjs --manifest ai-os/scripts/wire-module-dispatch/module-actions-manifest.yaml --target-org <disposable-test-org-id>"
+          smoke_test_script_purpose: >-
+            Automatically POSTs to /api/tasks with a synthetic codeReference
+            dispatch for EVERY new manifest action against one disposable
+            test org (not demo_org, not production), asserts a real DB row
+            landed in the target table, then deletes it -- this replaces
+            "manually click every module in the browser 20 times" with one
+            script run covering all of them.
+    step_by_step_plan:
+      - "1. Confirm HR/Payroll and Sales-HQ service-layer file paths (precondition_verification_step above) -- do not skip, this was the one gap left open in this audit."
+      - "2. Run scaffold-manifest.mjs once per module (CRM, Finance, HR, Sales, then the PROJEXA API-routes mode for construction) -- produces one combined manifest file."
+      - "3. Human review pass on the generated manifest (~5 min/module, approve/edit field labels and types) -- this is the ONE deliberately-manual step, and it is reviewing machine output, not authoring from scratch."
+      - "4. Run generate-dispatch-bindings.mjs --dry-run, inspect the diff, then --apply."
+      - "5. Run seed-worker-agents.mjs --apply."
+      - "6. Run all of step_D_verify's three commands. Do not consider PLAN-02 done until the smoke-test script shows 100% pass across every manifest action."
+      - "7. Log each module's completion as its own ai-os/boss/COMPLETED.yaml wave entry (per this repo's convention), not one giant entry -- PLAN-06's audit needs per-module granularity."
+    effort_reestimate: >-
+      Still large in absolute engineering surface (CRM + Finance + HR +
+      Sales + 8-11 PROJEXA modules), but the manifest+codegen approach
+      converts what would have been ~15-20 separate hand-written PRs into
+      1-2 codegen-script runs + 1 human review pass + 1 automated smoke
+      test. Recommend still tracking as its own dedicated execution track
+      (the 2026-07-21 plan's instinct on this was correct) but the actual
+      execution mechanism is now concrete rather than open-ended.
+
+  # ------------------------------------------------------------------------
+  - id: PLAN-03
+    title: "OSS + custom professional templates (reports/HTML/dashboards) -- DEEP-DIVE REPLACEMENT"
+    verified_current_state: >-
+      compliance.report_definitions: real table, 18 columns, 200 live rows
+      (VERIFIED via live psql/Supabase MCP query: 109 status=built, 85
+      status=data_gap, 6 status=planned). output_formats breakdown (also
+      live-queried): 171 rows = ["table"] only, 29 rows = ["table","chart"],
+      ZERO rows specify pdf/html/dashboard as an output format -- the entire
+      live catalog's format vocabulary is closed to table/chart. Consumed
+      ONLY by capability-tree-service.ts (confirmed by repo-wide grep +
+      an explicit in-code admission comment in
+      src/app/api/reports/catalog/route.ts) -- zero .tsx pages render it.
+      4 genuinely real, separately-built pieces of report/dashboard UI
+      already exist, unconnected to this catalog:
+        - src/app/(app)/reports/page.tsx (638 lines) -- Compliance Reports
+          export page, real, exports via jsPDF/XLSX/PPTX/docx/HTML from
+          /api/compliance/stats + /api/compliance data.
+        - src/app/(app)/reports/create/page.tsx (230 lines) +
+          src/components/CustomReportsSection.tsx (507 lines) -- real AI
+          ad-hoc report-builder (upload image/Excel/Word ->
+          /api/reports/ai-builder/analyze -> save -> render).
+        - src/app/(app)/kpi-hub/page.tsx (104 lines) -- real, live-data KPI
+          dashboard.
+        - src/app/(app)/orchestra/analytics/page.tsx (121 lines) -- real,
+          live-data dashboard with a genuine recharts BarChart.
+      react-pdf: confirmed completely absent (0 hits in package.json and
+      src/). Actual PDF infra in use: jspdf + jspdf-autotable (both real
+      deps, used in 5 files). Chart infra in use: recharts (^3.9.2) only --
+      no chart.js/echarts/d3/visx/nivo. None of PLAN-10's 11 candidate
+      visualization libraries (Superset, Evidence, ECharts, Perspective,
+      React Flow, Mermaid, Frappe Gantt, @hello-pangea/dnd, AG Grid,
+      MapLibre, React PDF Viewer) are present.
+      CRITICAL FINDING FOR SCOPE: since 100% of the live report_definitions
+      catalog's output_formats vocabulary is table/chart, and recharts +
+      jspdf/jspdf-autotable ALREADY cover both of those formats today,
+      **zero new library dependencies are required to close this specific
+      gap** -- PLAN-03 does not need to wait on or overlap with PLAN-10's
+      11-library visualization engine at all. This corrects the original
+      plan's implicit assumption that PLAN-03 needs new OSS sourcing.
+    automation_mechanism:
+      design_rationale: >-
+        Owner directive: no per-report manual page-building for 200 rows.
+        One generic, metadata-driven renderer replaces "build 200 pages."
+      script_or_component_1:
+        path: "src/app/(app)/reports/catalog/[reportId]/page.tsx"
+        purpose: >-
+          ONE dynamic route. At request time: fetches the report_definitions
+          row by id, branches purely on its `status` and `outputFormats`
+          fields (not per-row custom code): status=built + outputFormats
+          includes "table" -> renders via a shared <ReportTableView> reading
+          from the `executionConfig`-referenced data source; +chart ->
+          additionally renders a <recharts> chart component parameterized by
+          `executionConfig`; status=data_gap -> renders a real, honest
+          "data not available yet -- <dataGapNote>" state (reads the row's
+          own dataGapNote column, does not fabricate content);
+          status=planned -> renders "coming soon" from the row's own
+          metadata. This single component handles all 200 rows -- zero
+          per-report scaffolding.
+      script_or_component_2:
+        path: "src/app/(app)/reports/catalog/page.tsx"
+        purpose: >-
+          One catalog index page, grouped by `category`, listing all 200
+          rows with their live `status` badge -- reuses the existing
+          CustomReportsSection.tsx list-rendering pattern rather than
+          inventing a new list UI.
+      script_3:
+        path: ai-os/scripts/report-catalog-ui/verify-catalog-coverage.mjs
+        purpose: >-
+          Post-build regression check: queries report_definitions live,
+          confirms every row's id resolves to a 200-response (not a 500) at
+          /reports/catalog/[id], and confirms status=built rows actually
+          render non-empty data (not silently falling into the data_gap
+          branch due to a wiring bug). Run in CI going forward, not a
+          one-off manual click-through of 200 rows.
+        exact_command: "node ai-os/scripts/report-catalog-ui/verify-catalog-coverage.mjs --base-url http://localhost:3000"
+    step_by_step_plan:
+      - "1. Build the two files listed above (script_or_component_1, script_or_component_2) as the ONLY new UI surface needed -- do not build per-report pages."
+      - "2. For the 85 data_gap rows, confirm (do not assume) each row's dataGapNote is populated with a real, specific reason (spot-check a sample via `select id, name, data_gap_note from compliance.report_definitions where status='data_gap' limit 20` -- if any are null/empty, that's a data-quality fix needed before shipping the honest-empty-state UI, since an empty dataGapNote would render a broken-looking blank message)."
+      - "3. Run verify-catalog-coverage.mjs against a local/staging build before considering this done."
+      - "4. Separately (small, optional): link the existing but currently-disconnected reports/page.tsx (Compliance export) and reports/create/page.tsx (AI builder) from the new catalog index page, so a user reaches all reporting surfaces from one entry point -- this is a navigation fix, not new report-building work."
+    effort_reestimate: "medium, not large -- one generic component + one index page + a data-quality check on 85 rows' dataGapNote field, no new library integrations required."
+
+  # ------------------------------------------------------------------------
+  - id: PLAN-04
+    title: "VERI conversation list / software-vs-AI escalation -- DEEP-DIVE REPLACEMENT"
+    verified_current_state: >-
+      A formal, code-enforced, PRODUCTION-LIVE 3-bucket classification
+      already exists: FULL_SOFTWARE / PACKAGE_AVAILABLE / NOVEL, built as
+      part of "Priority 5: Software Orchestrator", implemented in
+      software-coverage-service.ts + task-execution-engine.ts's executeTask()
+      (line ~2073). Mechanism (VERIFIED by reading executeTask in full):
+        - engineKey set -> executeEngineDispatch() -> classified FULL_SOFTWARE
+          (line ~2102-2110). Confirmed dispatchEngine() (line 383, ~250-line
+          switch) is pure computation -- grepped its entire body for
+          callLLM/callLLMJson/callLLMVision, zero hits.
+        - resolvedWorkerAgentId set -> executeStructuredDispatch() ->
+          classified FULL_SOFTWARE (line ~2112-2116).
+        - otherwise -> classifyExecutionWithReliability()
+          (software-coverage-service.ts:72-78, pure unit-tested function)
+          returns PACKAGE_AVAILABLE (a reliable, successRate>=70 approved
+          instruction_packages row exists) -> executePackageDispatch()
+          (line ~1911): a real LLM call, but constrained to the package's
+          fixed steps + explicitly-extracted requiredVariables via
+          package-variable-resolver.ts, never raw user text, never open
+          reasoning -- "Lower AI."
+        - or NOVEL (no match) -> genuine free-text planning call (line
+          ~2210+): builds a prompt from the real worker-agent roster +
+          assistant memories, calls callLLMJson for {summary, steps[]}, and
+          proactively escalates to a STRONGER model specifically because
+          it's NOVEL (line ~2292-2318).
+      capability-tree-service.ts:43-99 additionally defines
+      CapabilityNode.deterministic: boolean, computed by markDeterministic()
+      as true iff the leaf carries codeReference || engineKey || reportUrl.
+      VeriComposer.tsx:612-616 surfaces this to the user directly: "This
+      will be handled by your AI Assistant, not run as a fixed calculation"
+      shown exactly when !leaf.deterministic.
+      CONFIRMED BUG/GAP (not just a design gap -- an actual incorrect UI
+      claim): "deterministic" conflates ROUTING-determinism with
+      TOKEN-COST. Proof: capability-tree-service.ts:1153 wires
+      codeReference "generate_construction_progress_summary" and
+      "detect_construction_budget_schedule_risk" as deterministic: true --
+      but their handlers (task-execution-engine.ts:338-350) call
+      construction-ai-service.ts's generateProgressSummary()/
+      detectBudgetScheduleRisk(), which genuinely invoke an LLM
+      (construction-ai-service.ts imports callLLM/callLLMJson/callLLMVision,
+      confirmed). So the composer's "not run as a fixed calculation" banner
+      is FALSE for these 2 leaves today, in production.
+      Separate mechanisms also confirmed real and relevant:
+        - high-impact-action-detector.ts: pure keyword matcher (12
+          categories: delete/archive/payment/approval/rejection/
+          compliance_submission/access_changes/data_export/
+          configuration_changes/bulk_operations/communication_send/
+          financial_posting), forces a confirmation dialog
+          (VeriComposer.tsx:711-746) before ANY write intent in these
+          categories executes, regardless of software/AI bucket. Orthogonal
+          axis, not part of the escalation taxonomy itself.
+        - response-engine.ts (Wave 154): closed ResponseLabel vocabulary
+          (yes/no/ok/pending/completed/failed/need_clarity/require_input/
+          wrong_data/incomplete_instructions), deterministic short-status
+          replies, zero LLM call, used by check_status/generate_report
+          handlers in llm-routing-gate.ts.
+        - FDE fallback (VeriComposer.tsx:151-157, 349-368): when no
+          capability-tree leaf matches, submitFdeFallback() POSTs to
+          /api/fde/requests -- routes to HUMAN governance review, not to
+          ad hoc AI generation.
+      veridian-ui-kit's src/prompt-patterns/catalog.ts (only exists at
+      v0.3.0+, NOT at the v0.2.2 compliance-tracker currently consumes) is
+      CONFIRMED NOT adjacent to this taxonomy -- it's a different concern
+      (which template/model/policy-gate/logging shape to use for a given
+      LLM call), only 2 entries (ticket_intelligence.detect,
+      email_intelligence.detect), explicitly does not cover
+      routing/classification per its own header comment.
+    escalation_rule_taxonomy_extending_not_replacing_priority5:
+      - rule: "1. Deterministic leaf, deterministic execution (true FULL_SOFTWARE)"
+        definition: "chain leaf carries engineKey, or reportUrl, or a codeReference whose handler is a confirmed pure DB read/write with zero LLM calls in its body."
+        worked_example: >-
+          User completes Calculators -> Mathematical Computation Engine ->
+          Basic Arithmetic Engine, operation=add,a=4,b=8 ->
+          engineKey:"basic_arithmetic_engine" -> dispatchEngine() case runs
+          directly, zero tokens.
+      - rule: "2. Deterministic leaf, AI-BACKED execution (currently MISLABELED as FULL_SOFTWARE -- this is the confirmed bug to fix)"
+        definition: "click-routed (deterministic:true in the UI), but the handler itself calls an LLM."
+        worked_example: >-
+          User picks Construction -> [Project] -> "AI Progress Summary" ->
+          codeReference:"generate_construction_progress_summary" ->
+          dispatchTool() -> generateProgressSummary()
+          (construction-ai-service.ts) genuinely calls an LLM. Needs a
+          SECOND boolean (e.g. CapabilityNode.aiBacked) distinct from
+          `deterministic`, so the UI banner can say something true: "handled
+          automatically, but uses AI to generate this specific summary" vs.
+          today's flatly false "not run as a fixed calculation."
+        fix_mechanism: >-
+          ai-os/scripts/veri-escalation/audit-ai-backed-leaves.mjs: uses the
+          TypeScript Compiler API to statically trace every
+          codeReference/engineKey handler in task-execution-engine.ts for
+          any call (direct or one level of indirection through an imported
+          service function) to callLLM/callLLMJson/callLLMVision, and
+          auto-generates the aiBacked:true/false value per leaf instead of a
+          human manually auditing 20+ handlers by eye.
+          Exact command: "node ai-os/scripts/veri-escalation/audit-ai-backed-leaves.mjs --write-flags capability-tree-service.ts"
+          Re-run requirement: must be re-run after PLAN-02's codegen adds
+          new codeReference branches (see dependency_table entry
+          PLAN-02->PLAN-04 above) so newly-wired actions get classified too.
+      - rule: "3. Learned, approved narrow package (PACKAGE_AVAILABLE)"
+        definition: "free text matches a capability with a reliable (successRate>=70) approved instruction package; LLM runs but constrained to explicitly-extracted variables only, never raw reasoning."
+        worked_example: >-
+          Chain "CRM -> Leads -> Create Lead" has an approved package; user
+          types "create a lead for Acme Corp, contact John, phone
+          555-1234" -> executePackageDispatch() extracts
+          {company,contact,phone} via package-variable-resolver.ts, runs the
+          package's fixed steps on the floor-tier model.
+      - rule: "4. Ambiguous free text, full AI planning (NOVEL)"
+        definition: "no capability match, or no reliable approved package; genuine escalation, proactively bumped to a stronger model."
+        worked_example: >-
+          First-time free text like "figure out why the Q3 GST
+          reconciliation looks off for the Mumbai branch," no prior learned
+          capability -> full callLLMJson planning call against the real
+          worker-agent roster.
+      - rule: "5. Deterministic short-reply, no dispatch at all"
+        definition: "answerable from state software already knows, via response-engine.ts's closed ResponseLabel vocabulary."
+        worked_example: >-
+          "What's the status of the GST filing task?" ->
+          suggestResponseForTaskStatus(task.status) -> "Pending -- GST
+          Return Q2 filing", zero tokens, no task created.
+      - rule: "6. No capability-tree entry -- escalate to human governance, not ad hoc AI generation"
+        definition: "user's need has no matching leaf and no fallback package."
+        worked_example: >-
+          User finds no leaf for "merge duplicate leads" in the Chain
+          Selector -> clicks the fallback -> submitFdeFallback() POSTs to
+          /api/fde/requests, routed for human review via the existing FDE
+          governance pipeline, never dispatched or free-text-answered.
+      - rule: "7. Cross-cutting write-safety gate (applies ON TOP of rules 1-6, not its own bucket)"
+        definition: "deterministic phrase match (high-impact-action-detector.ts) pauses ANY of the above for explicit confirmation."
+        worked_example: >-
+          "Delete the Q1 compliance item for Acme Corp" -> detectHighImpactAction
+          matches "delete" -> needsConfirmation:true -> AlertDialog
+          (VeriComposer.tsx:711) gates whichever of rules 1-6 would
+          otherwise run.
+    automation_mechanism_summary: >-
+      The taxonomy above is implemented as CODE (a second boolean field +
+      one static-analysis script), not a human-consulted decision document.
+      Developers/AI adding new capability-tree leaves in the future get the
+      aiBacked classification computed automatically by
+      audit-ai-backed-leaves.mjs on every CI run (recommend wiring it into
+      the existing test/typecheck CI step), not by manually filling in a
+      taxonomy lookup table per new leaf.
+    step_by_step_plan:
+      - "1. Add `aiBacked: boolean` to the CapabilityNode type (capability-tree-service.ts, near line 43-99's existing `deterministic` field)."
+      - "2. Write and run audit-ai-backed-leaves.mjs once against the CURRENT capability tree (pre-PLAN-02) to backfill aiBacked for all existing leaves."
+      - "3. Update VeriComposer.tsx:612-616's banner logic to branch on both booleans (4 real states: software+no-AI / software+AI-backed / package-AI / novel-AI), replacing the single false-in-2-cases message."
+      - "4. Wire audit-ai-backed-leaves.mjs into CI (or at minimum, into PLAN-02's step_D_verify sequence) so it re-runs whenever new leaves are added."
+      - "5. Publish rules 1-7 above as the literal artifact this planning item asked for -- e.g. as a short markdown doc referencing the code (VERI_ESCALATION_TAXONOMY.md), not a new runtime system, since the classification itself already lives in code."
+    effort_reestimate: "medium -- most of the hard architectural work already exists; this is one new field, one static-analysis script, and one UI banner fix, not a new subsystem."
+
+  # ------------------------------------------------------------------------
+  - id: PLAN-05
+    title: "Demo-data fill + 3x end-to-end run -- DEEP-DIVE REPLACEMENT"
+    verified_current_state: >-
+      Live DB confirms (queried directly, not inferred from seed files for
+      most rows): demo_org's older tables are untouched and fine since
+      2026-07-06 (max(created_at) for crm_leads/compliance_items scoped to
+      demo_org is exactly 2026-07-06):
+        - compliance_items: GOOD (10 of 178 total rows are demo_org)
+        - leave_requests: GOOD (6 of 21 total)
+        - erp_payroll_runs: GOOD (1 of 4 total)
+        - crm_leads: GOOD (8 of 517 total)
+        - crm_opportunities: GOOD (6 of 8 total)
+      Every NEW table is at ZERO for demo_org specifically (live-counted):
+        - crm_stage_history: 0 of 11 total for demo_org (opportunities exist but never recorded a Kanban stage transition)
+        - crm_accounts: 0 rows IN THE ENTIRE DATABASE, not just demo_org -- unseeded anywhere, any org
+        - crm_contacts: 0 rows IN THE ENTIRE DATABASE
+        - construction_boqs + construction_boq_line_items: 0 of 21 for demo_org (the 21 rows split across projexa_demo_org=8, an E2E test org=12, a load-test org=1)
+        - construction_categories/activities/work_progress_entries: 0/20, 0/69, 0/54 for demo_org
+        - construction_site_diaries: 0 of 76 (11 belong to projexa_demo_org)
+        - construction_labour_roster/attendance: 0/45, 0/123 for demo_org
+        - construction_kpi_definitions + entries: 0/16, 34 entries have no org_id at all (child-table gap)
+        - construction_expense_entries: 0 of 60
+        - construction_rfis: 0 of 106 (57 belong to projexa_demo_org)
+        - construction_submittals/punch_list_items/change_orders: 0/41, 0/66 (9 in projexa_demo_org), 0/34
+        - interior_mood_boards/ffe_items/floor_plans/materials + 3 child tables: all 0 for demo_org (e.g. mood_boards 0 of 13, 5 belong to projexa_demo_org)
+      ROOT CAUSE (not just "no data" -- a real identity-routing bug): the
+      construction/interior data that DOES exist lives under a DIFFERENT
+      org ("projexa_demo_org" / "Skyline Builders (PROJEXA Demo)"), plus a
+      separate E2E test org ("Meridian Construction Group") and a load-test
+      org -- NONE reachable via the 10 documented demo-persona logins
+      (DemoVeridian2026!). One of the fictitious Wave-111 companies is
+      literally named "Skyline Construction Co" (demo_co_8_skyline, 50 CRM
+      leads seeded) but has ZERO rows in every construction table despite
+      the construction-sounding name -- a real name/data mismatch, separate
+      from the org-routing bug.
+      No committed, re-runnable seed script exists for demo_org itself --
+      src/db/seed.ts seeds an unrelated "Acme Corp" org. The real 2026-07-06
+      seeding was one-off SQL applied live via Supabase MCP, documented only
+      as prose comments inside drizzle/0185_sales_branch_enablement_backfill.sql
+      and drizzle/0201_projexa_demo_org_erp_sales_hr_enablement.sql
+      (both explicitly self-described as "a reviewable RECORD of a
+      data-only change already applied live... not itself run by the
+      migration runner").
+    automation_mechanism:
+      script_1:
+        path: ai-os/scripts/demo-data/check-demo-coverage.mjs
+        purpose: >-
+          Idempotent, re-runnable coverage checker: queries live row counts
+          for org_id='demo_org' across every table in the manifest below,
+          flags any at zero. Meant to be run BEFORE and AFTER seeding
+          (regression gate), and re-runnable forever afterward (e.g. wired
+          into a periodic check) rather than a one-off manual audit.
+        exact_command: "node ai-os/scripts/demo-data/check-demo-coverage.mjs --org demo_org"
+        manifest_input: >-
+          ai-os/scripts/demo-data/demo-coverage-manifest.yaml -- one entry
+          per table (the full list above), used by both this script and
+          script_2 so the "what needs seeding" list is defined once, not
+          duplicated between a checker and a seeder.
+      script_2:
+        path: ai-os/scripts/demo-data/seed-demo-org-full-coverage.mjs
+        purpose: >-
+          ONE script, manifest-driven from demo-coverage-manifest.yaml, that
+          inserts realistic rows into EVERY zero-coverage table for
+          org_id='demo_org' in one run. Idempotent: checks existing count
+          per table before inserting (skips tables already non-zero, so
+          re-running it is always safe). Realistic row generation uses the
+          SAME shape/values already proven to exist in projexa_demo_org
+          (queried live and used as a template for realistic construction
+          data, rather than inventing fake shapes) -- effectively
+          re-pointing/cloning projexa_demo_org's already-good construction
+          data into demo_org's identity, then adding CRM-depth rows
+          (crm_accounts, crm_contacts, crm_stage_history) fresh since those
+          are empty everywhere.
+        exact_command: "node ai-os/scripts/demo-data/seed-demo-org-full-coverage.mjs --manifest ai-os/scripts/demo-data/demo-coverage-manifest.yaml --org demo_org --template-org projexa_demo_org --apply"
+      script_3:
+        path: ai-os/scripts/demo-data/e2e-3x-runner.mjs
+        purpose: >-
+          Automates the "run it end-to-end 3 times" requirement itself
+          rather than a human clicking through the app 3 times: drives
+          Playwright (check package.json for existing e2e test infra first
+          -- if present, reuse it rather than adding a new framework) through
+          one scripted pass per module/persona login, capturing errors,
+          re-running automatically up to 3 times, diffing what broke between
+          passes. Each pass's failures get logged to a single running
+          findings file rather than 3 separate manual QA notes.
+        precondition_verification_step: >-
+          Run `grep -n '"playwright"\|"cypress"' package.json` first to
+          confirm which e2e framework (if any) already exists in
+          compliance-tracker before deciding whether script_3 wraps existing
+          infra or needs a minimal net-new one -- NOT verified in this
+          deep-dive, flag as open.
+    step_by_step_plan:
+      - "1. Run script_1 (check-demo-coverage.mjs) once to get a fresh baseline (should reproduce the zero-table list above)."
+      - "2. Fix the org-identity bug first: decide (Owner call, small decision) whether to (a) re-point the 10 demo-persona logins at projexa_demo_org instead of demo_org, or (b) seed demo_org directly by cloning projexa_demo_org's data. Recommend (b) since the persona logins/passwords are the documented, memorized artifact Owner-facing demos rely on -- don't change what a login points to, fix what data is under it."
+      - "3. Run script_2 (seed-demo-org-full-coverage.mjs --apply) with --template-org projexa_demo_org."
+      - "4. Re-run script_1 to confirm zero remaining zero-coverage tables."
+      - "5. Separately fix the crm_accounts/crm_contacts global-zero gap (affects every org, not just demo_org) -- this is a PLAN-02-adjacent finding (these tables were added to the schema in the same wave as crm_stage_history but never wired into any seed OR write path anywhere) -- flag to whoever owns PLAN-02's CRM wiring, since these tables' write path is presumably part of the same createLead/createOpportunity-adjacent CRM completion work."
+      - "6. Confirm e2e framework choice (precondition_verification_step above), then run script_3 up to 3 times, fixing breakage found each pass, before declaring PLAN-05 done."
+    effort_reestimate: "Data-seeding portion (steps 1-5) is small-to-medium once template-org-cloning approach is used instead of manual row-by-row seeding. The 3x E2E run (step 6) genuinely depends on PLAN-02's module wiring being done for whichever modules are being driven through the chat/pill/chain path specifically (see dependency_table)."
+
+  # ------------------------------------------------------------------------
+  - id: PLAN-06
+    title: "3-round audit process, turned into a reusable checklist artifact -- DEEP-DIVE REPLACEMENT"
+    verified_current_state: >-
+      This item needed no new investigation (per scope) -- it needed the
+      existing, already-proven 3-round-audit convention (used for the
+      2026-07-18 credit-governance work) turned into a literal, reusable
+      artifact. That convention, reconstructed from this session's own
+      established practice and the plan's own meta.guardrails_applied note
+      ("verification.self_certification is forbidden per
+      STANDING_DIRECTIVE.yaml"), is: Round 1 = fresh-eyes audit against the
+      ORIGINAL objective (not the implementer's own summary of what they
+      did), listing every gap found, however small. Fix. Round 2 = re-audit
+      ONLY what changed from Round 1's fixes, PLUS a spot-check that nothing
+      else regressed. Fix. Round 3 = final, zero-tolerance audit, explicit
+      sign-off. Round 4 (meta) = audit the audit PROCESS itself -- were
+      rounds 1-3 run with genuine independence (e.g., a different
+      agent/context per round, not the same agent grading its own prior
+      round), not just three passes by the same biased reviewer.
+    automation_mechanism: >-
+      The literal reusable artifact is the checklist file below. Where
+      automatable, each round's checks reference a script rather than a
+      human eyeballing a screen (e.g. Round 1's "does this module's
+      dispatch actually write to the DB" check runs
+      smoke-test-new-actions.mjs from PLAN-02, not a manual click).
+    reusable_artifact:
+      path: ai-os/templates/3-ROUND-AUDIT-CHECKLIST.yaml
+      exact_schema: |
+        audit_subject: <task id being audited, e.g. PLAN-02>
+        source_of_truth: <link to the ORIGINAL objective/spec, not the implementer's summary>
+        round_1_fresh_eyes:
+          reviewer: <must be a different agent/session than the implementer>
+          checks:
+            - "Every claim in the implementer's completion report has a corresponding automated-script output or live-query result attached (no bare prose claims accepted)"
+            - "Every new codeReference/action has a passing smoke-test-new-actions.mjs (or module-equivalent) result, not just 'looks right in the code'"
+            - "tsc --noEmit and the full existing test suite both pass, re-run fresh by the reviewer, not trusted from the implementer's last run"
+          output: list of gaps found, however small, with file:line evidence per gap
+          gate: "if any gap found -> fix -> do not proceed to round_2 until fixes are re-verified by the SAME round_1 checks"
+        round_2_delta_plus_regression_spot_check:
+          reviewer: <may be same or different from round_1, but must independently re-run checks, not just re-read round_1's notes>
+          checks:
+            - "every round_1 gap is now closed, with fresh evidence (not the implementer's say-so)"
+            - "spot-check 2-3 adjacent areas NOT touched by the fix, to catch regressions"
+          output: list of any remaining/new gaps
+          gate: "same as round_1 -- fix, re-verify, do not proceed until clean"
+        round_3_final_zero_tolerance:
+          reviewer: <ideally the most senior/independent reviewer available>
+          checks:
+            - "full re-run of every automated check from round_1 and round_2"
+            - "explicit written sign-off statement, naming the reviewer and timestamp"
+          output: "PASS or FAIL, with the same file:line evidence standard as round_1 -- no 'looks good to me' without attached evidence"
+          gate: "FAIL -> back to round_1 for the failing item specifically, not a full restart of everything"
+        round_4_meta_audit_of_the_process:
+          checks:
+            - "were round_1/2/3 reviewers actually independent of the implementer and of each other, or was this 3 passes by the same person/context self-grading?"
+            - "does every gap/fix/sign-off in rounds 1-3 have a corresponding ai-os/boss/COMPLETED.yaml entry, so the audit trail is machine-checkable later, not just this session's memory?"
+          output: "confirms or denies the process itself met STANDING_DIRECTIVE.yaml's no-self-certification rule"
+    step_by_step_plan:
+      - "1. Write ai-os/templates/3-ROUND-AUDIT-CHECKLIST.yaml with the exact schema above (this is the literal deliverable this task asked for)."
+      - "2. For each of PLAN-01..05, once its COMPLETED.yaml entry exists (per the dependency_table's PLAN-01..05 -> PLAN-06 mechanism), instantiate one copy of the checklist with audit_subject set to that plan id, and run rounds 1-4 against it."
+      - "3. Each round's reviewer must be a genuinely separate agent/session invocation, not the same context re-reading its own prior output -- this is the one non-negotiable, evidence-backed requirement from this session's own precedent (self_certification forbidden per STANDING_DIRECTIVE.yaml)."
+      - "4. Store each completed round's checklist instance under ai-os/boss/audits/<PLAN-ID>-round-<N>.yaml so the trail is queryable later, not just narrated in chat."
+    effort_reestimate: "small -- the artifact itself is a template (already fully specified above); the actual per-round audit work is proportional to whatever PLAN-01..05 produced, done 5 separate times (once per plan item), not once."

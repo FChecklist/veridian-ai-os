@@ -1,0 +1,133 @@
+task_id: task-20260728-061556-sap-reports-prospect
+phase: phase_1_sap_report_logic_understanding
+generated: 2026-07-28T07:05:00Z
+method: >-
+  Web research into the standard, industry-wide (not SAP-proprietary) formulas
+  behind each of the 5 target reports, translated into plain-English
+  implementation rules mapped onto VERIDIAN's real schema/services (per Phase
+  0's gap list). These are universal accounting/PM/sales formulas that SAP
+  reports also implement -- not something requiring SAP's actual source or
+  documentation to replicate correctly.
+
+reports:
+  1_earned_value_wbs_progress:
+    catalog_stub_to_attach_logic_to: "Earned Value Analysis / Cost Performance Index (CPI), drizzle/0181"
+    core_formulas:
+      PV_planned_value: "budgeted cost of work that SHOULD be done by today, per the baseline schedule (BCWS)"
+      EV_earned_value: "budgeted cost of work ACTUALLY done by today (BCWP) -- for VERIDIAN: sum(task.budgeted_cost * task.percent_complete) across a project's WBS/task tree"
+      AC_actual_cost: "real money spent so far (ACWP) -- for VERIDIAN: sum of actual expense/PO/timesheet-cost records linked to the project"
+      CPI: "EV / AC -- >1 under budget, <1 over budget"
+      SPI: "EV / PV -- >1 ahead of schedule, <1 behind schedule"
+      CV_cost_variance: "EV - AC"
+      SV_schedule_variance: "EV - PV"
+      EAC_estimate_at_completion: "BAC / CPI (BAC = total approved project budget)"
+    veridian_implementation_note: >-
+      Requires each project task/WBS-item to carry a budgeted_cost and a
+      percent_complete (already exists per PROJEXA's site-progress model per
+      earlier session work) plus a linkage from actual expense/timesheet
+      records to the specific task, not just the project -- check whether
+      that per-task cost linkage exists before implementing; if actuals are
+      only tracked at project level today, AC can only be computed at
+      project granularity until that gap is closed separately.
+    source: "https://www.profit.co/blog/earned-value-management/evm-formulas-and-metrics-explained/, https://aliresources.hexagon.com/enterprise-project-performance/earned-value-management"
+
+  2_cash_flow_forecast:
+    catalog_stub_to_attach_logic_to: "Cash Flow Forecast Analysis / Cash Required Next 30 Days, drizzle/0181"
+    method_choice: >-
+      INDIRECT method is the right fit here (not direct) -- VERIDIAN already
+      has real P&L and Balance Sheet reports (src/app/api/erp/reports/
+      profit-and-loss, balance-sheet) to derive from; direct method would
+      need a granular AP/AR cash-movement ledger at 13-week resolution,
+      which is a bigger, separate build. Indirect matches "strategic,
+      longer-horizon" framing the report name implies.
+    core_formula: >-
+      Start from projected net income (from the existing P&L logic,
+      projected forward via the org's own historical monthly trend or a
+      simple run-rate), then adjust for: (a) non-cash items added back
+      (depreciation -- check if VERIDIAN's fixed-asset/depreciation engine
+      already computes this, reuse it), (b) changes in working capital
+      accounts pulled from the existing Balance Sheet report (AR increase =
+      cash decrease, AP increase = cash increase, inventory increase = cash
+      decrease).
+    veridian_implementation_note: >-
+      Reuse the existing balance-sheet/route.ts and profit-and-loss/route.ts
+      calculations as the two real data sources this forecast layers on top
+      of -- do not re-derive account balances independently.
+    source: "https://www.centime.com/posts/direct-vs-indirect-cash-flow-forecasting, https://trovata.io/blog/cash-flow-forecasting-methods-direct-vs-indirect"
+
+  3_accounts_receivable_aging:
+    catalog_stub_to_attach_logic_to: "none -- genuine ground-up gap, no existing catalog row"
+    core_formula: >-
+      days_overdue = as_of_date - invoice.due_date (NOT invoice_date -- due
+      date is what makes this useful for collections, per research).
+      Standard buckets: Current (not yet due), 1-30, 31-60, 61-90, 90+ days
+      overdue. bucket_amount = sum(open_invoice.balance) grouped by bucket,
+      per customer/org.
+    edge_cases_to_handle: >-
+      Future/not-yet-due invoices must go in a "Current" bucket, not produce
+      a negative day count that breaks the bucket boundary logic. Boundary
+      values (exactly 30, 60, 90) must be assigned to ONE bucket only via
+      strict inequality choice (e.g. <=30 vs 31-60), not left ambiguous.
+    veridian_implementation_note: >-
+      Needs an open_invoices concept with a due_date and running balance --
+      check the existing invoicing/CRM schema (src/lib/db/schema.ts) for
+      what already exists before adding a new table; this is a real gap in
+      the finance category per Phase 0.
+    source: "https://excelbell.com/aging-formula-in-excel/, https://www.metabase.com/metrics/accounts-receivable-aging/"
+
+  4_sap_style_sales_pipeline_probability:
+    catalog_stub_to_attach_logic_to: "none -- distinct from the already-shipped PR #610 CRM kanban dashboard"
+    core_formula: >-
+      weighted_pipeline_value = SUM(deal.amount * stage.probability) across
+      open deals. stage.probability should NOT be a hardcoded guess --
+      calibrate quarterly from real historical data:
+      stage_probability = (deals_won_from_stage / total_deals_that_reached_stage) * 100,
+      computed per stage from this org's own closed-deal history.
+    stage_duration_factor_optional: >-
+      A more advanced version adjusts probability by how long a deal has
+      SAT in its current stage (a deal stuck in "negotiation" for 90 days
+      is statistically less likely to close than one there for 5 days) --
+      real implementation would need a stage_entered_at timestamp per deal
+      and a decay curve; flag as a v2 enhancement, not required for the
+      prospect demo's first cut.
+    veridian_implementation_note: >-
+      Reuse the CRM's existing deal/lead schema and stage enum (already
+      built for PR #610's kanban dashboard) as the data source -- this is a
+      new calculation/API layer on the SAME underlying deal records, not a
+      new deals table. UI must use a visibly different name/route from the
+      existing "Sales Pipeline" kanban page to avoid prospect confusion
+      (e.g. "Pipeline Forecast" or "Win Probability Report").
+    source: "https://forecastio.ai/blog/weighted-pipeline, https://medium.com/@laurentpipitone/how-to-determine-the-probability-of-closing-sales-pipeline-stages-in-your-crm-a-data-centric-f0d0b4a52961"
+
+  5_stock_inventory_turnover:
+    catalog_stub_to_attach_logic_to: "none -- genuine ground-up gap"
+    core_formulas:
+      inventory_turnover_ratio: "COGS / average_inventory_value, where average_inventory_value = (beginning_inventory + ending_inventory) / 2 for the period"
+      DSI_days_sales_of_inventory: "365 / inventory_turnover_ratio (equivalently: (average_inventory / COGS) * 365) -- average days to sell current stock"
+      stock_aging: "per-SKU/material age = as_of_date - last_received_date (or FIFO layer date), bucketed similarly to AR aging (e.g. 0-30/31-60/61-90/90+ days on hand)"
+    veridian_implementation_note: >-
+      Needs COGS at the material/SKU level and inventory valuation snapshots
+      -- check PROJEXA's existing Material Shortage Analysis / BoQ material
+      tracking (backlog item, in progress) for a real inventory-quantity
+      source to build this on top of rather than duplicating a materials
+      table.
+    source: "https://www.accountingtools.com/articles/inventory-turnover-formula, https://www.extensiv.com/blog/aging-inventory"
+
+lead_source_effectiveness:
+  catalog_stub_to_attach_logic_to: "none -- genuine ground-up gap, simplest of the 5"
+  core_formula: >-
+    Group closed-won deals by lead_source, compute: conversion_rate =
+    (won_from_source / total_leads_from_source), avg_deal_size_by_source,
+    and CAC_by_source if marketing-spend-by-source data exists (else omit
+    CAC, don't fabricate a number without a real cost input).
+  veridian_implementation_note: "Straightforward GROUP BY on existing CRM lead/deal schema -- no new tables needed, lowest-effort of the 6 real gaps."
+
+next_phase: >-
+  Phase 2 (veridian_implementation_merging) -- for each of the 6 items
+  above, write the real SQL/service logic attaching to the existing
+  report_definitions dispatcher (per Phase 0's zero-duplication finding),
+  reusing existing schema/services named above rather than creating
+  parallel tables. Recommend starting with Lead Source Effectiveness and AR
+  Aging (simplest, no ambiguous data-availability questions) before Earned
+  Value (needs per-task actual-cost linkage confirmed first) and Cash Flow
+  Forecast (needs depreciation-engine reuse confirmed first).

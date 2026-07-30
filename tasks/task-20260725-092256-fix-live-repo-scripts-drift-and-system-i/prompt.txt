@@ -1,0 +1,39 @@
+## OBJECTIVE
+Real, software-driven (not self-reported) audit answering the Owner's 6-point confirmation request, and closing the one concrete, serious gap already found while starting this audit: /opt/veridian/scripts/ (the live path every cron job and every `python3 /opt/veridian/scripts/X.py` invocation actually runs) has drifted significantly from /opt/veridian/repos/claude-control/scripts/ (the git-tracked repo this session's PRs actually merge into) -- no automatic deploy mechanism connects them. Confirmed live evidence: /opt/veridian/scripts/task-gateway.py (dated Jul 24 14:16) does not contain the OWNER_ENGINE gate merged today in PR #66; /opt/veridian/scripts/auto_phase_continuation.py (dated Jul 25 03:44) has zero occurrences of PLAN_GLOBS despite that widening merging hours earlier; a `diff -rq` between the two script directories shows dozens of files present in only one side or differing between both.
+
+## KNOWN_CONTEXT
+- sync-repos.sh (real, live, runs every 2h via crontab) only does `git pull --ff-only` inside /opt/veridian/repos/<repo>/ -- it never touches /opt/veridian/scripts/. There is no other cron entry or script found so far that copies repo scripts/ into the live scripts/ tree. Confirm this is really the full picture (search harder than this task's own quick check did) before concluding no mechanism exists at all.
+- Both directories contain real, load-bearing content that must not be casually discarded: /opt/veridian/scripts/ has operational-only files (crontab backups, cost/credit accounting scripts, .bak files, an OpenRouter proxy) that were never meant to be in git; /opt/veridian/repos/claude-control/scripts/ has real engines built and merged via this session's task pipeline (context_engine.py, document_engine.py, decision-service.py, automation_rule_engine.py, chatgpt_audit_guard.py/versioning.py/promptlib_guard.py, detect_prompt_duplicates.py, browser/, and others) that may never have been deployed live at all.
+- This gap directly means: an unknown number of this session's real, merged, AUDIT:PASS-approved PRs may have had ZERO real effect on production behavior, because the code that actually runs (cron jobs, and every direct `/opt/veridian/scripts/X.py` invocation this whole session including by the Owner's own direct-session instruction) is the live tree, not the repo tree. Treat this as the session's most consequential open finding until proven otherwise.
+- The Owner's 6 points, restated as concrete real checks this task must answer with evidence, not assertion:
+  1. GitHub+Vercel+Supabase+Server form one integrated system -- verify real, current, working connections exist between them (not just that credentials are stored), e.g. a real Vercel deploy pulling from the real GitHub repo, real Supabase connections from real deployed code, this server's real relationship to both.
+  2. All engines are connected and wired -- use the real Wiring Engine registry (ai-os/WIRING_ENGINE_REGISTRY_2026-07-25.json, scripts/generate_wiring_registry.py, both from task-20260725-032718) as the actual measurement tool -- regenerate it fresh and report real current coverage, not the count from when it was first built.
+  3. Software runs before AI uses it -- this is the OWNER_ENGINE gate (point 2 above is the concrete blocking bug for this one specifically -- it is NOT actually true in production right now because of the live/repo drift).
+  4. System is fast and efficient -- pull real, current measurements (e.g. real cron job durations from logs, real gateway.py processing times already logged, real task dispatch latency) rather than asserting this.
+  5. Zero duplication -- the live/repo scripts/ drift itself is very likely to have PRODUCED duplication (e.g. two different versions of the same script logic existing in two places) -- inventory this specifically as part of resolving the drift.
+  6. Zero gaps -- the drift itself is the headline gap this task found; report it honestly as a real, serious, previously-undetected gap, do not undersell it.
+
+## SCOPE
+1. Produce a real, complete inventory of every difference between /opt/veridian/scripts/ and /opt/veridian/repos/claude-control/scripts/ (present-only-in-live, present-only-in-repo, present-in-both-but-different) as ai-os/SCRIPTS_LIVE_VS_REPO_DRIFT_AUDIT_2026-07-25.yaml, classifying each entry: operational-only (correctly live-only, e.g. crontab backups/cost scripts -- leave alone), undeployed-real-feature (exists correctly in repo, never deployed live -- these are the real gaps), stale-live-copy (exists in both, live is older/missing a real merged fix -- these are actively wrong right now), or needs-owner-decision (genuinely ambiguous, e.g. two independently-evolved versions of the same filename with real conflicting content).
+2. For every stale-live-copy and undeployed-real-feature entry, deploy the real, correct, currently-merged-master version to the live path -- verify each one actually runs correctly post-deploy (a real smoke invocation per script where one exists, e.g. --help or a real dry-run flag), not just a file copy.
+3. Build a real, permanent fix for the root cause so this cannot recur silently: a real deploy step (extend sync-repos.sh, or a new script, whichever is the smaller real change) that keeps /opt/veridian/scripts/ 's tracked files current with /opt/veridian/repos/claude-control/scripts/ automatically going forward, while explicitly preserving the operational-only live files identified in step 1 (do not naively mirror the whole directory and delete real operational-only content).
+4. Re-run scripts/generate_wiring_registry.py for real (from its now-correctly-deployed live copy) and report the real current coverage numbers for the Owner's point 2.
+5. Pull real, current evidence for the Owner's points 1 (integration) and 4 (speed/efficiency) -- cite real commands and their real output, not summarized claims.
+6. Write ai-os/SYSTEM_INTEGRATION_CONFIRMATION_2026-07-25.yaml directly answering all 6 of the Owner's numbered points with real evidence citations, explicitly including the drift finding as the headline answer to points 3, 5, and 6 (it directly falsifies all three until this task's own fix lands).
+7. Register in MASTER_INDEX.yaml (registries.scripts_drift_audit_and_system_integration_confirmation) and via superboss-register.py register-knowledge.
+
+## SUCCESS_CRITERIA
+- `test -f ai-os/SCRIPTS_LIVE_VS_REPO_DRIFT_AUDIT_2026-07-25.yaml` exits 0 and its entry count matches a real `diff -rq` run at completion time (paste that real diff output).
+- `diff -q /opt/veridian/scripts/task-gateway.py /opt/veridian/repos/claude-control/scripts/task-gateway.py` reports no difference (or an explicitly justified, documented one) after this task's deploy step.
+- `grep -c owner_engine_gate /opt/veridian/scripts/task-gateway.py` returns 1 or more (the real live path now has the gate).
+- The new/extended deploy mechanism from SCOPE item 3 has a real test run demonstrating it correctly updates a live script without touching a real operational-only file (name the specific before/after files tested).
+- `test -f ai-os/SYSTEM_INTEGRATION_CONFIRMATION_2026-07-25.yaml` exits 0.
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on claude-control) for the deploy mechanism, the real drift inventory, the real post-deploy diff evidence, the wiring registry's fresh real coverage numbers, the system integration confirmation document answering all 6 Owner points with evidence, the MASTER_INDEX + knowledge-engine registration, and a final checkpoint stating plainly which of the Owner's 6 points are now genuinely true versus which remain partially true with a named reason.
+
+## CONSTRAINTS
+Every needs-owner-decision entry from SCOPE item 1's classification stays in that bucket through to the final checkpoint -- list each one plainly for a real Owner decision rather than picking a winner yourself.
+
+## COMPLEXITY_TIER
+judgment

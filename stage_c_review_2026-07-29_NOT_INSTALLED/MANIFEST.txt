@@ -1,0 +1,22 @@
+Stage C manifest -- 18 systemd --user timer/service pairs replacing the
+19-line paused crontab (2 old lines consolidate into 1: dispatch-tick).
+NOT installed. See parent report for the full old-vs-new diff.
+
+veridian-cron-sync-repos.timer  OnCalendar=*-*-* 0/2:06:00  RandomizedDelaySec=300  (replaces: 0 */2 * * * ... sync-repos.sh)
+veridian-cron-sync-vercel-env.timer  OnCalendar=*-*-* 0/2:11:00  RandomizedDelaySec=300  (replaces: 5 */2 * * * ... sync-vercel-env.sh)
+veridian-cron-sync-verdian-ai-data.timer  OnCalendar=*-*-* 03:02:00  RandomizedDelaySec=600  (replaces: 0 3 * * * ... sync-verdian-ai-data.sh)
+veridian-cron-dispatch-tick.timer  OnCalendar=*-*-* *:2/10:00  RandomizedDelaySec=90  (replaces: */15 * * * * ... supervisor-sweep.sh; */10 * * * * ... queue-dispatcher.py)
+veridian-cron-sync-controller-back.timer  OnCalendar=*-*-* *:4/30:00  RandomizedDelaySec=180  (replaces: */30 * * * * ... sync-controller-back.py)
+veridian-cron-health-check-15min.timer  OnCalendar=*-*-* *:3/15:00  RandomizedDelaySec=120  (replaces: */15 * * * * ... health-check-15min.py)
+veridian-cron-cost-usage-60min.timer  OnCalendar=*-*-* *:24:00  RandomizedDelaySec=300  (replaces: 0 * * * * ... cost-usage-60min.py)
+veridian-cron-system-sync.timer  OnCalendar=*-*-* 0/6:10:00  RandomizedDelaySec=420  (replaces: 0 */6 * * * ... system-sync.py --check all)
+veridian-cron-credit-ledger-prune.timer  OnCalendar=*-*-* 03:33:00  RandomizedDelaySec=600  (replaces: 30 3 * * * ... credit-accountant.py prune --keep-days 30)
+veridian-cron-veridian-self-check.timer  OnCalendar=*-*-* *:8/15:00  RandomizedDelaySec=120  (replaces: */15 * * * * ... veridian_self_check.py)
+veridian-cron-file-inventory.timer  OnCalendar=*-*-* *:5/20:00  RandomizedDelaySec=150  (replaces: */20 * * * * ... file_inventory.py)
+veridian-cron-security-check.timer  OnCalendar=*-*-* *:13/15:00  RandomizedDelaySec=120  (replaces: */15 * * * * ... security-check.py)
+veridian-cron-knowledge-registry-multisource.timer  OnCalendar=*-*-* 0/6:25:00  RandomizedDelaySec=420  (replaces: 0 */6 * * * ... knowledge_registry_multisource.py)
+veridian-cron-software-catalog-gen.timer  OnCalendar=*-*-* 04:17:00  RandomizedDelaySec=600  (replaces: 15 4 * * * ... generate_software_catalog.py)
+veridian-cron-audit-pipeline-security.timer  OnCalendar=*-*-* 05:06:00  RandomizedDelaySec=600  (replaces: 0 5 * * * ... audit_pipeline_security.py)
+veridian-cron-phase-continuation-tick.timer  OnCalendar=*-*-* *:19/30:00  RandomizedDelaySec=180  (replaces: */30 * * * * ... auto_phase_continuation.py)
+veridian-cron-generate-wiring-registry.timer  OnCalendar=*-*-* 0/6:40:00  RandomizedDelaySec=420  (replaces: 0 */6 * * * ... generate_wiring_registry.py)
+veridian-cron-status-remediation-tick.timer  OnCalendar=*-*-* *:7/10:00  RandomizedDelaySec=90  (replaces: */10 * * * * ... veridian_status_monitor.py && veridian_remediation_dispatcher.py --apply)

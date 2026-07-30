@@ -1,0 +1,94 @@
+--- a/scripts/superboss-register.py
++++ b/scripts/superboss-register.py
+@@ -247,6 +247,29 @@
+     -- fabricated claim. Additive new table, same pattern as task_audits in
+     -- postflight_audit_gate.py -- not a parallel store to the 4 trees above,
+     -- which log work-events/system-inventory, not per-field checklist compliance.
++    -- 6th tree (2026-07-23, governance item 52, searchable_indexed_logs):
++    -- ai-os/logs/*.log(.jsonl) are plain-text/JSONL, grep-only -- no
++    -- index/search service existed. Same FTS5 CREATE VIRTUAL TABLE + AFTER
++    -- INSERT trigger convention as instructions/actions/system_index above,
++    -- populated by scripts/index-logs.py (idempotent per-file line-tracking,
++    -- same pattern as index_transcript()'s own state file).
++    CREATE TABLE IF NOT EXISTS log_index (
++        log_index_id TEXT PRIMARY KEY,
++        log_file TEXT NOT NULL,
++        line_no INTEGER NOT NULL,
++        ts TEXT,
++        content TEXT NOT NULL
++    );
++    CREATE VIRTUAL TABLE IF NOT EXISTS log_index_fts USING fts5(
++        log_index_id UNINDEXED, log_file, content,
++        content='log_index', content_rowid='rowid'
++    );
++    CREATE TRIGGER IF NOT EXISTS log_index_ai AFTER INSERT ON log_index BEGIN
++        INSERT INTO log_index_fts(rowid, log_index_id, log_file, content)
++        VALUES (new.rowid, new.log_index_id, new.log_file, new.content);
++    END;
++    CREATE UNIQUE INDEX IF NOT EXISTS idx_log_index_file_line ON log_index(log_file, line_no);
++
+     CREATE TABLE IF NOT EXISTS execution_log (
+         execution_log_id TEXT PRIMARY KEY,
+         ts TEXT NOT NULL,
+@@ -429,6 +452,27 @@
+     print(json.dumps({"action_id": aid}))
+ 
+ 
++def log_login(user, source_ip, method):
++    """Governance item 11 (veridian_built_login_logging): reuses the existing
++    actions table + actions_fts index (zero-duplication) instead of a parallel
++    login table -- a login is just another action, source_ip/method carried in
++    the same utm_content/utm_term columns log_action already uses for other
++    action kinds. Callable directly (security-check.py imports this, since it
++    already owns the only real auth.log parser -- see its own module docstring)
++    as well as via the log-login CLI subcommand below."""
++    init_db_silent()
++    conn = _connect()
++    aid = _new_id("ACT")
++    conn.execute(
++        "INSERT INTO actions (action_id, ts, work_item_id, instruction_id, utm_source, utm_medium, utm_campaign, utm_content, utm_term, result, metadata_json) "
++        "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
++        (aid, _now_iso(), None, None, "login", "ssh", None, source_ip, method, "success", json.dumps({"user": user})),
++    )
++    conn.commit()
++    conn.close()
++    return aid
++
++
+ STOPWORDS = {"the", "a", "an", "of", "to", "for", "and", "or", "in", "on", "vs", "is", "are", "be", "do", "does"}
+ 
+ 
+@@ -450,10 +494,11 @@
+ def search(args):
+     init_db_silent()
+     conn = _connect()
+-    results = {"instructions": [], "work_items": [], "actions": [], "system_index": []}
++    results = {"instructions": [], "work_items": [], "actions": [], "system_index": [], "log_index": []}
+     q = _fts_query(args.query)
+     for table, fts in [("instructions", "instructions_fts"), ("work_items", "work_items_fts"),
+-                        ("actions", "actions_fts"), ("system_index", "system_index_fts")]:
++                        ("actions", "actions_fts"), ("system_index", "system_index_fts"),
++                        ("log_index", "log_index_fts")]:
+         try:
+             rows = conn.execute(
+                 f"SELECT t.* FROM {fts} f JOIN {table} t ON t.rowid = f.rowid WHERE {fts} MATCH ? ORDER BY rank LIMIT ?",
+@@ -687,6 +732,11 @@
+     p_idxt = sub.add_parser("index-transcript")
+     p_idxt.add_argument("--file", required=True, help="path to the raw laptop-chat transcript JSONL")
+     p_idxt.add_argument("--session-id", dest="session_id", required=True)
++
++    p_login = sub.add_parser("log-login")
++    p_login.add_argument("--user", required=True, help="linux username")
++    p_login.add_argument("--source-ip", dest="source_ip", required=True)
++    p_login.add_argument("--method", required=True, help="publickey|password")
+ 
+     args = p.parse_args()
+     if args.cmd == "init":
+@@ -714,3 +764,7 @@
+     elif args.cmd == "index-transcript":
+         with _write_lock():
+             index_transcript(args)
++    elif args.cmd == "log-login":
++        with _write_lock():
++            aid = log_login(args.user, args.source_ip, args.method)
++            print(json.dumps({"action_id": aid}))

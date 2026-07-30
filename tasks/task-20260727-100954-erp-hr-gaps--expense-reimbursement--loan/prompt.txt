@@ -1,0 +1,32 @@
+## OBJECTIVE
+Close 4 real, code-verified HR gaps in compliance-tracker, found by a Phase 0 investigation on 2026-07-27 (Owner directive DEEP_ERP_FUNCTIONALITY_COMPLETION_VIA_ODOO_ERPNEXT_REFERENCE). This is NOT a "build HR from scratch" task -- compliance-tracker already has a substantial, working HR module (employee master, org chart, leave management, attendance, a full India-statutory payroll engine, recruitment, performance reviews). These are narrow, real, money-adjacent gaps confirmed absent by direct code inspection.
+
+## KNOWN_CONTEXT
+Verified real state as of 2026-07-27, do not re-derive or re-verify from scratch (spot-check only):
+- Employee master: `employeeProfiles` (src/lib/db/schema.ts:5038). Org chart: `users.reportingToId` + `departments.headId` with `getOrgChart()` in hr-service.ts:49-59.
+- Full payroll engine already real: `erp-payroll-service.ts` (513 lines), `erpStatutoryRules` (PF/ESI/PT admin-editable), `processPayrollRun()`, income-tax slabs with TDS. A stale comment in hr-service.ts:1-6 ("Payroll deliberately out of scope") predates this and is WRONG -- do not act on it, consider fixing/removing it as part of this task since it will mislead the next reader.
+- Recruitment (`jobOpenings`/`candidates`/`jobApplications`/`interviewFeedback`, schema.ts:7710-7762) and Performance (`performanceReviewCycles`/`performanceReviews`, schema.ts:7762-7793) already exist.
+- PROJEXA overlap: none -- PROJEXA's `/api/v1/projexa/{hr,leave,attendance,payroll,recruitment}` routes proxy into these same compliance-tracker tables, confirmed via PROJEXA's own AGENTS.md ("no construction domain data of its own").
+- PR #583 ("V2-17: HR validation UX + payroll rate-seed") is NOT merged (was OPEN with failing CI as of this investigation) -- do not assume any of its changes are live; check its current state and either build cleanly on current main or note if it needs separate attention (that PR itself is not this task's scope to fix).
+
+## SCOPE
+Build these 4 real gaps, each with real schema + service + API route + test, following this repo's existing HR-module patterns (Drizzle schema in schema.ts, service in src/lib/services/, requireAuth()-gated API route):
+1. Employee expense claims/reimbursement -- zero general-employee expense/reimbursement table exists (confirmed: `constructionExpenseEntries`, schema.ts:9661, is project-cost tracking, not employee reimbursement; do not conflate). Real workflow: employee submits claim (category, amount, receipt attachment, date) -> manager approval -> optional payroll integration (link to next `processPayrollRun()` for reimbursement payout, or a separate payment record if payroll integration is out of scope for this pass -- your call, document the decision).
+2. Employee loans/salary advances -- confirmed absent (grepped "loan"/"advance" across schema.ts, zero HR-relevant hits). Real workflow: request -> approval -> disbursement -> repayment schedule (installments deducted from future payroll runs via `erp-payroll-service.ts` integration).
+3. Deeper KRA/weighted-goal appraisals, multi-rater (360°) feedback -- current `performanceReviews` is one self+manager rating pair per cycle. Extend (do not replace) with a KRA/goal-weighting table and support for additional rater roles beyond self+manager.
+4. Shift management/roster -- `hrAttendanceRecords` (schema.ts:5141-5205) has daily status only, no shift-type/roster-assignment concept. Add a shift-type table + roster-assignment linking employees to shifts per date range, and have attendance derive expected-shift context from it.
+
+## SUCCESS_CRITERIA
+- All 4 features have real Drizzle migrations, service functions, `requireAuth()`-gated API routes, and passing tests (`bun test`) covering the core create/approve/execute flow for each.
+- `npx tsc --noEmit` clean.
+- `get_advisors(security)` via Supabase MCP shows zero new findings attributable to the new tables/routes.
+- Loan/expense-reimbursement payroll integration (if built) has a real test proving a processed payroll run correctly reflects the deduction/reimbursement.
+
+## EXPECTED_OUTPUT
+A real PR against compliance-tracker through the normal task-gateway dispatch pipeline (AGENTS.md Rule 6/7(c) -- structured audit-verdict comment required before merge, no direct push to main).
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not touch `constructionExpenseEntries` (that's PROJEXA/construction project-cost tracking, a distinct domain) when building employee expense reimbursement -- these are separate concepts that happen to share the word "expense." If this scope is too large for one pass, checkpoint honestly in PROGRESS.md (increment 1 of N), same pattern phase_5's browser-execution-tiers task used -- do not silently drop any of the 4 items without saying so.
+
+## COMPLEXITY_TIER
+judgment

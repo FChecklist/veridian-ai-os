@@ -1,0 +1,28 @@
+## OBJECTIVE
+Build a Scope-of-Works revision/variation tracking feature in PROJEXA (repo FChecklist/projexa), building on the existing hierarchical BoQ (compliance-tracker's `constructionBoqLineItems`, already wired into PROJEXA per today's interim-billing work). Real Owner requirement: track scope changes as named revisions against an original baseline, with positive/negative variation amounts, and prevent a negative variation from silently removing already-completed work.
+
+## KNOWN_CONTEXT
+A real BoQ Excel file has already been supplied by a prospect (Category -> Task -> Sub-Task -> Breakdown% -> Rate -> Amount hierarchy) and confirmed to match the existing `computeHierarchicalAmount()`/`constructionBoqLineItems` shape from PR #596 -- do not rebuild that hierarchy logic. This task ADDS revision tracking on top of it: an original scope baseline (Rev0), named subsequent revisions (Rev1, Rev2, ...) each recording which line items changed and by how much (+ve or -ve amount), with the current effective scope being the latest revision's state. Real business rule from the Owner directly: a negative variation (removing/reducing a line item) must be checked against that item's real recorded Work Progress (if a "work progress"/"site diary" style table already exists in compliance-tracker or PROJEXA recording completed quantity per BoQ line item, check it; if none exists yet, flag this as a real cross-dependency on the Work Progress Report task rather than inventing a fake progress source) -- reducing scope on work already done should be blocked or require explicit override, not silently applied.
+
+## SCOPE
+1. Add a real revision/variation table (e.g. `constructionScopeRevisions` + `constructionScopeVariationItems` or similar, matching this codebase's existing naming conventions in `schema.ts`) recording: revision label (Rev0/Rev1/...), created date, per-line-item delta amount and quantity, and a running total variation value.
+2. Add the negative-variation-vs-completed-work guard described above -- if no real completed-quantity data source exists yet, implement the check as a no-op-with-clear-TODO-comment referencing that gap explicitly (do not fabricate fake progress data), and note this honestly in PROGRESS.md as a real, disclosed limitation.
+3. Add a real comparison view/query: given two revision labels, return the line items that changed and by how much (this is the "compare various versions" requirement).
+4. Real API routes + a real PROJEXA-branded screen listing revisions and their variation totals per project.
+
+## SUCCESS_CRITERIA
+- A real test proving a positive variation adds a new line item correctly to the latest revision's effective scope.
+- A real test proving a negative variation on a line item is flagged/blocked when that item has recorded completed progress (or, if no progress data source exists yet, a real test proving the guard function correctly no-ops and logs the limitation rather than silently succeeding).
+- Verify by actually running:
+`npx tsc --noEmit`
+`bun test` (scoped to touched files)
+`git log --oneline -1 -- PROGRESS.md`
+
+## EXPECTED_OUTPUT
+A real PR on a new branch in the projexa repo (or compliance-tracker if the schema work genuinely belongs there per this codebase's existing pattern of keeping shared BoQ/construction schema in compliance-tracker -- check PR #596's file locations before deciding). Requires a fresh supervisor audit before merge; do not merge yourself.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not modify the existing `computeHierarchicalAmount()`/breakdown-percentage logic from PR #596 -- this task only adds revision tracking on top of it.
+
+## COMPLEXITY_TIER
+judgment

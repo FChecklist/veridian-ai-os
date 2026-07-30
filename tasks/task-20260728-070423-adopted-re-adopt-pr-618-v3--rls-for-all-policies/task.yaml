@@ -1,0 +1,103 @@
+id: task-20260728-070423-adopted-re-adopt-pr-618-v3--rls-for-all-policies
+title: 'Re-adopt PR 618 v3: RLS FOR ALL policies + UPDATE grants (fixes 2nd audit
+  finding)'
+status: awaiting_human_approval
+repo: compliance-tracker
+branch: worker/task-20260728-051737-owner-engine-phase-8-real-gaps
+workspace: /opt/veridian/ai-os/tasks/task-20260728-070423-adopted-re-adopt-pr-618-v3--rls-for-all-policies/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-070423-adopted-re-adopt-pr-618-v3--rls-for-all-policies
+service: veridian-supervisor@task-20260728-070423-adopted-re-adopt-pr-618-v3--rls-for-all-policies.service
+created_at: '2026-07-28T07:04:24.591416+00:00'
+last_checkpoint_at: '2026-07-28T07:07:46.422083+00:00'
+completed_steps: &id002
+- 'Read governance docs (ACTIVE-CLAIMS, CONSTITUTION, OS.yaml, MASTER-TRACKER), registered
+  claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`, moved the stale PR #589 "increment 1"
+  claim to `recently_completed`.'
+- Read authoritative phase_8 scope from claude-control's `VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml`
+  and the re-audit report.
+- 'Confirmed PR #561''s `scripts/export-prompt-versions-gitops.ts` is a one-way DB->git
+  GitOps exporter (no import counterpart, whole-registry, not a portable single-template
+  bundle) -- distinct from this task''s engine-prompt-export/import scope.'
+- 'Surveyed existing conventions to reuse: `resolveModelConfig()`+`callLLMJson()`
+  (llm-client.ts) for real LLM calls, `ai-response-locale.ts` for the known-locale
+  list, `permission-service.ts`''s `PROMPT_ACTION_ROLES`, `workerAgents`'' platform-wide
+  draft->published pattern (precedent for marketplace scope: platform-wide, orgId
+  nullable/attribution-only, not new cross-tenant RLS).'
+- 'Schema: added `prompt_translations`, `prompt_localizations`, `prompt_marketplace_listings`
+  tables to `src/lib/db/schema.ts` + hand-authored `drizzle/0268_prompt_translation_localization_marketplace.sql`
+  (not applied live, same convention as drizzle/0262 -- left for the supervising session).'
+- '`src/lib/services/prompt-translation-service.ts` + test (6 tests): real LLM translation
+  via `resolvePlatformModelConfig()`+`callLLMJson()`, cached per (versionId, locale),
+  `force` re-translates.'
+- '`src/lib/services/prompt-localization-service.ts` + test (5 tests): second real
+  LLM pass on top of a translation, grounded in real `Intl.DateTimeFormat`/`Intl.NumberFormat`
+  samples (`localeFormattingSamples()`, pure/unmocked-tested), translates on demand
+  if no translation exists yet.'
+- '`src/lib/services/prompt-marketplace-service.ts` + test (7 tests): publish (Production-lifecycle-only
+  gate), unlist, list (read-only, no admin gate).'
+- '`src/lib/services/prompt-export-import-service.ts` + test (9 tests): portable single-template
+  JSON bundle export + validated re-import (creates template if missing, append-only
+  Draft versions, content-based idempotent re-import skip).'
+- 'Permission entries in `permission-service.ts`: `prompt.translation.create`, `prompt.localization.create`,
+  `prompt.marketplace.publish`, `prompt.import.run` all `veridian_admin` (export is
+  intentionally ungated/read-only, same posture as the existing `GET /api/settings/prompts`).'
+- 'API routes: `src/app/api/prompt-os/{translate,localize,export,import}/route.ts`,
+  `src/app/api/prompt-marketplace/route.ts` -- all `requireAuth()`-gated, `ServiceError`-aware
+  error mapping.'
+- 'Real screen: `src/app/(app)/prompt-marketplace/page.tsx` (+ `AppSidebar.tsx` nav
+  entry, `messages/en.json`+`hi.json` i18n keys) -- browse listings, publish dialog
+  scoped to Production-lifecycle versions pulled from `/api/settings/prompts`.'
+- 'Fixed 3 real bugs found while verifying the four new `*.test.ts` files (all originally
+  failing, not a pre-existing-suite issue):'
+- '`npx tsc --noEmit` clean (needs `NODE_OPTIONS="--max-old-space-size=8192"` in this
+  environment -- default heap OOMs on this repo''s size, unrelated to this task).'
+- '`bun test` scoped to the 4 touched test files: 27/27 pass. Full-repo `bun test`:
+  2255/2258 pass; the 3 failures are pre-existing on this branch before any of this
+  task''s changes (verified via `git stash`) and are in unrelated files (`dispatch-completion-monitor.test.ts`,
+  `roster-overrides.test.ts`, `defense-in-depth.test.ts`) -- not caused by this work.'
+- 'Committed + pushed, opened PR #618 (no self-merge -- awaiting a fresh supervisor
+  audit per AGENTS.md Rule 7(c)/Rule 10). Updated `ai-os/boss/ACTIVE-CLAIMS.yaml`''s
+  claim entry with a status update.'
+remaining_steps: &id003
+- 'Fresh supervisor audit of PR #618 (mandatory, this session may not self-certify).'
+- Supervising session applies `drizzle/0268_prompt_translation_localization_marketplace.sql`
+  live (not applied in this PR).
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T07:04:24.591416+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'worker/task-20260728-051737-owner-engine-phase-8-real-gaps'
+    (https://github.com/FChecklist/compliance-tracker/pull/618) -- registered for
+    real audit, not a fresh worker dispatch
+- at: '2026-07-28T07:07:46.422083+00:00'
+  status: awaiting_human_approval
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 40a33c5e Merge remote-tracking branch 'origin/main' into fix-618-rls-v3
+  - '2c43f909 fix: replace SELECT-only RLS policies with FOR ALL, add missing UPDATE
+    grants'
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - 0a79f5b1 Merge remote-tracking branch 'origin/main' into fix-618-rls-v2
+  - 'a3da2c45 fix: add ENABLE ROW LEVEL SECURITY + GRANT for prompt_translations/localizations/marketplace_listings'
+  - 'b72180f4 Worker task-20260728-051737-owner-engine-phase-8-real-gaps: automated
+    checkpoint commit (credit accountant rejected auto-fix)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - '96b26971 chore: record PR #618 opened for phase_8 real-gaps closure in ACTIVE-CLAIMS
+    + PROGRESS'
+  - '28525c63 feat: close phase_8 real gaps -- prompt translation/localization/marketplace/export/import'
+  note: 'tier2, Superboss-approved, held for human merge: https://github.com/FChecklist/compliance-tracker/pull/618'
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/618
+master_synced_at: '2026-07-29T21:04:26.593820+00:00'

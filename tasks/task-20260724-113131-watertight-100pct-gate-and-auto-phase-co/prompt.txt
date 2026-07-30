@@ -1,0 +1,30 @@
+## OBJECTIVE
+Close the exact root cause that made 5 real initiatives (self-sustaining-system-engine, 20-Engines/10-Gateways, Auditor Engine, Testing Engine, Terminology Standardization) each stall at Phase 1 instead of reaching 100% completion. Instruction INS-20260724-113032-8032. Two mechanisms, both mandatory: a stricter dispatch-time validation gate, and an automatic phase-continuation script.
+
+## SCOPE
+1. Extend scripts/tight_task_validation.py: add a new check alongside the existing REQUIRED_SECTIONS/contradiction checks -- parse the SUCCESS_CRITERIA section and require at least one line that looks like a real, runnable shell command (heuristic: starts with a known command word like `python3`, `bash`, `curl`, `gh`, `git`, `npm`, `pytest`, or is wrapped in backticks and contains no spaces-only-prose pattern -- pick a concrete, testable heuristic and document it). If none found, return `{"valid": false, "reason": "no_runnable_verification_command_in_success_criteria: ..."}` with a clear, actionable message (what to add). Wire this into task-gateway.py's `start` subcommand's existing tight_task_validation.py call so dispatch is blocked until fixed.
+2. Build scripts/auto_phase_continuation.py: scans every `*_PHASE_PLAN_2026-07-24.yaml` file (search both /opt/veridian/ai-os/ and /opt/veridian/repos/claude-control/ai-os/, given this session's known live-vs-repo drift -- check both, do not assume one location). For each plan, determine the last completed phase (cross-reference against real merged PRs / task.yaml status via gh pr view, not just the phase file's own self-reported status field) and the next phase in sequence. If the next phase has not yet been dispatched (no existing task-gateway.py instruction/task references its id), generate a real, watertight prompt for it (following the same OBJECTIVE/SCOPE/KNOWN_CONTEXT/SUCCESS_CRITERIA/EXPECTED_OUTPUT/CONSTRAINTS/COMPLEXITY_TIER schema used by every task this session, with a real runnable command in SUCCESS_CRITERIA per item 1's new rule) and call `task-gateway.py submit` + `start` for it automatically.
+3. Wire auto_phase_continuation.py into cron (run-logged.sh pattern, every 30 min -- Owner's blanket approval this session covers new cron entries; record in OWNER_DECISIONS_NEEDED_2026-07-23.yaml with status approved and update CRONTAB_APPROVED_SNAPSHOT.txt, do not stop to ask).
+4. Run it once manually for real right now against the 5 known stalled initiatives (self-sustaining-system-engine has no further phases -- skip; 20-Engines/10-Gateways has 8 more phases after phase_1; Auditor Engine has 7 more after phase 1; Testing Engine has 3 more after phase_1; Terminology has 4 more after phase_1) and confirm it correctly dispatches the next real phase for at least 2 of these as a live proof, not just a dry-run.
+
+## KNOWN_CONTEXT
+- Owner directive, exact words: "100% to be completed, with coding, complete wiring, tested and go live" -- and explicit frustration that phased dispatch stopped at Phase 1 for 5 real initiatives instead of continuing automatically.
+- postflight_audit_gate.py already runs audit_cmd for real (subprocess, exit code decides DONE/FAILED) -- this task's item 1 fix ensures a real command actually exists to run, closing the gap where SUCCESS_CRITERIA was prose-only and the close-time audit_cmd citation was technically satisfied by copying prose rather than a real check.
+- All 5 phase plan files and their real phase counts (verify current numbers, do not assume): 20_ENGINES_10_GATEWAYS_PHASE_PLAN (9 phases, 1 done), AUDITOR_ENGINE_PHASE_PLAN (9 phases numbered 0-8, phases 0+1 done), TESTING_ENGINE_PHASE_PLAN (5 phases, 0+1 done), TERMINOLOGY_STANDARDIZATION_PHASE_PLAN (6 phases, 0+1 done).
+- Standing rule: registry/catalog/script writes come from real scripts, never hand-authored prose.
+
+## SUCCESS_CRITERIA
+- `python3 scripts/tight_task_validation.py <a test prompt.txt with prose-only SUCCESS_CRITERIA>` returns valid:false with the new reason.
+- `python3 scripts/tight_task_validation.py <a test prompt.txt with a real runnable command in SUCCESS_CRITERIA>` returns valid:true.
+- `python3 scripts/auto_phase_continuation.py --dry-run` lists the real next-phase for all 4 still-incomplete initiatives with correct phase ids.
+- A real, non-dry-run invocation of auto_phase_continuation.py successfully dispatches at least 2 real next-phase tasks, confirmed via `python3 /opt/veridian/scripts/veridian-task.py status` showing new task ids for those 2 phases.
+- `crontab -l` shows the new auto_phase_continuation.py entry.
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on claude-control) for both scripts, the real crontab entry, and a final checkpoint listing exactly which 2+ next-phase tasks were live-dispatched as proof, plus which initiatives still need their continuation dispatched by the next cron tick.
+
+## CONSTRAINTS
+Limit this task to building and proving the two mechanisms plus one real dispatch round -- let the cron entry handle all subsequent phase continuations automatically rather than this task manually dispatching every remaining phase itself.
+
+## COMPLEXITY_TIER
+judgment

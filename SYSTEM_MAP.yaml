@@ -1,0 +1,476 @@
+id: VERIDIAN-SYSTEM-MAP
+version: '1.0'
+purpose: machine/AI-consumable dependency graph, not written for human narrative reading
+audience: software_and_ai_only
+built_from: live import statements read directly from real files this session -- no guessed edges
+coverage_honesty:
+  subsystems_covered: 26
+  subsystems_total_in_diagram: 28
+  edges_found_by_real_import_scan: 30
+  limitation: edges are derived only from each subsystem's SAMPLE evidence files (up to 5-8 per subsystem from the prior verification
+    pass), not from a full repo-wide call graph across all 913 API routes and 5019 functions -- that would be a much larger
+    scan. This is a real, mechanically-derived partial graph, honestly scoped, not a complete one. Nodes with no sample files
+    (document_engine had only 1) will show weak/no edges for that reason, not because no dependency exists.
+  correction_applied_2026_07_22: node list originally carried the pre-correction zeros from LAYER1_28_SUBSYSTEM_VERIFY_2026-07-22.json
+    for organizations/multi_tenancy/user_management/calculation_engine/notification_engine/ai_governance/monitoring -- fixed
+    to match the corrected LAYER1_FALSE_ZERO_RECHECK_2026-07-22.json values before this map was presented as done, per assistant_working_protocol
+    rule_4_self_review_pass and rule_3_completion_gate.
+nodes:
+  layer_3_experience:
+    type: entrypoint
+    connects_to:
+    - authentication
+    - ai_router
+  layer_2_brands:
+    the_firm:
+      status: VERIFIED_REAL
+      connects_to:
+      - organizations
+    projexa:
+      status: VERIFIED_REAL
+      connects_to:
+      - organizations
+    the_advisor:
+      status: UNCONFIRMED_MAPPING
+      connects_to:
+      - organizations
+    the_office:
+      status: FUTURE_BRAND_SLOT
+      connects_to:
+      - organizations
+    the_coordinator:
+      status: FUTURE_BRAND_SLOT
+      connects_to:
+      - organizations
+    the_forge:
+      status: FUTURE_BRAND_SLOT
+      connects_to:
+      - organizations
+  layer_1_subsystems:
+    authentication:
+      files_matched: 11
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/proxy.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/auth/callback/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/users/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/login/login-form.tsx
+      - /opt/veridian/repos/compliance-tracker/src/app/signup/page.tsx
+    organizations:
+      status: VERIFIED_REAL
+      evidence: DB table organisations (British spelling) -- original 0 was a wrong search term, corrected same session
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/page.tsx
+      - /opt/veridian/repos/compliance-tracker/src/app/api/search/semantic/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/dynamic-chains/my-library/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/dispatch/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/(app)/the-firm-practice/page.tsx
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/construction-enablement-service.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/module-rule-service.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/maintainability-dashboard-service.ts
+    multi_tenancy:
+      status: VERIFIED_REAL_DIFFERENT_PATTERN
+      evidence: implemented via organization-scoping, not a literal tenant table -- corrected same session
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/data-policy/page.tsx
+      - /opt/veridian/repos/compliance-tracker/src/app/privacy/page.tsx
+      - /opt/veridian/repos/compliance-tracker/src/app/terms/page.tsx
+      - /opt/veridian/repos/compliance-tracker/src/app/api/v1/projexa/assistant/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/v1/projexa/hr/departments/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/v1/projexa/capability-tree/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/v1/platform/provision-org/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/v1/connectors/office-addin/whoami/route.ts
+    user_management:
+      status: VERIFIED_REAL
+      evidence: DB tables users, user_active_sessions, user_client_access -- corrected same session
+      sample: []
+    rbac:
+      files_matched: 11
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/(app)/access-review/page.tsx
+      - /opt/veridian/repos/compliance-tracker/src/app/(app)/hr/attendance/page.tsx
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/approval-workflow-service.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/crm-accounts-service.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/access-review-service.ts
+    workflow_engine:
+      files_matched: 5
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/posh/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/vendor-risk/[id]/assess/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/whistleblower/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/incidents/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/db/schema.ts
+    business_rule_engine:
+      files_matched: 11
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/approvals/[id]/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/monitors/board-meeting-hold-monitor.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/monitors/task-completion-monitor.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/monitors/workflow-completion-monitor.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/monitors/meeting-intelligence-generation-monitor.ts
+    calculation_engine:
+      status: VERIFIED_REAL
+      evidence: corrected same session, original pattern too strict
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/posh/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/vendor-risk/[id]/assess/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/whistleblower/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/incidents/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/(app)/vendor-risk/page.tsx
+      - /opt/veridian/repos/compliance-tracker/src/lib/task-execution-engine.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/gst-reconciliation-service.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/asset-registry-cache.ts
+    notification_engine:
+      status: VERIFIED_REAL
+      evidence: corrected same session
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/notifications/[id]/read/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/notifications/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/tasks/[id]/comments/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/ai/orchestrate/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/internal/task-nudge-digest/run/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/mcp/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/pricing/page.tsx
+      - /opt/veridian/repos/compliance-tracker/src/app/(app)/settings/page.tsx
+    document_engine:
+      files_matched: 1
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/v1/projexa/payroll/payslips/[id]/pdf/route.ts
+    search_engine:
+      files_matched: 12
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/search/semantic/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/search/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/governance/audit-search/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/asset-query-service.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/capability-registry-service.ts
+    audit_engine:
+      files_matched: 1
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/controls-health/route.ts
+    reporting_engine:
+      files_matched: 15
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/v1/projexa/reports/definitions/[id]/run/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/reports/catalog/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/reports/definitions/[id]/run/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/custom-charts/[id]/run/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/custom-chart-service.ts
+    dashboard_engine:
+      files_matched: 21
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/v1/projexa/products/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/v1/projexa/project-budgets/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/v1/projexa/dashboard/[projectId]/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/v1/projexa/dashboard/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/v1/projexa/projects/route.ts
+    integration_engine:
+      files_matched: 12
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/connectors/[toolkit]/sync/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/connectors/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/workspace-memory/drive-import/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/workspace-memory/drive-export/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/(app)/connectors/page.tsx
+    ai_governance:
+      status: PARTIAL
+      evidence: corrected same session -- routes exist to report status, no confirmed enforcement gate
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/page.tsx
+      - /opt/veridian/repos/compliance-tracker/src/app/api/approvals/[id]/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/esg/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/conversations/[id]/veri-participant/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/executive-review/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/re-audit/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/capability-improvements/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/work-item/[id]/route.ts
+    universal_registry:
+      files_matched: 0
+      sample: []
+    knowledge_graph:
+      files_matched: 0
+      sample: []
+    ai_router:
+      files_matched: 2
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/dispatch/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/db/schema.ts
+    mother_router:
+      files_matched: 7
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/dispatch/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/ai-team/roster-overrides.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/orchestra-model-resolver.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/ai-router/mother-router.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/ai-router/task-register-service.ts
+    dynamic_mode_pills:
+      files_matched: 4
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/capability-audit-service.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/dynamic-chain-directory-service.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/capability-tree-service.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/db/schema.ts
+    dynamic_chain:
+      files_matched: 18
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/dynamic-chains/[id]/versions/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/dynamic-chains/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/dynamic-chains/my-library/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/task-execution-engine.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/capability-learning-service.ts
+    storage:
+      files_matched: 11
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/v1/projexa/permits/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/voice-tickets/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/settings/branding/logo/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/documents/[id]/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/documents/route.ts
+    logging:
+      files_matched: 12
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/app/api/internal/orchestra-log-purge/run/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/(app)/ai-observability/page.tsx
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/d1-metrics-tracker-service.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/orchestra-trace-service.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/high-impact-action-detector.ts
+    monitoring:
+      status: VERIFIED_REAL
+      evidence: corrected same session
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/instrumentation.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/approvals/[id]/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/governance-health/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/controls-health/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/monitor/dispatch-completion/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/internal/audit-cadence/run/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/internal/dispatch-completion-monitor/run/route.ts
+      - /opt/veridian/repos/compliance-tracker/src/app/api/internal/capability-audit/run/route.ts
+    learning_engine:
+      files_matched: 6
+      sample:
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/token-usage-service.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/services/cost-anomaly-service.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/ai-team/roster.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/prompt-cache/metrics.ts
+      - /opt/veridian/repos/compliance-tracker/src/lib/adoption-metrics-service.ts
+edges_real_import_derived:
+- from: organizations
+  to: mother_router
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/dispatch/route.ts
+  evidence_import: '@/lib/ai-team/roster-overrides'
+- from: organizations
+  to: logging
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/dispatch/route.ts
+  evidence_import: '@/lib/high-impact-action-detector'
+- from: multi_tenancy
+  to: dynamic_chain
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/v1/projexa/assistant/route.ts
+  evidence_import: '@/lib/task-execution-engine'
+- from: multi_tenancy
+  to: calculation_engine
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/v1/projexa/assistant/route.ts
+  evidence_import: '@/lib/task-execution-engine'
+- from: multi_tenancy
+  to: dynamic_mode_pills
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/v1/projexa/capability-tree/route.ts
+  evidence_import: '@/lib/services/capability-tree-service'
+- from: rbac
+  to: logging
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/lib/services/approval-workflow-service.ts
+  evidence_import: '@/lib/high-impact-action-detector'
+- from: rbac
+  to: business_rule_engine
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/lib/services/approval-workflow-service.ts
+  evidence_import: '@/lib/monitors/workflow-completion-monitor'
+- from: business_rule_engine
+  to: rbac
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/approvals/[id]/route.ts
+  evidence_import: '@/lib/services/approval-workflow-service'
+- from: calculation_engine
+  to: mother_router
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/lib/task-execution-engine.ts
+  evidence_import: '@/lib/orchestra-model-resolver'
+- from: calculation_engine
+  to: logging
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/lib/task-execution-engine.ts
+  evidence_import: '@/lib/high-impact-action-detector'
+- from: calculation_engine
+  to: dynamic_chain
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/lib/task-execution-engine.ts
+  evidence_import: '@/lib/services/capability-learning-service'
+- from: calculation_engine
+  to: search_engine
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/lib/task-execution-engine.ts
+  evidence_import: '@/lib/services/asset-query-service'
+- from: notification_engine
+  to: mother_router
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/ai/orchestrate/route.ts
+  evidence_import: '@/lib/orchestra-model-resolver'
+- from: search_engine
+  to: calculation_engine
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/lib/services/asset-query-service.ts
+  evidence_import: ./asset-registry-cache
+- from: ai_governance
+  to: rbac
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/approvals/[id]/route.ts
+  evidence_import: '@/lib/services/approval-workflow-service'
+- from: ai_governance
+  to: dynamic_mode_pills
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/capability-improvements/route.ts
+  evidence_import: '@/lib/services/capability-audit-service'
+- from: ai_governance
+  to: dynamic_chain
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/capability-improvements/route.ts
+  evidence_import: '@/lib/services/capability-learning-service'
+- from: ai_router
+  to: mother_router
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/dispatch/route.ts
+  evidence_import: '@/lib/ai-team/roster-overrides'
+- from: ai_router
+  to: logging
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/dispatch/route.ts
+  evidence_import: '@/lib/high-impact-action-detector'
+- from: mother_router
+  to: logging
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/ai/team/dispatch/route.ts
+  evidence_import: '@/lib/high-impact-action-detector'
+- from: mother_router
+  to: learning_engine
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/lib/ai-team/roster-overrides.ts
+  evidence_import: ./roster
+- from: dynamic_mode_pills
+  to: dynamic_chain
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/lib/services/capability-audit-service.ts
+  evidence_import: ./capability-learning-service
+- from: dynamic_mode_pills
+  to: search_engine
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/lib/services/capability-audit-service.ts
+  evidence_import: ./asset-query-service
+- from: dynamic_chain
+  to: dynamic_mode_pills
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/dynamic-chains/[id]/versions/route.ts
+  evidence_import: '@/lib/services/dynamic-chain-directory-service'
+- from: dynamic_chain
+  to: mother_router
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/lib/task-execution-engine.ts
+  evidence_import: '@/lib/orchestra-model-resolver'
+- from: dynamic_chain
+  to: logging
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/lib/task-execution-engine.ts
+  evidence_import: '@/lib/high-impact-action-detector'
+- from: dynamic_chain
+  to: search_engine
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/lib/task-execution-engine.ts
+  evidence_import: '@/lib/services/asset-query-service'
+- from: logging
+  to: learning_engine
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/lib/services/d1-metrics-tracker-service.ts
+  evidence_import: '@/lib/ai-team/roster'
+- from: monitoring
+  to: rbac
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/approvals/[id]/route.ts
+  evidence_import: '@/lib/services/approval-workflow-service'
+- from: monitoring
+  to: dynamic_mode_pills
+  evidence_file: /opt/veridian/repos/compliance-tracker/src/app/api/internal/capability-audit/run/route.ts
+  evidence_import: '@/lib/services/capability-audit-service'
+unclassified_imports_sample_per_subsystem:
+  authentication:
+  - '@supabase/ssr'
+  - next/server
+  - '@/lib/protected-routes.generated'
+  organizations:
+  - next/link
+  - next/image
+  - lucide-react
+  multi_tenancy:
+  - next
+  - '@/components/LegalShell'
+  - next
+  rbac:
+  - react
+  - sonner
+  - next/link
+  workflow_engine:
+  - '@/lib/db'
+  - '@/lib/db/tenant-scoped'
+  - next/server
+  business_rule_engine:
+  - '@/lib/db'
+  - '@/lib/db/tenant-scoped'
+  - next/server
+  calculation_engine:
+  - '@/lib/db'
+  - '@/lib/db/tenant-scoped'
+  - next/server
+  notification_engine:
+  - '@/lib/db'
+  - '@/lib/db/tenant-scoped'
+  - next/server
+  document_engine:
+  - next/server
+  - '@/lib/supabase/auth-guard'
+  - '@/lib/services/erp-payroll-service'
+  search_engine:
+  - next/server
+  - '@/lib/embeddings'
+  - '@/lib/db'
+  audit_engine:
+  - next/server
+  - '@/lib/supabase/auth-guard'
+  - '@/lib/controls-health-audit'
+  reporting_engine:
+  - next/server
+  - '@/lib/supabase/auth-guard'
+  - '@/lib/services/report-engine-service'
+  dashboard_engine:
+  - next/server
+  - '@/lib/supabase/auth-guard'
+  - '@/lib/services/construction-dashboard-service'
+  integration_engine:
+  - next/server
+  - '@/lib/supabase/auth-guard'
+  - '@/lib/db'
+  ai_governance:
+  - next/link
+  - next/image
+  - lucide-react
+  ai_router:
+  - next/server
+  - '@/lib/supabase/auth-guard'
+  - '@/lib/ai-team/team-service'
+  mother_router:
+  - next/server
+  - '@/lib/supabase/auth-guard'
+  - '@/lib/ai-team/team-service'
+  dynamic_mode_pills:
+  - '@/lib/db'
+  - drizzle-orm
+  - '@/lib/ai-team/team-service'
+  dynamic_chain:
+  - next/server
+  - '@/lib/supabase/auth-guard'
+  - next/server
+  storage:
+  - next/server
+  - '@/lib/supabase/auth-guard'
+  - '@/lib/services/document-service'
+  logging:
+  - next/server
+  - '@/lib/db'
+  - '@/lib/orchestra-execution-logger'
+  monitoring:
+  - next
+  - '@sentry/nextjs'
+  - '@/lib/db'
+  learning_engine:
+  - '@/lib/db'
+  - drizzle-orm
+  - '@/lib/llm-client'
+known_gaps_annotated_on_graph:
+  mother_router: confirmed real, but bypass count unreconciled (10 dispatchTool callers vs 16 direct-LLM-call files found
+    this session; does not match prior ~35/~20 memory figure)
+  universal_registry: NOT_FOUND -- isolated node, zero real edges, zero implementation
+  knowledge_graph: NOT_FOUND -- isolated node, zero real edges, zero implementation
+  audit_engine: real script exists (ai-os/audit198/run-audit.mjs) but last real run is 2 commits stale vs current origin/main
+  reporting_engine: PARTIAL -- 200 report_definitions rows exist per prior session, most have no rendering UI

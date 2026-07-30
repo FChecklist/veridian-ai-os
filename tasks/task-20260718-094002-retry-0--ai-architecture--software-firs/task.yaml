@@ -1,0 +1,313 @@
+id: task-20260718-094002-retry-0--ai-architecture--software-firs
+title: '[retry 0] AI Architecture: Software-First AI-Second Philosophy'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-094002-retry-0--ai-architecture--software-firs
+workspace: /opt/veridian/ai-os/tasks/task-20260718-094002-retry-0--ai-architecture--software-firs/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-094002-retry-0--ai-architecture--software-firs
+service: veridian-worker@task-20260718-094002-retry-0--ai-architecture--software-firs.service
+created_at: '2026-07-18T09:40:03.482369+00:00'
+last_checkpoint_at: '2026-07-18T10:05:21.254505+00:00'
+completed_steps: &id002
+- Read governance docs (ACTIVE-CLAIMS, CONSTITUTION, OS.yaml) + registered own claim
+- Investigated real current state of `classifyExecution` / call sites / VCEL engine
+  count / tokenUsageLedger
+- Confirmed finding 1&3 is a real (discipline) gap; finding 2's number is stale, real
+  sub-gap is the ledger's missing per-domain volume
+- "Added `scripts/check-ai-call-site-justification.mjs` \u2014 requires each `callLLM*`\
+  \ site to carry a software-first gate OR an inline `// software-first: AI-only because\
+  \ ...` justification; allowlist for the `callLLM` definitions + the BYO-model probe.\
+  \ Negative-tested (correctly flags an ungated call, passes gated + justified)."
+- "Added inline `software-first: AI-only because ...` justifications to the 7 legitimately-AI-only\
+  \ sites (ai-team dispatch, ingest extractor, ai-report-builder \xD72, document-extraction,\
+  \ fm-register-digitization \xD72, prompt-eval). The 8 gated sites (chat-service,\
+  \ construction-ai, dialogue-script-executor, help/ask) pass via file-level gate."
+- Wired the new check into `.github/workflows/ci.yml` (new `ai-call-site-justification`
+  job, pure-node like guardrail-presence) + added self-anchoring manifest entries
+  to `scripts/check-guardrail-presence.mjs` (Rule 9)
+- Added `getDomainAiCallVolume()` to `token-usage-service.ts` (groups product-orchestra
+  AI spend by `layerKey`, the finest domain grain the ledger has) + veridian_admin-gated
+  `GET /api/ai/team/domain-ai-call-volume` route. Honest limitation documented (layer-level,
+  not per-VCEL-function).
+- Updated `docs/master/CAPABILITY_COVERAGE.md` roadmap with the per-domain prioritization
+  pointer + the stale-number correction context
+- 'Verified: `check-guardrail-presence.mjs` (90 markers) + `check-ai-call-site-justification.mjs`
+  (15 sites) both pass; `tsc --noEmit` zero logic errors in changed files (only environmental
+  `Cannot find module` noise from missing `node_modules` in this sandbox, resolves
+  in CI); syntax-valid all changed files'
+remaining_steps: &id003
+- "**Push + PR blocked by token scope** \u2014 this session's `gh` token has scopes\
+  \ `gist, read:org, repo` but **not `workflow`**, so GitHub refuses any push containing\
+  \ the `.github/workflows/ci.yml` change. Isolated and proved: pushing the branch\
+  \ with the `ci.yml` change excluded succeeds; with it included, rejected. Every\
+  \ other file (check script, manifest entry, service, route, justifications, docs)\
+  \ pushes fine."
+- Open PR (not self-merge), leave for supervising session's audit
+- "Note in PR description: tsc/lint/full-test-suite not runnable in this sandbox (no\
+  \ `bun`/`node_modules`) \u2014 CI will run them; my two touched sync-scripts pass\
+  \ locally"
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T09:40:04.182814+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  note: worker started (resume=0)
+- at: '2026-07-18T09:45:04.526449+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  note: periodic checkpoint
+- at: '2026-07-18T09:50:04.720352+00:00'
+  status: in_progress
+  files_modified:
+  - src/lib/ai-team/team-service.ts
+  - src/lib/ingest/extractor.ts
+  - src/lib/services/ai-report-builder-service.ts
+  - src/lib/services/document-extraction-service.ts
+  - scripts/check-ai-call-site-justification.mjs
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS, CONSTITUTION, OS.yaml) + registered own claim
+  - Investigated real current state of `classifyExecution` / call sites / VCEL engine
+    count / tokenUsageLedger
+  - Confirmed finding 1&3 is a real (discipline) gap; finding 2's number is stale,
+    real sub-gap is the ledger's missing per-domain volume
+  remaining_steps:
+  - Add `scripts/check-ai-call-site-justification.mjs` (require gate-or-justification
+    at each `callLLM*` site)
+  - Wire into `.github/workflows/ci.yml` + add manifest entry to `scripts/check-guardrail-presence.mjs`
+  - Add `getDomainAiCallVolume()` to `token-usage-service.ts` + a thin admin route
+  - Update `docs/master/CAPABILITY_COVERAGE.md` roadmap with the per-domain prioritization
+    pointer
+  - "Run lint / tsc / new check / guardrail-presence / full test suite \u2014 all\
+    \ green"
+  - Open PR (not self-merge), leave for supervising session's audit
+  recent_commits:
+  - d52e9c7d Register claim + PROGRESS for software-first AI-second gap-closure
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  note: periodic checkpoint
+- at: '2026-07-18T09:55:04.908274+00:00'
+  status: in_progress
+  files_modified:
+  - .github/workflows/ci.yml
+  - scripts/check-guardrail-presence.mjs
+  - src/lib/ai-team/team-service.ts
+  - src/lib/ingest/extractor.ts
+  - src/lib/services/ai-report-builder-service.ts
+  - src/lib/services/document-extraction-service.ts
+  - src/lib/services/fm-register-digitization-service.ts
+  - src/lib/services/prompt-eval-service.ts
+  - src/lib/services/token-usage-service.ts
+  - scripts/check-ai-call-site-justification.mjs
+  - src/app/api/ai/team/domain-ai-call-volume/
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS, CONSTITUTION, OS.yaml) + registered own claim
+  - Investigated real current state of `classifyExecution` / call sites / VCEL engine
+    count / tokenUsageLedger
+  - Confirmed finding 1&3 is a real (discipline) gap; finding 2's number is stale,
+    real sub-gap is the ledger's missing per-domain volume
+  remaining_steps:
+  - Add `scripts/check-ai-call-site-justification.mjs` (require gate-or-justification
+    at each `callLLM*` site)
+  - Wire into `.github/workflows/ci.yml` + add manifest entry to `scripts/check-guardrail-presence.mjs`
+  - Add `getDomainAiCallVolume()` to `token-usage-service.ts` + a thin admin route
+  - Update `docs/master/CAPABILITY_COVERAGE.md` roadmap with the per-domain prioritization
+    pointer
+  - "Run lint / tsc / new check / guardrail-presence / full test suite \u2014 all\
+    \ green"
+  - Open PR (not self-merge), leave for supervising session's audit
+  recent_commits:
+  - d52e9c7d Register claim + PROGRESS for software-first AI-second gap-closure
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  note: periodic checkpoint
+- at: '2026-07-18T10:00:05.121327+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS, CONSTITUTION, OS.yaml) + registered own claim
+  - Investigated real current state of `classifyExecution` / call sites / VCEL engine
+    count / tokenUsageLedger
+  - Confirmed finding 1&3 is a real (discipline) gap; finding 2's number is stale,
+    real sub-gap is the ledger's missing per-domain volume
+  - "Added `scripts/check-ai-call-site-justification.mjs` \u2014 requires each `callLLM*`\
+    \ site to carry a software-first gate OR an inline `// software-first: AI-only\
+    \ because ...` justification; allowlist for the `callLLM` definitions + the BYO-model\
+    \ probe. Negative-tested (correctly flags an ungated call, passes gated + justified)."
+  - "Added inline `software-first: AI-only because ...` justifications to the 7 legitimately-AI-only\
+    \ sites (ai-team dispatch, ingest extractor, ai-report-builder \xD72, document-extraction,\
+    \ fm-register-digitization \xD72, prompt-eval). The 8 gated sites (chat-service,\
+    \ construction-ai, dialogue-script-executor, help/ask) pass via file-level gate."
+  - Wired the new check into `.github/workflows/ci.yml` (new `ai-call-site-justification`
+    job, pure-node like guardrail-presence) + added self-anchoring manifest entries
+    to `scripts/check-guardrail-presence.mjs` (Rule 9)
+  - Added `getDomainAiCallVolume()` to `token-usage-service.ts` (groups product-orchestra
+    AI spend by `layerKey`, the finest domain grain the ledger has) + veridian_admin-gated
+    `GET /api/ai/team/domain-ai-call-volume` route. Honest limitation documented (layer-level,
+    not per-VCEL-function).
+  - Updated `docs/master/CAPABILITY_COVERAGE.md` roadmap with the per-domain prioritization
+    pointer + the stale-number correction context
+  - 'Verified: `check-guardrail-presence.mjs` (90 markers) + `check-ai-call-site-justification.mjs`
+    (15 sites) both pass; `tsc --noEmit` zero logic errors in changed files (only
+    environmental `Cannot find module` noise from missing `node_modules` in this sandbox,
+    resolves in CI); syntax-valid all changed files'
+  remaining_steps:
+  - Open PR (not self-merge), leave for supervising session's audit
+  - "Note in PR description: tsc/lint/full-test-suite not runnable in this sandbox\
+    \ (no `bun`/`node_modules`) \u2014 CI will run them; my two touched sync-scripts\
+    \ pass locally"
+  recent_commits:
+  - 'a7153d97 Software-first AI-second gap-closure: CI check + per-domain AI-volume
+    report'
+  - d52e9c7d Register claim + PROGRESS for software-first AI-second gap-closure
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: periodic checkpoint
+- at: '2026-07-18T10:05:05.350116+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS, CONSTITUTION, OS.yaml) + registered own claim
+  - Investigated real current state of `classifyExecution` / call sites / VCEL engine
+    count / tokenUsageLedger
+  - Confirmed finding 1&3 is a real (discipline) gap; finding 2's number is stale,
+    real sub-gap is the ledger's missing per-domain volume
+  - "Added `scripts/check-ai-call-site-justification.mjs` \u2014 requires each `callLLM*`\
+    \ site to carry a software-first gate OR an inline `// software-first: AI-only\
+    \ because ...` justification; allowlist for the `callLLM` definitions + the BYO-model\
+    \ probe. Negative-tested (correctly flags an ungated call, passes gated + justified)."
+  - "Added inline `software-first: AI-only because ...` justifications to the 7 legitimately-AI-only\
+    \ sites (ai-team dispatch, ingest extractor, ai-report-builder \xD72, document-extraction,\
+    \ fm-register-digitization \xD72, prompt-eval). The 8 gated sites (chat-service,\
+    \ construction-ai, dialogue-script-executor, help/ask) pass via file-level gate."
+  - Wired the new check into `.github/workflows/ci.yml` (new `ai-call-site-justification`
+    job, pure-node like guardrail-presence) + added self-anchoring manifest entries
+    to `scripts/check-guardrail-presence.mjs` (Rule 9)
+  - Added `getDomainAiCallVolume()` to `token-usage-service.ts` (groups product-orchestra
+    AI spend by `layerKey`, the finest domain grain the ledger has) + veridian_admin-gated
+    `GET /api/ai/team/domain-ai-call-volume` route. Honest limitation documented (layer-level,
+    not per-VCEL-function).
+  - Updated `docs/master/CAPABILITY_COVERAGE.md` roadmap with the per-domain prioritization
+    pointer + the stale-number correction context
+  - 'Verified: `check-guardrail-presence.mjs` (90 markers) + `check-ai-call-site-justification.mjs`
+    (15 sites) both pass; `tsc --noEmit` zero logic errors in changed files (only
+    environmental `Cannot find module` noise from missing `node_modules` in this sandbox,
+    resolves in CI); syntax-valid all changed files'
+  remaining_steps:
+  - "**Push + PR blocked by token scope** \u2014 this session's `gh` token has scopes\
+    \ `gist, read:org, repo` but **not `workflow`**, so GitHub refuses any push containing\
+    \ the `.github/workflows/ci.yml` change. Isolated and proved: pushing the branch\
+    \ with the `ci.yml` change excluded succeeds; with it included, rejected. Every\
+    \ other file (check script, manifest entry, service, route, justifications, docs)\
+    \ pushes fine."
+  - Open PR (not self-merge), leave for supervising session's audit
+  - "Note in PR description: tsc/lint/full-test-suite not runnable in this sandbox\
+    \ (no `bun`/`node_modules`) \u2014 CI will run them; my two touched sync-scripts\
+    \ pass locally"
+  recent_commits:
+  - 'a8051010 PROGRESS: record workflow-scope push blocker + options'
+  - 'a7153d97 Software-first AI-second gap-closure: CI check + per-domain AI-volume
+    report'
+  - d52e9c7d Register claim + PROGRESS for software-first AI-second gap-closure
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  note: periodic checkpoint
+- at: '2026-07-18T10:05:21.254505+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'a8051010 PROGRESS: record workflow-scope push blocker + options'
+  - 'a7153d97 Software-first AI-second gap-closure: CI check + per-domain AI-volume
+    report'
+  - d52e9c7d Register claim + PROGRESS for software-first AI-second gap-closure
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  note: worker finished, no changes to commit
+execution_seconds: 1517
+restart_count: 0
+token_usage:
+  input_tokens: 9600170
+  cache_creation_input_tokens: 0
+  cache_read_input_tokens: 0
+  output_tokens: 38807
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 0
+    ephemeral_5m_input_tokens: 0
+  inference_geo: ''
+  iterations: []
+  speed: standard
+master_synced_at: '2026-07-18T10:30:04.031603+00:00'

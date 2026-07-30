@@ -1,0 +1,26 @@
+## OBJECTIVE
+Fix real, correct AUDIT: REJECT findings on the current claude-control PR #79 branch (task-20260726-082342-add-ddl-pre-flight-authorization-gate-to's own DDL pre-flight gate). The gate's basic wiring into task-gateway.py's cmd_start() is correct and stays; this round tightens real detection weaknesses the reviewer found.
+
+## KNOWN_CONTEXT
+Read scripts/ddl_authorization_check.py in full first. Real findings from the review: (1) the PRE-APPROVED-LIVE-DDL citation check only requires the line to be non-empty and not a short placeholder -- it does not require the citation to reference anything real (an Owner decision-log entry ID, a dated approval note), so a worker could write `PRE-APPROVED-LIVE-DDL: yes` and pass. (2) The DDL keyword regex requires exact phrase adjacency and misses common real-world variants such as `CREATE UNIQUE INDEX`, multi-line/multi-statement SQL blocks, and DDL keywords written in lowercase or mixed case. (3) Tool-name detection only matches the literal string `apply_migration` -- it misses other DDL-capable Supabase MCP tool names this session has actually used or could use (check the Supabase MCP tool list available to this session for the real full set of write/DDL-capable tool names, not just apply_migration). (4) Most fundamentally: this is a static text scan of the prompt file at DISPATCH time, not an interception of the actual tool call at RUNTIME -- a prompt that doesn't mention DDL in its own text but whose worker later decides mid-task to call a DDL-capable tool anyway would not be caught by this gate at all. This last point is a real, deeper architectural limitation (this session's agent framework has no mechanism to intercept a live MCP tool call mid-run); do not attempt to solve runtime interception in this task -- instead, document it explicitly and honestly as a known, accepted limitation of this dispatch-time gate in both the script's own docstring and the protocol doc, so nobody later assumes this gate provides guarantees it does not.
+
+## SCOPE
+1. Tighten the PRE-APPROVED-LIVE-DDL citation check: require the value after the colon to match a real reference pattern (e.g. a decision-log entry ID format like the ones already used in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml, or a dated note of meaningful length) rather than accepting any non-empty, non-placeholder string.
+2. Widen the DDL keyword detection to real, case-insensitive regex coverage of common DDL statement forms (CREATE TABLE, CREATE INDEX, CREATE UNIQUE INDEX, ALTER TABLE, DROP TABLE, TRUNCATE, and any other real DDL keyword you find by reading actual migration files in drizzle/), across multi-line text, not just single-line exact phrases.
+3. Expand tool-name detection to cover every real DDL-capable Supabase MCP tool name available to this session (not just apply_migration) -- enumerate the real list rather than guessing.
+4. Add an explicit, honest "Known limitation" docstring/comment in scripts/ddl_authorization_check.py and a corresponding note in the protocol doc's existing DDL-gate section stating plainly: this is a dispatch-time prompt-text scan, not a runtime tool-call interceptor -- a worker whose prompt doesn't mention DDL but which decides mid-task to call a DDL-capable tool anyway is not caught by this gate.
+5. Extend the existing regression tests to cover the widened regex, the tightened citation check, and the additional tool names.
+
+## SUCCESS_CRITERIA
+- `python3 -m pytest tests/ -k ddl_authorization -v` exits 0 with the widened test coverage passing.
+- `grep -c "CREATE UNIQUE INDEX\|TRUNCATE" scripts/ddl_authorization_check.py` returns a nonzero count (new keyword coverage present).
+- `grep -n "Known limitation" scripts/ddl_authorization_check.py` shows the honest runtime-vs-dispatch-time limitation is now documented.
+
+## EXPECTED_OUTPUT
+Push directly to the existing PR #79 branch in FChecklist/claude-control (find it via `gh pr view 79 --repo FChecklist/claude-control --json headRefName`). Do not open a new PR.
+
+## CONSTRAINTS
+Do not attempt runtime MCP tool-call interception in this task -- document the limitation honestly instead, per SCOPE item 4. Do not merge yourself; this needs a fresh audit pass given the prior reject.
+
+## COMPLEXITY_TIER
+judgment

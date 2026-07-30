@@ -1,0 +1,30 @@
+## OBJECTIVE
+Fix 3 real, audit-confirmed issues on PR #597 ("Timesheet report: Category/Designer/Project/Status Budget-vs-Actual", branch `worker/task-20260727-122935-timesheet-budget-vs-actual`) before it can merge. Read the full audit verdict first: `gh api repos/FChecklist/compliance-tracker/issues/597/comments --jq '.[-1].body' | fold -w 150` (one very long "Evidence Recorded" line -- do not trust a truncated terminal view).
+
+## KNOWN_CONTEXT
+Real, audit-confirmed findings in `construction-reports-service.ts`, do not re-derive. The pure aggregator `aggregateDesignerTimesheetCosts()` is well-tested and mostly correct -- do not rewrite it, fix the 3 specific real bugs below:
+1. **Budget-undercount bug (the primary blocker)**: `aggregateDesignerTimesheetCosts()`'s `designerStatusByUser` is built only from time entries, not from the full user roster. A designer with a real `pms_budget_line_items` row but zero time entries anywhere in the org (e.g. a newly-budgeted designer who hasn't logged hours yet) is silently excluded from both the active and inactive buckets -- so `sum(byDesignerStatus.budget)` silently diverges from `overallBudget` in a plausible, real-world state, with no error surfaced. `designerTimesheetReport()` already fetches the full user roster elsewhere -- pass it in to fix this, do not re-fetch.
+2. **Real N+1 performance bug**: `designerTimesheetReport()` calls the DB-querying `resolveBillableRate()` once per time entry inside a sequential for-loop over EVERY time entry in the entire org (not just the requested project), even though `pms-time-service.ts` already exposes a pure, pre-fetch-once variant (`resolvePmsBillableRatePure`) specifically to avoid this. Fix: fetch the org's billable rates ONCE upfront, then use `resolvePmsBillableRatePure` inside the loop, same pattern this same file already uses elsewhere.
+3. **Scope-mixing bug**: the response mixes project-scoped fields (`byDesignerStatus`) with org-wide fields (`byDesigner`, `byProject`, `byCategory`) under a single `designerTimesheetReport(ctx, projectId)` call with no field-level indication of which scope each field represents -- likely to mislead a per-project report UI into showing data belonging to other projects. Fix: either scope ALL fields consistently to the requested project, or clearly separate/label project-scoped vs org-wide fields in the response shape (your call -- justify which, in the PR description).
+
+Not a security or tenant-isolation issue -- `withTenantContext` is intact throughout, `requireConstructionEnabled` still gates access. This is a data-correctness and performance fix.
+
+## SCOPE
+1. Fix `aggregateDesignerTimesheetCosts()` to accept the full user roster (not just users with time entries) so budgeted-but-entryless designers are correctly included in `designerStatusByUser`, and `sum(byDesignerStatus.budget) === overallBudget` always holds.
+2. Fix `designerTimesheetReport()`'s billable-rate resolution to fetch rates once upfront and use `resolvePmsBillableRatePure()` in the loop, eliminating the N+1.
+3. Resolve the project-scoped vs org-wide field-mixing -- pick one approach (full project-scoping or explicit labeling) and implement it consistently.
+
+## SUCCESS_CRITERIA
+- A real test proving: a designer with a real budget line but zero time entries still appears in `byDesignerStatus` with correct budget figures, and `sum(byDesignerStatus.budget) === overallBudget`.
+- A real test proving: `designerTimesheetReport()` makes a bounded, small number of DB calls for billable-rate resolution regardless of time-entry count (not one per entry) -- assert on call count, not just wall-clock time.
+- A real test proving the scope-mixing fix (either all fields correctly project-scoped, or a test asserting the response shape clearly labels project-scoped vs org-wide fields).
+- `npx tsc --noEmit` clean, `bun test` passing.
+
+## EXPECTED_OUTPUT
+Push the fix to the SAME branch (`worker/task-20260727-122935-timesheet-budget-vs-actual`, PR #597 already open) -- do not open a new PR. Requires a fresh supervisor audit before merge (see `veridian-task.py adopt` -- this PR was already adopted once as task-20260727-131559, a fresh review will need re-triggering after this fix lands).
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not rewrite the already-correct parts of `aggregateDesignerTimesheetCosts()` -- only fix the roster-inclusion gap.
+
+## COMPLEXITY_TIER
+judgment

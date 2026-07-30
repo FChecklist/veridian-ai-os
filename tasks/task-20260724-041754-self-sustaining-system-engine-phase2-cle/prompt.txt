@@ -1,0 +1,29 @@
+## OBJECTIVE
+Close 3 verified gaps left by task-20260724-033446-self-sustaining-system-engine-phase2-con (real, merged into claude-control master as commit 19535a2a, PR #10). This is a small, targeted cleanup, not a re-run of that task's scope.
+
+## SCOPE
+1. Add a real registries.self_sustaining_system_engine entry to MASTER_INDEX.yaml in BOTH locations that were checked and both found missing it: the live /opt/veridian/ai-os/MASTER_INDEX.yaml and the git-tracked /opt/veridian/repos/claude-control/ai-os/MASTER_INDEX.yaml. The entry must point at: the knowledge_engine sqlite table (ai-os/memory/superboss-register.sqlite), ai-os/SOFTWARE_CATALOG.yaml, STANDING_DIRECTIVE.yaml's existing v2_self_sustaining_system_engine key, the 2 cron entries added 2026-07-24 (knowledge-registry-multisource, software-catalog-gen), and ai-os/KNOWLEDGE_ENGINE_PHASE3_CANDIDATES_2026-07-24.yaml. Commit+push+PR the repo copy; write the live copy directly (matching how STANDING_DIRECTIVE.yaml's own v2 key was already applied live in the prior task).
+2. Run `python3 /opt/veridian/scripts/task-gateway.py close` for real against task-20260724-033446-self-sustaining-system-engine-phase2-con (its actual audit-cmd/evidence), and confirm its knowledge_engine_reverify behavior actually re-verifies the knowledge_engine rows this task touched (recompute content_hash, flip verification_status if changed). Capture and report the real command output as evidence, not a paraphrase.
+3. Root-cause why that worker's task.yaml checkpoint history went in_progress -> completed directly, skipping pending_review entirely (confirmed via its own checkpoint timestamps: 5x in_progress then straight to completed at 03:56:47). Read worker-entrypoint.sh and veridian-task.py's checkpoint status-transition logic to find where a worker is allowed to self-report completed without an intermediate pending_review step, and fix it so that transition is no longer possible -- every worker must pass through pending_review (which is what triggers `systemctl --user start veridian-supervisor@<id>.service`) before reaching a terminal completed/blocked state.
+
+## KNOWN_CONTEXT
+- PR #10 (https://github.com/FChecklist/claude-control/pull/10) is genuinely merged -- verified directly via `gh pr view 10 --json state,mergedAt` returning state=MERGED, mergedAt=2026-07-24T04:09:46Z, mergeCommit=19535a2a2bf47ea0060895bffdd75d1f09b46837. Do not re-merge or reopen it.
+- The merge-review supervisor for that task DID eventually run (triggered manually this session, not automatically) and DID approve it (tier1, real AUDIT: PASS comment posted on the PR) -- the review/audit trail for that specific task is real and complete. Only the 3 items in SCOPE above are outstanding.
+- A related, separate bug (already understood, not in this task's scope to fix): `gh pr merge --merge --delete-branch` in supervisor-entrypoint.sh merged PR #10 successfully via the GitHub API but then exited non-zero because --delete-branch failed locally (git worktree conflict: master already checked out at /opt/veridian/repos/claude-control), causing the script to log a false "merge FAILED" note even though the merge had actually succeeded. That task.yaml note has already been corrected by hand this session. If SCOPE item 3's fix naturally also touches this code path, a fix is welcome but is not a required success criterion here -- do not go out of scope chasing it if unrelated.
+- crontab -l currently has 15 entries including a freshly re-enabled `*/15 * * * * run-logged.sh "supervisor-sweep" supervisor-sweep.sh` (Owner-approved 2026-07-24, CRONTAB_APPROVED_SNAPSHOT.txt already updated to match -- no further crontab changes are needed or expected from this task; if this task's own work happens to require a NEW crontab change beyond what's already approved, stop and flag it as a new entry in OWNER_DECISIONS_NEEDED_2026-07-23.yaml with status awaiting_owner_decision rather than editing live crontab directly).
+- ai-os/KNOWLEDGE_ENGINE_PHASE3_CANDIDATES_2026-07-24.yaml already exists (written by the prior task) -- read it before starting, it may already describe some of this same follow-on work.
+
+## SUCCESS_CRITERIA
+- `python3 -c "import yaml; d=yaml.safe_load(open('/opt/veridian/ai-os/MASTER_INDEX.yaml')); print('self_sustaining_system_engine' in d['registries'])"` prints True.
+- Same check against the merged git copy at /opt/veridian/repos/claude-control/ai-os/MASTER_INDEX.yaml (after `git pull origin master`) also prints True.
+- A real `task-gateway.py close` invocation for task-20260724-033446-self-sustaining-system-engine-phase2-con has been run, its output captured, and it shows a real reverify pass over that task's touched knowledge_engine rows.
+- A new, isolated test (unit test or a manual reproduction) demonstrates a worker can no longer reach status=completed without first passing through status=pending_review.
+
+## EXPECTED_OUTPUT
+Real committed and pushed changes (a new PR on claude-control, separate from #10), the real close-command output as evidence, and a final checkpoint summary confirming all 3 SCOPE items closed with command-output evidence for each -- not narrative claims.
+
+## CONSTRAINTS
+Limit all work to exactly the 3 SCOPE items listed above; treat the prior task's 6 items as settled, already-confirmed, real, and merged. Any registry/catalog write must still be produced by a script or cron job, not hand-authored prose, per the existing standing rule from the prior task. If any part of this work would require a crontab change beyond the one already Owner-approved and installed, stop and record it in OWNER_DECISIONS_NEEDED_2026-07-23.yaml instead of editing crontab directly.
+
+## COMPLEXITY_TIER
+integrative

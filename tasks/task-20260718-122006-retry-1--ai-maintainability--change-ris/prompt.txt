@@ -1,0 +1,23 @@
+VERIDIAN Review Framework gap-closure: AI Maintainability / Change Risk Management.
+This covers 5 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Low] AI Confidence Before Code Changes
+  Gap: Confidence input itself is not independently verified
+  Recommended approach: Periodically audit whether reported confidence percentages correlate with actual outcome quality.
+- [High] Impact Analysis Before Modification
+  Gap: No automated pre-modification impact analysis
+  Recommended approach: Build a lightweight static dependency index (e.g. which services import which, which routes call which services) queryable before a change.
+- [High] Rollback Readiness
+  Gap: Rollback relies on generic git/CI mechanisms, not a dedicated capability
+  Recommended approach: Add down-migration scripts for Drizzle changes and document a rollback runbook for high-risk deploys.
+- [High] Dependency Graph Accuracy
+  Gap: No accurate, queryable dependency graph exists at any layer
+  Recommended approach: Build the dependency index from row 74's recommendation, and consider adding FK constraints per row 37 to make the data-layer graph enforceable.
+- [Medium] Knowledge Synchronization Between Code and Documentation
+  Gap: Sync checks are structural, not semantic (duplicate of AI Documentation row 67 finding)
+  Recommended approach: Same recommendation as row 67: periodic manual audit passes as the practical complement to structural CI checks.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

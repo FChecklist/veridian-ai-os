@@ -1,0 +1,85 @@
+id: task-20260728-045920-adopted-fresh-audit--pr--613
+title: 'Fresh audit: PR #613'
+status: awaiting_human_approval
+repo: compliance-tracker
+branch: worker/task-20260728-043316-design-studio-timesheets--designer-wise
+workspace: /opt/veridian/ai-os/tasks/task-20260728-045920-adopted-fresh-audit--pr--613/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-045920-adopted-fresh-audit--pr--613
+service: veridian-supervisor@task-20260728-045920-adopted-fresh-audit--pr--613.service
+created_at: '2026-07-28T04:59:21.996438+00:00'
+last_checkpoint_at: '2026-07-28T05:01:24.081346+00:00'
+completed_steps: &id002
+- Read governance docs, registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+- 'Audited existing infra: confirmed designer-wise Budget-vs-Actual cut (byDesigner)
+  already exists in construction-reports-service.ts (PR #597 + audit fix 46d6967d)
+  -- SCOPE item 1 already satisfied, no rebuild needed'
+- 'Audited existing infra: confirmed a full KPI designer-fills/manager-approves table
+  pair already exists (constructionKpiDefinitions/constructionKpiEntries, construction-kpi-service.ts,
+  /api/construction/kpi-entries + /[id]/approve) -- SCOPE item 3 already satisfied,
+  not duplicating'
+- 'Schema: added `pmsTimeEntryApprovalStatusEnum` (draft/submitted/approved/rejected)
+  + approvalStatus/approvedById/approvedAt/rejectionReason columns to `pmsTimeEntries`
+  (schema.ts)'
+- Hand-written migration `drizzle/0268_pms_time_entry_approval_flow.sql` + `_journal.json`
+  entry (same drizzle/meta snapshot-gap approach documented in 0267's header)
+- 'Service: `submitTimeEntry`/`approveTimeEntry`/`rejectTimeEntry` in pms-time-service.ts,
+  modeled on construction-kpi-service.ts''s submitKpiEntry/approveKpiEntry (self-approval
+  blocked, state-machine enforced)'
+- 'API routes: `/api/pms/time-entries/[id]/{submit,approve,reject}` -- approve/reject
+  gated via `requireRole(dbUser, "manager")`'
+- 'Report: `designerApprovalStatusReport`/`aggregateDesignerApprovalStatus` (designer-wise
+  approval-status view) in construction-reports-service.ts'
+- 'Report: `workAnalysisReport`/`aggregateWorkAnalysis` (hours by task/category per
+  designer over a period) in construction-reports-service.ts'
+- Registered both new reports (`designer-approval-status`, `work-analysis`) in REPORT_REGISTRY
+  + dispatcher route (dateFrom/dateTo query params for work-analysis)
+- 'Tests: existing designer-wise Budget-vs-Actual cut tests (PR #597) still pass unmodified;
+  new pure-aggregator tests for both new reports; new state-machine tests (self-approval
+  blocked, wrong-state transitions blocked, happy path) in pms-time-service.test.ts;
+  new route-level access-control test (member 403''d, manager allowed) in approve/route.test.ts'
+- 'Verified: `bunx tsc --noEmit` clean; `bun test construction-reports-service.test.ts`
+  (10 pass, includes all pre-existing PR #597 tests); full `bun test` -- 2244 pass,
+  0 fail'
+- Commit + push
+remaining_steps: &id003
+- Open PR, request supervisor audit (per EXPECTED_OUTPUT -- not self-merged)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T04:59:21.996438+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'worker/task-20260728-043316-design-studio-timesheets--designer-wise'
+    (https://github.com/FChecklist/compliance-tracker/pull/613) -- registered for
+    real audit, not a fresh worker dispatch
+- at: '2026-07-28T05:01:24.081346+00:00'
+  status: awaiting_human_approval
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '520954f9 chore: move design-studio-timesheets claim to recently_completed (PR
+    #613 opened)'
+  - 'e19af288 feat: Design Studio timesheets -- approval workflow + designer-wise
+    status/work-analysis reports'
+  - '8eb5ec21 chore: register active-claim for Design Studio timesheets task, audit
+    existing infra in PROGRESS.md'
+  - '61b74cd5 Merge pull request #609 from FChecklist/feat/projexa-full-module-chain-api'
+  - d45f5f94 Merge remote-tracking branch 'origin/main' into feat/projexa-full-module-chain-api
+  - '74632493 fix: mockTree spreads real capability-tree-service exports, preventing
+    sibling test regression from mock.module override'
+  - '41a73a7a Merge pull request #603 from FChecklist/worker/task-20260727-153107-re-audit-projexa-erp-e2e-for-100pct-comp'
+  - '37b0345e fix: remove duplicate PROGRESS.md header line from reconstruction'
+  - '0afa4d96 merge: resolve with latest main (keep-both, clean reconstruction now)'
+  - '9d3bd0f4 fix: reconstruct PROGRESS.md correctly -- restore real main history
+    + this task own section only, discard prior bad keep-both merges'
+  note: 'tier2, Superboss-approved, held for human merge: https://github.com/FChecklist/compliance-tracker/pull/613'
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/613
+master_synced_at: '2026-07-29T21:04:26.448084+00:00'

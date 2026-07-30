@@ -1,0 +1,1008 @@
+id: task-20260726-172004-search-performance-explain-analyze---gin
+title: Search performance EXPLAIN ANALYZE + GIN index
+status: superseded
+repo: compliance-tracker
+branch: worker/task-20260726-172004-search-performance-explain-analyze---gin
+workspace: /opt/veridian/ai-os/tasks/task-20260726-172004-search-performance-explain-analyze---gin/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-172004-search-performance-explain-analyze---gin
+service: veridian-worker@task-20260726-172004-search-performance-explain-analyze---gin.service
+created_at: '2026-07-26T17:20:05.882279+00:00'
+last_checkpoint_at: '2026-07-26T19:53:11.519076+00:00'
+completed_steps: &id002
+- "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+  \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+- "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+  \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+  \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+  \ and (surprisingly) mostly not live either \u2014 see drift note below."
+- Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+  (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+  / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+  counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+  plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+- "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+  \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+  \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+  \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+  \ so a fresh environment matches production. **Not applied live** \u2014 Tier2 (migration\
+  \ + live DB) holds for Owner sign-off per this task's constraints."
+- "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+  \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+  \ index-eligible the moment the index exists \u2014 no query rewrite required."
+- Committed the `ai-os/OS.yaml` index entry pointing at the EXPLAIN doc (was left
+  uncommitted at the prior checkpoint).
+- "Opened PR #582 (https://github.com/FChecklist/compliance-tracker/pull/582) \u2014\
+  \ CI running at time of this update (Guardrail Presence Check, Documentation Sentinel\
+  \ Check, Secret Scanning, Security Pattern Check already passing; rest pending)."
+remaining_steps: &id003
+- 'CI to finish on PR #582 and merge (no direct-to-main push per Rule 6).'
+- "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+  \ (Tier2 hold \u2014 not done by this session; can happen independent of / after\
+  \ PR merge since the migration file itself is inert until applied)."
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T17:20:07.663293+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  - 'aedcbb06 PROGRESS.md: start task-20260726-102520 (resolve PR #563 conflict, refresh
+    DB catalog)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T17:25:08.956094+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  - 'aedcbb06 PROGRESS.md: start task-20260726-102520 (resolve PR #563 conflict, refresh
+    DB catalog)'
+  note: periodic checkpoint
+- at: '2026-07-26T17:30:10.216862+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  - 'aedcbb06 PROGRESS.md: start task-20260726-102520 (resolve PR #563 conflict, refresh
+    DB catalog)'
+  note: periodic checkpoint
+- at: '2026-07-26T17:40:22.385547+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  - 'aedcbb06 PROGRESS.md: start task-20260726-102520 (resolve PR #563 conflict, refresh
+    DB catalog)'
+  note: periodic checkpoint
+- at: '2026-07-26T17:47:30.907809+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - drizzle/0264_search_perf_gin_trgm_indexes.sql
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  - 'aedcbb06 PROGRESS.md: start task-20260726-102520 (resolve PR #563 conflict, refresh
+    DB catalog)'
+  note: periodic checkpoint
+- at: '2026-07-26T17:59:45.980725+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md
+  - drizzle/0264_search_perf_gin_trgm_indexes.sql
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  remaining_steps:
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session)."
+  - Open PR.
+  recent_commits:
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  - 'aedcbb06 PROGRESS.md: start task-20260726-102520 (resolve PR #563 conflict, refresh
+    DB catalog)'
+  note: periodic checkpoint
+- at: '2026-07-26T18:05:26.423958+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  remaining_steps:
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session)."
+  - Open PR.
+  recent_commits:
+  - 'ba6fc5f3 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T18:32:51.909492+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  remaining_steps:
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session)."
+  - Open PR.
+  recent_commits:
+  - 'ba6fc5f3 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: worker started (resume=1, lifetime invocation 2/20, pre-flight passed)
+- at: '2026-07-26T18:51:00.456085+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  remaining_steps:
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session)."
+  - Open PR.
+  recent_commits:
+  - 'ba6fc5f3 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T18:56:14.989416+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  remaining_steps:
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session)."
+  - Open PR.
+  recent_commits:
+  - '5463aad0 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: periodic checkpoint
+- at: '2026-07-26T19:01:17.677587+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5463aad0 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: periodic checkpoint
+- at: '2026-07-26T19:12:44.248651+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/OS.yaml
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  remaining_steps:
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session)."
+  - Open PR.
+  recent_commits:
+  - '5463aad0 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: worker started (resume=1, lifetime invocation 3/20, pre-flight passed)
+- at: '2026-07-26T19:19:58.832042+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  - Committed the `ai-os/OS.yaml` index entry pointing at the EXPLAIN doc (was left
+    uncommitted at the prior checkpoint).
+  - "Opened PR #582 (https://github.com/FChecklist/compliance-tracker/pull/582) \u2014\
+    \ CI running at time of this update (Guardrail Presence Check, Documentation Sentinel\
+    \ Check, Secret Scanning, Security Pattern Check already passing; rest pending)."
+  remaining_steps:
+  - 'CI to finish on PR #582 and merge (no direct-to-main push per Rule 6).'
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session; can happen independent of / after\
+    \ PR merge since the migration file itself is inert until applied)."
+  recent_commits:
+  - 'c2bd4038 PROGRESS.md: record OS.yaml commit + PR #582 opened for V2-20'
+  - '65017f48 ai-os/OS.yaml: index the V2-20 EXPLAIN ANALYZE search-perf doc'
+  - '5463aad0 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  note: periodic checkpoint
+- at: '2026-07-26T19:36:12.539755+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  - Committed the `ai-os/OS.yaml` index entry pointing at the EXPLAIN doc (was left
+    uncommitted at the prior checkpoint).
+  - "Opened PR #582 (https://github.com/FChecklist/compliance-tracker/pull/582) \u2014\
+    \ CI running at time of this update (Guardrail Presence Check, Documentation Sentinel\
+    \ Check, Secret Scanning, Security Pattern Check already passing; rest pending)."
+  remaining_steps:
+  - 'CI to finish on PR #582 and merge (no direct-to-main push per Rule 6).'
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session; can happen independent of / after\
+    \ PR merge since the migration file itself is inert until applied)."
+  recent_commits:
+  - 'c2bd4038 PROGRESS.md: record OS.yaml commit + PR #582 opened for V2-20'
+  - '65017f48 ai-os/OS.yaml: index the V2-20 EXPLAIN ANALYZE search-perf doc'
+  - '5463aad0 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:36:54.367801+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  - Committed the `ai-os/OS.yaml` index entry pointing at the EXPLAIN doc (was left
+    uncommitted at the prior checkpoint).
+  - "Opened PR #582 (https://github.com/FChecklist/compliance-tracker/pull/582) \u2014\
+    \ CI running at time of this update (Guardrail Presence Check, Documentation Sentinel\
+    \ Check, Secret Scanning, Security Pattern Check already passing; rest pending)."
+  remaining_steps:
+  - 'CI to finish on PR #582 and merge (no direct-to-main push per Rule 6).'
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session; can happen independent of / after\
+    \ PR merge since the migration file itself is inert until applied)."
+  recent_commits:
+  - 'c2bd4038 PROGRESS.md: record OS.yaml commit + PR #582 opened for V2-20'
+  - '65017f48 ai-os/OS.yaml: index the V2-20 EXPLAIN ANALYZE search-perf doc'
+  - '5463aad0 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:37:28.687261+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  - Committed the `ai-os/OS.yaml` index entry pointing at the EXPLAIN doc (was left
+    uncommitted at the prior checkpoint).
+  - "Opened PR #582 (https://github.com/FChecklist/compliance-tracker/pull/582) \u2014\
+    \ CI running at time of this update (Guardrail Presence Check, Documentation Sentinel\
+    \ Check, Secret Scanning, Security Pattern Check already passing; rest pending)."
+  remaining_steps:
+  - 'CI to finish on PR #582 and merge (no direct-to-main push per Rule 6).'
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session; can happen independent of / after\
+    \ PR merge since the migration file itself is inert until applied)."
+  recent_commits:
+  - 'c2bd4038 PROGRESS.md: record OS.yaml commit + PR #582 opened for V2-20'
+  - '65017f48 ai-os/OS.yaml: index the V2-20 EXPLAIN ANALYZE search-perf doc'
+  - '5463aad0 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:48:20.468265+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  - Committed the `ai-os/OS.yaml` index entry pointing at the EXPLAIN doc (was left
+    uncommitted at the prior checkpoint).
+  - "Opened PR #582 (https://github.com/FChecklist/compliance-tracker/pull/582) \u2014\
+    \ CI running at time of this update (Guardrail Presence Check, Documentation Sentinel\
+    \ Check, Secret Scanning, Security Pattern Check already passing; rest pending)."
+  remaining_steps:
+  - 'CI to finish on PR #582 and merge (no direct-to-main push per Rule 6).'
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session; can happen independent of / after\
+    \ PR merge since the migration file itself is inert until applied)."
+  recent_commits:
+  - 'c2bd4038 PROGRESS.md: record OS.yaml commit + PR #582 opened for V2-20'
+  - '65017f48 ai-os/OS.yaml: index the V2-20 EXPLAIN ANALYZE search-perf doc'
+  - '5463aad0 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:49:05.202007+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  - Committed the `ai-os/OS.yaml` index entry pointing at the EXPLAIN doc (was left
+    uncommitted at the prior checkpoint).
+  - "Opened PR #582 (https://github.com/FChecklist/compliance-tracker/pull/582) \u2014\
+    \ CI running at time of this update (Guardrail Presence Check, Documentation Sentinel\
+    \ Check, Secret Scanning, Security Pattern Check already passing; rest pending)."
+  remaining_steps:
+  - 'CI to finish on PR #582 and merge (no direct-to-main push per Rule 6).'
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session; can happen independent of / after\
+    \ PR merge since the migration file itself is inert until applied)."
+  recent_commits:
+  - 'c2bd4038 PROGRESS.md: record OS.yaml commit + PR #582 opened for V2-20'
+  - '65017f48 ai-os/OS.yaml: index the V2-20 EXPLAIN ANALYZE search-perf doc'
+  - '5463aad0 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:49:39.753561+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  - Committed the `ai-os/OS.yaml` index entry pointing at the EXPLAIN doc (was left
+    uncommitted at the prior checkpoint).
+  - "Opened PR #582 (https://github.com/FChecklist/compliance-tracker/pull/582) \u2014\
+    \ CI running at time of this update (Guardrail Presence Check, Documentation Sentinel\
+    \ Check, Secret Scanning, Security Pattern Check already passing; rest pending)."
+  remaining_steps:
+  - 'CI to finish on PR #582 and merge (no direct-to-main push per Rule 6).'
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session; can happen independent of / after\
+    \ PR merge since the migration file itself is inert until applied)."
+  recent_commits:
+  - 'c2bd4038 PROGRESS.md: record OS.yaml commit + PR #582 opened for V2-20'
+  - '65017f48 ai-os/OS.yaml: index the V2-20 EXPLAIN ANALYZE search-perf doc'
+  - '5463aad0 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:51:49.551285+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  - Committed the `ai-os/OS.yaml` index entry pointing at the EXPLAIN doc (was left
+    uncommitted at the prior checkpoint).
+  - "Opened PR #582 (https://github.com/FChecklist/compliance-tracker/pull/582) \u2014\
+    \ CI running at time of this update (Guardrail Presence Check, Documentation Sentinel\
+    \ Check, Secret Scanning, Security Pattern Check already passing; rest pending)."
+  remaining_steps:
+  - 'CI to finish on PR #582 and merge (no direct-to-main push per Rule 6).'
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session; can happen independent of / after\
+    \ PR merge since the migration file itself is inert until applied)."
+  recent_commits:
+  - 'c2bd4038 PROGRESS.md: record OS.yaml commit + PR #582 opened for V2-20'
+  - '65017f48 ai-os/OS.yaml: index the V2-20 EXPLAIN ANALYZE search-perf doc'
+  - '5463aad0 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:52:38.610140+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - "Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no collision found \u2014\
+    \ grepped for search-service/search-perf/V2-20/gin_trgm, none active)."
+  - "Re-verified the gap is still real: `search-service.ts`'s `searchAll()` uses plain\
+    \ `ilike()` against `compliance_items.title/description`, `tasks.title/description`,\
+    \ `clients.name`, org-scoped. No GIN/trgm index existed for any of these in git,\
+    \ and (surprisingly) mostly not live either \u2014 see drift note below."
+  - Ran real `EXPLAIN (ANALYZE, BUFFERS)` against the live `verdian-ai` Supabase DB
+    (project `pcrjmlpuqsbocqfwoxod`) at realistic org-scale volume (30k `compliance_items`
+    / 50k `tasks` / 5k `clients` under real org `org_001`, vs. this DB's actual live
+    counts of 178/1899/16), both before and after adding `pg_trgm` GIN indexes. Full
+    plans and methodology in `ai-os/EXPLAIN_ANALYZE_SEARCH_PERF_2026-07-26.md`.
+  - "Wrote `drizzle/0264_search_perf_gin_trgm_indexes.sql` \u2014 adds the 4 missing\
+    \ GIN trgm indexes (`compliance_items.description`, `tasks.title`, `tasks.description`,\
+    \ `clients.name`) plus captures one pre-existing but **undocumented** live index\
+    \ (`idx_ct2_ci_title_trgm` on `compliance_items.title`) under its existing name\
+    \ so a fresh environment matches production. **Not applied live** \u2014 Tier2\
+    \ (migration + live DB) holds for Owner sign-off per this task's constraints."
+  - "No `search-service.ts` code change needed: `pg_trgm`'s opclass registers support\
+    \ for the `ILIKE` (`~~*`) operator directly, so the existing `ilike()` calls become\
+    \ index-eligible the moment the index exists \u2014 no query rewrite required."
+  - Committed the `ai-os/OS.yaml` index entry pointing at the EXPLAIN doc (was left
+    uncommitted at the prior checkpoint).
+  - "Opened PR #582 (https://github.com/FChecklist/compliance-tracker/pull/582) \u2014\
+    \ CI running at time of this update (Guardrail Presence Check, Documentation Sentinel\
+    \ Check, Secret Scanning, Security Pattern Check already passing; rest pending)."
+  remaining_steps:
+  - 'CI to finish on PR #582 and merge (no direct-to-main push per Rule 6).'
+  - "Owner sign-off + live `apply_migration` of `drizzle/0264_search_perf_gin_trgm_indexes.sql`\
+    \ (Tier2 hold \u2014 not done by this session; can happen independent of / after\
+    \ PR merge since the migration file itself is inert until applied)."
+  recent_commits:
+  - 'c2bd4038 PROGRESS.md: record OS.yaml commit + PR #582 opened for V2-20'
+  - '65017f48 ai-os/OS.yaml: index the V2-20 EXPLAIN ANALYZE search-perf doc'
+  - '5463aad0 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:53:11.519076+00:00'
+  status: failed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'c2bd4038 PROGRESS.md: record OS.yaml commit + PR #582 opened for V2-20'
+  - '65017f48 ai-os/OS.yaml: index the V2-20 EXPLAIN ANALYZE search-perf doc'
+  - '5463aad0 V2-20: search performance EXPLAIN ANALYZE + pg_trgm GIN index'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+execution_seconds: 2868
+restart_count: 2
+token_usage:
+  input_tokens: 102
+  cache_creation_input_tokens: 120420
+  cache_read_input_tokens: 4908352
+  output_tokens: 54498
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 120420
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 724
+    cache_read_input_tokens: 142854
+    cache_creation_input_tokens: 1250
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1250
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+duplicate_of: task-20260726-194917-rca-task-20260726-172004-search-performa
+superseded_reason: Collapsed by plan_backlog_completion.py dedup 2026-07-27 -- same
+  underlying issue as task-20260726-194917-rca-task-20260726-172004-search-performa
+  (4 total attempts in chain).
+superseded_at: '2026-07-27T03:38:37.279257+00:00'

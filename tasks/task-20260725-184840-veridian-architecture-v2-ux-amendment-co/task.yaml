@@ -1,0 +1,270 @@
+id: task-20260725-184840-veridian-architecture-v2-ux-amendment-co
+title: veridian-architecture-v2-ux-amendment-corrected
+status: completed
+repo: claude-control
+branch: worker/task-20260725-184840-veridian-architecture-v2-ux-amendment-co
+workspace: /opt/veridian/ai-os/tasks/task-20260725-184840-veridian-architecture-v2-ux-amendment-co/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260725-184840-veridian-architecture-v2-ux-amendment-co
+service: veridian-worker@task-20260725-184840-veridian-architecture-v2-ux-amendment-co.service
+created_at: '2026-07-25T18:48:41.907100+00:00'
+last_checkpoint_at: '2026-07-25T19:03:02.886822+00:00'
+completed_steps: &id002
+- 'Read PR #72 diff/body in full (gh pr view/diff 72) to understand exact prior wording
+  and both rejection reasons.'
+- 'Read the real verbatim source file in full: /opt/veridian/ai-os/OWNER_DIRECTIVES/BROWSER_NATIVE_END_USER_ARCHITECTURE_2026-07-25.txt
+  (61 lines; includes an explicit interpretive note clearly separated from the Owner''s
+  verbatim words).'
+- 'Read registries.credit_spend_governance definition in ai-os/MASTER_INDEX.yaml (line
+  1893): "software first, AI second, minimal credits only when needed", propose/report
+  two-gate ledger.'
+- Verified byte-for-byte (grep -F) every quote intended for use against the source
+  file -- all 9 candidate quotes FOUND.
+- Checked phases 3/4/6-10 for G05/mandatory-AI mentions -- none affected by the corrected
+  reading (existing references describe G05 as the standard AI-call boundary, not
+  a mandatory per-request hop). No changes needed there.
+- 'Re-derived phase_2 and phase_5 amendments from scratch (not a patch of PR #72''s
+  diff) with corrected citation + G05-as-escalation-only reconciled against credit_spend_governance.'
+- Applied amendment to ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml (phase_2
+  objective+scope, phase_5 objective+scope+integration_point+success_criteria).
+- 'Hit a YAML syntax bug while editing (unquoted plain scalars containing `: ` and
+  ` #72` -- the latter is treated as a comment start by the YAML parser); fixed by
+  quoting the affected objective/scope fields and rewording "PR #72" -> "pull request
+  72" where still unquoted. Re-validated: `python3 -c "import yaml; ... assert len(d[''phases''])==10"`
+  now passes.'
+- 'Caught and fixed a second citation-accuracy bug during my own verification pass:
+  I had quoted "software first, AI second, minimal credits only when **genuinely**
+  needed" as if verbatim from MASTER_INDEX.yaml, but the real text there (registries.credit_spend_governance.mechanism)
+  says "...only when needed" (no "genuinely"). Corrected the quote to the exact real
+  wording and moved "genuinely" to an unquoted paraphrase clause.'
+- Ran full success-criteria verification (see final checkpoint below) -- all pass.
+remaining_steps: &id003
+- Commit and push; open PR.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-25T18:48:46.149829+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - d79c54d Auto-sync 3 server task(s) to master controller
+  - 'ef60e5f Merge pull request #73 from FChecklist/worker/task-20260725-180624-end-user-prompt-library-generation'
+  - 5d25299 Record end-user prompt library extension + first real batch in blocker
+    doc and MASTER_INDEX
+  - 80ec5c5 Add enduser_domain generation mode targeting (End User Role x Business
+    Domain), extend ingest validation
+  - 8ffb7f1 Extend CHATGPT_PROMPT_SCHEMA with End User Role + Industry columns for
+    the end-user prompt library
+  - '5bc908c Resolve veridian-architecture-v2-target-repo-anchor: Owner clarified
+    in chat 2026-07-25 the browser-native platform merges into the existing end-user
+    product -- compliance-tracker confirmed correct target repo'
+  - '3dbb492 Fix systemic cross-repo auto-dispatch gap: auto_phase_continuation.py
+    always dispatched to a single default repo with no per-phase override, so every
+    phase in VERIDIAN_ARCHITECTURE_V2 (all 9 of its compliance-tracker-scoped phases)
+    would have hit the same manual-intervention wall phase_1 just did. Added target_repo
+    field support (dispatch() now uses next_praw[target_repo] when set), and moved
+    the malformed repo-note text out of external_depends_on (where it was misread
+    as an unparseable, permanently-blocking dependency) into target_repo/target_repo_note
+    for all 8 remaining phases. Verified: dry-run now correctly shows phase_1 as already_dispatched,
+    will correctly auto-target compliance-tracker for phase_2 onward without further
+    manual intervention.'
+  - '836c9c0 Fix phase_1 dispatch-blocking bug: the audit task recorded a non-blocking
+    scope-correction note in external_depends_on (a field auto_phase_continuation.py
+    parses for real cross-plan blocking deps), which made a mechanically-unparseable
+    string permanently block phase_1 despite the note itself saying it proceeds regardless.
+    Moved the real content to target_repo/target_repo_note, cleared external_depends_on
+    to reflect there is no real blocking dependency.'
+  - 6054432 Record Owner-approved resume of auto-phase-continuation cron -- Task 2
+    gap-analysis re-verification (PR 71) confirmed clean
+  - af51040 Auto-sync 1 server task(s) to master controller
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-25T18:53:47.414107+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml
+  completed_steps:
+  - 'Read PR #72 diff/body in full (gh pr view/diff 72) to understand exact prior
+    wording and both rejection reasons.'
+  - 'Read the real verbatim source file in full: /opt/veridian/ai-os/OWNER_DIRECTIVES/BROWSER_NATIVE_END_USER_ARCHITECTURE_2026-07-25.txt
+    (61 lines; includes an explicit interpretive note clearly separated from the Owner''s
+    verbatim words).'
+  - 'Read registries.credit_spend_governance definition in ai-os/MASTER_INDEX.yaml
+    (line 1893): "software first, AI second, minimal credits only when needed", propose/report
+    two-gate ledger.'
+  - Verified byte-for-byte (grep -F) every quote intended for use against the source
+    file -- all 9 candidate quotes FOUND.
+  - Checked phases 3/4/6-10 for G05/mandatory-AI mentions -- none affected by the
+    corrected reading (existing references describe G05 as the standard AI-call boundary,
+    not a mandatory per-request hop). No changes needed there.
+  remaining_steps:
+  - 'Re-derive phase_2 and phase_5 amendments from scratch (not a patch of PR #72''s
+    diff) with corrected citation + G05-as-escalation-only reconciled against credit_spend_governance.'
+  - Apply amendment to ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml.
+  - Run success-criteria verification commands (yaml parses, 10 phases, citation grep,
+    credit_spend_governance grep).
+  - Commit and push; open PR.
+  recent_commits:
+  - d79c54d Auto-sync 3 server task(s) to master controller
+  - 'ef60e5f Merge pull request #73 from FChecklist/worker/task-20260725-180624-end-user-prompt-library-generation'
+  - 5d25299 Record end-user prompt library extension + first real batch in blocker
+    doc and MASTER_INDEX
+  - 80ec5c5 Add enduser_domain generation mode targeting (End User Role x Business
+    Domain), extend ingest validation
+  - 8ffb7f1 Extend CHATGPT_PROMPT_SCHEMA with End User Role + Industry columns for
+    the end-user prompt library
+  - '5bc908c Resolve veridian-architecture-v2-target-repo-anchor: Owner clarified
+    in chat 2026-07-25 the browser-native platform merges into the existing end-user
+    product -- compliance-tracker confirmed correct target repo'
+  - '3dbb492 Fix systemic cross-repo auto-dispatch gap: auto_phase_continuation.py
+    always dispatched to a single default repo with no per-phase override, so every
+    phase in VERIDIAN_ARCHITECTURE_V2 (all 9 of its compliance-tracker-scoped phases)
+    would have hit the same manual-intervention wall phase_1 just did. Added target_repo
+    field support (dispatch() now uses next_praw[target_repo] when set), and moved
+    the malformed repo-note text out of external_depends_on (where it was misread
+    as an unparseable, permanently-blocking dependency) into target_repo/target_repo_note
+    for all 8 remaining phases. Verified: dry-run now correctly shows phase_1 as already_dispatched,
+    will correctly auto-target compliance-tracker for phase_2 onward without further
+    manual intervention.'
+  - '836c9c0 Fix phase_1 dispatch-blocking bug: the audit task recorded a non-blocking
+    scope-correction note in external_depends_on (a field auto_phase_continuation.py
+    parses for real cross-plan blocking deps), which made a mechanically-unparseable
+    string permanently block phase_1 despite the note itself saying it proceeds regardless.
+    Moved the real content to target_repo/target_repo_note, cleared external_depends_on
+    to reflect there is no real blocking dependency.'
+  - 6054432 Record Owner-approved resume of auto-phase-continuation cron -- Task 2
+    gap-analysis re-verification (PR 71) confirmed clean
+  - af51040 Auto-sync 1 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-25T18:57:50.487710+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Read PR #72 diff/body in full (gh pr view/diff 72) to understand exact prior
+    wording and both rejection reasons.'
+  - 'Read the real verbatim source file in full: /opt/veridian/ai-os/OWNER_DIRECTIVES/BROWSER_NATIVE_END_USER_ARCHITECTURE_2026-07-25.txt
+    (61 lines; includes an explicit interpretive note clearly separated from the Owner''s
+    verbatim words).'
+  - 'Read registries.credit_spend_governance definition in ai-os/MASTER_INDEX.yaml
+    (line 1893): "software first, AI second, minimal credits only when needed", propose/report
+    two-gate ledger.'
+  - Verified byte-for-byte (grep -F) every quote intended for use against the source
+    file -- all 9 candidate quotes FOUND.
+  - Checked phases 3/4/6-10 for G05/mandatory-AI mentions -- none affected by the
+    corrected reading (existing references describe G05 as the standard AI-call boundary,
+    not a mandatory per-request hop). No changes needed there.
+  - 'Re-derived phase_2 and phase_5 amendments from scratch (not a patch of PR #72''s
+    diff) with corrected citation + G05-as-escalation-only reconciled against credit_spend_governance.'
+  - Applied amendment to ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml
+    (phase_2 objective+scope, phase_5 objective+scope+integration_point+success_criteria).
+  - 'Hit a YAML syntax bug while editing (unquoted plain scalars containing `: ` and
+    ` #72` -- the latter is treated as a comment start by the YAML parser); fixed
+    by quoting the affected objective/scope fields and rewording "PR #72" -> "pull
+    request 72" where still unquoted. Re-validated: `python3 -c "import yaml; ...
+    assert len(d[''phases''])==10"` now passes.'
+  - 'Caught and fixed a second citation-accuracy bug during my own verification pass:
+    I had quoted "software first, AI second, minimal credits only when **genuinely**
+    needed" as if verbatim from MASTER_INDEX.yaml, but the real text there (registries.credit_spend_governance.mechanism)
+    says "...only when needed" (no "genuinely"). Corrected the quote to the exact
+    real wording and moved "genuinely" to an unquoted paraphrase clause.'
+  - Ran full success-criteria verification (see final checkpoint below) -- all pass.
+  remaining_steps:
+  - Commit and push; open PR.
+  recent_commits:
+  - '1bd5b91 Re-derive VERIDIAN v2 phase_2/phase_5 UX amendment, fixing both PR #72
+    AUDIT:FAIL defects'
+  - d79c54d Auto-sync 3 server task(s) to master controller
+  - 'ef60e5f Merge pull request #73 from FChecklist/worker/task-20260725-180624-end-user-prompt-library-generation'
+  - 5d25299 Record end-user prompt library extension + first real batch in blocker
+    doc and MASTER_INDEX
+  - 80ec5c5 Add enduser_domain generation mode targeting (End User Role x Business
+    Domain), extend ingest validation
+  - 8ffb7f1 Extend CHATGPT_PROMPT_SCHEMA with End User Role + Industry columns for
+    the end-user prompt library
+  - '5bc908c Resolve veridian-architecture-v2-target-repo-anchor: Owner clarified
+    in chat 2026-07-25 the browser-native platform merges into the existing end-user
+    product -- compliance-tracker confirmed correct target repo'
+  - '3dbb492 Fix systemic cross-repo auto-dispatch gap: auto_phase_continuation.py
+    always dispatched to a single default repo with no per-phase override, so every
+    phase in VERIDIAN_ARCHITECTURE_V2 (all 9 of its compliance-tracker-scoped phases)
+    would have hit the same manual-intervention wall phase_1 just did. Added target_repo
+    field support (dispatch() now uses next_praw[target_repo] when set), and moved
+    the malformed repo-note text out of external_depends_on (where it was misread
+    as an unparseable, permanently-blocking dependency) into target_repo/target_repo_note
+    for all 8 remaining phases. Verified: dry-run now correctly shows phase_1 as already_dispatched,
+    will correctly auto-target compliance-tracker for phase_2 onward without further
+    manual intervention.'
+  - '836c9c0 Fix phase_1 dispatch-blocking bug: the audit task recorded a non-blocking
+    scope-correction note in external_depends_on (a field auto_phase_continuation.py
+    parses for real cross-plan blocking deps), which made a mechanically-unparseable
+    string permanently block phase_1 despite the note itself saying it proceeds regardless.
+    Moved the real content to target_repo/target_repo_note, cleared external_depends_on
+    to reflect there is no real blocking dependency.'
+  - 6054432 Record Owner-approved resume of auto-phase-continuation cron -- Task 2
+    gap-analysis re-verification (PR 71) confirmed clean
+  note: quality gates passed, pushed branch worker/task-20260725-184840-veridian-architecture-v2-ux-amendment-co,
+    awaiting review
+- at: '2026-07-25T19:03:02.886822+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '1bd5b91 Re-derive VERIDIAN v2 phase_2/phase_5 UX amendment, fixing both PR #72
+    AUDIT:FAIL defects'
+  - d79c54d Auto-sync 3 server task(s) to master controller
+  - 'ef60e5f Merge pull request #73 from FChecklist/worker/task-20260725-180624-end-user-prompt-library-generation'
+  - 5d25299 Record end-user prompt library extension + first real batch in blocker
+    doc and MASTER_INDEX
+  - 80ec5c5 Add enduser_domain generation mode targeting (End User Role x Business
+    Domain), extend ingest validation
+  - 8ffb7f1 Extend CHATGPT_PROMPT_SCHEMA with End User Role + Industry columns for
+    the end-user prompt library
+  - '5bc908c Resolve veridian-architecture-v2-target-repo-anchor: Owner clarified
+    in chat 2026-07-25 the browser-native platform merges into the existing end-user
+    product -- compliance-tracker confirmed correct target repo'
+  - '3dbb492 Fix systemic cross-repo auto-dispatch gap: auto_phase_continuation.py
+    always dispatched to a single default repo with no per-phase override, so every
+    phase in VERIDIAN_ARCHITECTURE_V2 (all 9 of its compliance-tracker-scoped phases)
+    would have hit the same manual-intervention wall phase_1 just did. Added target_repo
+    field support (dispatch() now uses next_praw[target_repo] when set), and moved
+    the malformed repo-note text out of external_depends_on (where it was misread
+    as an unparseable, permanently-blocking dependency) into target_repo/target_repo_note
+    for all 8 remaining phases. Verified: dry-run now correctly shows phase_1 as already_dispatched,
+    will correctly auto-target compliance-tracker for phase_2 onward without further
+    manual intervention.'
+  - '836c9c0 Fix phase_1 dispatch-blocking bug: the audit task recorded a non-blocking
+    scope-correction note in external_depends_on (a field auto_phase_continuation.py
+    parses for real cross-plan blocking deps), which made a mechanically-unparseable
+    string permanently block phase_1 despite the note itself saying it proceeds regardless.
+    Moved the real content to target_repo/target_repo_note, cleared external_depends_on
+    to reflect there is no real blocking dependency.'
+  - 6054432 Record Owner-approved resume of auto-phase-continuation cron -- Task 2
+    gap-analysis re-verification (PR 71) confirmed clean
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/74'
+execution_seconds: 544
+restart_count: 0
+token_usage:
+  input_tokens: 108
+  cache_creation_input_tokens: 110652
+  cache_read_input_tokens: 5227965
+  output_tokens: 37794
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 110652
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 555
+    cache_read_input_tokens: 132674
+    cache_creation_input_tokens: 1662
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1662
+    type: message
+  speed: standard
+master_synced_at: '2026-07-25T19:30:09.362818+00:00'

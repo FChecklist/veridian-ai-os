@@ -1,0 +1,31 @@
+## OBJECTIVE
+Fix 3 real, audit-confirmed gaps on PROJEXA PR #60 ("Company/Dept/Project dashboard hierarchy", branch `feat/company-dept-project-dashboard`) before it can merge: an unpushed cross-repo dependency, a misleading error state, and a silent pagination cap.
+
+## KNOWN_CONTEXT
+Real, audit-confirmed findings, do not re-derive:
+1. The category-distribution charts depend on a VERIDIAN endpoint (`GET /v1/projexa/reports/category-boq-amounts`) that exists only on an unpushed local branch in the compliance-tracker checkout at `/opt/veridian/repos/compliance-tracker` -- the original worker deliberately did not push/PR it, leaving that decision for a live session. That decision is now made: push it and open a real PR (Owner-delegated authorization to proceed, per this session's standing decision authority) -- find the real unpushed commit(s) via `git log` / `git branch` in that checkout before assuming its exact state.
+2. `src/components/CategoryDistributionCharts.tsx` treats a failed fetch (e.g. the 502 this dependency gap causes today) identically to a genuinely empty category list, showing the same "No BOQ line items found for this project yet." message for both -- misleading, must be a distinct error/pending state.
+3. `revenueForProjectInRange()` in the project-details route silently caps at `MAX_INVOICE_PAGES=4` (800 invoices) per date-ranged request with no indication returned to the caller if the cap was hit -- a high-invoice-volume org's date-ranged revenue could be silently undercounted.
+
+## SCOPE
+1. In the compliance-tracker checkout, find the real unpushed `category-boq-amounts` branch/commits, push the branch, and open a real PR for it (separate PR, compliance-tracker repo) -- this unblocks PROJEXA PR #60's category-distribution charts for real. Do not merge either PR yourself.
+2. Fix `CategoryDistributionCharts.tsx` to distinguish a fetch failure (network/5xx error) from a genuinely empty result -- show a real "unable to load category data" state for the former, keep the existing empty-state message only for the latter.
+3. Fix `revenueForProjectInRange()` to surface whether `MAX_INVOICE_PAGES` was hit (e.g. a `truncated: boolean` field in its return value) and have the calling UI show a real "figures may be incomplete for this date range" indicator when true, rather than silently returning a possibly-undercounted number.
+4. Perform a real live browser smoke test of `/dashboard/hierarchy` and `/dashboard/overview` -- the original PR's own PROGRESS.md disclosed this was never done. Use the dev server or a preview deployment; confirm both pages render without a hard error.
+
+## SUCCESS_CRITERIA
+- A real test proving `CategoryDistributionCharts.tsx` renders a distinct error state when the fetch fails vs. when it succeeds with zero categories.
+- A real test proving `revenueForProjectInRange()` returns `truncated: true` when a date range's invoice count exceeds the page cap, and `false` otherwise.
+- Verify by actually running:
+`npx tsc --noEmit`
+`bun test` (scoped to touched files)
+`gh pr view <the new compliance-tracker PR number> --json state` (confirm it was actually opened, not just claimed)
+
+## EXPECTED_OUTPUT
+Push the 3 fixes to the SAME projexa branch (`feat/company-dept-project-dashboard`, PR #60 already open), plus the separate new compliance-tracker PR for the category-boq-amounts endpoint. Requires a fresh supervisor audit on both before merge; do not merge either yourself even after a PASS verdict.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not modify the real company-scope security check (`requireCompanyScope()`) -- the audit confirmed it is correct and real.
+
+## COMPLEXITY_TIER
+judgment

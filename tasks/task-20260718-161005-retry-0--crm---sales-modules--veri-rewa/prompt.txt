@@ -1,0 +1,41 @@
+VERIDIAN Review Framework gap-closure: CRM & Sales Modules / VERI Reward (Gamification & Referral).
+This covers 11 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Low] VERI Reward (Gamification & Referral): CRUD & Approval Workflow Correctness
+  Gap: Full read/write lifecycle exists (award, check-unlock, redeem-via-leaderboard-display, streak check-in) but is entirely unexercised in live data (0 rows across points_ledger/unlocks/streaks/referrals) despite being wired into real trigger points (documents, compliance, onboarding, auth).
+  Recommended approach: Manually trigger one of the 4 wired call sites (e.g. upload a document) in a test org and confirm a veri_reward_points_ledger row is created
+- [Medium] VERI Reward (Gamification & Referral): Business Rule & Validation Accuracy
+  Gap: Achievement unlock logic (checkAndUnlockAchievements, veri-reward-service.ts:90) compares progressValue against targetValue per achievement_definitions row, but with 0 unlocks ever recorded live, the correctness of this comparison against real progress data is unverified.
+  Recommended approach: Add unit tests + a live smoke test as described in the CRUD recommendation above
+- [Low] VERI Reward (Gamification & Referral): Multi-Tenant / Multi-Project Isolation
+  Gap: Unlike Sales Engine, this system is genuinely org-scoped ('free and on-by-default for every org' per the page's own header comment); getOrgLeaderboard/awardPoints take orgId.
+  Recommended approach: Confirm RLS is forced on veri_reward_* tables (verified live: all 5 tables show relrowsecurity=true, relforcerowsecurity=true)
+- [Medium] VERI Reward (Gamification & Referral): Reporting & Export Accuracy
+  Gap: listPointsHistory()/getOrgLeaderboard() power the in-app 'Recent activity'/leaderboard cards, but there is no export or admin-level cross-org rollup report for VERI Reward engagement.
+  Recommended approach: Add an admin-facing engagement report (points awarded/redeemed, achievement unlock rate, referral conversion rate)
+- [Medium] VERI Reward (Gamification & Referral): AI Copilot / Worker Agent Integration Depth
+  Gap: The module itself is not an 'AI Copilot' in the LLM sense -- it's deterministic gamification logic (points math, streak counters, achievement threshold checks), which is appropriate and doesn't need an AI copilot to be excellent at what it does.
+  Recommended approach: Low priority: could add an AI-generated personalized nudge ('you're 2 points from your next achievement') purely as a nice-to-have
+- [Low] VERI Reward (Gamification & Referral): Audit Trail & Change History
+  Gap: veri_reward_points_ledger IS itself an audit trail (delta, sourceType, reason, createdAt per entry, shown in 'Recent activity'); RLS forced on it.
+  Recommended approach: N/A
+- [Medium] VERI Reward (Gamification & Referral): Search, Filter & Bulk Operations
+  Gap: Points history list has no search/filter/date-range; leaderboard is a fixed top-10 with no pagination.
+  Recommended approach: Add pagination/date-range filtering to points history and leaderboard
+- [Medium] VERI Reward (Gamification & Referral): Notification & Alert Trigger Correctness
+  Gap: Achievement unlocks and referral conversions have no confirmed push/toast/notification-table trigger beyond what's visible when a user happens to revisit the /rewards page themselves.
+  Recommended approach: Add a toast/notification at the moment of unlock, not just a passive page state
+- [Medium] VERI Reward (Gamification & Referral): Documentation & In-App Help Coverage
+  Gap: Rewards page has clear labels (STATUS_LABEL map for referral states) but no explanatory help text about how points are earned or achievement rules.
+  Recommended approach: Add a short 'how it works' panel or link
+- [High] VERI Reward (Gamification & Referral): Data Import/Export Template Fidelity
+  Gap: No import/export for points/achievement/referral data found.
+  Recommended approach: Add a simple CSV export of points history
+- [Medium] VERI Reward (Gamification & Referral): Localization Readiness (multi-currency / multi-language fields)
+  Gap: Points are a unitless integer (no currency); referral link URLs are locale-agnostic (window.location.origin based); no explicit multi-language achievement copy confirmed.
+  Recommended approach: Confirm/wire achievement copy into the platform i18n system
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

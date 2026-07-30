@@ -1,0 +1,57 @@
+You are reverse-engineering a live Odoo ERP instance from the front end only (no source code access — black-box exploration via the UI, using your Playwright MCP browser tools). This is an authorized exercise on the Owner's own personal trial/demo Odoo account — confirmed safe for full read-write testing (creating, confirming, and submitting test records to observe real workflows), NOT a restricted read-only exercise like other repos you may have context on.
+
+## Target system
+
+- URL: https://www.odoo.com/web/login
+- Username: raajat.agarwal@gmail.com
+- Password: Odoo@1234
+
+## Scale and how to handle it
+
+Odoo is a large ERP suite (Sales, CRM, Inventory, Manufacturing, Accounting, Invoicing, Purchase, Point of Sale, Project, Timesheets, Employees, Recruitment, Expenses, Field Service, Helpdesk, Website, eCommerce, Marketing Automation, Email Marketing, SMS Marketing, Events, Livechat, Surveys, Documents, Sign, Approvals, Knowledge, Subscriptions, Fleet, Maintenance, Quality, Repair, Rental, and more) — but this specific trial account will only have a subset actually installed. The Owner's instruction is complete coverage: every module, every function, nothing left out — flows, data, logic, reports, analysis, and BOTH success and error paths. Treat this as a marathon task you resume across multiple invocations, not something to rush or leave shallow to finish faster.
+
+## Step 1 — map before you dive in
+
+Log in. Take a screenshot of the home/apps dashboard. Find the full app switcher (grid icon, or navigate to /odoo/apps) and enumerate EVERY app tile that is actually installed/enabled on this account (not the full Odoo Apps marketplace catalog — just what's live here). Write this to `docs/00-installed-apps-map.md`: app name, one-line purpose, and a priority order you'll work through them in (put foundational apps first — e.g. Contacts, Sales, Inventory, Accounting/Invoicing — since other apps usually reference their data). Commit and push this file before doing anything else. This is your master checklist for the rest of the task — keep it updated as you go (check items off, don't just leave it stale).
+
+## Step 2 — for each app, in priority order, document in full depth
+
+For every module/menu/page/function within the app:
+
+1. **Purpose** — what it's for, in plain language.
+2. **Navigation path** — full breadcrumb (App > Menu > Submenu > Page).
+3. **Page/UI design** — list view vs kanban vs form vs pivot/graph vs dashboard, what's visible, what's conditional.
+4. **Data fields** — every field: label, apparent type, required/optional, validation behavior, default value, and whether it's computed/derived (Odoo has many computed fields — note these specifically, e.g. "Total = sum of line items, read-only, recalculates live").
+5. **Underlying data model (inferred)** — the entity this screen operates on and its relationships to other entities you've already mapped (e.g. "a Sales Order references one Customer (res.partner) and has many Order Lines, each referencing a Product").
+6. **Functionality/logic** — every action available (create, confirm, cancel, duplicate, print, send, validate, post, reconcile, etc.), what business rules/conditions gate them (e.g. "Confirm button only enabled once at least one order line exists"; "cannot delete a posted invoice, only reverse it"), and any workflow/state-machine you can observe (e.g. Quotation → Sales Order → Delivery → Invoice → Paid).
+7. **Inputs and outputs** — for each action: exact inputs required, exact observable output (new record, state change, generated PDF, posted journal entry, etc.).
+8. **Reports and analysis views** — every report, pivot table, graph, dashboard, or "Analysis" menu item tied to this app: what it shows, what it's filtered/grouped by, what data it's computed from.
+9. **Success AND error paths** — actually exercise workflows to completion where safe (e.g. create a quotation using existing demo customers/products, confirm it, validate the delivery, create the invoice, register a payment — document each state transition and what changed). Also deliberately try to trigger validation errors (e.g. try to confirm an order with a required field empty, try an invalid date, try to delete something Odoo won't let you delete) and document the exact error message and what triggered it. Both halves matter equally.
+
+Write one markdown file per app under `docs/<app-slug>/`, further split into one file per major module within large apps if that's cleaner (e.g. `docs/accounting/invoices.md`, `docs/accounting/payments.md`, `docs/accounting/reports.md`). Screenshots land automatically in the wired-up output directory — organize them under `screenshots/<app-slug>/`.
+
+## Working method
+
+- Use Odoo's own built-in demo data (demo customers, demo products, demo employees) wherever it exists rather than inventing new ones — Odoo Online trials come pre-seeded with this.
+- Where you need a record to exist to observe a downstream flow (e.g. need a confirmed Sales Order to see the Delivery flow), create one using demo data, clearly named so it's identifiable as a test record (e.g. include "TEST-" in any free-text name field you control), and note in the doc that you created it and why.
+- After finishing each app, write/update `docs/00-installed-apps-map.md`'s checklist and commit + push. Do this per app, not just at the very end — this task will very likely span many resumed invocations.
+- When (if) you've genuinely covered every installed app, write `docs/SUMMARY.md`: full cross-app data model, full function list, and an honest "Known Gaps" section. Given the scale, it's fine — expected, even — if you run out of budget before reaching this; a thorough partial pass beats a rushed complete one. Keep PROGRESS.md's Remaining section accurate so a resumed instance of you (or a follow-up task) knows exactly where to pick up.
+
+## Hard rules
+
+- Do NOT write the literal password into any committed file.
+- Do NOT process any real financial transaction — no real payment gateway, no real bank connection, no real external SMS/email provider send to a non-demo address. If Odoo's demo environment happens to have live integrations configured, stop short of actually executing them (e.g. you can open the "Register Payment" form and see its fields, but if it would call a real payment processor, don't submit it — note that you stopped there and why).
+- Do NOT fabricate functionality you didn't actually observe. Mark inferences as inferred.
+- Document errors, bugs, and broken pages as-is — that's valuable data, not something to skip past.
+- Commit and push frequently (end of each app/module at minimum), not just at the end.
+## OWNER ESCALATION (2026-07-20) — Odoo is now the sole priority
+
+The Owner has explicitly reinforced this task: 'reverse engineer complete Odoo end to end, every function, every module, every placeholder, every single data entry, input, output, logic, navigation, how it works. Odoo is the main focus.' Other reverse-engineering tasks on this server have been paused to free up compute/subscription capacity specifically for this task. Treat 'every single data entry, input, output, logic' literally — do not summarize a form as 'has the usual fields', actually enumerate every field by name. Do not skip a module because it looks minor. If something is a placeholder/disabled/greyed-out UI element, document that it exists and what state it's in rather than ignoring it. You have a much larger invocation budget for this specific task than the default — do not rush to wrap up early; go deep.
+
+## OWNER CONFIRMATION (2026-07-20): credentials are correct
+
+The Owner has directly confirmed, via a screenshot of the real https://www.odoo.com/web/login page with these exact values typed in, that email raajat.agarwal@gmail.com and password Odoo@1234 ARE the correct, current, valid credentials for this account. Your previous Wrong login/password finding was therefore a FALSE NEGATIVE caused by something in your automation, not bad credentials — do not conclude the credentials are wrong again.
+
+Likely causes of the false negative worth checking: (a) the CDP User-Agent override and/or the sustained-mouse-movement Turnstile workaround may have left the browser context with a stale or mismatched session/cookie state by the time you actually submitted the login form — try the full flow again in a completely fresh isolated browser context, from a clean page load, applying the UA override once at the very start rather than reapplying mid-flow; (b) double check you are filling the actual visible Email/Password fields on https://www.odoo.com/web/login (the ones matching the Owner's screenshot: 'Access and manage your documents and databases from odoo.com' portal login) and not a different/hidden/decoy form element; (c) check for autofill or trailing-whitespace interference introduced by however you typed the values, and consider using a slower, more human-like fill (click field, clear it explicitly, type) rather than a raw value-set.
+
+If it fails again after a genuinely clean retry, capture the exact error text and a screenshot, and describe precisely what you did differently from a normal human login, rather than concluding again that the credentials themselves are wrong.

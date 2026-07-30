@@ -1,0 +1,65 @@
+id: task-20260728-041511-adopted-audit--restore-progress-md-lost-history
+title: 'Audit: restore PROGRESS.md lost history (PR 612)'
+status: blocked
+repo: compliance-tracker
+branch: fix/restore-progress-md-lost-history
+workspace: /opt/veridian/ai-os/tasks/task-20260728-041511-adopted-audit--restore-progress-md-lost-history/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-041511-adopted-audit--restore-progress-md-lost-history
+service: veridian-supervisor@task-20260728-041511-adopted-audit--restore-progress-md-lost-history.service
+created_at: '2026-07-28T04:15:12.935716+00:00'
+last_checkpoint_at: '2026-07-28T04:18:45.670172+00:00'
+completed_steps: &id002
+- Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` (no live collision found; several
+  older
+- 'Root-caused the bug: `buildProductNodes()` in `src/lib/services/capability-tree-service.ts`'
+- Fixed `buildProductNodes()` to query `erpItems` (org-scoped, isActive) and attach
+  a new
+- Removed the now-dead `genericProjectActions()` helper (only caller was the old
+- Exported `GENERIC_ENTITY_ACTIONS`/`GENERIC_PRODUCT_ACTIONS` (were module-private)
+  so both
+- 'Added regression tests in `capability-tree-service.test.ts` (9 tests total, all
+  passing):'
+- 'Verified:'
+- 'Constraint check: did not touch any cron/systemd `.timer` state (no such files
+  touched at'
+- 'Committed, pushed, opened PR #607 against main:'
+remaining_steps: &id003
+- 'Fresh supervisor audit of PR #607, then merge (not by this session).'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T04:15:12.935716+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'fix/restore-progress-md-lost-history' (https://github.com/FChecklist/compliance-tracker/pull/612)
+    -- registered for real audit, not a fresh worker dispatch
+- at: '2026-07-28T04:18:45.670172+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '3f88c80f fix: restore PROGRESS.md history lost during PR 607 merge -- real content-loss
+    bug found 2026-07-28, 4 task-history sections silently dropped instead of kept'
+  - '61b74cd5 Merge pull request #609 from FChecklist/feat/projexa-full-module-chain-api'
+  - d45f5f94 Merge remote-tracking branch 'origin/main' into feat/projexa-full-module-chain-api
+  - '74632493 fix: mockTree spreads real capability-tree-service exports, preventing
+    sibling test regression from mock.module override'
+  - '41a73a7a Merge pull request #603 from FChecklist/worker/task-20260727-153107-re-audit-projexa-erp-e2e-for-100pct-comp'
+  - '37b0345e fix: remove duplicate PROGRESS.md header line from reconstruction'
+  - '0afa4d96 merge: resolve with latest main (keep-both, clean reconstruction now)'
+  - '9d3bd0f4 fix: reconstruct PROGRESS.md correctly -- restore real main history
+    + this task own section only, discard prior bad keep-both merges'
+  - '4edfc273 Merge pull request #607 from FChecklist/worker/task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr'
+  - '5614a9d1 merge: resolve conflicts with current main (keep-both, append-only)'
+  note: "Superboss rejected: https://github.com/FChecklist/compliance-tracker/pull/612\
+    \ \u2014 see review.json for issues"
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/612
+master_synced_at: '2026-07-29T21:04:26.408553+00:00'

@@ -1,0 +1,311 @@
+id: task-20260718-180651-rescue-pr--431
+title: 'Rescue PR #431'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-180651-rescue-pr--431
+workspace: /opt/veridian/ai-os/tasks/task-20260718-180651-rescue-pr--431/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-180651-rescue-pr--431
+service: veridian-worker@task-20260718-180651-rescue-pr--431.service
+created_at: '2026-07-18T18:06:52.103966+00:00'
+last_checkpoint_at: '2026-07-18T18:17:12.913266+00:00'
+completed_steps: &id002
+- Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no existing claim on this PR/branch (only
+  unrelated "431 tables" text matches elsewhere in the file)
+- Found the PR's actual worktree already checked out at /opt/veridian/ai-os/tasks/task-20260718-092002-checks---balances--separation-of-duties/workspace
+  (by the original stopped worker) and did all rebase/test/push work directly there,
+  since the branch was already checked out there and git disallows checking it out
+  twice
+- 'git fetch origin && git rebase origin/main -- rebased cleanly onto a356fdee (#440),
+  ZERO conflicts (2 commits replayed cleanly: "Register active claim" + "Close Checks
+  & Balances gap-closure")'
+- Confirmed no drizzle/*.sql or src/lib/db/schema.ts changes in the final diff (15
+  files, 359 insertions/80 deletions, all src/ + PROGRESS.md + ACTIVE-CLAIMS.yaml)
+  -- this is TIER1, not TIER2
+- bun install --frozen-lockfile -- clean
+- bunx tsc --noEmit -- clean
+- bun run lint -- 0 errors, 3 pre-existing warnings unrelated to this PR's changed
+  files
+- bun test -- 1428 pass, 0 fail, 103 files. The original Unit Tests CI failure was
+  pre-existing main flakiness (mock.module() leaking stale ERP service stubs across
+  test files), already fixed on main by commit ceb18219 before this rebase -- confirmed
+  by finding that exact fix commit in `git log HEAD..origin/main` during investigation
+- git push --force-with-lease origin worker/task-20260718-092002-checks---balances--separation-of-duties
+  (942bb519 -> f0eddbdc)
+- Read the full PR diff myself end to end (all 15 changed files) before writing the
+  audit
+- 'Posted structured `AUDIT: PASS` PR comment with all 8 required fields: https://github.com/FChecklist/compliance-tracker/pull/431#issuecomment-5012371948'
+- Noticed Mandatory Audit Check's first run on the new commit (run 29655400282) failed
+  because it ran on push, before the audit comment existed -- re-triggered it via
+  `gh run rerun 29655400282`
+- CI went fully green on f0eddbdc -- all 7 required branch-protection checks (Lint,
+  Type Check, Build, audit-check, Guardrail Presence Check, Asset Registry Coverage
+  Check, Unit Tests) SUCCESS. Vercel preview context was still PENDING but confirmed
+  (via `gh api .../branches/main/protection`) it is not a required check.
+- TIER1 confirmed (no drizzle/schema.ts changes) + audit verdict PASS -> merged via
+  `gh pr merge 431 --squash --delete-branch` (squash commit faf6c142)
+- Cleaned up remote branch (local delete failed because a different task's worktree
+  still had it checked out -- left that worktree alone, deleted the remote ref directly
+  with `git push origin --delete`)
+- Reported final status
+remaining_steps: &id003
+- 'None -- PR #431 merged.'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T18:06:53.016091+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - a356fdee Fix PROJEXA unable to create Knowledge Base or Wiki pages via API key
+    (#440)
+  - 22325b47 Fix sales invoices silently excluded from PROJEXA revenue reporting (#439)
+  - 5889d192 Add PROJEXA project creation (was the one missing CRUD path) (#438)
+  - 'c99d6c8f Move UI-kit adoption claim from active to recently_completed (merged
+    as PR #436) (#437)'
+  - '3d3f6aef Merge pull request #436 from FChecklist/feat/home-page-merge-panel-fix'
+  - 8a20736f Fix Home page to actually hide VeriChatPanel, matching the agreed UI/UX
+    reference
+  - 'c2eca637 Merge pull request #435 from FChecklist/chore/active-claims-cleanup-ciflake'
+  - 'ae9f39ae Move CI-flake-fix claim from active to recently_completed (merged as
+    PR #434)'
+  - 'fe2bde84 Merge pull request #434 from FChecklist/fix/tenant-isolation-mock-module-leak'
+  - 7e096664 Re-trigger CI after posting structured audit verdict comment
+  note: worker started (resume=0)
+- at: '2026-07-18T18:06:55.873733+00:00'
+  status: failed
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - a356fdee Fix PROJEXA unable to create Knowledge Base or Wiki pages via API key
+    (#440)
+  - 22325b47 Fix sales invoices silently excluded from PROJEXA revenue reporting (#439)
+  - 5889d192 Add PROJEXA project creation (was the one missing CRUD path) (#438)
+  - 'c99d6c8f Move UI-kit adoption claim from active to recently_completed (merged
+    as PR #436) (#437)'
+  - '3d3f6aef Merge pull request #436 from FChecklist/feat/home-page-merge-panel-fix'
+  - 8a20736f Fix Home page to actually hide VeriChatPanel, matching the agreed UI/UX
+    reference
+  - 'c2eca637 Merge pull request #435 from FChecklist/chore/active-claims-cleanup-ciflake'
+  - 'ae9f39ae Move CI-flake-fix claim from active to recently_completed (merged as
+    PR #434)'
+  - 'fe2bde84 Merge pull request #434 from FChecklist/fix/tenant-isolation-mock-module-leak'
+  - 7e096664 Re-trigger CI after posting structured audit verdict comment
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-18T18:07:26.463555+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - a356fdee Fix PROJEXA unable to create Knowledge Base or Wiki pages via API key
+    (#440)
+  - 22325b47 Fix sales invoices silently excluded from PROJEXA revenue reporting (#439)
+  - 5889d192 Add PROJEXA project creation (was the one missing CRUD path) (#438)
+  - 'c99d6c8f Move UI-kit adoption claim from active to recently_completed (merged
+    as PR #436) (#437)'
+  - '3d3f6aef Merge pull request #436 from FChecklist/feat/home-page-merge-panel-fix'
+  - 8a20736f Fix Home page to actually hide VeriChatPanel, matching the agreed UI/UX
+    reference
+  - 'c2eca637 Merge pull request #435 from FChecklist/chore/active-claims-cleanup-ciflake'
+  - 'ae9f39ae Move CI-flake-fix claim from active to recently_completed (merged as
+    PR #434)'
+  - 'fe2bde84 Merge pull request #434 from FChecklist/fix/tenant-isolation-mock-module-leak'
+  - 7e096664 Re-trigger CI after posting structured audit verdict comment
+  note: worker started (resume=1)
+- at: '2026-07-18T18:07:28.530053+00:00'
+  status: failed
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - a356fdee Fix PROJEXA unable to create Knowledge Base or Wiki pages via API key
+    (#440)
+  - 22325b47 Fix sales invoices silently excluded from PROJEXA revenue reporting (#439)
+  - 5889d192 Add PROJEXA project creation (was the one missing CRUD path) (#438)
+  - 'c99d6c8f Move UI-kit adoption claim from active to recently_completed (merged
+    as PR #436) (#437)'
+  - '3d3f6aef Merge pull request #436 from FChecklist/feat/home-page-merge-panel-fix'
+  - 8a20736f Fix Home page to actually hide VeriChatPanel, matching the agreed UI/UX
+    reference
+  - 'c2eca637 Merge pull request #435 from FChecklist/chore/active-claims-cleanup-ciflake'
+  - 'ae9f39ae Move CI-flake-fix claim from active to recently_completed (merged as
+    PR #434)'
+  - 'fe2bde84 Merge pull request #434 from FChecklist/fix/tenant-isolation-mock-module-leak'
+  - 7e096664 Re-trigger CI after posting structured audit verdict comment
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-18T18:07:59.221925+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - a356fdee Fix PROJEXA unable to create Knowledge Base or Wiki pages via API key
+    (#440)
+  - 22325b47 Fix sales invoices silently excluded from PROJEXA revenue reporting (#439)
+  - 5889d192 Add PROJEXA project creation (was the one missing CRUD path) (#438)
+  - 'c99d6c8f Move UI-kit adoption claim from active to recently_completed (merged
+    as PR #436) (#437)'
+  - '3d3f6aef Merge pull request #436 from FChecklist/feat/home-page-merge-panel-fix'
+  - 8a20736f Fix Home page to actually hide VeriChatPanel, matching the agreed UI/UX
+    reference
+  - 'c2eca637 Merge pull request #435 from FChecklist/chore/active-claims-cleanup-ciflake'
+  - 'ae9f39ae Move CI-flake-fix claim from active to recently_completed (merged as
+    PR #434)'
+  - 'fe2bde84 Merge pull request #434 from FChecklist/fix/tenant-isolation-mock-module-leak'
+  - 7e096664 Re-trigger CI after posting structured audit verdict comment
+  note: worker started (resume=1)
+- at: '2026-07-18T18:08:01.353256+00:00'
+  status: failed
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - a356fdee Fix PROJEXA unable to create Knowledge Base or Wiki pages via API key
+    (#440)
+  - 22325b47 Fix sales invoices silently excluded from PROJEXA revenue reporting (#439)
+  - 5889d192 Add PROJEXA project creation (was the one missing CRUD path) (#438)
+  - 'c99d6c8f Move UI-kit adoption claim from active to recently_completed (merged
+    as PR #436) (#437)'
+  - '3d3f6aef Merge pull request #436 from FChecklist/feat/home-page-merge-panel-fix'
+  - 8a20736f Fix Home page to actually hide VeriChatPanel, matching the agreed UI/UX
+    reference
+  - 'c2eca637 Merge pull request #435 from FChecklist/chore/active-claims-cleanup-ciflake'
+  - 'ae9f39ae Move CI-flake-fix claim from active to recently_completed (merged as
+    PR #434)'
+  - 'fe2bde84 Merge pull request #434 from FChecklist/fix/tenant-isolation-mock-module-leak'
+  - 7e096664 Re-trigger CI after posting structured audit verdict comment
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-18T18:09:53.683896+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - a356fdee Fix PROJEXA unable to create Knowledge Base or Wiki pages via API key
+    (#440)
+  - 22325b47 Fix sales invoices silently excluded from PROJEXA revenue reporting (#439)
+  - 5889d192 Add PROJEXA project creation (was the one missing CRUD path) (#438)
+  - 'c99d6c8f Move UI-kit adoption claim from active to recently_completed (merged
+    as PR #436) (#437)'
+  - '3d3f6aef Merge pull request #436 from FChecklist/feat/home-page-merge-panel-fix'
+  - 8a20736f Fix Home page to actually hide VeriChatPanel, matching the agreed UI/UX
+    reference
+  - 'c2eca637 Merge pull request #435 from FChecklist/chore/active-claims-cleanup-ciflake'
+  - 'ae9f39ae Move CI-flake-fix claim from active to recently_completed (merged as
+    PR #434)'
+  - 'fe2bde84 Merge pull request #434 from FChecklist/fix/tenant-isolation-mock-module-leak'
+  - 7e096664 Re-trigger CI after posting structured audit verdict comment
+  note: worker started (resume=1)
+- at: '2026-07-18T18:14:54.370953+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no existing claim on this PR/branch (only
+    unrelated "431 tables" text matches elsewhere in the file)
+  - Found the PR's actual worktree already checked out at /opt/veridian/ai-os/tasks/task-20260718-092002-checks---balances--separation-of-duties/workspace
+    (by the original stopped worker) and did all rebase/test/push work directly there,
+    since the branch was already checked out there and git disallows checking it out
+    twice
+  - 'git fetch origin && git rebase origin/main -- rebased cleanly onto a356fdee (#440),
+    ZERO conflicts (2 commits replayed cleanly: "Register active claim" + "Close Checks
+    & Balances gap-closure")'
+  - Confirmed no drizzle/*.sql or src/lib/db/schema.ts changes in the final diff (15
+    files, 359 insertions/80 deletions, all src/ + PROGRESS.md + ACTIVE-CLAIMS.yaml)
+    -- this is TIER1, not TIER2
+  - bun install --frozen-lockfile -- clean
+  - bunx tsc --noEmit -- clean
+  - bun run lint -- 0 errors, 3 pre-existing warnings unrelated to this PR's changed
+    files
+  - bun test -- 1428 pass, 0 fail, 103 files. The original Unit Tests CI failure was
+    pre-existing main flakiness (mock.module() leaking stale ERP service stubs across
+    test files), already fixed on main by commit ceb18219 before this rebase -- confirmed
+    by finding that exact fix commit in `git log HEAD..origin/main` during investigation
+  - git push --force-with-lease origin worker/task-20260718-092002-checks---balances--separation-of-duties
+    (942bb519 -> f0eddbdc)
+  - Read the full PR diff myself end to end (all 15 changed files) before writing
+    the audit
+  - 'Posted structured `AUDIT: PASS` PR comment with all 8 required fields: https://github.com/FChecklist/compliance-tracker/pull/431#issuecomment-5012371948'
+  - Noticed Mandatory Audit Check's first run on the new commit (run 29655400282)
+    failed because it ran on push, before the audit comment existed -- re-triggered
+    it via `gh run rerun 29655400282`
+  remaining_steps:
+  - Wait for CI (Mandatory Audit Check rerun + main CI workflow + CodeQL) to go fully
+    green on f0eddbdc
+  - 'If green: TIER1 + PASS audit -> merge via `gh pr merge 431 --squash --delete-branch`'
+  - Report final status via task checkpoint (PR number, tier, CI state, merged/awaiting-signoff,
+    summary of real work)
+  recent_commits:
+  - a356fdee Fix PROJEXA unable to create Knowledge Base or Wiki pages via API key
+    (#440)
+  - 22325b47 Fix sales invoices silently excluded from PROJEXA revenue reporting (#439)
+  - 5889d192 Add PROJEXA project creation (was the one missing CRUD path) (#438)
+  - 'c99d6c8f Move UI-kit adoption claim from active to recently_completed (merged
+    as PR #436) (#437)'
+  - '3d3f6aef Merge pull request #436 from FChecklist/feat/home-page-merge-panel-fix'
+  - 8a20736f Fix Home page to actually hide VeriChatPanel, matching the agreed UI/UX
+    reference
+  - 'c2eca637 Merge pull request #435 from FChecklist/chore/active-claims-cleanup-ciflake'
+  - 'ae9f39ae Move CI-flake-fix claim from active to recently_completed (merged as
+    PR #434)'
+  - 'fe2bde84 Merge pull request #434 from FChecklist/fix/tenant-isolation-mock-module-leak'
+  - 7e096664 Re-trigger CI after posting structured audit verdict comment
+  note: periodic checkpoint
+- at: '2026-07-18T18:17:12.913266+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '1532ace1 Track PR #431 rescue progress (merged, TIER1)'
+  - a356fdee Fix PROJEXA unable to create Knowledge Base or Wiki pages via API key
+    (#440)
+  - 22325b47 Fix sales invoices silently excluded from PROJEXA revenue reporting (#439)
+  - 5889d192 Add PROJEXA project creation (was the one missing CRUD path) (#438)
+  - 'c99d6c8f Move UI-kit adoption claim from active to recently_completed (merged
+    as PR #436) (#437)'
+  - '3d3f6aef Merge pull request #436 from FChecklist/feat/home-page-merge-panel-fix'
+  - 8a20736f Fix Home page to actually hide VeriChatPanel, matching the agreed UI/UX
+    reference
+  - 'c2eca637 Merge pull request #435 from FChecklist/chore/active-claims-cleanup-ciflake'
+  - 'ae9f39ae Move CI-flake-fix claim from active to recently_completed (merged as
+    PR #434)'
+  - 'fe2bde84 Merge pull request #434 from FChecklist/fix/tenant-isolation-mock-module-leak'
+  note: worker finished, no changes to commit
+execution_seconds: 447
+restart_count: 3
+token_usage:
+  input_tokens: 0
+  cache_creation_input_tokens: 0
+  cache_read_input_tokens: 0
+  output_tokens: 0
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 0
+    ephemeral_5m_input_tokens: 0
+  inference_geo: ''
+  iterations: []
+  speed: standard
+master_synced_at: '2026-07-18T18:30:04.723314+00:00'

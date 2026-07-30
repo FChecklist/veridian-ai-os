@@ -1,0 +1,82 @@
+id: task-20260728-045209-adopted-re-audit-pr-60-after-dependency---error
+title: Re-audit PR 60 after dependency + error-state + pagination fixes
+status: blocked
+repo: projexa
+branch: feat/company-dept-project-dashboard
+workspace: /opt/veridian/ai-os/tasks/task-20260728-045209-adopted-re-audit-pr-60-after-dependency---error/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-045209-adopted-re-audit-pr-60-after-dependency---error
+service: veridian-supervisor@task-20260728-045209-adopted-re-audit-pr-60-after-dependency---error.service
+created_at: '2026-07-28T04:52:10.491759+00:00'
+last_checkpoint_at: '2026-07-28T04:55:16.560015+00:00'
+completed_steps: &id002
+- 'Investigated whether Company/Department already exist (SCOPE item 1). Findings:'
+- Built the real Company -> Department -> Project drill-down (`/dashboard/hierarchy`),
+  each level filtering the next via real VERIDIAN calls, with membership-verified
+  `companyId` scoping (`src/lib/company-scope.ts`) so a caller can never read another
+  company's data by guessing an org UUID.
+- Added the Details view's date-range filter for Revenue/Expense/Progress (Budget
+  is disclosed as a period-invariant annual total, not date-sliceable).
+- Built the category-distribution pie chart (share of BOQ total) + bar chart (completed
+  vs. total amount per category), sourced from real BOQ line-item amounts (grouped
+  via `activityId -> category`) and real WPR completion %.
+- Built the separate, lightweight multi-project status-bar overview (`/dashboard/overview`)
+  -- one horizontal % complete bar per project, intentionally not folded into the
+  drill-down.
+- Added sidebar nav entries ("Company Dashboard", "Projects Overview") + en/hi i18n
+  strings.
+- 'Tests: `src/lib/company-scope.test.ts` (membership-boundary scoping) + 2 route-level
+  test files under `src/app/api/dashboard-hierarchy/**` (cross-company scoping, department
+  filter passthrough, category-distribution percentages sum to 100% and match seeded
+  BOQ amounts). 12/12 pass.'
+- '`npx tsc --noEmit` -- clean, zero errors.'
+- '`npx eslint` on all new/changed files -- clean.'
+remaining_steps: &id003
+- Supervisor decision + push/PR for the compliance-tracker companion change above
+  (or an alternative if the supervisor prefers a different approach).
+- Fresh supervisor audit of the projexa PR before merge (per task protocol -- not
+  to be merged by this worker).
+- '`bun test` was run scoped to the new dashboard files (12/12 pass) and `npx tsc
+  --noEmit` for the whole project (clean) -- the full existing `bun test` suite was
+  not re-run end-to-end due to session budget; worth a full run in CI/audit.'
+- UI was not visually verified in a running browser (session budget) -- functional
+  correctness verified via tsc + unit/route tests only, per instructions this is disclosed
+  rather than claiming visual confirmation.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T04:52:10.491759+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'feat/company-dept-project-dashboard' (https://github.com/FChecklist/projexa/pull/60)
+    -- registered for real audit, not a fresh worker dispatch
+- at: '2026-07-28T04:55:16.560015+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 4d776a0 Fix misleading error state and silent revenue truncation on hierarchy
+    dashboard
+  - aa311e2 Add Company -> Department -> Project dashboard drill-down + category charts
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '638330f Merge pull request #54 from FChecklist/feat/pwa-offline-infra'
+  - '5af1723 merge: resolve conflict with main'
+  - '36766eb Merge pull request #56 from FChecklist/worker/task-20260727-133855-fix-pr-53--last-owner-admin-demotion-pro'
+  - '537ec33 merge: resolve conflict with main'
+  - 114d0ee Guard PATCH /api/org-members/[id] against demoting an org's last owner/admin
+  note: "tier1, Superboss-approved, but the merge itself FAILED (gh pr view confirms\
+    \ state=OPEN, mergedAt=; see supervisor.log) \u2014 needs manual attention, NOT\
+    \ actually merged: https://github.com/FChecklist/projexa/pull/60"
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/projexa/pull/60
+master_synced_at: '2026-07-29T21:04:26.444764+00:00'

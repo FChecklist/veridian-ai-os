@@ -1,0 +1,26 @@
+## OBJECTIVE
+Produce a real, current analysis of everything already built/deployed across Vercel (deployments/env vars) and GitHub (repos/branches/PRs/workflows) and update the existing tracking files (MASTER_INDEX.yaml, system_map, master_architecture) to reflect real current state. Do not build any new deployment tool, CI system, or repo-management script -- analyze and update what already exists only.
+
+## KNOWN_CONTEXT
+Three Vercel projects are already linked per prior session record: compliance-tracker -> veridian-compliance-ai, projexa -> projexa, veda-advisors -> veda-advisors (team scope meet-track-s-projects). Seven GitHub repos exist under FChecklist: compliance-tracker, claude-control, projexa, veda-advisors, global-revenue-engine, veridian-brain, sumeet-spec. Real, currently-open PRs across these repos as of this session that need to be part of this census (do not treat as new work, just catalogue their real current state): claude-control PR #79 (DDL gate, content approved, merge blocked), PR #80 (interactive write-gate, round 3 in progress), PR #82 (OWNER_ENGINE integration, round 2 in progress), PR #84 (recovered lifecycle-fix, being verified); compliance-tracker PR #563 (migration-drift audit, real conflict, being resolved in a parallel task this same session -- do not duplicate that work, just note its existence and real current state in this census).
+
+## SCOPE
+1. Produce a real, current inventory of all Vercel deployment state across the three linked projects: production deployment status, environment variable presence (do not print secret values, just confirm keys exist/are stale), and whether each project's real plan tier (Hobby/Pro) affects anything documented elsewhere (a prior session finding noted the Hobby plan blocks custom environments -- confirm this is still the real plan tier).
+2. Produce a real, current inventory of all 7 GitHub repos: default branch, branch protection rules (required status checks), open PR count and their real state (mergeable/conflicting/blocked), and whether each repo's required-checks list matches what's documented in any existing tracking file.
+3. Update MASTER_INDEX.yaml's registries[] section (or system_map_2026_07_22 / master_architecture_2026_07_22, whichever is the more appropriate existing home per their own documented scope) with this real, current Vercel+GitHub state -- do not create a new tracking file for this; extend an existing one.
+4. Specifically confirm real current state of the four open claude-control PRs and one open compliance-tracker PR listed in KNOWN_CONTEXT via fresh `gh pr view` calls (not memory) and note their real state in the update.
+5. Do not build a new CI workflow, a new Vercel integration script, or a new repo-management tool -- only inventory and update existing tracking files.
+
+## SUCCESS_CRITERIA
+- A real, dated Vercel+GitHub state snapshot is added to an existing tracking file (not a new one), with every one of the 7 repos and 3 Vercel projects represented.
+- `gh pr view 79 80 82 84 --repo FChecklist/claude-control` (or four separate calls) and `gh pr view 563 --repo FChecklist/compliance-tracker` real current states are reflected accurately in the update, not from memory.
+- `gh api repos/FChecklist/compliance-tracker/branches/main/protection/required_status_checks --jq '.contexts'` (and the equivalent for other repos with branch protection) confirms the real required-checks list matches what's documented.
+
+## EXPECTED_OUTPUT
+A real PR (against claude-control, since that's where MASTER_INDEX.yaml/system_map live) updating the appropriate existing tracking file(s) with this real current-state census.
+
+## CONSTRAINTS
+Do not build any new deployment, CI, or repo-management tooling. Do not merge yourself. Do not print any real secret/env-var values, only confirm key presence/staleness.
+
+## COMPLEXITY_TIER
+judgment

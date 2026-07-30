@@ -1,0 +1,489 @@
+id: task-20260719-021229-gap-closure--gp-08-09-hallucination-conf
+title: 'Gap closure: GP-08-09-hallucination-confidence'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260719-021229-gap-closure--gp-08-09-hallucination-conf
+workspace: /opt/veridian/ai-os/tasks/task-20260719-021229-gap-closure--gp-08-09-hallucination-conf/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260719-021229-gap-closure--gp-08-09-hallucination-conf
+service: veridian-worker@task-20260719-021229-gap-closure--gp-08-09-hallucination-conf.service
+created_at: '2026-07-19T02:12:30.314574+00:00'
+last_checkpoint_at: '2026-07-19T02:52:53.601056+00:00'
+completed_steps: &id002
+- Read ai-os/CONSTITUTION.yaml RES-02 entry + src/lib/monitor-protocol.ts
+- Checked ai-os/boss/ACTIVE-CLAIMS.yaml + `gh pr list` -- no duplicate
+- Registered claim in ACTIVE-CLAIMS.yaml (separate first commit)
+- Researched real call sites for all documented event-type wildcards
+- 'Scoped final Phase 1 slice: 5 new monitors covering 9 event names'
+- Built shared src/lib/monitors/rule-engine-monitor.ts (factors out
+- workflow-completion-monitor.ts wired at approval-workflow-service.ts's
+- task-completion-monitor.ts wired at task-service.ts's updateTask
+- board-meeting-hold-monitor.ts wired at
+- meeting-intelligence-generation-monitor.ts wired at
+- webhook-delivery-outcome-monitor.ts wired at webhook-deliver.ts's
+- drizzle/0244_narrow_monitor_agents_phase1.sql seeding the 5 new
+- Unit tests for the shared executor + all 5 new monitors (happy path +
+- Updated ai-os/CONSTITUTION.yaml RES-02 entry + MASTER-TRACKER.yaml's
+- '`bunx tsc --noEmit` clean, `bun run lint` clean (0 errors, 3'
+- 'Pushed branch, opened PR #461 against main'
+- 'Posted AUDIT: PASS PR comment (had to repost once -- the CI'
+- 'CI green: all required checks pass (audit-check, Lint, Type Check,'
+remaining_steps: &id003
+- NONE for this session -- TIER2 (diff includes
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-19T02:12:31.309712+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  note: worker started (resume=0)
+- at: '2026-07-19T02:17:31.808450+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:22:32.171838+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/orchestra-execution-logger.ts
+  - src/lib/claim-verification.test.ts
+  - src/lib/claim-verification.ts
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml guardrail_protocols GP-08/GP-09 in full
+  - Read policy-enforcement-engine.ts, dispatch-confidence-scoring.ts, confidence-banding.ts,
+    orchestra-execution-logger.ts, ai-team/roster.ts, ai-team/team-service.ts, ai-team/dispatch-repo.ts,
+    api/ai/team/dispatch/route.ts, activity-log-service.ts
+  - Fresh grep for "confidence" across src/lib -- confirmed dispatch-confidence-scoring.ts
+    already exists (2026-07-18) but is a deterministic proxy, NOT a fact-check of
+    claims against real codebase state -- that specific gap is real
+  - Checked ai-os/boss/ACTIVE-CLAIMS.yaml + `gh pr list` -- no genuine duplicate claim
+    on this narrow slice
+  - Registered claim in ACTIVE-CLAIMS.yaml, committed as its own first commit
+  remaining_steps:
+  - Implement src/lib/claim-verification.ts (extraction + grep-verification of backtick-quoted
+    file-path/function-name claims)
+  - Wire confidenceScore/lowConfidenceFlagged into orchestra-execution-logger.ts's
+    recordOrchestraExecution()
+  - 'Add tests: real function/file claim (high confidence) + nonexistent claim (low
+    confidence, flagged)'
+  - Update CONSTITUTION.yaml GP-08/GP-09 status text
+  - Run bunx tsc --noEmit, bun run lint, bun test
+  - Push, open PR
+  - 'Post AUDIT: PASS comment'
+  - Watch CI to green
+  - Classify tier (should be TIER1 -- no schema/migration touched) and self-merge
+    if green
+  - Final report
+  recent_commits:
+  - 5e905873 Register ACTIVE-CLAIMS.yaml entry for GP-08/GP-09 claim-confidence-scoring
+    gap
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:27:32.513979+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml guardrail_protocols GP-08/GP-09 in full
+  - Read policy-enforcement-engine.ts, dispatch-confidence-scoring.ts, confidence-banding.ts,
+    orchestra-execution-logger.ts, ai-team/roster.ts, ai-team/team-service.ts, ai-team/dispatch-repo.ts,
+    api/ai/team/dispatch/route.ts, activity-log-service.ts
+  - Fresh grep for "confidence" across src/lib -- confirmed dispatch-confidence-scoring.ts
+    already exists (2026-07-18) but is a deterministic proxy, NOT a fact-check of
+    claims against real codebase state -- that specific gap is real
+  - Checked ai-os/boss/ACTIVE-CLAIMS.yaml + `gh pr list` -- no genuine duplicate claim
+    on this narrow slice
+  - Registered claim in ACTIVE-CLAIMS.yaml, committed as its own first commit
+  - Implemented src/lib/claim-verification.ts (extraction + grep-verification of backtick-quoted
+    file-path/function-name claims, capped, lazy-cached scan under src/lib+src/app+src/components,
+    test files excluded from the scan)
+  - Wired confidenceScore/lowConfidenceFlagged into orchestra-execution-logger.ts's
+    recordOrchestraExecution() (attached into existing output jsonb, no schema/migration
+    change)
+  - 'Added tests: real function/file claim (high confidence, score 1) + nonexistent
+    claim (low confidence, score 0, flagged) + mixed case + no-claims case -- 13 tests,
+    all passing'
+  - Updated CONSTITUTION.yaml GP-08/GP-09 status text
+  - 'bunx tsc --noEmit clean, bun run lint clean (pre-existing warnings only, unrelated),
+    bun test: 1735 pass / 0 fail'
+  remaining_steps:
+  - Push, open PR
+  - 'Post AUDIT: PASS comment'
+  - Watch CI to green
+  - Classify tier (should be TIER1 -- no schema/migration touched) and self-merge
+    if green
+  - Final report
+  recent_commits:
+  - '2cbf63ed Retrigger CI after posting correctly-formatted AUDIT: PASS comment'
+  - 'b68a60ec Retrigger CI after posting AUDIT: PASS comment'
+  - '4d7d5e03 Close GP-08/GP-09 gap: grep-verifiable claim confidence scoring'
+  - 5e905873 Register ACTIVE-CLAIMS.yaml entry for GP-08/GP-09 claim-confidence-scoring
+    gap
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  note: periodic checkpoint
+- at: '2026-07-19T02:32:32.824543+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml guardrail_protocols GP-08/GP-09 in full
+  - Read policy-enforcement-engine.ts, dispatch-confidence-scoring.ts, confidence-banding.ts,
+    orchestra-execution-logger.ts, ai-team/roster.ts, ai-team/team-service.ts, ai-team/dispatch-repo.ts,
+    api/ai/team/dispatch/route.ts, activity-log-service.ts
+  - Fresh grep for "confidence" across src/lib -- confirmed dispatch-confidence-scoring.ts
+    already exists (2026-07-18) but is a deterministic proxy, NOT a fact-check of
+    claims against real codebase state -- that specific gap is real
+  - Checked ai-os/boss/ACTIVE-CLAIMS.yaml + `gh pr list` -- no genuine duplicate claim
+    on this narrow slice
+  - Registered claim in ACTIVE-CLAIMS.yaml, committed as its own first commit
+  - Implemented src/lib/claim-verification.ts (extraction + grep-verification of backtick-quoted
+    file-path/function-name claims, capped, lazy-cached scan under src/lib+src/app+src/components,
+    test files excluded from the scan)
+  - Wired confidenceScore/lowConfidenceFlagged into orchestra-execution-logger.ts's
+    recordOrchestraExecution() (attached into existing output jsonb, no schema/migration
+    change)
+  - 'Added tests: real function/file claim (high confidence, score 1) + nonexistent
+    claim (low confidence, score 0, flagged) + mixed case + no-claims case -- 13 tests,
+    all passing'
+  - Updated CONSTITUTION.yaml GP-08/GP-09 status text
+  - 'bunx tsc --noEmit clean, bun run lint clean (pre-existing warnings only, unrelated),
+    bun test: 1735 pass / 0 fail'
+  - 'Pushed, opened PR #463'
+  - 'Posted structured AUDIT: PASS comment (8 fields, no markdown bold on labels --
+    validate-audit-verdict.ts requires the label at literal line start)'
+  - 'CI green: Mandatory Audit Check, CI (Lint/Type Check/Build/Unit/E2E/Asset Registry/Metadata
+    Index/Guardrail Presence/Doc checks), Sentinel Governance Checks, CodeQL all pass
+    -- only Vercel failed (known rate-limited, non-required)'
+  - 'Merged origin/main into branch to resolve a CONFLICTING mergeStateStatus caused
+    by PR #462 landing concurrently'
+  remaining_steps:
+  - Push merge commit, re-verify CI green on the merged branch
+  - Classify tier (TIER1 -- no schema/migration touched) and self-merge if green
+  - Final report
+  recent_commits:
+  - 5d3127c0 Merge origin/main into task/gp-08-09-claim-confidence-scoring
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - '2cbf63ed Retrigger CI after posting correctly-formatted AUDIT: PASS comment'
+  - 'b68a60ec Retrigger CI after posting AUDIT: PASS comment'
+  - '4d7d5e03 Close GP-08/GP-09 gap: grep-verifiable claim confidence scoring'
+  - 5e905873 Register ACTIVE-CLAIMS.yaml entry for GP-08/GP-09 claim-confidence-scoring
+    gap
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:37:33.162357+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml guardrail_protocols GP-08/GP-09 in full
+  - Read policy-enforcement-engine.ts, dispatch-confidence-scoring.ts, confidence-banding.ts,
+    orchestra-execution-logger.ts, ai-team/roster.ts, ai-team/team-service.ts, ai-team/dispatch-repo.ts,
+    api/ai/team/dispatch/route.ts, activity-log-service.ts
+  - Fresh grep for "confidence" across src/lib -- confirmed dispatch-confidence-scoring.ts
+    already exists (2026-07-18) but is a deterministic proxy, NOT a fact-check of
+    claims against real codebase state -- that specific gap is real
+  - Checked ai-os/boss/ACTIVE-CLAIMS.yaml + `gh pr list` -- no genuine duplicate claim
+    on this narrow slice
+  - Registered claim in ACTIVE-CLAIMS.yaml, committed as its own first commit
+  - Implemented src/lib/claim-verification.ts (extraction + grep-verification of backtick-quoted
+    file-path/function-name claims, capped, lazy-cached scan under src/lib+src/app+src/components,
+    test files excluded from the scan)
+  - Wired confidenceScore/lowConfidenceFlagged into orchestra-execution-logger.ts's
+    recordOrchestraExecution() (attached into existing output jsonb, no schema/migration
+    change)
+  - 'Added tests: real function/file claim (high confidence, score 1) + nonexistent
+    claim (low confidence, score 0, flagged) + mixed case + no-claims case -- 13 tests,
+    all passing'
+  - Updated CONSTITUTION.yaml GP-08/GP-09 status text
+  - 'bunx tsc --noEmit clean, bun run lint clean (pre-existing warnings only, unrelated),
+    bun test: 1735 pass / 0 fail'
+  - 'Pushed, opened PR #463'
+  - 'Posted structured AUDIT: PASS comment (8 fields, no markdown bold on labels --
+    validate-audit-verdict.ts requires the label at literal line start)'
+  - 'CI green: Mandatory Audit Check, CI (Lint/Type Check/Build/Unit/E2E/Asset Registry/Metadata
+    Index/Guardrail Presence/Doc checks), Sentinel Governance Checks, CodeQL all pass
+    -- only Vercel failed (known rate-limited, non-required)'
+  - 'Merged origin/main into branch to resolve a CONFLICTING mergeStateStatus caused
+    by PR #462 landing concurrently'
+  remaining_steps:
+  - Push merge commit, re-verify CI green on the merged branch
+  - Classify tier (TIER1 -- no schema/migration touched) and self-merge if green
+  - Final report
+  recent_commits:
+  - 905c347b Merge origin/main into task/gp-08-09-claim-confidence-scoring (2)
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - 5d3127c0 Merge origin/main into task/gp-08-09-claim-confidence-scoring
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - '2cbf63ed Retrigger CI after posting correctly-formatted AUDIT: PASS comment'
+  - 'b68a60ec Retrigger CI after posting AUDIT: PASS comment'
+  - '4d7d5e03 Close GP-08/GP-09 gap: grep-verifiable claim confidence scoring'
+  - 5e905873 Register ACTIVE-CLAIMS.yaml entry for GP-08/GP-09 claim-confidence-scoring
+    gap
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:42:33.531749+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml guardrail_protocols GP-08/GP-09 in full
+  - Read policy-enforcement-engine.ts, dispatch-confidence-scoring.ts, confidence-banding.ts,
+    orchestra-execution-logger.ts, ai-team/roster.ts, ai-team/team-service.ts, ai-team/dispatch-repo.ts,
+    api/ai/team/dispatch/route.ts, activity-log-service.ts
+  - Fresh grep for "confidence" across src/lib -- confirmed dispatch-confidence-scoring.ts
+    already exists (2026-07-18) but is a deterministic proxy, NOT a fact-check of
+    claims against real codebase state -- that specific gap is real
+  - Checked ai-os/boss/ACTIVE-CLAIMS.yaml + `gh pr list` -- no genuine duplicate claim
+    on this narrow slice
+  - Registered claim in ACTIVE-CLAIMS.yaml, committed as its own first commit
+  - Implemented src/lib/claim-verification.ts (extraction + grep-verification of backtick-quoted
+    file-path/function-name claims, capped, lazy-cached scan under src/lib+src/app+src/components,
+    test files excluded from the scan)
+  - Wired confidenceScore/lowConfidenceFlagged into orchestra-execution-logger.ts's
+    recordOrchestraExecution() (attached into existing output jsonb, no schema/migration
+    change)
+  - 'Added tests: real function/file claim (high confidence, score 1) + nonexistent
+    claim (low confidence, score 0, flagged) + mixed case + no-claims case -- 13 tests,
+    all passing'
+  - Updated CONSTITUTION.yaml GP-08/GP-09 status text
+  - 'bunx tsc --noEmit clean, bun run lint clean (pre-existing warnings only, unrelated),
+    bun test: 1735 pass / 0 fail'
+  - 'Pushed, opened PR #463'
+  - 'Posted structured AUDIT: PASS comment (8 fields, no markdown bold on labels --
+    validate-audit-verdict.ts requires the label at literal line start)'
+  - 'CI green: Mandatory Audit Check, CI (Lint/Type Check/Build/Unit/E2E/Asset Registry/Metadata
+    Index/Guardrail Presence/Doc checks), Sentinel Governance Checks, CodeQL all pass
+    -- only Vercel failed (known rate-limited, non-required)'
+  - 'Merged origin/main into branch to resolve a CONFLICTING mergeStateStatus caused
+    by PR #462 landing concurrently'
+  remaining_steps:
+  - Push merge commit, re-verify CI green on the merged branch
+  - Classify tier (TIER1 -- no schema/migration touched) and self-merge if green
+  - Final report
+  recent_commits:
+  - 905c347b Merge origin/main into task/gp-08-09-claim-confidence-scoring (2)
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - 5d3127c0 Merge origin/main into task/gp-08-09-claim-confidence-scoring
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - '2cbf63ed Retrigger CI after posting correctly-formatted AUDIT: PASS comment'
+  - 'b68a60ec Retrigger CI after posting AUDIT: PASS comment'
+  - '4d7d5e03 Close GP-08/GP-09 gap: grep-verifiable claim confidence scoring'
+  - 5e905873 Register ACTIVE-CLAIMS.yaml entry for GP-08/GP-09 claim-confidence-scoring
+    gap
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:47:33.844535+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/CONSTITUTION.yaml
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  - src/app/api/crm/leads/[id]/follow-up-task/route.ts
+  - src/app/api/crm/opportunities/[id]/follow-up-task/route.ts
+  - src/lib/loop-prevention.test.ts
+  - src/lib/loop-prevention.ts
+  - src/lib/services/crm-service.ts
+  - src/lib/task-dependency-graph.ts
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml guardrail_protocols GP-08/GP-09 in full
+  - Read policy-enforcement-engine.ts, dispatch-confidence-scoring.ts, confidence-banding.ts,
+    orchestra-execution-logger.ts, ai-team/roster.ts, ai-team/team-service.ts, ai-team/dispatch-repo.ts,
+    api/ai/team/dispatch/route.ts, activity-log-service.ts
+  - Fresh grep for "confidence" across src/lib -- confirmed dispatch-confidence-scoring.ts
+    already exists (2026-07-18) but is a deterministic proxy, NOT a fact-check of
+    claims against real codebase state -- that specific gap is real
+  - Checked ai-os/boss/ACTIVE-CLAIMS.yaml + `gh pr list` -- no genuine duplicate claim
+    on this narrow slice
+  - Registered claim in ACTIVE-CLAIMS.yaml, committed as its own first commit
+  - Implemented src/lib/claim-verification.ts (extraction + grep-verification of backtick-quoted
+    file-path/function-name claims, capped, lazy-cached scan under src/lib+src/app+src/components,
+    test files excluded from the scan)
+  - Wired confidenceScore/lowConfidenceFlagged into orchestra-execution-logger.ts's
+    recordOrchestraExecution() (attached into existing output jsonb, no schema/migration
+    change)
+  - 'Added tests: real function/file claim (high confidence, score 1) + nonexistent
+    claim (low confidence, score 0, flagged) + mixed case + no-claims case -- 13 tests,
+    all passing'
+  - Updated CONSTITUTION.yaml GP-08/GP-09 status text
+  - 'bunx tsc --noEmit clean, bun run lint clean (pre-existing warnings only, unrelated),
+    bun test: 1735+ pass / 0 fail'
+  - 'Pushed, opened PR #463'
+  - 'Posted structured AUDIT: PASS comment (8 fields, no markdown bold on labels --
+    validate-audit-verdict.ts requires the label at literal line start)'
+  - 'CI green: Mandatory Audit Check, CI (Lint/Type Check/Build/Unit/E2E/Asset Registry/Metadata
+    Index/Guardrail Presence/Doc checks), Sentinel Governance Checks, CodeQL all pass
+    -- only Vercel failed (known rate-limited, non-required)'
+  - 'Merged origin/main into branch multiple times (main moving fast -- PR #462, #464,
+    GP-20 loop-prevention, etc. landing concurrently) to resolve repeated CONFLICTING
+    mergeStateStatus, each time only PROGRESS.md (per-task-instance file) conflicting,
+    ACTIVE-CLAIMS.yaml/CONSTITUTION.yaml auto-merging cleanly'
+  remaining_steps:
+  - Push latest merge commit, re-verify CI green
+  - Classify tier (TIER1 -- no schema/migration touched) and self-merge if green
+  - Final report
+  recent_commits:
+  - 905c347b Merge origin/main into task/gp-08-09-claim-confidence-scoring (2)
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - 5d3127c0 Merge origin/main into task/gp-08-09-claim-confidence-scoring
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - '2cbf63ed Retrigger CI after posting correctly-formatted AUDIT: PASS comment'
+  - 'b68a60ec Retrigger CI after posting AUDIT: PASS comment'
+  - '4d7d5e03 Close GP-08/GP-09 gap: grep-verifiable claim confidence scoring'
+  - 5e905873 Register ACTIVE-CLAIMS.yaml entry for GP-08/GP-09 claim-confidence-scoring
+    gap
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:52:34.232423+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/CONSTITUTION.yaml RES-02 entry + src/lib/monitor-protocol.ts
+  - Checked ai-os/boss/ACTIVE-CLAIMS.yaml + `gh pr list` -- no duplicate
+  - Registered claim in ACTIVE-CLAIMS.yaml (separate first commit)
+  - Researched real call sites for all documented event-type wildcards
+  - 'Scoped final Phase 1 slice: 5 new monitors covering 9 event names'
+  - Built shared src/lib/monitors/rule-engine-monitor.ts (factors out
+  - workflow-completion-monitor.ts wired at approval-workflow-service.ts's
+  - task-completion-monitor.ts wired at task-service.ts's updateTask
+  - board-meeting-hold-monitor.ts wired at
+  - meeting-intelligence-generation-monitor.ts wired at
+  - webhook-delivery-outcome-monitor.ts wired at webhook-deliver.ts's
+  - drizzle/0244_narrow_monitor_agents_phase1.sql seeding the 5 new
+  - Unit tests for the shared executor + all 5 new monitors (happy path +
+  - Updated ai-os/CONSTITUTION.yaml RES-02 entry + MASTER-TRACKER.yaml's
+  - '`bunx tsc --noEmit` clean, `bun run lint` clean (0 errors, 3'
+  - 'Pushed branch, opened PR #461 against main'
+  - 'Posted AUDIT: PASS PR comment (had to repost once -- the CI'
+  - 'CI green: all required checks pass (audit-check, Lint, Type Check,'
+  remaining_steps:
+  - NONE for this session -- TIER2 (diff includes
+  recent_commits:
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:52:53.601056+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  note: worker finished, no changes to commit
+execution_seconds: 2422
+restart_count: 0
+token_usage:
+  input_tokens: 232
+  cache_creation_input_tokens: 210330
+  cache_read_input_tokens: 19784980
+  output_tokens: 64944
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 210330
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 816
+    cache_read_input_tokens: 232050
+    cache_creation_input_tokens: 1818
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1818
+    type: message
+  speed: standard
+master_synced_at: '2026-07-19T03:00:04.507421+00:00'

@@ -1,0 +1,235 @@
+id: task-20260726-163551-real-automated-verification-of-all-218-t
+title: Real automated verification of all 218 tasks from last 7 days (Owner completion
+  audit)
+status: completed
+repo: claude-control
+branch: worker/task-20260726-163551-real-automated-verification-of-all-218-t
+workspace: /opt/veridian/ai-os/tasks/task-20260726-163551-real-automated-verification-of-all-218-t/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-163551-real-automated-verification-of-all-218-t
+service: veridian-worker@task-20260726-163551-real-automated-verification-of-all-218-t.service
+created_at: '2026-07-26T16:35:52.239005+00:00'
+last_checkpoint_at: '2026-07-26T16:47:58.860711+00:00'
+completed_steps: &id002
+- 'Explored ai-os/tasks/ structure: real data lives at /opt/veridian/ai-os/tasks/
+  (451 total dirs, NOT git-tracked -- /opt/veridian is not a git repo). Confirmed
+  "last 7 days" window (now - 7 days) yields ~218 tasks.'
+- 'Confirmed pr_url.txt / worker.log / supervisor.log evidence shape; confirmed known
+  exception task-20260726-081117 recorded PR #565 in pr_url.txt while title says "Fix
+  PR563" -- last checkpoint note literally says "merged autonomously: .../pull/565".'
+- Confirmed gh CLI auth works; chose `gh pr list --repo <repo> --state all -L 2000`
+  (one call per repo, ~6 repos) instead of per-task `gh pr view` for efficient batching.
+- Confirmed local git clones exist at /opt/veridian/repos/<repo> for real commit-ancestry
+  fallback (git log origin/<default-branch> --grep=<task_id>).
+- 'Inspected *_PHASE_PLAN_*.yaml structure (phases: [{id,status,...}]) for cross-referencing;
+  live copies at /opt/veridian/ai-os, some (VERIDIAN_ARCHITECTURE_V2) only exist in
+  the git-tracked ai-os/ snapshot -- script checks live first, falls back to repo
+  copy.'
+- Wrote ai-os-scripts/verify_7day_task_completion.py implementing the full verification
+  chain (pr_url.txt -> log grep -> gh headRefName match -> commit ancestry -> checkpoint-terminal-state
+  fallback), with --count-only, --out-md, --out-json.
+- 'Ran --count-only: 219 real tasks in the live 7-day window (4 dirs correctly omitted
+  -- no task.yaml at all, honestly reported not silently dropped).'
+- 'Ran full audit. Verified both known real exceptions (task-20260726-081117 -> merged
+  PR #565, task-20260726-115425 -> merged PR #569) are AUTOMATICALLY flagged via generalized
+  title-vs-actual-PR mismatch detection (not hardcoded): real_verified_status=MERGED
+  but reason explicitly states the title''s named PR #563 is still OPEN and unresolved.'
+- Spot-checked OPEN_NOT_DONE, INVESTIGATION_ONLY, NO_PR_FOUND rows and phase_plan_ref
+  cross-references by hand against source task dirs -- all correct. `python3 -m json.tool`
+  on the JSON output exits 0.
+- 'Registered ai-os-scripts/verify_7day_task_completion.py + the audit outputs in
+  ai-os/MASTER_INDEX.yaml''s registries section (id: task_completion_audit_7day),
+  following the existing entry pattern. YAML re-parses cleanly (114 registries entries).'
+- 'Merged origin/master in (2 commits it was behind, clean auto-merge including MASTER_INDEX.yaml),
+  pushed branch, opened PR: https://github.com/FChecklist/claude-control/pull/93.
+  Not merged, per task constraints.'
+remaining_steps: &id003 []
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T16:35:54.220915+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - '66fc379 Phase 2 extension: unify ddl_authorization_check.py onto policy_decision_schema,
+    build the real policy gate registry'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T16:40:55.401105+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - '66fc379 Phase 2 extension: unify ddl_authorization_check.py onto policy_decision_schema,
+    build the real policy gate registry'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  note: periodic checkpoint
+- at: '2026-07-26T16:45:56.538672+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os-scripts/verify_7day_task_completion.py
+  - ai-os/TASK_COMPLETION_AUDIT_2026-07-26.json
+  - ai-os/TASK_COMPLETION_AUDIT_2026-07-26.md
+  completed_steps:
+  - 'Explored ai-os/tasks/ structure: real data lives at /opt/veridian/ai-os/tasks/
+    (451 total dirs, NOT git-tracked -- /opt/veridian is not a git repo). Confirmed
+    "last 7 days" window (now - 7 days) yields ~218 tasks.'
+  - 'Confirmed pr_url.txt / worker.log / supervisor.log evidence shape; confirmed
+    known exception task-20260726-081117 recorded PR #565 in pr_url.txt while title
+    says "Fix PR563" -- last checkpoint note literally says "merged autonomously:
+    .../pull/565".'
+  - Confirmed gh CLI auth works; chose `gh pr list --repo <repo> --state all -L 2000`
+    (one call per repo, ~6 repos) instead of per-task `gh pr view` for efficient batching.
+  - Confirmed local git clones exist at /opt/veridian/repos/<repo> for real commit-ancestry
+    fallback (git log origin/<default-branch> --grep=<task_id>).
+  - 'Inspected *_PHASE_PLAN_*.yaml structure (phases: [{id,status,...}]) for cross-referencing;
+    live copies at /opt/veridian/ai-os, some (VERIDIAN_ARCHITECTURE_V2) only exist
+    in the git-tracked ai-os/ snapshot -- script checks live first, falls back to
+    repo copy.'
+  - Wrote ai-os-scripts/verify_7day_task_completion.py implementing the full verification
+    chain (pr_url.txt -> log grep -> gh headRefName match -> commit ancestry -> checkpoint-terminal-state
+    fallback), with --count-only, --out-md, --out-json.
+  remaining_steps:
+  - Run --count-only, sanity check row count against live task.yaml count.
+  - Run full audit (--out-md, --out-json), verify task-20260726-081117 row is correctly
+    flagged.
+  - Register the audit in ai-os/MASTER_INDEX.yaml registries section (git-tracked
+    copy).
+  - Commit + push; open PR against claude-control (do NOT merge, per constraints).
+  recent_commits:
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - '66fc379 Phase 2 extension: unify ddl_authorization_check.py onto policy_decision_schema,
+    build the real policy gate registry'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  note: periodic checkpoint
+- at: '2026-07-26T16:47:01.742912+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Explored ai-os/tasks/ structure: real data lives at /opt/veridian/ai-os/tasks/
+    (451 total dirs, NOT git-tracked -- /opt/veridian is not a git repo). Confirmed
+    "last 7 days" window (now - 7 days) yields ~218 tasks.'
+  - 'Confirmed pr_url.txt / worker.log / supervisor.log evidence shape; confirmed
+    known exception task-20260726-081117 recorded PR #565 in pr_url.txt while title
+    says "Fix PR563" -- last checkpoint note literally says "merged autonomously:
+    .../pull/565".'
+  - Confirmed gh CLI auth works; chose `gh pr list --repo <repo> --state all -L 2000`
+    (one call per repo, ~6 repos) instead of per-task `gh pr view` for efficient batching.
+  - Confirmed local git clones exist at /opt/veridian/repos/<repo> for real commit-ancestry
+    fallback (git log origin/<default-branch> --grep=<task_id>).
+  - 'Inspected *_PHASE_PLAN_*.yaml structure (phases: [{id,status,...}]) for cross-referencing;
+    live copies at /opt/veridian/ai-os, some (VERIDIAN_ARCHITECTURE_V2) only exist
+    in the git-tracked ai-os/ snapshot -- script checks live first, falls back to
+    repo copy.'
+  - Wrote ai-os-scripts/verify_7day_task_completion.py implementing the full verification
+    chain (pr_url.txt -> log grep -> gh headRefName match -> commit ancestry -> checkpoint-terminal-state
+    fallback), with --count-only, --out-md, --out-json.
+  - 'Ran --count-only: 219 real tasks in the live 7-day window (4 dirs correctly omitted
+    -- no task.yaml at all, honestly reported not silently dropped).'
+  - 'Ran full audit. Verified both known real exceptions (task-20260726-081117 ->
+    merged PR #565, task-20260726-115425 -> merged PR #569) are AUTOMATICALLY flagged
+    via generalized title-vs-actual-PR mismatch detection (not hardcoded): real_verified_status=MERGED
+    but reason explicitly states the title''s named PR #563 is still OPEN and unresolved.'
+  - Spot-checked OPEN_NOT_DONE, INVESTIGATION_ONLY, NO_PR_FOUND rows and phase_plan_ref
+    cross-references by hand against source task dirs -- all correct. `python3 -m
+    json.tool` on the JSON output exits 0.
+  - 'Registered ai-os-scripts/verify_7day_task_completion.py + the audit outputs in
+    ai-os/MASTER_INDEX.yaml''s registries section (id: task_completion_audit_7day),
+    following the existing entry pattern. YAML re-parses cleanly (114 registries entries).'
+  - 'Merged origin/master in (2 commits it was behind, clean auto-merge including
+    MASTER_INDEX.yaml), pushed branch, opened PR: https://github.com/FChecklist/claude-control/pull/93.
+    Not merged, per task constraints.'
+  remaining_steps: []
+  recent_commits:
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  note: quality gates passed, pushed branch worker/task-20260726-163551-real-automated-verification-of-all-218-t,
+    awaiting review
+- at: '2026-07-26T16:47:58.860711+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/93'
+execution_seconds: 667
+restart_count: 0
+token_usage:
+  input_tokens: 96
+  cache_creation_input_tokens: 91050
+  cache_read_input_tokens: 3948701
+  output_tokens: 48375
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 91050
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 515
+    cache_read_input_tokens: 114121
+    cache_creation_input_tokens: 613
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 613
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-26T18:05:35.071210+00:00'

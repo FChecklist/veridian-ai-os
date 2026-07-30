@@ -1,0 +1,455 @@
+id: task-20260719-061256-projexa-e2e-phase-1--architecture-discov
+title: 'PROJEXA E2E Phase 1: architecture discovery + seed data'
+status: completed
+repo: projexa
+branch: worker/task-20260719-061256-projexa-e2e-phase-1--architecture-discov
+workspace: /opt/veridian/ai-os/tasks/task-20260719-061256-projexa-e2e-phase-1--architecture-discov/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260719-061256-projexa-e2e-phase-1--architecture-discov
+service: veridian-worker@task-20260719-061256-projexa-e2e-phase-1--architecture-discov.service
+created_at: '2026-07-19T06:12:56.831302+00:00'
+last_checkpoint_at: '2026-07-19T06:45:17.822166+00:00'
+completed_steps: &id002
+- 'Located both repos: FChecklist/projexa (this workspace) and FChecklist/compliance-tracker
+  (/opt/veridian/repos/compliance-tracker)'
+- 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #477,
+  via a scratch clone at /tmp/compliance-tracker-claim to avoid touching the shared
+  checkout''s pre-existing uncommitted work)'
+- 'Confirmed real auth/data-bridge mechanism with file:line citations:'
+- 'SELF-CORRECTED: initially misread the "platform schema" detail as a false premise
+  because the shared checkout was 63 commits behind origin/main. Live `psql` introspection
+  confirmed the task brief WAS right: `platform.product_branches` etc. really exist
+  (compliance-tracker PR #468/#469, merged). No drizzle/0245 file exists by that name,
+  but the schema-relocation fact is real. Construction/ERP/HR business tables (what
+  seeding needs) are unaffected.'
+- 'Confirmed real userRoleEnum (live pg_enum): admin, manager, member, viewer, veridian_admin,
+  branch_manager, senior_professional, team_member, client_viewer, external_auditor,
+  stage_0'
+- Found existing account-provisioning precedent for democeo@projexa-ai.com (claude-control/CONTROLLER.yaml
+  PROJEXA-DEMO-01 entry)
+- 'Full 40-module real-vs-placeholder backing survey complete (6 parallel research
+  agents): 39/40 REAL-BACKING, 1/40 (settings) legitimately PROJEXA-native-only by
+  design -- full table in PHASE1_SEED_REPORT.md section (b)'
+- Full live-DB schema introspection (psql \d) for every table used in the seed script
+  -- cross-checked against agent findings, all consistent
+- Designed 11-person org chart (CEO + 10) mapped to real userRoleEnum + realistic
+  construction job titles -- see PHASE1_SEED_REPORT.md section (c)
+- 'Wrote and ran 4-batch seed script against compliance-tracker''s live DB: new org
+  "Meridian Construction Group (E2E Test Org)" (id 4ecc472f-4152-4310-ae8d-cf8b7c52ab6d),
+  1,007 rows total across projects/RFIs/submittals/punch-list/change-orders/site-diary/schedule/BOQ/vendors/materials/customers/POs/quotations/sales-orders/invoices/payroll/leave/documents/meetings/KPIs'
+- Minted a real VERIDIAN vk_ API key (compliance-tracker api_keys row b199026b-dc76-402e-ab40-616db6068774)
+  scoped to the new org, ready to bridge from PROJEXA
+- Attempted PROJEXA-side account creation; hit a genuine, well-evidenced credential-access
+  blocker (Vercel Sensitive env vars unreadable via CLI, no Supabase MCP tool available,
+  expired SUPABASE_ACCESS_TOKEN, public signup blocked by required email confirmation
+  with no mailbox access) -- documented in full in PHASE1_SEED_REPORT.md section (c),
+  including a side-effect probe account left in PROJEXA's Supabase Auth that needs
+  cleanup
+- Wrote scripts/phase1-provision-projexa-accounts.mjs -- ready to run once a session
+  has real PROJEXA service-role/DB access, reuses the already-minted real org id +
+  vk_ key (no re-seeding needed)
+- Wrote PHASE1_SEED_REPORT.md with exact counts, credentials, and file:line citations
+- Committed report + seed scripts, opened PR against FChecklist/projexa
+remaining_steps: &id003
+- (Blocked, handed off) Run scripts/phase1-provision-projexa-accounts.mjs once real
+  PROJEXA Supabase service-role/DB credentials are available -- creates the 11 real
+  working logins Phase 2/3 need
+- (Handed off) Delete the dangling unconfirmed probe account probe-test-e2e-phase1@projexa-ai.com
+  from PROJEXA's Supabase Auth once service-role access exists
+- Phase 2 (E2E test writing/execution) -- separate, subsequent dispatch, not part
+  of this task
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-19T06:12:57.839152+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  note: worker started (resume=0)
+- at: '2026-07-19T06:17:58.152672+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  note: periodic checkpoint
+- at: '2026-07-19T06:22:58.535782+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Located both repos: FChecklist/projexa (this workspace) and FChecklist/compliance-tracker
+    (/opt/veridian/repos/compliance-tracker)'
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #477,
+    via a scratch clone at /tmp/compliance-tracker-claim to avoid touching the shared
+    checkout''s pre-existing uncommitted work)'
+  - 'Confirmed real auth/data-bridge mechanism with file:line citations:'
+  - 'Corrected a false premise in the task brief: there is NO drizzle/0245 migration
+    and NO separate "platform" Postgres schema -- product_branches/product_branch_modules
+    are defined in the `compliance` pg schema (complianceSchemaDB) in schema.ts:1860/1884.
+    Confirmed via `ls drizzle/*.sql` (latest is 0224) and grep. A sibling branch `claim-cleanup/schema-ts-platform-move`
+    exists on the compliance-tracker remote, suggesting another session is already
+    aware of/working a real platform-schema migration -- flagged in report, not duplicated
+    here.'
+  - 'Confirmed real userRoleEnum (compliance-tracker/src/lib/db/schema.ts:8-11): admin,
+    manager, member, viewer, veridian_admin, branch_manager, senior_professional,
+    team_member, client_viewer, external_auditor, stage_0'
+  - 'Found existing account-provisioning precedent for democeo@projexa-ai.com (claude-control/CONTROLLER.yaml
+    PROJEXA-DEMO-01 entry): owner via real signup flow, members via direct auth.users/auth.identities
+    inserts + manual memberships row (no self-serve invite flow exists)'
+  - 'Found seed-script conventions to follow: compliance-tracker/src/db/seed.ts, scripts/gen-wave111-seed-sql.ts,
+    scripts/wave111-create-hero-logins.ts, scripts/projexa-load-test.ts (latter confirms
+    which org is the load-test org to avoid)'
+  remaining_steps:
+  - Full 40-module real-vs-placeholder backing survey (in progress via parallel agents)
+  - Full schema table inventory for construction/ERP/HR modules relevant to seeding
+  - Design 11-person org chart (CEO + 10) mapped to real userRoleEnum + realistic
+    job titles
+  - Write seed script for new "Meridian Construction Group (E2E Test Org)" org, run
+    it against compliance-tracker's real DB
+  - Create veridian_credentials link row (new PROJEXA org <-> new compliance-tracker
+    org + vk_ apiKey)
+  - Create 11 real Supabase Auth accounts on PROJEXA's Supabase project (evpckeuxgvahguwsaeul)
+  - Write PHASE1_SEED_REPORT.md with exact counts and credentials
+  - Commit report (+ seed script) and open PR against FChecklist/projexa
+  recent_commits:
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  note: periodic checkpoint
+- at: '2026-07-19T06:27:58.853615+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Located both repos: FChecklist/projexa (this workspace) and FChecklist/compliance-tracker
+    (/opt/veridian/repos/compliance-tracker)'
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #477,
+    via a scratch clone at /tmp/compliance-tracker-claim to avoid touching the shared
+    checkout''s pre-existing uncommitted work)'
+  - 'Confirmed real auth/data-bridge mechanism with file:line citations:'
+  - 'Corrected a false premise in the task brief: there is NO drizzle/0245 migration
+    and NO separate "platform" Postgres schema -- product_branches/product_branch_modules
+    are defined in the `compliance` pg schema (complianceSchemaDB) in schema.ts:1860/1884.
+    Confirmed via `ls drizzle/*.sql` (latest is 0224) and grep. A sibling branch `claim-cleanup/schema-ts-platform-move`
+    exists on the compliance-tracker remote, suggesting another session is already
+    aware of/working a real platform-schema migration -- flagged in report, not duplicated
+    here.'
+  - 'Confirmed real userRoleEnum (compliance-tracker/src/lib/db/schema.ts:8-11): admin,
+    manager, member, viewer, veridian_admin, branch_manager, senior_professional,
+    team_member, client_viewer, external_auditor, stage_0'
+  - 'Found existing account-provisioning precedent for democeo@projexa-ai.com (claude-control/CONTROLLER.yaml
+    PROJEXA-DEMO-01 entry): owner via real signup flow, members via direct auth.users/auth.identities
+    inserts + manual memberships row (no self-serve invite flow exists)'
+  - 'Found seed-script conventions to follow: compliance-tracker/src/db/seed.ts, scripts/gen-wave111-seed-sql.ts,
+    scripts/wave111-create-hero-logins.ts, scripts/projexa-load-test.ts (latter confirms
+    which org is the load-test org to avoid)'
+  remaining_steps:
+  - Full 40-module real-vs-placeholder backing survey (in progress via parallel agents)
+  - Full schema table inventory for construction/ERP/HR modules relevant to seeding
+  - Design 11-person org chart (CEO + 10) mapped to real userRoleEnum + realistic
+    job titles
+  - Write seed script for new "Meridian Construction Group (E2E Test Org)" org, run
+    it against compliance-tracker's real DB
+  - Create veridian_credentials link row (new PROJEXA org <-> new compliance-tracker
+    org + vk_ apiKey)
+  - Create 11 real Supabase Auth accounts on PROJEXA's Supabase project (evpckeuxgvahguwsaeul)
+  - Write PHASE1_SEED_REPORT.md with exact counts and credentials
+  - Commit report (+ seed script) and open PR against FChecklist/projexa
+  recent_commits:
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  note: periodic checkpoint
+- at: '2026-07-19T06:32:59.172401+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Located both repos: FChecklist/projexa (this workspace) and FChecklist/compliance-tracker
+    (/opt/veridian/repos/compliance-tracker)'
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #477,
+    via a scratch clone at /tmp/compliance-tracker-claim to avoid touching the shared
+    checkout''s pre-existing uncommitted work)'
+  - 'Confirmed real auth/data-bridge mechanism with file:line citations:'
+  - 'SELF-CORRECTED: initially misread this as a false premise because the shared
+    checkout at /opt/veridian/repos/compliance-tracker was 63 commits behind origin/main.
+    Live `psql` introspection of the real DB (compliance-tracker/.env.local DATABASE_URL)
+    confirms the task brief WAS right: `platform.product_branches`/`platform.product_branch_modules`
+    (+20 other tables) really do live in a separate `platform` Postgres schema today,
+    applied live via Supabase MCP (see compliance-tracker PR #468 "Add platform schema
+    compartment migration" + PR #469 "schema.ts: reflect live platform schema move
+    (22 tables + 3 enums)", both already merged to origin/main). The stale local schema.ts
+    (still showing `complianceSchemaDB.table(''product_branches'', ...)`) was simply
+    out of date. No drizzle/0245 file exists (the move was applied directly via Supabase
+    MCP, not a numbered drizzle migration) -- that specific file-name detail in the
+    brief doesn''t resolve to a real file, but the schema-relocation fact itself is
+    real and confirmed live. Construction/ERP/HR business tables (what the seed script
+    needs) are unaffected -- diffed HEAD..origin/main and confirmed no changes to
+    any construction_*/erp_*/employee_profiles/projects/users/leave_* table definitions.'
+  - 'Confirmed real userRoleEnum (compliance-tracker/src/lib/db/schema.ts:8-11): admin,
+    manager, member, viewer, veridian_admin, branch_manager, senior_professional,
+    team_member, client_viewer, external_auditor, stage_0'
+  - 'Found existing account-provisioning precedent for democeo@projexa-ai.com (claude-control/CONTROLLER.yaml
+    PROJEXA-DEMO-01 entry): owner via real signup flow, members via direct auth.users/auth.identities
+    inserts + manual memberships row (no self-serve invite flow exists)'
+  - 'Found seed-script conventions to follow: compliance-tracker/src/db/seed.ts, scripts/gen-wave111-seed-sql.ts,
+    scripts/wave111-create-hero-logins.ts, scripts/projexa-load-test.ts (latter confirms
+    which org is the load-test org to avoid)'
+  remaining_steps:
+  - Full 40-module real-vs-placeholder backing survey (in progress via parallel agents)
+  - Full schema table inventory for construction/ERP/HR modules relevant to seeding
+  - Design 11-person org chart (CEO + 10) mapped to real userRoleEnum + realistic
+    job titles
+  - Write seed script for new "Meridian Construction Group (E2E Test Org)" org, run
+    it against compliance-tracker's real DB
+  - Create veridian_credentials link row (new PROJEXA org <-> new compliance-tracker
+    org + vk_ apiKey)
+  - Create 11 real Supabase Auth accounts on PROJEXA's Supabase project (evpckeuxgvahguwsaeul)
+  - Write PHASE1_SEED_REPORT.md with exact counts and credentials
+  - Commit report (+ seed script) and open PR against FChecklist/projexa
+  recent_commits:
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  note: periodic checkpoint
+- at: '2026-07-19T06:37:59.509369+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - 'Located both repos: FChecklist/projexa (this workspace) and FChecklist/compliance-tracker
+    (/opt/veridian/repos/compliance-tracker)'
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #477,
+    via a scratch clone at /tmp/compliance-tracker-claim to avoid touching the shared
+    checkout''s pre-existing uncommitted work)'
+  - 'Confirmed real auth/data-bridge mechanism with file:line citations:'
+  - 'SELF-CORRECTED: initially misread this as a false premise because the shared
+    checkout at /opt/veridian/repos/compliance-tracker was 63 commits behind origin/main.
+    Live `psql` introspection of the real DB (compliance-tracker/.env.local DATABASE_URL)
+    confirms the task brief WAS right: `platform.product_branches`/`platform.product_branch_modules`
+    (+20 other tables) really do live in a separate `platform` Postgres schema today,
+    applied live via Supabase MCP (see compliance-tracker PR #468 "Add platform schema
+    compartment migration" + PR #469 "schema.ts: reflect live platform schema move
+    (22 tables + 3 enums)", both already merged to origin/main). The stale local schema.ts
+    (still showing `complianceSchemaDB.table(''product_branches'', ...)`) was simply
+    out of date. No drizzle/0245 file exists (the move was applied directly via Supabase
+    MCP, not a numbered drizzle migration) -- that specific file-name detail in the
+    brief doesn''t resolve to a real file, but the schema-relocation fact itself is
+    real and confirmed live. Construction/ERP/HR business tables (what the seed script
+    needs) are unaffected -- diffed HEAD..origin/main and confirmed no changes to
+    any construction_*/erp_*/employee_profiles/projects/users/leave_* table definitions.'
+  - 'Confirmed real userRoleEnum (compliance-tracker/src/lib/db/schema.ts:8-11): admin,
+    manager, member, viewer, veridian_admin, branch_manager, senior_professional,
+    team_member, client_viewer, external_auditor, stage_0'
+  - 'Found existing account-provisioning precedent for democeo@projexa-ai.com (claude-control/CONTROLLER.yaml
+    PROJEXA-DEMO-01 entry): owner via real signup flow, members via direct auth.users/auth.identities
+    inserts + manual memberships row (no self-serve invite flow exists)'
+  - 'Found seed-script conventions to follow: compliance-tracker/src/db/seed.ts, scripts/gen-wave111-seed-sql.ts,
+    scripts/wave111-create-hero-logins.ts, scripts/projexa-load-test.ts (latter confirms
+    which org is the load-test org to avoid)'
+  remaining_steps:
+  - Full 40-module real-vs-placeholder backing survey (in progress via parallel agents)
+  - Full schema table inventory for construction/ERP/HR modules relevant to seeding
+  - Design 11-person org chart (CEO + 10) mapped to real userRoleEnum + realistic
+    job titles
+  - Write seed script for new "Meridian Construction Group (E2E Test Org)" org, run
+    it against compliance-tracker's real DB
+  - Create veridian_credentials link row (new PROJEXA org <-> new compliance-tracker
+    org + vk_ apiKey)
+  - Create 11 real Supabase Auth accounts on PROJEXA's Supabase project (evpckeuxgvahguwsaeul)
+  - Write PHASE1_SEED_REPORT.md with exact counts and credentials
+  - Commit report (+ seed script) and open PR against FChecklist/projexa
+  recent_commits:
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  note: periodic checkpoint
+- at: '2026-07-19T06:42:59.840332+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - scripts/
+  completed_steps:
+  - 'Located both repos: FChecklist/projexa (this workspace) and FChecklist/compliance-tracker
+    (/opt/veridian/repos/compliance-tracker)'
+  - 'Registered claim in compliance-tracker''s ai-os/boss/ACTIVE-CLAIMS.yaml (PR #477,
+    via a scratch clone at /tmp/compliance-tracker-claim to avoid touching the shared
+    checkout''s pre-existing uncommitted work)'
+  - 'Confirmed real auth/data-bridge mechanism with file:line citations:'
+  - 'SELF-CORRECTED: initially misread this as a false premise because the shared
+    checkout at /opt/veridian/repos/compliance-tracker was 63 commits behind origin/main.
+    Live `psql` introspection of the real DB (compliance-tracker/.env.local DATABASE_URL)
+    confirms the task brief WAS right: `platform.product_branches`/`platform.product_branch_modules`
+    (+20 other tables) really do live in a separate `platform` Postgres schema today,
+    applied live via Supabase MCP (see compliance-tracker PR #468 "Add platform schema
+    compartment migration" + PR #469 "schema.ts: reflect live platform schema move
+    (22 tables + 3 enums)", both already merged to origin/main). The stale local schema.ts
+    (still showing `complianceSchemaDB.table(''product_branches'', ...)`) was simply
+    out of date. No drizzle/0245 file exists (the move was applied directly via Supabase
+    MCP, not a numbered drizzle migration) -- that specific file-name detail in the
+    brief doesn''t resolve to a real file, but the schema-relocation fact itself is
+    real and confirmed live. Construction/ERP/HR business tables (what the seed script
+    needs) are unaffected -- diffed HEAD..origin/main and confirmed no changes to
+    any construction_*/erp_*/employee_profiles/projects/users/leave_* table definitions.'
+  - 'Confirmed real userRoleEnum (compliance-tracker/src/lib/db/schema.ts:8-11): admin,
+    manager, member, viewer, veridian_admin, branch_manager, senior_professional,
+    team_member, client_viewer, external_auditor, stage_0'
+  - 'Found existing account-provisioning precedent for democeo@projexa-ai.com (claude-control/CONTROLLER.yaml
+    PROJEXA-DEMO-01 entry): owner via real signup flow, members via direct auth.users/auth.identities
+    inserts + manual memberships row (no self-serve invite flow exists)'
+  - 'Found seed-script conventions to follow: compliance-tracker/src/db/seed.ts, scripts/gen-wave111-seed-sql.ts,
+    scripts/wave111-create-hero-logins.ts, scripts/projexa-load-test.ts (latter confirms
+    which org is the load-test org to avoid)'
+  remaining_steps:
+  - Full 40-module real-vs-placeholder backing survey (in progress via parallel agents)
+  - Full schema table inventory for construction/ERP/HR modules relevant to seeding
+  - Design 11-person org chart (CEO + 10) mapped to real userRoleEnum + realistic
+    job titles
+  - Write seed script for new "Meridian Construction Group (E2E Test Org)" org, run
+    it against compliance-tracker's real DB
+  - Create veridian_credentials link row (new PROJEXA org <-> new compliance-tracker
+    org + vk_ apiKey)
+  - Create 11 real Supabase Auth accounts on PROJEXA's Supabase project (evpckeuxgvahguwsaeul)
+  - Write PHASE1_SEED_REPORT.md with exact counts and credentials
+  - Commit report (+ seed script) and open PR against FChecklist/projexa
+  recent_commits:
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  - 'aefdf6c Merge pull request #34 from FChecklist/cleanup/unused-ui-components-status-badge-chart-datatable'
+  note: periodic checkpoint
+- at: '2026-07-19T06:45:17.822166+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'a2bb802 Phase 1: PROJEXA<->VERIDIAN architecture discovery + E2E test org seed
+    data'
+  - dd47267 Migrate PROJEXA to consume veridian-ui-kit (#43)
+  - 341435a Migrate to veridian-ui-kit's real shell/composer/panel/header components
+    (#42)
+  - 6e803bb Fix shadcn semantic tokens still showing old orange (#41)
+  - 5ff5183 Add a real Create Project flow to the dashboard (#40)
+  - '7a85f89 Adopt veridian-ui-kit: exact VERIDIAN colors/fonts + merged Home page
+    (#38)'
+  - dab4314 Fix AppSidebar mounting twice on every authenticated page (#39)
+  - '5ddbc2f fix: link hero stat chips to the ROI section''s honest math instead of
+    floating unexplained (#37)'
+  - 'e40ffa7 Marketing site redesign: integrated homepage + How It Works page + contact
+    capture (#36)'
+  - e675629 Show real e-signature status for pending-approval change orders (#35)
+  note: worker finished, no changes to commit
+execution_seconds: 1940
+restart_count: 0
+token_usage:
+  input_tokens: 316
+  cache_creation_input_tokens: 302811
+  cache_read_input_tokens: 28002421
+  output_tokens: 124121
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 302811
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 767
+    cache_read_input_tokens: 326002
+    cache_creation_input_tokens: 347
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 347
+    type: message
+  speed: standard
+master_synced_at: '2026-07-19T07:00:05.067777+00:00'

@@ -1,0 +1,20 @@
+TASK: V2-6 -- Decisions-of-record (docs-only close for the hold/document rows)
+
+### V2-6 — Decisions-of-record (docs-only close for the hold/document rows) [D7/D9/C13/C16/C17/C18/C19]
+- READY: yes
+- SOFTWARE TEAM LEVEL: L1 Code Worker (docs-only)
+- TASK ID: V2-6-DECISIONS-OF-RECORD
+- MODULE: compliance-tracker (ai-os/)
+- OBJECTIVE: Record the §2 decisions that close rows without code: CRM/ERP connector hold (D7/D11), no-second-cost-source (D9), bank-credential target-lowered-to-3 (C13), market-fit-deferred-no-customer-base (C16), OPENAI_API_KEY-provisioning-formal-request (C17), metadata-driven-no-action (C18), Supabase-IPv4-free-half (C19). Each row gets a one-paragraph decision record in `ai-os/` so the CSV re-score has evidence.
+- READ FIRST: §2 of this file; the relevant CSV rows.
+- WHAT TO BUILD: A single `ai-os/REVIEW_FRAMEWORK_DECISIONS_2026-07-19.md` with one entry per decided/recorded row (decision + rationale + authority basis). No code.
+- CONSTRAINTS: Docs-only. Register claim.
+- DONE CRITERIA: Doc exists, covers every (b)/(c)-docs row; PR open (tier1).
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

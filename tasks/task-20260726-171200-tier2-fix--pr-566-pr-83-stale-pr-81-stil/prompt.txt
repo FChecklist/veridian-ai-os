@@ -1,0 +1,30 @@
+## OBJECTIVE
+Fix the real, unresolved gap that got task-20260726-094625-re-verify-20-engine-inventory---confirm's work (compliance-tracker PR #566, https://github.com/FChecklist/compliance-tracker/pull/566, and claude-control PR #83, https://github.com/FChecklist/claude-control/pull/83 -- both on branch worker/task-20260726-094625-re-verify-20-engine-inventory---confirm in their respective repos) a real AUDIT: REJECT verdict: a stale/false claim about PR #81's status was committed into permanent governance files in both repos. Do not re-run the whole 20-engine re-verification -- only correct the specific stale claim and re-confirm current PR states before finalizing.
+
+## KNOWN_CONTEXT
+Verbatim from ai-os/tasks/task-20260726-094625-re-verify-20-engine-inventory---confirm/review.json (verdict: reject):
+"PROGRESS.md claims this session traced 4 new files to 'currently-open PRs #79, #80, #81, #82' -- PR #81 is actually CLOSED (not merged, rejected as duplicate work), not open, as of gh pr view at review time." and "ACTIVE-CLAIMS.yaml recently_completed entry repeats the same stale claim ('still-open PRs #81 ... and #82') into the permanent cross-session coordination registry, which other sessions rely on as ground truth per Rule 11" and "The same stale 'open PR #81, not yet merged' framing was carried into the actual engine-inventory work product (claude-control PR #83's gap_description for Engine 8), so the inaccuracy is not confined to this repo's tracking files."
+Re-verified live on 2026-07-26 (this dispatch) via `gh pr view <n> --repo FChecklist/claude-control --json number,state,mergedAt`:
+- PR #79: MERGED
+- PR #80: OPEN (still under active bypass-hardening rounds, unrelated task)
+- PR #81: CLOSED, mergedAt=null (closed as duplicate of already-merged commit e6c7049 -- confirmed CLOSED, not open, still true right now)
+- PR #82: MERGED
+So the specific correction needed is: everywhere these files currently say PR #81 (and, if also present, #82) are "still open"/"not yet merged", the actual current, correct facts are PR #81 = CLOSED (rejected duplicate, not merged) and PR #82 = MERGED. Re-check PR #79 and #80's actual current state yourself at execution time (state may have changed further by then) rather than trusting the numbers above as of this dispatch.
+
+## SCOPE
+1. In the compliance-tracker repo, on branch worker/task-20260726-094625-re-verify-20-engine-inventory---confirm (PR #566's real existing branch): find and correct the stale "currently-open PRs #79, #80, #81, #82" claim in PROGRESS.md, and the "still-open PRs #81 ... and #82" claim in ai-os/boss/ACTIVE-CLAIMS.yaml's recently_completed entry (or wherever that entry now lives if it has moved), replacing them with the real, freshly-verified state of each PR number referenced.
+2. In the claude-control repo, on branch worker/task-20260726-094625-re-verify-20-engine-inventory---confirm (PR #83's real existing branch): find and correct the same stale framing in the Engine 8 gap_description (or wherever the engine-inventory deliverable states PR #81's status), so it reflects PR #81 as CLOSED (rejected duplicate), not open/pending.
+3. Before finalizing, re-run `gh pr view <n> --repo FChecklist/claude-control --json number,state,mergedAt` for every PR number your corrected text references, and make sure the text matches the live state at the moment you push, not a stale snapshot.
+4. This is a documentation-only correction -- do not re-run the underlying 20-engine inventory confirmation work itself; the review found no fault with that beyond this one factual staleness.
+
+## SUCCESS_CRITERIA
+A grep across both changed files for the string "PR #81" (or wherever it's referenced) shows text consistent with `gh pr view 81 --repo FChecklist/claude-control --json state,mergedAt` output at commit time -- i.e., no remaining "open"/"not yet merged" language for PR #81 once it is confirmed CLOSED.
+
+## EXPECTED_OUTPUT
+Two real, pushed commits (or one commit touching both repos' checkouts if your workspace has both) to the existing branch worker/task-20260726-094625-re-verify-20-engine-inventory---confirm in compliance-tracker (updating PR #566) and the same-named branch in claude-control (updating PR #83). Do not open new PRs -- both branches and PRs already exist and are open.
+
+## CONSTRAINTS
+Do not re-run the full engine-inventory re-verification prompt. Do not touch any file outside the specific stale-PR-status claims identified above. Do not merge either PR yourself.
+
+## COMPLEXITY_TIER
+mechanical

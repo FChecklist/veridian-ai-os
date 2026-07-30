@@ -1,0 +1,138 @@
+id: task-20260718-061003-ai-cost-governance---finops--cache-drive
+title: 'AI Cost Governance & FinOps: Cache-Driven Savings'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-061003-ai-cost-governance---finops--cache-drive
+workspace: /opt/veridian/ai-os/tasks/task-20260718-061003-ai-cost-governance---finops--cache-drive/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-061003-ai-cost-governance---finops--cache-drive
+service: veridian-worker@task-20260718-061003-ai-cost-governance---finops--cache-drive.service
+created_at: '2026-07-18T06:10:04.647349+00:00'
+last_checkpoint_at: '2026-07-18T06:19:19.258801+00:00'
+completed_steps: &id002
+- Read `ai-os/boss/ACTIVE-CLAIMS.yaml`, `ai-os/CONSTITUTION.yaml` context, and registered
+  this session's claim before starting work.
+- 'Investigated the gap live rather than trusting the finding text: confirmed `recordPromptCacheMetric()`
+  (`src/lib/prompt-cache/metrics.ts`), called from `chat-service.ts`''s `generateAiReply()`,
+  wrote only to `prompt_cache_metrics` (an observability table) and never touched
+  `token_usage_ledger` (the table `cost-guard.ts`/`getTokenUsageSummary()` actually
+  read for Finance/cost-cap purposes). The gap description matched current code --
+  not already resolved.'
+- Added `estimateCacheSavingsUsd(model, usage)` to `src/lib/llm-client.ts` -- computes
+  real $ saved from Anthropic prompt-cache reads (documented 90% discount on cache-read
+  tokens), returning `null` when caching wasn't attempted or the model has no pricing
+  row (same "absence means not attempted" contract as `cacheReadTokens` itself).
+- Added `cache_savings_usd` nullable numeric column to `token_usage_ledger` (`src/lib/db/schema.ts`
+  + `drizzle/0225_token_usage_ledger_cache_savings.sql`).
+- '`logTokenUsage()` (`src/lib/services/token-usage-service.ts`) now computes and
+  stores `cacheSavingsUsd` on every row via `estimateCacheSavingsUsd`.'
+- '`recordPromptCacheMetric()` now also calls `logTokenUsage()` (scope `product_orchestra`)
+  alongside its existing `prompt_cache_metrics` write, so this call site''s real spend
+  *and* its cache savings both land in the ledger Finance actually reads. `chat-service.ts`''s
+  one call site updated to pass `userId` through.'
+- '`getTokenUsageSummary()` now surfaces `totalCacheSavingsUsd` plus a `cacheSavingsUsd`
+  column on every grouped row (by scope/role/model/org), so the savings are visible
+  in the existing Finance report (`/api/ai/team/token-usage`), not just a column nobody
+  queries.'
+- Added regression tests for `estimateCacheSavingsUsd` in `src/lib/llm-client.test.ts`
+  (null when not attempted, 0 for cache-creation-only calls, correct 90%-discount
+  math, null for unpriced models).
+- 'Verified: full test suite 1328 pass / 0 fail, `tsc --noEmit` clean, `eslint` 0
+  errors, `scripts/check-guardrail-presence.mjs` 88/88 markers present.'
+- Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`.
+remaining_steps: &id003
+- None for this finding. Open the PR for review/merge (per Rule 6, no direct push
+  to `main`).
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T06:10:05.205883+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  note: worker started (resume=0)
+- at: '2026-07-18T06:15:05.527696+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/db/schema.ts
+  - src/lib/llm-client.ts
+  - src/lib/prompt-cache/metrics.ts
+  - src/lib/services/chat-service.ts
+  - src/lib/services/token-usage-service.ts
+  - drizzle/0225_token_usage_ledger_cache_savings.sql
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  note: periodic checkpoint
+- at: '2026-07-18T06:19:19.258801+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 319f7fc0 Reflect prompt-cache savings in the token usage ledger
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  note: worker finished, no changes to commit
+execution_seconds: 555
+restart_count: 0
+token_usage:
+  input_tokens: 144
+  cache_creation_input_tokens: 95541
+  cache_read_input_tokens: 6222069
+  output_tokens: 35316
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 95541
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 435
+    cache_read_input_tokens: 117861
+    cache_creation_input_tokens: 1218
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1218
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T06:30:03.293106+00:00'

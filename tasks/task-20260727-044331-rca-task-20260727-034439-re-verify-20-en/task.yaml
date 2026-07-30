@@ -1,0 +1,1113 @@
+id: task-20260727-044331-rca-task-20260727-034439-re-verify-20-en
+title: rca-task-20260727-034439-re-verify-20-engine-inventory---confirm
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260727-044331-rca-task-20260727-034439-re-verify-20-en
+workspace: /opt/veridian/ai-os/tasks/task-20260727-044331-rca-task-20260727-034439-re-verify-20-en/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-044331-rca-task-20260727-034439-re-verify-20-en
+service: veridian-worker@task-20260727-044331-rca-task-20260727-034439-re-verify-20-en.service
+created_at: '2026-07-27T04:43:32.948318+00:00'
+last_checkpoint_at: '2026-07-28T11:37:47.022118+00:00'
+completed_steps: &id002
+- "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its own\
+  \ quality-gate phase was a legitimately slow/hung `next build` (a separate defect,\
+  \ already fixed live by sibling task-20260727-043407 via a `timeout` wrapper in\
+  \ scripts/quality-gate.sh \u2014 verified that fix is present)."
+- 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+  itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+  creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+  units were active simultaneously, one new escalation almost every ~60s watchdog
+  tick, for the identical "periodic checkpoint" signature.'
+- "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+  : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+  skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+  \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+  \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+  \ action taken\" branch every time, and `process_task()` still unconditionally escalated\
+  \ afterward. `record_fix_applied()` was also being called even for unrecognized\
+  \ actions, inflating `success_count` and masking that the fix never engaged."
+- "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+  \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+  \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's own\
+  \ escalation happened with `found=False`, so the known_fixes row was never even\
+  \ consulted."
+- "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+  \ part of any repo \u2014 same location the OOM and hung-build fixes for this signature\
+  \ already live):"
+- 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of `find_active_rca_for()`
+  and `escalate()`''s dedup skip path; `veridian-task.py create --help` confirms `--rca-target-id`
+  is wired.'
+- "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+  \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+  \ `known_fixes` row now has `success_count=17` (this row already existed since 2026-07-26;\
+  \ this run confirms it, and the fix_action name is now backed by real code for the\
+  \ first time)."
+remaining_steps: &id003
+- "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+  \ worker units were left running by the pre-fix escalation storm. **Re-verified\
+  \ 2026-07-28 (invocation 2):** `systemctl list-units 'veridian-worker@*rca*' --all`\
+  \ now returns 0 loaded units \u2014 the duplicate workers have drained/exited on\
+  \ their own since invocation 1's checkpoint; nothing left to clean up."
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T04:43:34.771008+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7f517f9a V2-13: register claim + re-verify scope for chat context/glossary/mode-pill
+    analytics'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T04:48:36.167860+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7f517f9a V2-13: register claim + re-verify scope for chat context/glossary/mode-pill
+    analytics'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  note: periodic checkpoint
+- at: '2026-07-27T04:53:37.604221+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7f517f9a V2-13: register claim + re-verify scope for chat context/glossary/mode-pill
+    analytics'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  note: periodic checkpoint
+- at: '2026-07-27T04:58:39.320293+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm (task-20260727-043407,\
+    \ 044231, 044431, 044531, 044632, 044732 as of this checkpoint). Did not stop\
+    \ them \u2014 that is a live-service action against other in-flight (automated)\
+    \ sessions' work, judged out of scope for a code-level RCA fix; flagging for owner/supervisor\
+    \ review. The new dedup fix prevents *future* duplicate escalations but does not\
+    \ retroactively clean up ones already created before this fix landed (none of\
+    \ them have `rca_target_id` set, since that field didn't exist yet at their creation\
+    \ time)."
+  recent_commits:
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7f517f9a V2-13: register claim + re-verify scope for chat context/glossary/mode-pill
+    analytics'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: periodic checkpoint
+- at: '2026-07-27T05:03:50.216974+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm (task-20260727-043407,\
+    \ 044231, 044431, 044531, 044632, 044732 as of this checkpoint). Did not stop\
+    \ them \u2014 that is a live-service action against other in-flight (automated)\
+    \ sessions' work, judged out of scope for a code-level RCA fix; flagging for owner/supervisor\
+    \ review. The new dedup fix prevents *future* duplicate escalations but does not\
+    \ retroactively clean up ones already created before this fix landed (none of\
+    \ them have `rca_target_id` set, since that field didn't exist yet at their creation\
+    \ time)."
+  recent_commits:
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7f517f9a V2-13: register claim + re-verify scope for chat context/glossary/mode-pill
+    analytics'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: periodic checkpoint
+- at: '2026-07-27T05:08:58.371683+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm (task-20260727-043407,\
+    \ 044231, 044431, 044531, 044632, 044732 as of this checkpoint). Did not stop\
+    \ them \u2014 that is a live-service action against other in-flight (automated)\
+    \ sessions' work, judged out of scope for a code-level RCA fix; flagging for owner/supervisor\
+    \ review. The new dedup fix prevents *future* duplicate escalations but does not\
+    \ retroactively clean up ones already created before this fix landed (none of\
+    \ them have `rca_target_id` set, since that field didn't exist yet at their creation\
+    \ time)."
+  recent_commits:
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7f517f9a V2-13: register claim + re-verify scope for chat context/glossary/mode-pill
+    analytics'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: periodic checkpoint
+- at: '2026-07-27T05:15:00.750091+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm (task-20260727-043407,\
+    \ 044231, 044431, 044531, 044632, 044732 as of this checkpoint). Did not stop\
+    \ them \u2014 that is a live-service action against other in-flight (automated)\
+    \ sessions' work, judged out of scope for a code-level RCA fix; flagging for owner/supervisor\
+    \ review. The new dedup fix prevents *future* duplicate escalations but does not\
+    \ retroactively clean up ones already created before this fix landed (none of\
+    \ them have `rca_target_id` set, since that field didn't exist yet at their creation\
+    \ time)."
+  recent_commits:
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7f517f9a V2-13: register claim + re-verify scope for chat context/glossary/mode-pill
+    analytics'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: periodic checkpoint
+- at: '2026-07-27T05:25:47.589116+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm (task-20260727-043407,\
+    \ 044231, 044431, 044531, 044632, 044732 as of this checkpoint). Did not stop\
+    \ them \u2014 that is a live-service action against other in-flight (automated)\
+    \ sessions' work, judged out of scope for a code-level RCA fix; flagging for owner/supervisor\
+    \ review. The new dedup fix prevents *future* duplicate escalations but does not\
+    \ retroactively clean up ones already created before this fix landed (none of\
+    \ them have `rca_target_id` set, since that field didn't exist yet at their creation\
+    \ time)."
+  recent_commits:
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7f517f9a V2-13: register claim + re-verify scope for chat context/glossary/mode-pill
+    analytics'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: periodic checkpoint
+- at: '2026-07-27T05:32:30.521055+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm (task-20260727-043407,\
+    \ 044231, 044431, 044531, 044632, 044732 as of this checkpoint). Did not stop\
+    \ them \u2014 that is a live-service action against other in-flight (automated)\
+    \ sessions' work, judged out of scope for a code-level RCA fix; flagging for owner/supervisor\
+    \ review. The new dedup fix prevents *future* duplicate escalations but does not\
+    \ retroactively clean up ones already created before this fix landed (none of\
+    \ them have `rca_target_id` set, since that field didn't exist yet at their creation\
+    \ time)."
+  recent_commits:
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7f517f9a V2-13: register claim + re-verify scope for chat context/glossary/mode-pill
+    analytics'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: periodic checkpoint
+- at: '2026-07-27T05:39:32.708261+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm (task-20260727-043407,\
+    \ 044231, 044431, 044531, 044632, 044732 as of this checkpoint). Did not stop\
+    \ them \u2014 that is a live-service action against other in-flight (automated)\
+    \ sessions' work, judged out of scope for a code-level RCA fix; flagging for owner/supervisor\
+    \ review. The new dedup fix prevents *future* duplicate escalations but does not\
+    \ retroactively clean up ones already created before this fix landed (none of\
+    \ them have `rca_target_id` set, since that field didn't exist yet at their creation\
+    \ time)."
+  recent_commits:
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7f517f9a V2-13: register claim + re-verify scope for chat context/glossary/mode-pill
+    analytics'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: periodic checkpoint
+- at: '2026-07-28T11:01:23.259419+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm (task-20260727-043407,\
+    \ 044231, 044431, 044531, 044632, 044732 as of this checkpoint). Did not stop\
+    \ them \u2014 that is a live-service action against other in-flight (automated)\
+    \ sessions' work, judged out of scope for a code-level RCA fix; flagging for owner/supervisor\
+    \ review. The new dedup fix prevents *future* duplicate escalations but does not\
+    \ retroactively clean up ones already created before this fix landed (none of\
+    \ them have `rca_target_id` set, since that field didn't exist yet at their creation\
+    \ time)."
+  recent_commits:
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7f517f9a V2-13: register claim + re-verify scope for chat context/glossary/mode-pill
+    analytics'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  note: worker started (resume=1, lifetime invocation 2/20, pre-flight passed)
+- at: '2026-07-28T11:06:30.419318+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm. **Re-verified\
+    \ 2026-07-28 (invocation 2):** `systemctl list-units 'veridian-worker@*rca*' --all`\
+    \ now returns 0 loaded units \u2014 the duplicate workers have drained/exited\
+    \ on their own since invocation 1's checkpoint; nothing left to clean up."
+  recent_commits:
+  - "e98ca378 PROGRESS.md: re-verify watchdog RCA fix \u2014 superseded by resource_governor.py,\
+    \ confirmed live (0 duplicate RCA units)"
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7f517f9a V2-13: register claim + re-verify scope for chat context/glossary/mode-pill
+    analytics'
+  note: periodic checkpoint
+- at: '2026-07-28T11:12:19.346676+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm. **Re-verified\
+    \ 2026-07-28 (invocation 2):** `systemctl list-units 'veridian-worker@*rca*' --all`\
+    \ now returns 0 loaded units \u2014 the duplicate workers have drained/exited\
+    \ on their own since invocation 1's checkpoint; nothing left to clean up."
+  recent_commits:
+  - "e98ca378 PROGRESS.md: re-verify watchdog RCA fix \u2014 superseded by resource_governor.py,\
+    \ confirmed live (0 duplicate RCA units)"
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7f517f9a V2-13: register claim + re-verify scope for chat context/glossary/mode-pill
+    analytics'
+  note: periodic checkpoint
+- at: '2026-07-28T11:19:04.488121+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm. **Re-verified\
+    \ 2026-07-28 (invocation 2):** `systemctl list-units 'veridian-worker@*rca*' --all`\
+    \ now returns 0 loaded units \u2014 the duplicate workers have drained/exited\
+    \ on their own since invocation 1's checkpoint; nothing left to clean up."
+  recent_commits:
+  - "e98ca378 PROGRESS.md: re-verify watchdog RCA fix \u2014 superseded by resource_governor.py,\
+    \ confirmed live (0 duplicate RCA units)"
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7f517f9a V2-13: register claim + re-verify scope for chat context/glossary/mode-pill
+    analytics'
+  note: worker started (resume=1, lifetime invocation 3/20, pre-flight passed)
+- at: '2026-07-28T11:25:47.112028+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm. **Re-verified\
+    \ 2026-07-28 (invocation 2):** `systemctl list-units 'veridian-worker@*rca*' --all`\
+    \ now returns 0 loaded units \u2014 the duplicate workers have drained/exited\
+    \ on their own since invocation 1's checkpoint; nothing left to clean up."
+  recent_commits:
+  - "1c37c00c PROGRESS.md: re-verify watchdog RCA fix (invocation 3) \u2014 no regression,\
+    \ still live"
+  - "e98ca378 PROGRESS.md: re-verify watchdog RCA fix \u2014 superseded by resource_governor.py,\
+    \ confirmed live (0 duplicate RCA units)"
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  note: periodic checkpoint
+- at: '2026-07-28T11:30:48.957785+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm. **Re-verified\
+    \ 2026-07-28 (invocation 2):** `systemctl list-units 'veridian-worker@*rca*' --all`\
+    \ now returns 0 loaded units \u2014 the duplicate workers have drained/exited\
+    \ on their own since invocation 1's checkpoint; nothing left to clean up."
+  recent_commits:
+  - "1c37c00c PROGRESS.md: re-verify watchdog RCA fix (invocation 3) \u2014 no regression,\
+    \ still live"
+  - "e98ca378 PROGRESS.md: re-verify watchdog RCA fix \u2014 superseded by resource_governor.py,\
+    \ confirmed live (0 duplicate RCA units)"
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  note: periodic checkpoint
+- at: '2026-07-28T11:35:51.595742+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm. **Re-verified\
+    \ 2026-07-28 (invocation 2):** `systemctl list-units 'veridian-worker@*rca*' --all`\
+    \ now returns 0 loaded units \u2014 the duplicate workers have drained/exited\
+    \ on their own since invocation 1's checkpoint; nothing left to clean up."
+  recent_commits:
+  - "1c37c00c PROGRESS.md: re-verify watchdog RCA fix (invocation 3) \u2014 no regression,\
+    \ still live"
+  - "e98ca378 PROGRESS.md: re-verify watchdog RCA fix \u2014 superseded by resource_governor.py,\
+    \ confirmed live (0 duplicate RCA units)"
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  note: periodic checkpoint
+- at: '2026-07-28T11:37:45.056433+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - "Read task-20260727-034439's task.yaml, worker.log, systemd.log; confirmed its\
+    \ own quality-gate phase was a legitimately slow/hung `next build` (a separate\
+    \ defect, already fixed live by sibling task-20260727-043407 via a `timeout` wrapper\
+    \ in scripts/quality-gate.sh \u2014 verified that fix is present)."
+  - 'Found the REAL, distinct root cause of the "stalled or looping" watchdog escalation
+    itself: scripts/veridian-task-watchdog.py''s `escalate()` had no dedup check before
+    creating a new RCA task. Confirmed live: 7 separate `veridian-worker@*rca-task-20260727-034439*`
+    units were active simultaneously, one new escalation almost every ~60s watchdog
+    tick, for the identical "periodic checkpoint" signature.'
+  - "Found the reason no prior fix ever took effect despite 13 recorded \"successes\"\
+    : `known_fixes` already had a row (signature=\"periodic checkpoint\", fix_action=\"\
+    skip_escalation_when_activating\", since 2026-07-26) whose name describes exactly\
+    \ the missing dedup behavior, but that action name was never implemented in `FIX_ACTIONS`\
+    \ \u2014 `apply_known_fix()` fell into the \"unrecognized action name, no automated\
+    \ action taken\" branch every time, and `process_task()` still unconditionally\
+    \ escalated afterward. `record_fix_applied()` was also being called even for unrecognized\
+    \ actions, inflating `success_count` and masking that the fix never engaged."
+  - "Found a second bug compounding the first: `known_fix = lookup_known_fix(signature)\
+    \ if found else None` gated the known_fixes lookup (step_2) behind `search_prior_occurrence()`\
+    \ (step_1, ATTENTION.md/task_audits text search) succeeding \u2014 this task's\
+    \ own escalation happened with `found=False`, so the known_fixes row was never\
+    \ even consulted."
+  - "Real fix applied directly to `/opt/veridian/scripts` (shared server infra, not\
+    \ part of any repo \u2014 same location the OOM and hung-build fixes for this\
+    \ signature already live):"
+  - 'Verified: `python3 -m py_compile` on both files; a monkeypatched unit test of
+    `find_active_rca_for()` and `escalate()`''s dedup skip path; `veridian-task.py
+    create --help` confirms `--rca-target-id` is wired.'
+  - "Registered the fix: `python3 scripts/superboss-register.py log-fix --signature\
+    \ \"periodic checkpoint\" --fix-action \"skip_escalation_when_activating\"` \u2192\
+    \ `known_fixes` row now has `success_count=17` (this row already existed since\
+    \ 2026-07-26; this run confirms it, and the fix_action name is now backed by real\
+    \ code for the first time)."
+  remaining_steps:
+  - "Out of this task's scope, reported not fixed: 6+ duplicate `rca-task-20260727-034439*`\
+    \ worker units were left running by the pre-fix escalation storm. **Re-verified\
+    \ 2026-07-28 (invocation 2):** `systemctl list-units 'veridian-worker@*rca*' --all`\
+    \ now returns 0 loaded units \u2014 the duplicate workers have drained/exited\
+    \ on their own since invocation 1's checkpoint; nothing left to clean up."
+  recent_commits:
+  - "1c37c00c PROGRESS.md: re-verify watchdog RCA fix (invocation 3) \u2014 no regression,\
+    \ still live"
+  - "e98ca378 PROGRESS.md: re-verify watchdog RCA fix \u2014 superseded by resource_governor.py,\
+    \ confirmed live (0 duplicate RCA units)"
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-28T11:37:47.022118+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - "1c37c00c PROGRESS.md: re-verify watchdog RCA fix (invocation 3) \u2014 no regression,\
+    \ still live"
+  - "e98ca378 PROGRESS.md: re-verify watchdog RCA fix \u2014 superseded by resource_governor.py,\
+    \ confirmed live (0 duplicate RCA units)"
+  - '25ca042b PROGRESS.md: record RCA of watchdog runaway RCA-escalation loop (periodic
+    checkpoint signature)'
+  - '1da32e4e Merge pull request #580 from FChecklist/worker/task-20260726-171946-chat-context---terminology---mode-pill-a'
+  - 'd5d01a30 PROGRESS.md: record PR #580 CI re-verification (all required checks
+    green)'
+  - '66318f20 PROGRESS.md: record PR #580 conflict resolution against origin/main'
+  - 2d852573 Merge remote-tracking branch 'origin/main' into worker/task-20260726-171946-chat-context---terminology---mode-pill-a
+  - 'd76d6e2c PROGRESS.md: record PR #580 link'
+  - '1731b25a V2-13: wire chat context fetch, org-glossary hook, and mode-pill usage
+    analytics'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 1, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+execution_seconds: 1352
+restart_count: 3
+token_usage:
+  input_tokens: 126
+  cache_creation_input_tokens: 145883
+  cache_read_input_tokens: 7279887
+  output_tokens: 49424
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 145883
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 827
+    cache_read_input_tokens: 167785
+    cache_creation_input_tokens: 1782
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1782
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+duplicate_of: task-20260727-034439-re-verify-20-engine-inventory---confirm
+superseded_reason: veridian-task-watchdog.timer (an active systemd timer never stopped
+  during the earlier OOM-incident cron/worker shutdown) was spawning a fresh rca-
+  retry of this exact issue every ~60s, all in parallel, with no check for an already-running
+  attempt. Stopped and disabled the timer 2026-07-27T05:49; this and its 3 siblings
+  were forcibly terminated as pure duplication, zero unique real progress lost (max
+  5 completed steps, no PR opened by any of them).
+superseded_at: '2026-07-27T05:50:55.988587+00:00'
+master_synced_at: '2026-07-29T21:04:25.551183+00:00'

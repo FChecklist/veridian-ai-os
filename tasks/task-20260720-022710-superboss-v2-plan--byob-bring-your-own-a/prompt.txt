@@ -1,0 +1,20 @@
+TASK: V2-5 -- BYOB bring-your-own-AI-model
+
+### V2-5 — BYOB bring-your-own-AI-model [D6]
+- READY: yes
+- SOFTWARE TEAM LEVEL: L3 Feature Worker
+- TASK ID: V2-5-BYOB-AI-MODEL
+- MODULE: compliance-tracker
+- OBJECTIVE: Build the per-tenant custom-LLM/API-key integration into the AI routing layer (the SECOND BYOB interpretation; the first — white-label branding — is already shipped per §1.1). A tenant configures their own model+key; the Mother Router prefers it for that tenant's dispatches, still through `checkTierEligibility()`. Closes CSV row #66's AI-model half.
+- READ FIRST: `src/lib/ai-router/mother-router.ts` + `roster-overrides.ts`; `ai-config-crypto.ts` (encrypt the key); `CONSTITUTION.yaml` ai_orchestra_tiers; AGENTS.md Rule 9 (no guardrail weakened).
+- WHAT TO BUILD: A per-org `tenant_ai_config` table (encrypted API key + model id + optional base URL) + a Mother Router override path that, when present, prefers the tenant's model but STILL runs `checkTierEligibility()` (an ineligible tenant model silently downgrades, never bypasses the guardrail). Settings UI for the tenant admin. Real tests including the guardrail-no-bypass case.
+- CONSTRAINTS: **Never bypass `checkTierEligibility()`** (Rule 9). Encrypt keys at rest. Tier2 (schema+crypto) — supervisor holds. Register claim.
+- DONE CRITERIA: Tenant can configure+use their own model; guardrail-no-bypass test green; tsc/lint/test clean; PR open.
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

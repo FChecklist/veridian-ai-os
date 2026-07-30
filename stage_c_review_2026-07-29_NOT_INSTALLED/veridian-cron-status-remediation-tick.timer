@@ -1,0 +1,11 @@
+[Unit]
+Description=Run veridian-cron-status-remediation-tick on its scheduled cadence (jittered -- see the paired .service for why)
+
+[Timer]
+OnCalendar=*-*-* *:7/10:00
+RandomizedDelaySec=90
+AccuracySec=1s
+Persistent=false
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,266 @@
+id: task-20260726-231913-fix-wiring-registry-migration-bug-in-dis
+title: Fix wiring_registry migration bug in dispatch consolidation (round 2)
+status: completed
+repo: claude-control
+branch: worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in
+workspace: /opt/veridian/ai-os/tasks/task-20260726-231913-fix-wiring-registry-migration-bug-in-dis/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-231913-fix-wiring-registry-migration-bug-in-dis
+service: veridian-worker@task-20260726-231913-fix-wiring-registry-migration-bug-in-dis.service
+created_at: '2026-07-26T23:19:14.424463+00:00'
+last_checkpoint_at: '2026-07-26T23:27:46.737248+00:00'
+completed_steps: &id002
+- Checked out the real PR branch (worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in)
+  from origin -- the task workspace's own default branch did not contain these files.
+- 'Read scripts/dispatch_core.py''s `_upsert_wiring_row()` and scripts/superboss-register.py''s
+  `_ensure_wiring_registry_table()` / `_migrate_schema()` / `_migrate_wiring_registry_entity_types()`
+  / `init_db()` / `init_db_silent()` in full. Confirmed the bug: `_upsert_wiring_row()`
+  only calls `_ensure_wiring_registry_table()` (a `CREATE TABLE IF NOT EXISTS` no-op
+  against an already-existing table), never `_migrate_schema()` (which calls `_migrate_wiring_registry_entity_types()`,
+  the real CHECK-widening table rebuild).'
+- Fixed `_upsert_wiring_row()` in dispatch_core.py to call `sbr._migrate_wiring_registry_entity_types(conn)`
+  after `_ensure_wiring_registry_table(conn)`, before the write. Used the targeted
+  migration function directly rather than the broader `_migrate_schema()`, since `_migrate_schema()`
+  also does an `ALTER TABLE system_index ADD COLUMN tags` that assumes `system_index`
+  already exists (true in production, but not in a wiring_registry-only test fixture)
+  -- irrelevant to the wiring_registry CHECK bug being fixed here.
+- 'Added `test_dispatch_core_record_dispatch_event_migrates_pre_existing_narrow_check_schema`
+  to tests/test_dispatch_core.py: seeds a fixture DB with the real pre-migration (narrower,
+  no `dispatch_event`) CHECK constraint plus a pre-existing row, calls `record_dispatch_event()`,
+  and asserts both the new row is genuinely queryable AND the pre-existing row survived
+  the table-rebuild migration unchanged.'
+- 'Confirmed the new test fails without the fix: temporarily reverted the `_migrate_wiring_registry_entity_types(conn)`
+  call, reran the new test alone -- it failed with the exact real `sqlite3.IntegrityError:
+  CHECK constraint failed: entity_type IN (...)` the audit reported (caught and logged
+  as a WARNING by the existing best-effort try/except, row never written). Reapplied
+  the fix; test passes again.'
+- '`python3 -m pytest tests/test_dispatch_core.py tests/test_dispatch_tick.py tests/test_phase_continuation_tick.py
+  tests/test_status_remediation_tick.py -v` -- all 19 tests pass (18 pre-existing
+  + 1 new). Note: the SUCCESS_CRITERIA''s literal `-k "dispatch_core or wiring"` filter
+  only matches 8 of the 19 (the other 11 live in test_phase_continuation_tick.py/test_status_remediation_tick.py
+  without "dispatch_core"/"wiring" in their names) -- ran the full 4-file suite instead
+  to cover all 19.'
+- 'Fixed dispatch-tick.py''s `module_queue_tick()` to genuinely round-robin across
+  module queues: builds per-module candidate lists, then interleaves one item per
+  module per round instead of draining one module''s whole queue before starting the
+  next. This mirrors module-queue-dispatcher.py.superseded-by-consolidation-2026-07-27''s
+  own pre-existing bug (its comment claimed "Round-robin across module queues" over
+  code that was actually module-by-module) -- a real, pre-existing issue, not introduced
+  by this consolidation, fixed while in this file per the task spec. Added an accurate
+  comment describing the real interleaving logic (dispatch-tick.py had dropped the
+  misleading comment during the port but kept the same non-interleaved code, so there
+  was no comment/code mismatch to "reconcile" in this file specifically -- just the
+  underlying bug to fix).'
+- 'Added `test_dispatch_tick_module_queue_round_robins_across_modules` to tests/test_dispatch_tick.py:
+  2 modules x 2 NEW items each, cap headroom for all 4, asserts real dispatch order
+  (recovered from the mock task-id counter) alternates modules. Confirmed it fails
+  without the fix (temporarily reverted, reran alone -- got module order `[backend,
+  backend, frontend, frontend]` instead of alternating); reapplied the fix, test passes.'
+- 'Full repo suite: `python3 -m pytest tests/ -v` -- 85/85 passed (includes the 19
+  dispatch-consolidation tests + 1 new round-robin test = 20 in that area, plus all
+  other unrelated suites, confirming no regressions).'
+- 'Pushed both commits to worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in
+  (5936458 migration fix, 3fff940 round-robin fix). Diff scope confirmed minimal:
+  only scripts/dispatch_core.py, scripts/dispatch-tick.py, and their two test files
+  -- dispatch_core.py''s concurrency-lock logic, the other 2 consolidated scripts,
+  and the renamed originals are untouched.'
+remaining_steps: &id003
+- None -- task complete. Needs a fresh audit pass per this task's CONSTRAINTS (do
+  not merge self).
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T23:19:19.001105+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 'e2c9f1c RCA task-20260726-171957 "periodic checkpoint" stall: cap Node build/lint
+    memory in quality-gate.sh to prevent OOM-kill loops'
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T23:24:20.443241+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/dispatch-tick.py
+  completed_steps:
+  - Checked out the real PR branch (worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in)
+    from origin -- the task workspace's own default branch did not contain these files.
+  - 'Read scripts/dispatch_core.py''s `_upsert_wiring_row()` and scripts/superboss-register.py''s
+    `_ensure_wiring_registry_table()` / `_migrate_schema()` / `_migrate_wiring_registry_entity_types()`
+    / `init_db()` / `init_db_silent()` in full. Confirmed the bug: `_upsert_wiring_row()`
+    only calls `_ensure_wiring_registry_table()` (a `CREATE TABLE IF NOT EXISTS` no-op
+    against an already-existing table), never `_migrate_schema()` (which calls `_migrate_wiring_registry_entity_types()`,
+    the real CHECK-widening table rebuild).'
+  - Fixed `_upsert_wiring_row()` in dispatch_core.py to call `sbr._migrate_wiring_registry_entity_types(conn)`
+    after `_ensure_wiring_registry_table(conn)`, before the write. Used the targeted
+    migration function directly rather than the broader `_migrate_schema()`, since
+    `_migrate_schema()` also does an `ALTER TABLE system_index ADD COLUMN tags` that
+    assumes `system_index` already exists (true in production, but not in a wiring_registry-only
+    test fixture) -- irrelevant to the wiring_registry CHECK bug being fixed here.
+  - 'Added `test_dispatch_core_record_dispatch_event_migrates_pre_existing_narrow_check_schema`
+    to tests/test_dispatch_core.py: seeds a fixture DB with the real pre-migration
+    (narrower, no `dispatch_event`) CHECK constraint plus a pre-existing row, calls
+    `record_dispatch_event()`, and asserts both the new row is genuinely queryable
+    AND the pre-existing row survived the table-rebuild migration unchanged.'
+  - 'Confirmed the new test fails without the fix: temporarily reverted the `_migrate_wiring_registry_entity_types(conn)`
+    call, reran the new test alone -- it failed with the exact real `sqlite3.IntegrityError:
+    CHECK constraint failed: entity_type IN (...)` the audit reported (caught and
+    logged as a WARNING by the existing best-effort try/except, row never written).
+    Reapplied the fix; test passes again.'
+  - '`python3 -m pytest tests/test_dispatch_core.py tests/test_dispatch_tick.py tests/test_phase_continuation_tick.py
+    tests/test_status_remediation_tick.py -v` -- all 19 tests pass (18 pre-existing
+    + 1 new). Note: the SUCCESS_CRITERIA''s literal `-k "dispatch_core or wiring"`
+    filter only matches 8 of the 19 (the other 11 live in test_phase_continuation_tick.py/test_status_remediation_tick.py
+    without "dispatch_core"/"wiring" in their names) -- ran the full 4-file suite
+    instead to cover all 19.'
+  remaining_steps:
+  - Fix dispatch-tick.py's `module_queue_tick()` to genuinely round-robin across module
+    queues instead of processing module-by-module; reconcile the comment.
+  - Run full test suite to confirm no other regressions.
+  - Commit and push directly to worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in.
+  recent_commits:
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  - c8a746d Add phase-continuation-tick.py (refactor of auto_phase_continuation.py)
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  - 'f6af5ca Merge pull request #99 from FChecklist/worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi'
+  note: periodic checkpoint
+- at: '2026-07-26T23:26:01.806553+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Checked out the real PR branch (worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in)
+    from origin -- the task workspace's own default branch did not contain these files.
+  - 'Read scripts/dispatch_core.py''s `_upsert_wiring_row()` and scripts/superboss-register.py''s
+    `_ensure_wiring_registry_table()` / `_migrate_schema()` / `_migrate_wiring_registry_entity_types()`
+    / `init_db()` / `init_db_silent()` in full. Confirmed the bug: `_upsert_wiring_row()`
+    only calls `_ensure_wiring_registry_table()` (a `CREATE TABLE IF NOT EXISTS` no-op
+    against an already-existing table), never `_migrate_schema()` (which calls `_migrate_wiring_registry_entity_types()`,
+    the real CHECK-widening table rebuild).'
+  - Fixed `_upsert_wiring_row()` in dispatch_core.py to call `sbr._migrate_wiring_registry_entity_types(conn)`
+    after `_ensure_wiring_registry_table(conn)`, before the write. Used the targeted
+    migration function directly rather than the broader `_migrate_schema()`, since
+    `_migrate_schema()` also does an `ALTER TABLE system_index ADD COLUMN tags` that
+    assumes `system_index` already exists (true in production, but not in a wiring_registry-only
+    test fixture) -- irrelevant to the wiring_registry CHECK bug being fixed here.
+  - 'Added `test_dispatch_core_record_dispatch_event_migrates_pre_existing_narrow_check_schema`
+    to tests/test_dispatch_core.py: seeds a fixture DB with the real pre-migration
+    (narrower, no `dispatch_event`) CHECK constraint plus a pre-existing row, calls
+    `record_dispatch_event()`, and asserts both the new row is genuinely queryable
+    AND the pre-existing row survived the table-rebuild migration unchanged.'
+  - 'Confirmed the new test fails without the fix: temporarily reverted the `_migrate_wiring_registry_entity_types(conn)`
+    call, reran the new test alone -- it failed with the exact real `sqlite3.IntegrityError:
+    CHECK constraint failed: entity_type IN (...)` the audit reported (caught and
+    logged as a WARNING by the existing best-effort try/except, row never written).
+    Reapplied the fix; test passes again.'
+  - '`python3 -m pytest tests/test_dispatch_core.py tests/test_dispatch_tick.py tests/test_phase_continuation_tick.py
+    tests/test_status_remediation_tick.py -v` -- all 19 tests pass (18 pre-existing
+    + 1 new). Note: the SUCCESS_CRITERIA''s literal `-k "dispatch_core or wiring"`
+    filter only matches 8 of the 19 (the other 11 live in test_phase_continuation_tick.py/test_status_remediation_tick.py
+    without "dispatch_core"/"wiring" in their names) -- ran the full 4-file suite
+    instead to cover all 19.'
+  - 'Fixed dispatch-tick.py''s `module_queue_tick()` to genuinely round-robin across
+    module queues: builds per-module candidate lists, then interleaves one item per
+    module per round instead of draining one module''s whole queue before starting
+    the next. This mirrors module-queue-dispatcher.py.superseded-by-consolidation-2026-07-27''s
+    own pre-existing bug (its comment claimed "Round-robin across module queues" over
+    code that was actually module-by-module) -- a real, pre-existing issue, not introduced
+    by this consolidation, fixed while in this file per the task spec. Added an accurate
+    comment describing the real interleaving logic (dispatch-tick.py had dropped the
+    misleading comment during the port but kept the same non-interleaved code, so
+    there was no comment/code mismatch to "reconcile" in this file specifically --
+    just the underlying bug to fix).'
+  - 'Added `test_dispatch_tick_module_queue_round_robins_across_modules` to tests/test_dispatch_tick.py:
+    2 modules x 2 NEW items each, cap headroom for all 4, asserts real dispatch order
+    (recovered from the mock task-id counter) alternates modules. Confirmed it fails
+    without the fix (temporarily reverted, reran alone -- got module order `[backend,
+    backend, frontend, frontend]` instead of alternating); reapplied the fix, test
+    passes.'
+  - 'Full repo suite: `python3 -m pytest tests/ -v` -- 85/85 passed (includes the
+    19 dispatch-consolidation tests + 1 new round-robin test = 20 in that area, plus
+    all other unrelated suites, confirming no regressions).'
+  - 'Pushed both commits to worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in
+    (5936458 migration fix, 3fff940 round-robin fix). Diff scope confirmed minimal:
+    only scripts/dispatch_core.py, scripts/dispatch-tick.py, and their two test files
+    -- dispatch_core.py''s concurrency-lock logic, the other 2 consolidated scripts,
+    and the renamed originals are untouched.'
+  remaining_steps:
+  - None -- task complete. Needs a fresh audit pass per this task's CONSTRAINTS (do
+    not merge self).
+  recent_commits:
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  - c8a746d Add phase-continuation-tick.py (refactor of auto_phase_continuation.py)
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  note: quality gates passed, pushed branch worker/task-20260726-231913-fix-wiring-registry-migration-bug-in-dis,
+    awaiting review
+- at: '2026-07-26T23:27:46.737248+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  - c8a746d Add phase-continuation-tick.py (refactor of auto_phase_continuation.py)
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  - 53bd0a0 Auto-sync 2 server task(s) to master controller
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/101'
+execution_seconds: 401
+restart_count: 0
+token_usage:
+  input_tokens: 122
+  cache_creation_input_tokens: 109215
+  cache_read_input_tokens: 5600075
+  output_tokens: 31254
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 109215
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 505
+    cache_read_input_tokens: 132281
+    cache_creation_input_tokens: 618
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 618
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:25.484018+00:00'

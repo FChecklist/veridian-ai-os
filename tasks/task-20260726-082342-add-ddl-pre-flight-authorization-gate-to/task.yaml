@@ -1,0 +1,186 @@
+id: task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+title: Add DDL pre-flight authorization gate to dispatch pipeline (Owner-approved)
+status: superseded
+repo: claude-control
+branch: worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+workspace: /opt/veridian/ai-os/tasks/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+service: veridian-worker@task-20260726-082342-add-ddl-pre-flight-authorization-gate-to.service
+created_at: '2026-07-26T08:23:43.708541+00:00'
+last_checkpoint_at: '2026-07-26T08:32:33.627886+00:00'
+completed_steps: &id002
+- Read task-gateway.py cmd_start(), tight_task_validation.py, check_single_protocol_file.py
+  to match conventions
+- Confirmed PROTOCOL_OWNER_AI.yaml is the single canonical protocol file via check_single_protocol_file.py
+- Write scripts/ddl_authorization_check.py
+- Wire it into scripts/task-gateway.py cmd_start() (right after tight_task_validation.py,
+  before veridian-task.py create)
+- Add regression tests in tests/test_ddl_authorization_check.py (5 scenarios incl.
+  the 4 required)
+- Document the gate + 2026-07-26 incident in PROTOCOL_OWNER_AI.yaml (article A15,
+  engines list, S4_SPEC)
+- Verified success-criteria commands pass; `python3 -m pytest tests/ -k ddl_authorization
+  -v` = 5 passed
+- Verified existing tight_task_validation.py tests still pass unmodified (11 passed
+  total)
+remaining_steps: &id003
+- Commit + push branch, open PR (not merged by this task per CONSTRAINTS -- needs
+  a fresh audit pass)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T08:23:45.489216+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  - '5a93d3f Fix broken YAML (bare colon in SATISFIED: annotation) + backfill phase_3
+    self-report -- PR 561 merged with real security corrective fix'
+  - 8168e78 Merge branch 'master' of https://github.com/FChecklist/claude-control
+  - 'e6c0e44 Merge pull request #77 from FChecklist/worker/task-20260726-051203-server-owner-ai-protocol-memory-consolid'
+  - 32bf369 Consolidate server-side OWNER_DIRECTIVES into one protocol + one memory
+    file
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T08:28:46.637648+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml
+  - scripts/task-gateway.py
+  - scripts/ddl_authorization_check.py
+  - tests/test_ddl_authorization_check.py
+  completed_steps:
+  - Read task-gateway.py cmd_start(), tight_task_validation.py, check_single_protocol_file.py
+    to match conventions
+  - Confirmed PROTOCOL_OWNER_AI.yaml is the single canonical protocol file via check_single_protocol_file.py
+  remaining_steps:
+  - Write scripts/ddl_authorization_check.py
+  - Wire it into scripts/task-gateway.py cmd_start()
+  - Add regression tests in tests/
+  - Document the gate + 2026-07-26 incident in PROTOCOL_OWNER_AI.yaml
+  - Run success-criteria commands, commit + push, open PR
+  recent_commits:
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  - '5a93d3f Fix broken YAML (bare colon in SATISFIED: annotation) + backfill phase_3
+    self-report -- PR 561 merged with real security corrective fix'
+  - 8168e78 Merge branch 'master' of https://github.com/FChecklist/claude-control
+  - 'e6c0e44 Merge pull request #77 from FChecklist/worker/task-20260726-051203-server-owner-ai-protocol-memory-consolid'
+  - 32bf369 Consolidate server-side OWNER_DIRECTIVES into one protocol + one memory
+    file
+  note: periodic checkpoint
+- at: '2026-07-26T08:29:37.106334+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read task-gateway.py cmd_start(), tight_task_validation.py, check_single_protocol_file.py
+    to match conventions
+  - Confirmed PROTOCOL_OWNER_AI.yaml is the single canonical protocol file via check_single_protocol_file.py
+  - Write scripts/ddl_authorization_check.py
+  - Wire it into scripts/task-gateway.py cmd_start() (right after tight_task_validation.py,
+    before veridian-task.py create)
+  - Add regression tests in tests/test_ddl_authorization_check.py (5 scenarios incl.
+    the 4 required)
+  - Document the gate + 2026-07-26 incident in PROTOCOL_OWNER_AI.yaml (article A15,
+    engines list, S4_SPEC)
+  - Verified success-criteria commands pass; `python3 -m pytest tests/ -k ddl_authorization
+    -v` = 5 passed
+  - Verified existing tight_task_validation.py tests still pass unmodified (11 passed
+    total)
+  remaining_steps:
+  - Commit + push branch, open PR (not merged by this task per CONSTRAINTS -- needs
+    a fresh audit pass)
+  recent_commits:
+  - e23c2d4 Add DDL pre-flight authorization gate to task dispatch
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  - '5a93d3f Fix broken YAML (bare colon in SATISFIED: annotation) + backfill phase_3
+    self-report -- PR 561 merged with real security corrective fix'
+  - 8168e78 Merge branch 'master' of https://github.com/FChecklist/claude-control
+  - 'e6c0e44 Merge pull request #77 from FChecklist/worker/task-20260726-051203-server-owner-ai-protocol-memory-consolid'
+  note: quality gates passed, pushed branch worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to,
+    awaiting review
+- at: '2026-07-26T08:32:33.627886+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - e23c2d4 Add DDL pre-flight authorization gate to task dispatch
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  - '5a93d3f Fix broken YAML (bare colon in SATISFIED: annotation) + backfill phase_3
+    self-report -- PR 561 merged with real security corrective fix'
+  - 8168e78 Merge branch 'master' of https://github.com/FChecklist/claude-control
+  - 'e6c0e44 Merge pull request #77 from FChecklist/worker/task-20260726-051203-server-owner-ai-protocol-memory-consolid'
+  note: "Superboss rejected: https://github.com/FChecklist/claude-control/pull/79\
+    \ \u2014 see review.json for issues"
+execution_seconds: 350
+restart_count: 0
+token_usage:
+  input_tokens: 90
+  cache_creation_input_tokens: 107747
+  cache_read_input_tokens: 4552214
+  output_tokens: 27176
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 107747
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 547
+    cache_read_input_tokens: 130316
+    cache_creation_input_tokens: 1115
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1115
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T10:00:09.669806+00:00'
+duplicate_of: task-20260726-084103-fix-ddl-gate-detection-weaknesses--round
+superseded_reason: 'Real deliverable (scripts/ddl_authorization_check.py, 19259 bytes)
+  confirmed present and live, shipped via PR #79 -- same underlying gate this task
+  was asked to build, credited to a differently-worded task.'
+superseded_at: '2026-07-27T04:26:05.905299+00:00'

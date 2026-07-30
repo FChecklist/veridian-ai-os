@@ -1,0 +1,38 @@
+TASK ID: COST-INCIDENT-11K-CALLS-RCA
+MODULE: compliance-tracker + cross-system forensics (GitHub Actions across FChecklist/compliance-tracker, FChecklist/projexa, FChecklist/claude-control; OpenRouter; Groq; VERIDIAN-DEV server logs)
+OBJECTIVE: Owner reports that in an earlier session, "an api called 11000 times" -- find real evidence of which API/provider/code-path this was, do a genuine root-cause analysis (not a guess), and implement real prevention so it cannot recur and tokens are not wasted.
+
+READ FIRST (known context, verify all of it against real evidence, do not assume any of it is the answer):
+1. ai-os/boss/ACTIVE-CLAIMS.yaml -- register your own claim before starting.
+2. A real prior overspend incident is already documented: 2026-07-08, OpenRouter spend hit $12.34 of $10 funded credit, 93% ($11.44) from Claude Sonnet 5 dispatches via scripts/ai-workforce-agent.mjs -- led to replacing Claude-tier roster roles with GLM-5.2 same day, and building compliance.token_usage_ledger (migration 0093, src/lib/services/token-usage-service.ts). This is a cost-$ incident, not confirmed to be a call-COUNT incident -- check whether it also involved ~11,000 individual calls or a much smaller number of expensive calls.
+3. A real ANTHROPIC_API_KEY credit-exhaustion incident happened 2026-07-18 (3 worker tasks failed after exhausting retries, confirmed via result.json "Credit balance is too low").
+4. A real bug existed until 2026-07-18: `systemctl --user` failed when invoked from cron (missing XDG_RUNTIME_DIR), causing the queue-dispatcher's cron-driven dispatch attempts to silently fail and get re-queued repeatedly before the fix -- check whether this produced an abnormally high call count during the period it was broken.
+5. Direct DB check already run (does NOT show 11,000 anywhere): compliance.orchestra_executions = 2548 rows total, all-time. platform.ai_routing_audit_log = 0 rows (feature only shipped in PR #433, 2026-07-18). compliance.token_usage_ledger = 0 rows (built 2026-07-08 but AI_TEAM_LOG_SECRET was never added to Vercel production, so writes have been failing silently the whole time -- confirm this is still true, and fix it as part of prevention if so, since a call-count incident with zero ledger rows is itself a visibility gap worth closing regardless of what the root cause turns out to be).
+6. costCapEnforcementEnabled (organisations table) was found DEFAULTING TO FALSE for all new orgs as of 2026-07-19 (fixed today in a separate PR, drizzle/0216) -- determine whether unenforced cost caps during the incident window contributed to it running unchecked, or is unrelated.
+
+INVESTIGATE (be systematic, cite real evidence -- dashboard numbers, log excerpts, timestamps, commit SHAs -- for every claim, do not present a plausible-sounding guess as the answer):
+1. GitHub Actions run history: `gh run list --repo FChecklist/compliance-tracker --limit 200` (and projexa, claude-control) -- look for any single workflow run with an abnormal step/retry count, or a workflow that fired far more often than expected in a short window. Cross-reference against the many "Re-trigger CI after ..." commits already visible in git log -- check whether any CI job has (or had) a retry pattern that could compound into thousands of calls.
+2. OpenRouter's own usage/activity API (OPENROUTER_API_KEY in /opt/veridian/shared/.env) -- query its real historical request-count endpoint, find any date/hour bucket near 11,000 requests, identify which model/key it was.
+3. Groq's usage if queryable via its API key in the same .env file.
+4. VERIDIAN-DEV server's own history: `journalctl --user -u 'veridian-worker@*' --since <candidate window>` and `-u 'veridian-supervisor@*'`, plus crontab -l's queue-dispatcher.py/supervisor-sweep.sh cadence -- calculate the theoretical max call count if either loop ran unattended for a stretch (e.g. every 10 min x N hours x 3 concurrent slots) and compare to 11,000.
+5. If none of the above precisely explains 11,000, consider whether the Owner is referring to something outside this product's own tracked systems entirely (e.g. a raw `gh api` polling loop, a Vercel function invocation spike -- `vercel` CLI is available and pre-authenticated -- or a completely different session/tool the Owner used that isn't part of this codebase). Say so honestly if the exact number can't be pinned to a specific cause after real investigation, rather than forcing a fit onto the nearest plausible incident.
+
+DELIVERABLE:
+- New doc `ai-os/INCIDENT_11K_API_CALLS_RCA.md`: what was found, with real evidence per claim, an honest confidence level on whether the located incident(s) actually match "11000 times," and what remains unexplained if anything does.
+- Real prevention implemented, not just recommended, for whatever the actual root cause turns out to be. Candidates to consider (only build what the real root cause justifies -- do not build all of these speculatively):
+  - A hard per-task/per-session external-API-call budget cap enforced in the dispatch path (worker-entrypoint.sh and/or the Next.js dispatch routes), that hard-stops and alerts rather than silently continuing once crossed.
+  - A retry-storm guard: a MAX TOTAL attempt count across all retries/re-queues for a given logical task, not just a per-invocation retry limit, so a stuck task can't silently re-fire indefinitely.
+  - Fixing the AI_TEAM_LOG_SECRET Vercel env-var gap (token_usage_ledger writes have been failing silently since 2026-07-08) -- this is a real visibility gap independent of the root cause and should be closed regardless, so the NEXT incident is actually visible in the ledger instead of requiring manual forensics like this task.
+  - Cost-cap enforcement default (already fixed today per item 6 above) -- verify it, don't re-do it.
+- If the root cause is something already fixed (the cron systemctl bug, patched 2026-07-18) do not re-implement a fix for it -- just confirm and cite the existing fix in the RCA doc.
+
+CONSTRAINTS: server-only, CLAUDE_CODE_OAUTH_TOKEN (never ANTHROPIC_API_KEY, stays disabled). Register ai-os/boss/ACTIVE-CLAIMS.yaml claim before real work. Commit + push incrementally. Open a real PR against main (not self-merged) for any code change -- tier2 if it touches cost-guard/rate-limiting/budget code, hold for Owner sign-off regardless of your own review. Do not touch the AIROUTER-01 Phase 2 files (src/lib/ai-router/**, drizzle/0249, drizzle/0250) -- a separate task is actively working there in parallel, avoid any collision.
+
+DONE CRITERIA:
+- RCA doc written with real, cited evidence, honest about confidence/unresolved parts.
+- Real prevention code implemented for the confirmed root cause (or the AI_TEAM_LOG_SECRET visibility gap at minimum, if the root cause itself can't be pinned down with certainty).
+- tsc/lint/test/build clean for any code touched.
+- ACTIVE-CLAIMS.yaml claim updated with completed_at + PR number.
+- PR opened against main, not self-merged.
+
+Maintain a PROGRESS.md file in the repository root with '## Completed' and '## Remaining' sections, each a markdown checklist (- [x] done thing / - [ ] pending thing). Update it as you complete each meaningful step.

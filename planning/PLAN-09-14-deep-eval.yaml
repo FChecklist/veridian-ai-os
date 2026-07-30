@@ -1,0 +1,664 @@
+# ============================================================================
+# VERIDIAN STRATEGIC PLAN 2026-07-21 -- DEEP EVALUATION: PLAN-09..PLAN-14
+# Companion file to STRATEGIC_PLAN_2026-07-21.yaml. Written to a SEPARATE
+# file (not merged into the shared plan) to avoid clobbering two other
+# agents' concurrent edits to PLAN-01..08/15/16 in the same document.
+# PLANNING ARTIFACT ONLY. NOT EXECUTED. No dependencies added, no code
+# written, no PRs opened -- every finding below was produced by read-only
+# inspection (git show origin/main, grep, Supabase SQL SELECT) of the real
+# compliance-tracker repo (github.com/FChecklist/compliance-tracker,
+# origin/main @ 2f5de6b74387921191a258db6c30a26660a56492) and the real
+# Supabase project "verdian-ai" (pcrjmlpuqsbocqfwoxod).
+# ============================================================================
+
+meta:
+  id: VERIDIAN-STRATEGIC-PLAN-2026-07-21-DEEP-EVAL-09-14
+  version: 1.0
+  parent: /opt/veridian/ai-os/STRATEGIC_PLAN_2026-07-21.yaml
+  scope: [PLAN-09, PLAN-10, PLAN-11, PLAN-12, PLAN-13, PLAN-14]
+  method: >-
+    Every "already-present / not-present" claim below was verified against
+    origin/main's actual package.json (git show origin/main:package.json),
+    not assumed. Every schema claim was verified against
+    src/lib/db/schema.ts and a live SELECT against the real
+    compliance.token_usage_ledger table (0 rows, confirmed by
+    `select count(*) from compliance.token_usage_ledger` returning 0 --
+    see PLAN-09 below). Every mother-router.ts claim was verified by
+    reading the file (487 lines) and grepping real call sites, not by
+    reading the file's own doc-comments alone.
+
+# ----------------------------------------------------------------------
+# MASTER DEPENDENCY-INVENTORY TABLE -- every library named across
+# PLAN-09..14, checked against compliance-tracker's real origin/main
+# package.json (153 lines: dependencies + devDependencies + overrides).
+# This single table is the highest-value output of this pass: it turns
+# ~26 guesses ("None of these libraries are in this session's known
+# dependency inventory") into verified facts.
+# ----------------------------------------------------------------------
+library_inventory_table:
+  - library: Vercel AI SDK
+    npm_package: "ai / @ai-sdk/*"
+    status: NOT_PRESENT
+    evidence: "grep for '\"ai\":' and '@ai-sdk' in package.json -- zero matches"
+    used_by_plan: [PLAN-13]
+
+  - library: Dexie.js
+    npm_package: dexie
+    status: NOT_PRESENT
+    evidence: "not in dependencies or devDependencies"
+    used_by_plan: [PLAN-13]
+
+  - library: fflate
+    npm_package: fflate
+    status: NOT_PRESENT
+    evidence: "not in dependencies or devDependencies"
+    used_by_plan: [PLAN-13]
+
+  - library: tiktoken
+    npm_package: tiktoken
+    status: NOT_PRESENT
+    evidence: "not in dependencies or devDependencies"
+    used_by_plan: [PLAN-13]
+
+  - library: msgpack-javascript
+    npm_package: "@msgpack/msgpack"
+    status: NOT_PRESENT
+    evidence: "not in dependencies or devDependencies"
+    used_by_plan: [PLAN-13]
+
+  - library: Zustand
+    npm_package: zustand
+    status: "PRESENT (dependency) BUT ZERO REAL USAGE"
+    evidence: >-
+      Declared at dependencies.zustand ^5.0.6. grep -rl 'zustand' across
+      src/**/*.ts(x) returns ZERO files. It is installed but not imported
+      anywhere in application code today -- effectively dead weight, not
+      an active state-management layer. Treat as "available but unused,"
+      not "already wired in."
+    used_by_plan: [PLAN-13]
+
+  - library: TanStack Query
+    npm_package: "@tanstack/react-query"
+    status: PRESENT_AND_USED
+    evidence: >-
+      dependencies @tanstack/react-query ^5.82.0. Real usage in 3 files:
+      src/lib/queries/use-me.ts, src/lib/queries/use-compliance-stats.ts,
+      src/components/providers/QueryProvider.tsx (app-wide QueryProvider
+      already wraps the app). This is a genuinely live, if lightly used,
+      data-fetching layer -- NOT a net-new addition for PLAN-13.
+    used_by_plan: [PLAN-13]
+
+  - library: Uppy
+    npm_package: "@uppy/core etc."
+    status: NOT_PRESENT
+    evidence: "not in dependencies or devDependencies"
+    used_by_plan: [PLAN-13]
+
+  - library: tRPC
+    npm_package: "@trpc/server / @trpc/client"
+    status: NOT_PRESENT
+    evidence: "grep for '@trpc' in package.json -- zero matches. App already uses Next.js Route Handlers (src/app/api/**) as its API layer."
+    used_by_plan: [PLAN-13]
+
+  - library: Apache Superset
+    npm_package: "N/A (external Python/Flask service, not an npm dep)"
+    status: NOT_PRESENT
+    evidence: "not applicable to package.json; would need its own hosted service, not an npm install"
+    used_by_plan: [PLAN-10, PLAN-11]
+
+  - library: Evidence (evidence.dev)
+    npm_package: "N/A (external build tool, not an npm runtime dep)"
+    status: NOT_PRESENT
+    evidence: "not applicable to package.json"
+    used_by_plan: [PLAN-10, PLAN-11]
+
+  - library: Apache ECharts
+    npm_package: echarts / echarts-for-react
+    status: NOT_PRESENT
+    evidence: "not in dependencies or devDependencies"
+    used_by_plan: [PLAN-10, PLAN-11]
+
+  - library: Perspective (FINOS)
+    npm_package: "@finos/perspective"
+    status: NOT_PRESENT
+    evidence: "not in dependencies or devDependencies"
+    used_by_plan: [PLAN-10, PLAN-11]
+
+  - library: React Flow / xyflow
+    npm_package: "@xyflow/react"
+    status: NOT_PRESENT
+    evidence: "not in dependencies or devDependencies"
+    used_by_plan: [PLAN-10, PLAN-11]
+
+  - library: Mermaid
+    npm_package: mermaid
+    status: NOT_PRESENT
+    evidence: "not in dependencies or devDependencies"
+    used_by_plan: [PLAN-10, PLAN-11]
+
+  - library: Frappe Gantt
+    npm_package: frappe-gantt
+    status: NOT_PRESENT
+    evidence: "not in dependencies or devDependencies"
+    used_by_plan: [PLAN-10, PLAN-11]
+
+  - library: "@hello-pangea/dnd"
+    npm_package: "@hello-pangea/dnd"
+    status: "NOT_PRESENT -- AND REDUNDANT, do not add"
+    evidence: >-
+      Not in package.json. But @dnd-kit/core + @dnd-kit/sortable +
+      @dnd-kit/utilities ARE present (^6.3.1 / ^10.0.0 / ^3.2.2) and
+      already power a real drag-and-drop screen:
+      src/app/(app)/pms/[projectId]/board/page.tsx (Kanban board). Adding
+      @hello-pangea/dnd would mean shipping two competing DnD libraries
+      for the same job. Recommendation: use @dnd-kit for any new
+      drag-and-drop surface (board/gantt reordering etc.), do not add
+      @hello-pangea/dnd at all.
+    used_by_plan: [PLAN-10, PLAN-11]
+
+  - library: AG Grid Community
+    npm_package: ag-grid-community / ag-grid-react
+    status: NOT_PRESENT
+    evidence: >-
+      Not in package.json. But there IS an existing, real extension
+      point: @tanstack/react-table (^8.21.3) + a custom
+      src/components/ui/data-table.tsx, used today in exactly one screen,
+      src/app/(app)/reports/page.tsx. This is the closest thing in the
+      app to "already renders a table that AG Grid could extend."
+    used_by_plan: [PLAN-10, PLAN-11]
+
+  - library: MapLibre GL JS
+    npm_package: maplibre-gl
+    status: NOT_PRESENT
+    evidence: "not in dependencies or devDependencies. grep for any map component/page (find -iname '*map*') found no existing map surface anywhere in the app -- genuinely zero attach point, confirming the plan's own instinct."
+    used_by_plan: [PLAN-10, PLAN-11]
+
+  - library: "React PDF + React PDF Viewer"
+    npm_package: "@react-pdf/renderer / react-pdf / @react-pdf-viewer/core"
+    status: NOT_PRESENT
+    evidence: >-
+      Not in package.json. Note: the app DOES already do PDF generation
+      today via jspdf-family tooling per memory
+      (compliance_tracker_dependency_cleanup_2026-07-10.md fixed 12 jspdf
+      CVEs) -- so PDF *generation* is not a blank slate, only PDF
+      *viewing/rendering-as-React-components* (this library's actual job)
+      is net-new. Recommend checking whether the existing jspdf path
+      already satisfies the need before adding a second PDF stack.
+    used_by_plan: [PLAN-10, PLAN-11]
+
+  - library: LiteLLM
+    npm_package: "N/A (external Python gateway service)"
+    status: NOT_PRESENT
+    evidence: "not applicable to package.json; would be a separate hosted proxy, not an npm install"
+    used_by_plan: [PLAN-14]
+
+  - library: Langfuse
+    npm_package: langfuse
+    status: NOT_PRESENT
+    evidence: "not in dependencies or devDependencies"
+    used_by_plan: [PLAN-14]
+
+  - library: GPTCache
+    npm_package: "N/A (Python-only library, no JS/TS port)"
+    status: NOT_PRESENT
+    evidence: >-
+      Not in package.json (and could not be, in a Next.js/Bun runtime,
+      without a sidecar Python service -- GPTCache has no first-party
+      JS/TS package). The app already has its OWN semantic-adjacent
+      caching layer: src/lib/prompt-cache/ (Prompt & Cache Management
+      Framework Phase 1, 2026-07-14), which logs
+      cacheReadTokens/cacheCreationTokens per call. Treat GPTCache as
+      "replace-candidate for a real gap in prompt-cache/, not a
+      greenfield add," see PLAN-14 below.
+    used_by_plan: [PLAN-14]
+
+  - library: LlamaIndex
+    npm_package: "llamaindex (TS port exists) or Python sidecar"
+    status: NOT_PRESENT
+    evidence: "not in dependencies or devDependencies"
+    used_by_plan: [PLAN-14]
+
+  - library: LangGraph
+    npm_package: "@langchain/langgraph"
+    status: NOT_PRESENT
+    evidence: "not in dependencies or devDependencies"
+    used_by_plan: [PLAN-14]
+
+  - library: OpenTelemetry
+    npm_package: "@opentelemetry/*"
+    status: "PRESENT AS VERSION PIN ONLY -- ZERO REAL USAGE"
+    evidence: >-
+      8 @opentelemetry/* packages ARE listed, but only inside
+      package.json's "overrides" block (version-pinning a transitive
+      dependency some other package pulls in), not in "dependencies".
+      grep -rl '@opentelemetry' across src/**/*.ts(x) returns ZERO files.
+      No tracer, no span, no exporter is initialized anywhere in
+      application code. This directly confirms PLAN-14's own known_state
+      note ("NONE of ... OpenTelemetry ... are wired in today") --
+      now with the added nuance that it isn't even absent from
+      package.json, it's present-but-inert, which is an easier starting
+      point than a from-scratch install.
+    used_by_plan: [PLAN-14]
+
+  - library: Zod
+    npm_package: zod
+    status: PRESENT_AND_USED
+    evidence: "dependencies zod ^4.0.2 -- used extensively across the codebase for input validation (standard Next.js API route pattern here); genuinely already load-bearing, not a candidate for anything, just confirming it's there."
+    used_by_plan: [PLAN-13, PLAN-14]
+
+# ----------------------------------------------------------------------
+# CROSS-TASK DEPENDENCY TABLE -- every depends_on edge among PLAN-09..14
+# (and the two edges reaching outside this scope into PLAN-01/02/03),
+# with the CONCRETE mechanism that satisfies it, not just the word
+# "depends on."
+# ----------------------------------------------------------------------
+dependency_edges:
+  - edge: "PLAN-09 -> PLAN-02"
+    stated_as: "need real task-execution instrumentation points across modules first"
+    concrete_mechanism: >-
+      PLAN-02's own known_state names the real choke point already:
+      src/lib/task-execution-engine.ts's dispatchTool(db, orgId, userId,
+      codeReference, context?) -- a single function, called from every
+      module (verified real call sites at task-execution-engine.ts:1738
+      and :2453, plus CRM's create_lead/create_opportunity path PLAN-02
+      already confirmed). `codeReference` is a real, already-populated,
+      per-task-type string key (e.g. "get_compliance_stats",
+      "get_overdue_items", "list_departments", "create_lead") threaded
+      through EVERY module today, not a new concept to invent. PLAN-09
+      does NOT need to wait for all of PLAN-02's module-by-module audit
+      to complete -- it only needs dispatchTool()'s existing
+      `codeReference` argument to become the taskType dimension logged
+      into token_usage_ledger. This is a single wrapper change (call
+      logTokenUsage alongside dispatchTool, scope='product_orchestra',
+      new taskType column = codeReference), not a dependency on PLAN-02
+      finishing.
+
+  - edge: "PLAN-10 -> PLAN-01"
+    stated_as: "shared UI/UX layer needed first"
+    concrete_mechanism: >-
+      PLAN-01's concrete deliverable is @fchecklist/veridian-ui-kit
+      becoming a real built-out npm workspace package (it is ALREADY a
+      real dependency today: package.json dependencies
+      "@fchecklist/veridian-ui-kit":
+      "github:FChecklist/veridian-ui-kit#v0.2.2" -- currently a
+      near-skeleton per PLAN-01's own finding). Concrete mechanism: any
+      new chart/table/diagram wrapper component built for PLAN-10/11
+      (see scaffolding design below) should be authored INSIDE
+      veridian-ui-kit and consumed by compliance-tracker via that
+      existing github: dependency, not built as one-off components
+      inside compliance-tracker's own src/components/. This makes the
+      dependency mechanical and checkable: `grep veridian-ui-kit
+      compliance-tracker/package.json` before/after, and a version bump
+      in that one line is the actual signal PLAN-01 shipped something
+      PLAN-10 can consume.
+
+  - edge: "PLAN-10 -> PLAN-03"
+    stated_as: "(PLAN-03 not in this agent's scope -- title/content not read; cross-referenced by id only per Owner's original numbering, not touched)"
+    concrete_mechanism: >-
+      Out of scope for this pass (PLAN-03 belongs to a different agent).
+      Flagging only that PLAN-10's build sequence below does not assume
+      PLAN-03 is done -- the AG Grid pilot (see PLAN-10/11 section) has
+      no dependency on PLAN-03's subject matter as far as this agent's
+      package.json/codebase evidence shows.
+
+  - edge: "PLAN-11 -> PLAN-10"
+    stated_as: "same library stack, Owner said merge"
+    concrete_mechanism: >-
+      Literal merge mechanism: PLAN-11's "8 interaction modes" (Explain/
+      Analyze/Predict/Recommend/Audit/Summarize/Decision-support/Reports)
+      are implemented as a single new column on the scaffolding
+      generator's screen-definition schema (see automation_design below)
+      -- e.g. `aiModes: ["explain","audit"]` on a screen's data-shape
+      definition -- which the SAME generator script reads to wire an
+      "Ask AI about this chart" action alongside the chart/table/diagram
+      it already generates from PLAN-10's work. There is no separate
+      PLAN-11 codebase; it is PLAN-10's generator plus one more field in
+      the same config file per screen.
+
+  - edge: "PLAN-13 -> PLAN-12"
+    stated_as: "same 'VERIDIAN Browser SDK' name, should share one implementation"
+    concrete_mechanism: >-
+      PLAN-12's Priority 1 ("measure first") concretely means: install
+      @vercel/speed-insights + @vercel/analytics (BOTH confirmed
+      NOT_PRESENT in package.json -- see PLAN-12/13 section), wire
+      <SpeedInsights /> + <Analytics /> into src/app/layout.tsx, and let
+      1-2 weeks of real Core Web Vitals accumulate in the Vercel
+      dashboard BEFORE any of PLAN-13's 13-library stack gets scoped or
+      installed. The concrete gate: PLAN-13 work does not start until a
+      real Vercel Speed Insights report (screenshot or export) exists to
+      point at, so each of the 13 libraries can be justified against an
+      actual measured bottleneck instead of the current guess-based
+      list.
+
+  - edge: "PLAN-14 -> PLAN-13"
+    stated_as: "shares the Context Optimizer concept, build once"
+    concrete_mechanism: >-
+      Concretely: PLAN-13's "VERIDIAN Context Optimizer" (browser-side:
+      trims/dedupes/compresses what gets sent FROM the browser) and
+      PLAN-14's "Context Optimizer" (server-side: trims/dedupes what
+      gets sent from Mother Router INTO the model call) sit on opposite
+      sides of the same network hop and take different inputs (DOM/
+      client-state vs. org metadata/permission-resolved context) --
+      genuinely NOT guaranteed to be the same module. The dependency
+      edge should be RENAMED, not assumed: PLAN-14 depends on PLAN-13
+      only for a SHARED TYPE CONTRACT (a `ContextChunk[]` /
+      `OptimizedContext` TypeScript type exported from one shared
+      package, e.g. veridian-ui-kit or a new `@fchecklist/ai-context`
+      package), not shared runtime code. Verify this at execution time
+      (as the existing plan text already flags) by writing the type
+      contract FIRST, before either optimizer's implementation, and
+      having both sides import it.
+
+# ----------------------------------------------------------------------
+# PLAN-09: PTTU token-accounting engine
+# ----------------------------------------------------------------------
+tasks:
+  - id: PLAN-09
+    title: "PTTU (Per-Task Token Used) calculation + ledger engine"
+    real_schema_verified: >-
+      compliance.token_usage_ledger (src/lib/db/schema.ts:8892-8915):
+      id, scope ('ai_team_internal'|'product_orchestra'), orgId, userId,
+      roleKey, layerKey, taskSummary, provider, model, promptTokens,
+      completionTokens, estimatedCostUsd, cacheSavingsUsd, createdAt.
+      NO taskType / codeReference / PTTU column exists yet -- confirmed
+      by reading the full CREATE TABLE definition, not inferred.
+    real_population_state_verified_live: >-
+      Ran `select count(*) from compliance.token_usage_ledger` against
+      the real Supabase project "verdian-ai" (pcrjmlpuqsbocqfwoxod):
+      result = 0 rows, TOTAL, across BOTH scopes. This is a stronger
+      finding than the prior session's "cacheSavingsUsd column ...
+      unpopulated" note -- the entire table is empty, not just one
+      column. Only 3 real call sites of logTokenUsage() exist in the
+      whole codebase:
+        1. src/app/api/ai/team/log-usage/route.ts (secret-gated,
+           called by scripts/ai-workforce-agent.mjs in GitHub Actions --
+           scope=ai_team_internal)
+        2. src/lib/ai-team/team-service.ts:88 (AI Dev Team roster calls
+           -- scope=ai_team_internal)
+        3. src/lib/prompt-cache/metrics.ts:52 (THE ONLY
+           scope='product_orchestra' call site that exists today --
+           fires on every cache-eligible customer-facing LLM call, but
+           only carries orgId/userId/layerKey/provider/model/usage --
+           NO per-task-type field, NO codeReference)
+      Conclusion: there is currently ZERO historical data of any kind
+      to mine a per-task-type median from. Any PTTU formula must include
+      a bootstrap/seeding period, not assume mineable history exists.
+    concrete_formula_proposal: >-
+      PTTU = tentative_ai_only_cost + (actual_ai_tokens_used * 1.2)
+      [Owner's stated formula, unchanged -- the multiplier and even the
+      formula shape are explicitly Owner-sign-off items per the existing
+      plan, NOT decided here].
+      This proposal only concretizes the genuinely-missing half,
+      "tentative_ai_only_cost":
+        1. TAXONOMY (free, exists today): use dispatchTool()'s
+           `codeReference` string (task-execution-engine.ts) as the
+           taskType key. It is already a real, granular, per-module
+           identifier (get_compliance_stats, create_lead, ...) -- do NOT
+           invent a new taxonomy.
+        2. INSTRUMENTATION (small, concrete change): add ONE call to
+           logTokenUsage() inside dispatchTool() itself (or its two real
+           callers at task-execution-engine.ts:1738 and :2453), scope=
+           'product_orchestra', with a new `taskType` column =
+           codeReference. This is the single instrumentation point --
+           not "instrument every module separately."
+        3. SCHEMA CHANGE (concrete, one migration):
+           ALTER TABLE compliance.token_usage_ledger
+             ADD COLUMN task_type text,
+             ADD COLUMN pttu_ai_only_estimate_usd numeric,
+             ADD COLUMN pttu_actual_cost_usd numeric,
+             ADD COLUMN pttu_total_usd numeric;
+           (drizzle-kit generate + drizzle-kit migrate, standard existing
+           workflow -- db:generate/db:migrate scripts already in
+           package.json).
+        4. BOOTSTRAP (concrete, addresses the 0-rows-today problem):
+           for the first N=30 (configurable) real logged rows per
+           taskType, tentative_ai_only_cost falls back to a static
+           RATE CARD keyed on (taskType category, model tier) --
+           e.g. simple-lookup tasks (get_*/list_*) = X tokens-equivalent,
+           write/create tasks = Y, multi-step orchestration = Z -- three
+           tiers, not per-task-type guesses, seeded from the ALREADY-
+           EXISTING model-tier-eligibility.ts tiering the rest of the
+           app uses (do not invent a fourth tiering scheme). Once
+           real logged rows per taskType pass the N=30 threshold,
+           SWITCH AUTOMATICALLY to
+           `select percentile_cont(0.5) within group (order by
+           prompt_tokens+completion_tokens) from token_usage_ledger
+           where task_type = $1 and scope='product_orchestra'` --
+           a real historical median, computed by a script/cron
+           (reuse the existing vercel.json crons pattern, e.g. add
+           /api/internal/pttu-median-refresh/run), not a manual number.
+        5. ACCESS CONTROL (concrete mechanism, not "needs design"):
+           the formula/breakdown columns (task_type,
+           pttu_ai_only_estimate_usd, pttu_actual_cost_usd) live in
+           `compliance` schema already governed by the same
+           withTenantContext / org-scoped RLS posture cost-guard.ts uses
+           for 'product_orchestra' rows today (cost-guard.ts:43) --
+           extend the SAME Postgres RLS policy, do not design a new
+           access-control mechanism. Only `pttu_total_usd` (the single
+           customer-visible number) should ever be selected by any
+           customer-facing API route; the breakdown columns should be
+           selected ONLY by Finance-role-gated internal routes, mirroring
+           the existing ai_team_internal vs product_orchestra scope
+           split cost-guard.ts already enforces.
+    owner_signoff_still_required: >-
+      Unchanged from the existing plan: the exact multiplier (1.2), the
+      exact rate-card tier boundaries in step 4, and whether PTTU should
+      be shown per-task or only aggregated are all Owner calls. What
+      changed here is that steps 1-5 above are now concrete enough to
+      execute the day sign-off happens, instead of "this needs a
+      formula."
+    depends_on_this_pass: ["PLAN-02 (see dependency_edges above -- narrowed to dispatchTool's codeReference, not the full module audit)"]
+    effort: large -- still the highest business-sensitivity item in this
+      plan (pricing-facing); Owner sign-off gate unchanged.
+
+  # ----------------------------------------------------------------------
+  # PLAN-10 + PLAN-11: Visualization + Presentation engines (merged per
+  # Owner's own instruction)
+  # ----------------------------------------------------------------------
+  - id: "PLAN-10+11 (merged per Owner instruction)"
+    title: "VERIDIAN Visualization + Presentation Engine"
+    recommended_single_pilot:
+      library: "AG Grid Community (ag-grid-community + ag-grid-react)"
+      screen: "src/app/(app)/reports/page.tsx (+ src/components/ui/data-table.tsx)"
+      why_this_and_not_echarts: >-
+        The task brief asked to weigh "extend an existing surface" vs.
+        "attach to nothing." Evidence: recharts (already present, ^3.9.2)
+        already renders charts in 7 real files (orchestra/analytics,
+        reports, compliance-chart.tsx, chart.tsx, DashboardAnalytics.tsx,
+        CustomChartBuilder.tsx, CustomReportsSection.tsx) -- the
+        "charting" need is NOT a blank slate the way the plan's own
+        placeholder guess assumed. ECharts' genuine NEW capability
+        (heatmap/risk-matrix/knowledge-graph/org-map) has ZERO existing
+        component to extend either (confirmed: no heatmap/risk-matrix
+        component exists anywhere in src today) -- so ECharts is
+        actually closer to "net-new" than "extend existing," contrary to
+        the plan's guess.
+        AG Grid, by contrast, has a real, narrow, already-working
+        extension point: @tanstack/react-table (^8.21.3) +
+        data-table.tsx, used in exactly ONE screen today
+        (reports/page.tsx). Reports is also the single most
+        cross-cutting of the 17 named visualization types -- grep found
+        15+ distinct /api/**/reports and /api/**/dashboard routes across
+        GRC, finance, construction, ERP, internal, and orchestra domains,
+        all of which are plausible future consumers of the same grid
+        component once it exists. A data-grid (sort/filter/group/
+        virtualize/export) is also a more broadly reusable primitive
+        than a single-purpose chart type -- nearly every one of the
+        other 16 visualization types eventually needs SOME tabular view
+        (audit explorer, document explorer, KPI dashboards all have
+        table-shaped sub-views).
+        Recommend ECharts as PILOT #2 immediately after, specifically
+        targeted at compliance-heatmap/risk-matrix (genuinely net-new,
+        no existing component to reconcile against).
+    automation_scaffolding_design: >-
+      Per Owner's explicit "100% automation, no manual work, no
+      individual implementation table by table" instruction: do NOT plan
+      to hand-wire AG Grid (or any of the 11 libraries) into N screens
+      one at a time. Concrete generator design:
+        1. Define ONE schema file per screen (not per library):
+           `src/lib/viz-registry/screens/<screen-id>.viz.ts`, exporting
+           a typed `ScreenVizDefinition` = { screenId, dataShape (column
+           defs + types, reusing the Drizzle table's own inferred types
+           via `typeof someTable.$inferSelect` -- NOT hand-typed a
+           second time), vizType: 'grid'|'chart'|'diagram'|'gantt'|'map'
+           |'pdf', aiModes?: ('explain'|'audit'|'summarize'|...)[] }.
+        2. Build ONE codegen script,
+           `scripts/generate-viz-component.mjs <screen-id>`, that reads
+           the screen's .viz.ts definition and EMITS the actual React
+           wrapper component (e.g.
+           `src/components/viz/generated/<screen-id>.tsx`) importing the
+           correct library (ag-grid-react for vizType='grid', echarts
+           for 'chart', etc.) with columns/series auto-derived from
+           dataShape. This script lives in veridian-ui-kit (per the
+           PLAN-01 dependency edge above) so it is reusable by
+           compliance-tracker, projexa, and any future brand.
+        3. Rollout to N screens becomes:
+           `for f in src/lib/viz-registry/screens/*.viz.ts; do node
+           scripts/generate-viz-component.mjs "$(basename "$f"
+           .viz.ts)"; done` -- one script run, not N manual
+           integrations. Add this as an npm script,
+           `"viz:generate-all": "for f in
+           src/lib/viz-registry/screens/*.viz.ts; do node
+           scripts/generate-viz-component.mjs \"$(basename \"$f\"
+           .viz.ts)\"; done"` in package.json, so it is a single named
+           command, not a remembered shell one-liner.
+        4. VERIFICATION after each run (idiot-proof, no judgment call):
+           `npx tsc --noEmit` (already the project's existing
+           typecheck path) must pass on the generated files, AND a
+           generated Playwright smoke test
+           (`scripts/generate-viz-component.mjs` also emits
+           `<screen-id>.viz.spec.ts` asserting the grid/chart renders
+           >0 rows/series against a seeded fixture) must pass via the
+           project's existing `@playwright/test` devDependency. A
+           failing typecheck or smoke test = the generator did not
+           finish correctly; there is no ambiguous "looks fine" step.
+    pilot_execution_steps_concrete:
+      - "1. `bun add ag-grid-community ag-grid-react` (workspace: veridian-ui-kit, then re-consume in compliance-tracker via its existing github: dependency version bump)."
+      - "2. Write src/lib/viz-registry/screens/reports.viz.ts describing reports/page.tsx's existing data-table.tsx columns (copy the current @tanstack/react-table columnDef list 1:1 as the source of truth -- no new columns invented)."
+      - "3. Run `node scripts/generate-viz-component.mjs reports` (once built per above) to emit the AG Grid wrapper."
+      - "4. Swap data-table.tsx's usage in reports/page.tsx for the generated component behind a feature flag (reuse the app's existing feature-flag mechanism, do not invent a new one -- confirm which flag system compliance-tracker already uses before this step, since this agent did not verify that mechanism)."
+      - "5. Verify: `npx tsc --noEmit` clean, generated Playwright smoke spec green, and a manual side-by-side screenshot diff of reports/page.tsx old vs. new (same seeded data) before removing the feature flag."
+    depends_on_this_pass: ["PLAN-01 (veridian-ui-kit as the home for the generator + generated components)"]
+    effort: "large, but the generator collapses 'very large x 11 libraries' into one script + 11 screen-definition files"
+
+  # ----------------------------------------------------------------------
+  # PLAN-12 + PLAN-13: Performance + Browser SDK
+  # ----------------------------------------------------------------------
+  - id: "PLAN-12"
+    title: "Web performance optimization + browser-side architecture"
+    real_finding_vercel_analytics: >-
+      Checked vercel.json (repo root) and package.json: NO
+      @vercel/speed-insights, NO @vercel/analytics package, and
+      vercel.json (which IS real and has 22 real cron entries, so it is
+      actively maintained) has no analytics/speedInsights block. This
+      confirms Speed Insights/Web Analytics are NOT wired in today.
+    concrete_first_step: >-
+      This IS the single cheapest, highest-value first step, exactly as
+      the task brief anticipated -- concretely:
+        1. `bun add @vercel/speed-insights @vercel/analytics`
+        2. In src/app/layout.tsx, add `<SpeedInsights />` and
+           `<Analytics />` inside the root <body> (Next.js App Router
+           pattern for both packages -- no server config needed since
+           this is already a Vercel-hosted project per vercel.json).
+        3. Deploy. Verification (idiot-proof): within 24-48h, the
+           project's Vercel dashboard -> Speed Insights tab shows real
+           Core Web Vitals (LCP/FID/CLS) data points; absence of data
+           after 48h = the component didn't mount, re-check layout.tsx.
+        4. Gate: PLAN-13's 13-library stack does not get scoped further
+           until this real report exists (see dependency_edges above).
+    effort: "small for step 1-3 (this task); large for the rest of the 10-priority plan, which should wait for real measurement per the existing plan's own reasoning"
+
+  - id: "PLAN-13"
+    title: "VERIDIAN Browser SDK (specific library selection)"
+    real_overlap_findings: >-
+      Re-checked package.json specifically for state/data-fetching
+      overlap (this task's specific ask):
+        - Zustand: PRESENT as a dependency (^5.0.6) but ZERO import
+          usage anywhere in src/ (verified by grep -rl 'zustand'
+          src --include='*.ts' --include='*.tsx' -> no output). It is
+          not "redundant with an active choice" -- it is installed and
+          inert. PLAN-13 can either (a) actually start using the
+          zustand that's already there, or (b) rip it out if a decision
+          is made to standardize on React Context/useState instead --
+          either way, do NOT install a second state library; resolve
+          the existing unused one first.
+        - TanStack Query: PRESENT and ACTIVELY used (3 files, including
+          an app-wide QueryProvider already mounted). Adding it again
+          under PLAN-13 would be entirely redundant -- treat
+          @tanstack/react-query as DONE for this task, not net-new.
+        - Vercel AI SDK / Dexie / fflate / tiktoken / msgpack / Uppy /
+          tRPC: all genuinely NOT_PRESENT (see library_inventory_table),
+          real net-new work if pursued.
+    concrete_recommendation: >-
+      Narrow PLAN-13's real net-new scope to: Vercel AI SDK, Dexie.js,
+      fflate, tiktoken, msgpack-javascript, Uppy (6 genuinely new
+      libraries, not 10) -- drop tRPC (Next.js Route Handlers already
+      fill that role across the entire existing src/app/api/** surface,
+      confirmed by the sheer number of existing route.ts files found
+      during this pass) and drop Zustand/TanStack Query from the
+      "to install" list since both already exist.
+    depends_on_this_pass: ["PLAN-12 (see dependency_edges above -- concrete gate: real Speed Insights data must exist first)"]
+    effort: "large, but real scope is 6 libraries not 10-13"
+
+  # ----------------------------------------------------------------------
+  # PLAN-14: Mother Router AI-context-optimization pipeline
+  # ----------------------------------------------------------------------
+  - id: "PLAN-14"
+    title: "Mother Router AI-context-optimization pipeline"
+    real_file_read: >-
+      src/lib/ai-router/mother-router.ts (487 lines) read in full.
+      CRITICAL correction to the existing plan's known_state: this file
+      is NOT itself the thing that dispatches every AI call. Its own
+      doc-comment (lines 1-35) explicitly states it "does NOT modify
+      model-tier-eligibility.ts, orchestra-model-resolver.ts, roster.ts,
+      or llm-client.ts" and that a mechanical re-grep on 2026-07-20 found
+      35 unique files still calling resolveModelConfig() or
+      checkTierEligibility() DIRECTLY, bypassing mother-router.ts
+      entirely -- spanning core business logic (crm-service.ts,
+      fde-service.ts, gst/ai-review-report.ts, and more). Mother Router
+      is a thin registry/policy/audit LAYER on top of those 4
+      pre-existing modules, added 2026-07-18, not the universal
+      dispatch chokepoint the rearchitecture plan implicitly assumed.
+      Exported surface (verified): invalidateMotherRouterCache,
+      computeSoftwareTeamResolution, computeEndUserOrgResolution,
+      computeSalesMarketingResolution, computeCustomerSuccessResolution,
+      getOrgAiPackage, resolveModel, rollbackPolicy.
+    real_callers_verified: >-
+      Real code callers of mother-router's resolveModel(): only 3 files
+      (src/app/api/ai/team/dispatch/route.ts,
+      src/lib/services/model-scorecard-service.ts,
+      src/lib/ai-router/software-team-ladder.ts) -- schema.ts is a 4th
+      match but is just the DB migration reference, not a runtime
+      caller. Separately, real HTTP/internal callers of the
+      /api/ai/team/dispatch ROUTE itself (grep for the literal path
+      string) span ~20 files: communication-drafting-service.ts,
+      capability-audit-service.ts, model-scorecard-service.ts,
+      report-cadence-service.ts, dispatch-completion-monitor.ts,
+      handover-protocol.ts, advisory-dispatch-service.ts,
+      dispatch-repo.ts, team-service.ts, roster.ts,
+      roster-overrides.ts, qa-precompletion-gate.ts,
+      activity-log-service.ts, instruction-contract.ts,
+      guardrail-registrations.ts, response-vocabulary-gate.ts,
+      AiTeamRosterSection.tsx, plus 2 CI scripts
+      (check-guardrail-presence.mjs, check-doc-cross-references.mjs).
+      This is the REAL blast radius any rearchitecture must not break --
+      concretely enumerated, not assumed.
+    real_gptcache_finding: >-
+      The app already has a real, live, non-GPTCache semantic-adjacent
+      caching layer: src/lib/prompt-cache/ (Prompt & Cache Management
+      Framework Phase 1, 2026-07-14) -- logs cacheReadTokens/
+      cacheCreationTokens per call via recordPromptCacheMetric(), and is
+      the ONLY current source of real scope='product_orchestra' rows in
+      token_usage_ledger (see PLAN-09 above). Introducing GPTCache
+      (which has no first-party JS/TS package -- Python-only, would
+      need a sidecar service) should be evaluated as "does this replace
+      or extend prompt-cache/, and is a Python sidecar justified" rather
+      than a blind greenfield add.
+    concrete_low_risk_migration_sequence:
+      - "1. PARITY-TEST SCRIPT FIRST (automation, not manual spot-checking, per Owner's explicit instruction): write scripts/mother-router-parity-check.mjs that (a) reads the last N real rows from compliance.token_usage_ledger scope='ai_team_internal' (once PLAN-09's instrumentation is live -- until then, use mother-router.test.ts's existing fixtures as the input corpus), (b) replays each one through BOTH the current computeSoftwareTeamResolution()/computeEndUserOrgResolution() path AND a new, parallel LiteLLM/GPTCache/LlamaIndex pipeline stub, (c) diffs the two resolutions (model chosen, policy version, resolved package) field-by-field, (d) exits non-zero and prints a machine-readable diff table on ANY mismatch. This script is the actual verification mechanism, run in CI (add to the existing GitHub Actions workflow alongside check-guardrail-presence.mjs), not a human eyeballing outputs."
+      - "2. Build the new pipeline BEHIND resolveModel()'s existing MotherRouterContext type as a second implementation, feature-flagged (reuse whichever flag system PLAN-13's pilot step above uses once confirmed -- do not invent a second flag mechanism), never called from the 20 real call sites above until step 3 passes."
+      - "3. Run scripts/mother-router-parity-check.mjs in CI on every commit touching src/lib/ai-router/** until 100 consecutive real (or fixture-replayed) dispatches show zero resolution mismatches -- this threshold, not a time-based one, is the cutover gate."
+      - "4. Cut over ONE real caller first -- recommend model-scorecard-service.ts (lowest blast radius of the 3 direct resolveModel() callers: it reads scores, it does not gate live customer/dev-team dispatch the way dispatch/route.ts does) -- then re-run the parity script against real production traffic for that one caller for a defined window (Owner to set -- concretely proposed: 7 days) before touching dispatch/route.ts itself, which is the one true high-blast-radius caller (20 downstream files)."
+      - "5. Only after step 4's single-caller window is clean, cut over dispatch/route.ts, with rollbackPolicy() (already exported, already real -- src/lib/ai-router/mother-router.ts:475) as the concrete, already-built rollback mechanism if anything regresses -- do not design a new rollback path, this one already exists and is untested-but-present."
+    depends_on_this_pass: ["PLAN-13 (see dependency_edges above -- narrowed to a shared TypeScript type contract, not shared runtime code, pending verification)"]
+    effort: "very large + genuinely higher-risk -- unchanged from the existing plan's own assessment, now with the real 20-file blast radius enumerated instead of assumed"

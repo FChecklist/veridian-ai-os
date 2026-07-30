@@ -1,0 +1,435 @@
+id: task-20260728-123340-directive-001-phase-1-classify
+title: DIRECTIVE-001-PHASE-1-CLASSIFY
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260728-123340-directive-001-phase-1-classify
+workspace: /opt/veridian/ai-os/tasks/task-20260728-123340-directive-001-phase-1-classify/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-123340-directive-001-phase-1-classify
+service: veridian-worker@task-20260728-123340-directive-001-phase-1-classify.service
+created_at: '2026-07-28T12:33:41.660152+00:00'
+last_checkpoint_at: '2026-07-29T06:29:47.432086+00:00'
+completed_steps: &id002
+- Located the real spec (prompt.txt lives in the task dir, not the workspace) and
+  the DB it refers to (`/opt/veridian/ai-os/memory/sap_mapping.sqlite`, see `scripts/sap_mapping_store.py`
+  for `DB_PATH`).
+- Found `engine_track` already exists on `sap_reports` and all 80 rows (not 87 --
+  see below) already have it populated, all `updated_at='2026-07-28 16:24:03'` --
+  done by an untracked process before this task's own checkpoints (invocations 1-2)
+  ever recorded work, and never logged in `ai-os/boss/ACTIVE-CLAIMS.yaml` or `COMPLETED.yaml`.
+- 'Independently verified the classification: read every row''s `calculation_logic`
+  text against its assigned `engine_track` for all 80 rows (not just spot-checked)
+  -- distribution (calculation 67 / hybrid 9 / workflow 4) correlates with real per-row
+  content, not a blanket default. No corrections needed.'
+- 'Resolved the "87 vs 80" discrepancy via `ingest_log`: 11 modules summing to exactly
+  80, all `sap_modules.study_status=''DONE''`, zero parse/validation errors -- 87
+  was the task-dispatch-time estimate, written before the same-day ingestion pipeline
+  (09:01-10:16) finished landing all module chunks. 80 is the real final count.'
+- Wrote `ai-os/tasks/sap_mapping/PHASE_1_CLASSIFY.yaml` as the audit trail (this classification's
+  source of truth remains the live sqlite file; this repo can't hold it since it's
+  a shared server-side DB, not a git artifact).
+- Updated `ai-os/OS.yaml`'s `ai-os/tasks/sap_mapping` index entry to reference the
+  new file.
+- 'Pushed branch, opened PR #628: https://github.com/FChecklist/compliance-tracker/pull/628'
+- 'Posted structured AUDIT: PASS comment on PR #628 per Rule 7c / mandatory-audit-check.yml
+  (independent re-verification against the live sqlite DB, not self-certified from
+  the doer''s own claims).'
+remaining_steps: &id003
+- 'Waiting on CI for PR #628, then merge (no reviewer bottleneck per AGENTS.md Rule
+  6).'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T12:33:43.505131+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-28T12:38:45.211716+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-29T05:53:28.727122+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: worker started (resume=1, lifetime invocation 2/20, pre-flight passed)
+- at: '2026-07-29T05:58:33.440363+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-29T06:03:36.351112+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-29T06:08:38.499781+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Located the real spec (prompt.txt lives in the task dir, not the workspace) and
+    the DB it refers to (`/opt/veridian/ai-os/memory/sap_mapping.sqlite`, see `scripts/sap_mapping_store.py`
+    for `DB_PATH`).
+  - Found `engine_track` already exists on `sap_reports` and all 80 rows (not 87 --
+    see below) already have it populated, all `updated_at='2026-07-28 16:24:03'` --
+    done by an untracked process before this task's own checkpoints (invocations 1-2)
+    ever recorded work, and never logged in `ai-os/boss/ACTIVE-CLAIMS.yaml` or `COMPLETED.yaml`.
+  - 'Independently verified the classification: read every row''s `calculation_logic`
+    text against its assigned `engine_track` for all 80 rows (not just spot-checked)
+    -- distribution (calculation 67 / hybrid 9 / workflow 4) correlates with real
+    per-row content, not a blanket default. No corrections needed.'
+  - 'Resolved the "87 vs 80" discrepancy via `ingest_log`: 11 modules summing to exactly
+    80, all `sap_modules.study_status=''DONE''`, zero parse/validation errors -- 87
+    was the task-dispatch-time estimate, written before the same-day ingestion pipeline
+    (09:01-10:16) finished landing all module chunks. 80 is the real final count.'
+  - Wrote `ai-os/tasks/sap_mapping/PHASE_1_CLASSIFY.yaml` as the audit trail (this
+    classification's source of truth remains the live sqlite file; this repo can't
+    hold it since it's a shared server-side DB, not a git artifact).
+  - Updated `ai-os/OS.yaml`'s `ai-os/tasks/sap_mapping` index entry to reference the
+    new file.
+  remaining_steps:
+  - None -- task deliverable (every sap_reports row classified into engine_track,
+    real content, no guessing) was already satisfied in the live DB; this invocation's
+    job was verification + closing the governance-logging gap. Commit and push PROGRESS.md
+    + the two ai-os files, open PR per Rule 6.
+  recent_commits:
+  - 'e9a3340a fix: restore PROGRESS.md''s prior task sections (accumulates per merged
+    PR, not per-branch)'
+  - '81075375 docs: SAP mapping Phase 1 classify audit trail (engine_track already
+    populated)'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  note: periodic checkpoint
+- at: '2026-07-29T06:13:40.186255+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Located the real spec (prompt.txt lives in the task dir, not the workspace) and
+    the DB it refers to (`/opt/veridian/ai-os/memory/sap_mapping.sqlite`, see `scripts/sap_mapping_store.py`
+    for `DB_PATH`).
+  - Found `engine_track` already exists on `sap_reports` and all 80 rows (not 87 --
+    see below) already have it populated, all `updated_at='2026-07-28 16:24:03'` --
+    done by an untracked process before this task's own checkpoints (invocations 1-2)
+    ever recorded work, and never logged in `ai-os/boss/ACTIVE-CLAIMS.yaml` or `COMPLETED.yaml`.
+  - 'Independently verified the classification: read every row''s `calculation_logic`
+    text against its assigned `engine_track` for all 80 rows (not just spot-checked)
+    -- distribution (calculation 67 / hybrid 9 / workflow 4) correlates with real
+    per-row content, not a blanket default. No corrections needed.'
+  - 'Resolved the "87 vs 80" discrepancy via `ingest_log`: 11 modules summing to exactly
+    80, all `sap_modules.study_status=''DONE''`, zero parse/validation errors -- 87
+    was the task-dispatch-time estimate, written before the same-day ingestion pipeline
+    (09:01-10:16) finished landing all module chunks. 80 is the real final count.'
+  - Wrote `ai-os/tasks/sap_mapping/PHASE_1_CLASSIFY.yaml` as the audit trail (this
+    classification's source of truth remains the live sqlite file; this repo can't
+    hold it since it's a shared server-side DB, not a git artifact).
+  - Updated `ai-os/OS.yaml`'s `ai-os/tasks/sap_mapping` index entry to reference the
+    new file.
+  - 'Pushed branch, opened PR #628: https://github.com/FChecklist/compliance-tracker/pull/628'
+  - 'Posted structured AUDIT: PASS comment on PR #628 per Rule 7c / mandatory-audit-check.yml
+    (independent re-verification against the live sqlite DB, not self-certified from
+    the doer''s own claims).'
+  remaining_steps:
+  - 'Waiting on CI for PR #628, then merge (no reviewer bottleneck per AGENTS.md Rule
+    6).'
+  recent_commits:
+  - '58ac4fe1 chore: note audit comment in PROGRESS.md'
+  - '6e6720fd chore: note PR #628 in PROGRESS.md'
+  - 'e9a3340a fix: restore PROGRESS.md''s prior task sections (accumulates per merged
+    PR, not per-branch)'
+  - '81075375 docs: SAP mapping Phase 1 classify audit trail (engine_track already
+    populated)'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  note: periodic checkpoint
+- at: '2026-07-29T06:20:00.321070+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Located the real spec (prompt.txt lives in the task dir, not the workspace) and
+    the DB it refers to (`/opt/veridian/ai-os/memory/sap_mapping.sqlite`, see `scripts/sap_mapping_store.py`
+    for `DB_PATH`).
+  - Found `engine_track` already exists on `sap_reports` and all 80 rows (not 87 --
+    see below) already have it populated, all `updated_at='2026-07-28 16:24:03'` --
+    done by an untracked process before this task's own checkpoints (invocations 1-2)
+    ever recorded work, and never logged in `ai-os/boss/ACTIVE-CLAIMS.yaml` or `COMPLETED.yaml`.
+  - 'Independently verified the classification: read every row''s `calculation_logic`
+    text against its assigned `engine_track` for all 80 rows (not just spot-checked)
+    -- distribution (calculation 67 / hybrid 9 / workflow 4) correlates with real
+    per-row content, not a blanket default. No corrections needed.'
+  - 'Resolved the "87 vs 80" discrepancy via `ingest_log`: 11 modules summing to exactly
+    80, all `sap_modules.study_status=''DONE''`, zero parse/validation errors -- 87
+    was the task-dispatch-time estimate, written before the same-day ingestion pipeline
+    (09:01-10:16) finished landing all module chunks. 80 is the real final count.'
+  - Wrote `ai-os/tasks/sap_mapping/PHASE_1_CLASSIFY.yaml` as the audit trail (this
+    classification's source of truth remains the live sqlite file; this repo can't
+    hold it since it's a shared server-side DB, not a git artifact).
+  - Updated `ai-os/OS.yaml`'s `ai-os/tasks/sap_mapping` index entry to reference the
+    new file.
+  - 'Pushed branch, opened PR #628: https://github.com/FChecklist/compliance-tracker/pull/628'
+  - 'Posted structured AUDIT: PASS comment on PR #628 per Rule 7c / mandatory-audit-check.yml
+    (independent re-verification against the live sqlite DB, not self-certified from
+    the doer''s own claims).'
+  remaining_steps:
+  - 'Waiting on CI for PR #628, then merge (no reviewer bottleneck per AGENTS.md Rule
+    6).'
+  recent_commits:
+  - '58ac4fe1 chore: note audit comment in PROGRESS.md'
+  - '6e6720fd chore: note PR #628 in PROGRESS.md'
+  - 'e9a3340a fix: restore PROGRESS.md''s prior task sections (accumulates per merged
+    PR, not per-branch)'
+  - '81075375 docs: SAP mapping Phase 1 classify audit trail (engine_track already
+    populated)'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  note: periodic checkpoint
+- at: '2026-07-29T06:29:20.077758+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Located the real spec (prompt.txt lives in the task dir, not the workspace) and
+    the DB it refers to (`/opt/veridian/ai-os/memory/sap_mapping.sqlite`, see `scripts/sap_mapping_store.py`
+    for `DB_PATH`).
+  - Found `engine_track` already exists on `sap_reports` and all 80 rows (not 87 --
+    see below) already have it populated, all `updated_at='2026-07-28 16:24:03'` --
+    done by an untracked process before this task's own checkpoints (invocations 1-2)
+    ever recorded work, and never logged in `ai-os/boss/ACTIVE-CLAIMS.yaml` or `COMPLETED.yaml`.
+  - 'Independently verified the classification: read every row''s `calculation_logic`
+    text against its assigned `engine_track` for all 80 rows (not just spot-checked)
+    -- distribution (calculation 67 / hybrid 9 / workflow 4) correlates with real
+    per-row content, not a blanket default. No corrections needed.'
+  - 'Resolved the "87 vs 80" discrepancy via `ingest_log`: 11 modules summing to exactly
+    80, all `sap_modules.study_status=''DONE''`, zero parse/validation errors -- 87
+    was the task-dispatch-time estimate, written before the same-day ingestion pipeline
+    (09:01-10:16) finished landing all module chunks. 80 is the real final count.'
+  - Wrote `ai-os/tasks/sap_mapping/PHASE_1_CLASSIFY.yaml` as the audit trail (this
+    classification's source of truth remains the live sqlite file; this repo can't
+    hold it since it's a shared server-side DB, not a git artifact).
+  - Updated `ai-os/OS.yaml`'s `ai-os/tasks/sap_mapping` index entry to reference the
+    new file.
+  - 'Pushed branch, opened PR #628: https://github.com/FChecklist/compliance-tracker/pull/628'
+  - 'Posted structured AUDIT: PASS comment on PR #628 per Rule 7c / mandatory-audit-check.yml
+    (independent re-verification against the live sqlite DB, not self-certified from
+    the doer''s own claims).'
+  remaining_steps:
+  - 'Waiting on CI for PR #628, then merge (no reviewer bottleneck per AGENTS.md Rule
+    6).'
+  recent_commits:
+  - '58ac4fe1 chore: note audit comment in PROGRESS.md'
+  - '6e6720fd chore: note PR #628 in PROGRESS.md'
+  - 'e9a3340a fix: restore PROGRESS.md''s prior task sections (accumulates per merged
+    PR, not per-branch)'
+  - '81075375 docs: SAP mapping Phase 1 classify audit trail (engine_track already
+    populated)'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  note: periodic checkpoint
+- at: '2026-07-29T06:29:45.237979+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Located the real spec (prompt.txt lives in the task dir, not the workspace) and
+    the DB it refers to (`/opt/veridian/ai-os/memory/sap_mapping.sqlite`, see `scripts/sap_mapping_store.py`
+    for `DB_PATH`).
+  - Found `engine_track` already exists on `sap_reports` and all 80 rows (not 87 --
+    see below) already have it populated, all `updated_at='2026-07-28 16:24:03'` --
+    done by an untracked process before this task's own checkpoints (invocations 1-2)
+    ever recorded work, and never logged in `ai-os/boss/ACTIVE-CLAIMS.yaml` or `COMPLETED.yaml`.
+  - 'Independently verified the classification: read every row''s `calculation_logic`
+    text against its assigned `engine_track` for all 80 rows (not just spot-checked)
+    -- distribution (calculation 67 / hybrid 9 / workflow 4) correlates with real
+    per-row content, not a blanket default. No corrections needed.'
+  - 'Resolved the "87 vs 80" discrepancy via `ingest_log`: 11 modules summing to exactly
+    80, all `sap_modules.study_status=''DONE''`, zero parse/validation errors -- 87
+    was the task-dispatch-time estimate, written before the same-day ingestion pipeline
+    (09:01-10:16) finished landing all module chunks. 80 is the real final count.'
+  - Wrote `ai-os/tasks/sap_mapping/PHASE_1_CLASSIFY.yaml` as the audit trail (this
+    classification's source of truth remains the live sqlite file; this repo can't
+    hold it since it's a shared server-side DB, not a git artifact).
+  - Updated `ai-os/OS.yaml`'s `ai-os/tasks/sap_mapping` index entry to reference the
+    new file.
+  - 'Pushed branch, opened PR #628: https://github.com/FChecklist/compliance-tracker/pull/628'
+  - 'Posted structured AUDIT: PASS comment on PR #628 per Rule 7c / mandatory-audit-check.yml
+    (independent re-verification against the live sqlite DB, not self-certified from
+    the doer''s own claims).'
+  remaining_steps:
+  - 'Waiting on CI for PR #628, then merge (no reviewer bottleneck per AGENTS.md Rule
+    6).'
+  recent_commits:
+  - '58ac4fe1 chore: note audit comment in PROGRESS.md'
+  - '6e6720fd chore: note PR #628 in PROGRESS.md'
+  - 'e9a3340a fix: restore PROGRESS.md''s prior task sections (accumulates per merged
+    PR, not per-branch)'
+  - '81075375 docs: SAP mapping Phase 1 classify audit trail (engine_track already
+    populated)'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-29T06:29:47.432086+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '58ac4fe1 chore: note audit comment in PROGRESS.md'
+  - '6e6720fd chore: note PR #628 in PROGRESS.md'
+  - 'e9a3340a fix: restore PROGRESS.md''s prior task sections (accumulates per merged
+    PR, not per-branch)'
+  - '81075375 docs: SAP mapping Phase 1 classify audit trail (engine_track already
+    populated)'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 1, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+execution_seconds: 1231
+restart_count: 2
+token_usage:
+  input_tokens: 206
+  cache_creation_input_tokens: 159294
+  cache_read_input_tokens: 11923037
+  output_tokens: 45555
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 159294
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 165
+    cache_read_input_tokens: 182847
+    cache_creation_input_tokens: 131
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 131
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:26.726319+00:00'

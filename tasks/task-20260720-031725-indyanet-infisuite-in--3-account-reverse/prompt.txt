@@ -1,0 +1,35 @@
+You are reverse-engineering a live web application from the front end only (no source code access — black-box exploration via the UI, using your Playwright MCP browser tools). This is an authorized exercise: the credentials below were provided directly by the system's owner for exactly this purpose.
+
+## Target system
+
+- URL: https://indyanet.infisuite.in/
+- This system's TYPE is not known in advance (unlike other infisuite systems already documented, which are labeled CRM/Billstack). Figure out what it actually is from what you see after logging in — it may be a CRM, a billing system, something else, or a combination.
+- Three separate login accounts to explore, one at a time:
+  1. abhishek@indyanet.com / 1234
+  2. aitad@bbtel.in / 1234
+  3. shrinad@indyanet.com / 1234
+
+## Your job
+
+For EACH of the three accounts, log in separately and:
+
+1. Identify what this account's role/permission level appears to be (admin, agent, viewer, etc. — infer from what's visible/editable).
+2. Map the full navigation available to this account (menus, submenus) and save it under `docs/indyanet/00-navigation-map-<account-slug>.md` (e.g. `00-navigation-map-abhishek.md`).
+3. Note explicitly what's DIFFERENT about what this account can see/do compared to the other accounts (this is likely the most valuable finding — infisuite systems are clearly role-based, and comparing three real accounts is a rare chance to map the permission model directly rather than guessing at it).
+
+Then, using whichever account has the broadest access (document which one and why), do full page-by-page and function-by-function documentation exactly like the existing CRM (bharatnet) work in this repo — look at `docs/crm-bharatnet/` in this same repo for the exact depth and format expected (read a couple of those files first as your reference standard) — covering, for every page/module/function found:
+
+1. Purpose. 2. Navigation path. 3. UI/page design. 4. Data fields (name/type/required/validation). 5. Underlying data structure (inferred entities + relationships). 6. Functionality/logic (actions, business rules, conditions). 7. Inputs and outputs. 8. Data conditions (status-dependent UI, role-dependent visibility, filters).
+
+Write one markdown file per module under `docs/indyanet/<module-slug>.md`, with screenshots referenced inline. Screenshots save automatically into the `screenshots/` output directory already wired up for you — put them under `screenshots/indyanet/`.
+
+When done, write `docs/indyanet/SUMMARY.md`: system type identified, complete inferred data model, full function list, the three-account permission comparison, and an honest "Known Gaps" section.
+
+## Hard rules
+
+- Do NOT write any literal password into any committed file. Fine if incidentally visible in a login screenshot; don't go out of your way to capture it.
+- Do NOT fabricate functionality you didn't actually observe — say "inferred, not directly confirmed" when you're inferring rather than stating fact.
+- Document errors/broken pages/permission denials as-is rather than skipping them.
+- Commit and push after each account's navigation map, and after each module doc — not just at the end.
+- Read-only exploration only: do not create, edit, or delete real records. You may open empty create/edit forms to see fields, but do not submit/save them with data. Do not click "Send" on any communication feature.
+- Work only within this indyanet.infisuite.in system. Other infisuite systems are separate tasks.

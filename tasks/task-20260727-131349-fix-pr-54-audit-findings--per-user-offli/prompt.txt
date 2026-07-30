@@ -1,0 +1,28 @@
+## OBJECTIVE
+Fix 2 real, audit-confirmed issues on PROJEXA PR #54 ("PWA infra + offline work-progress sync queue", branch `feat/pwa-offline-infra`) before it can merge. Read the full audit verdict first: `gh api repos/FChecklist/projexa/issues/54/comments --jq '.[-1].body' | fold -w 150` (one very long "Evidence Recorded" line -- do not trust a truncated terminal view).
+
+## KNOWN_CONTEXT
+Real, audit-confirmed findings on `src/lib/offline/work-progress-queue.ts`, do not re-derive:
+1. **Cross-user data leak on shared devices (the primary blocker)**: the offline queue is a single global IndexedDB store scoped only to the browser origin, with no per-user/session key and no clearing on logout or account switch. Construction-site field tablets are explicitly the stated target persona for this feature and are commonly shared/handed off between users. If Supervisor A queues work-progress entries offline, logs out, and Supervisor B logs in on the same device before the queue drains, `WorkProgressClient`'s mount effect and the `'online'` listener will auto-sync A's still-queued entries under B's session (work-progress infers organizationId/actor from `requireAuth()`'s server-side session context, not any client-supplied field) -- silently attributing A's progress data to B's account, and/or leaking A's queued entry data (activity name, quantity, remarks, photo) into B's UI, potentially across different orgs.
+2. **Race condition on sync**: `syncQueuedWorkProgressEntries()` has no mutex/lock against concurrent invocation. A component remount racing the `'online'` event, or a flaky-connectivity flap firing multiple `'online'` events, can both read the same pending entries before either is marked `'syncing'`, causing duplicate `POST /api/work-progress` calls for the same entry.
+3. **Non-blocking follow-up noted by the audit**: failed sync entries (status `'error'`) retry forever with no backoff/max-attempt cap -- fix if time permits, not the priority.
+- The PWA manifest/service-worker scaffolding itself (`src/app/manifest.ts`, `public/sw.js`, `ServiceWorkerRegistration`) is real and correctly built (excludes `/api/*` from cache, real non-silent UI for the disclosed photo-upload gap) -- do not touch that part.
+
+## SCOPE
+1. Scope the IndexedDB queue's store key to the authenticated user/session (not just browser origin) -- on logout or account switch, entries queued under a different session must not be visible to or auto-synced by the new session. A real, explicit clear/isolate-on-logout mechanism, not just a naming convention that happens to not collide.
+2. Add a real lock/dedupe against concurrent `syncQueuedWorkProgressEntries()` invocation -- mark entries `'syncing'` atomically before any async work begins (or use an equivalent real mutex), so two overlapping calls cannot both submit the same entry.
+3. (Time permitting, not blocking) Add a backoff/max-attempt cap for permanently-failing entries.
+
+## SUCCESS_CRITERIA
+- A real test proving: User A queues an entry offline, logs out; User B (different session, ideally different org) logs in on the same device before sync -- B's session does NOT auto-sync or display A's queued entry.
+- A real test proving: two concurrent calls to the sync function do not produce a duplicate POST for the same queued entry.
+- `npx tsc --noEmit` clean, `bun test` passing including the new tests (not just sequential single-session scenarios, which the audit noted the original tests were limited to).
+
+## EXPECTED_OUTPUT
+Push the fix to the SAME branch (`feat/pwa-offline-infra`, PR #54 already open) -- do not open a new PR. Requires a fresh supervisor audit before merge per this repo's own review pipeline; do not merge it yourself.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not touch the PWA manifest/service-worker files -- the audit confirmed those are already correct.
+
+## COMPLEXITY_TIER
+judgment

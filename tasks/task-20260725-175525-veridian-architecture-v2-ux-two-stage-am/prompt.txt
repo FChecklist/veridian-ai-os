@@ -1,0 +1,29 @@
+## OBJECTIVE
+Amend ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml's phase_2 and phase_5 scope (and any other phase whose scope genuinely needs it) to explicitly encode a real Owner-clarified end-user interaction requirement, before phase_1 merges and auto-continuation reaches phase_2. Do not touch phase_1 -- it is already dispatched and in progress against compliance-tracker.
+
+## KNOWN_CONTEXT
+- Owner's own words, given directly in chat 2026-07-25, quoted verbatim so nothing is lost in paraphrase: "a browser-native AI platform should be merged with the existing system, so that the END USER, who will use the system (not the OWNER), can work through the browser-native AI platform which is merged with the existing system for the end user. option 1 - [for the {dynamic mode pills + dynamic option chain} + chat input in the web browser at the end user side] and than the browser-native AI platform merged with the existing system takes over. The browser-native AI platform makes the complete machine language output of the end user prompt and gives to the SOFTWARE to execute. FIRST execution in the browser-native AI platform, SECOND execution in the SERVER by the SOFTWARE. SOFTWARE FIRST APPROACH. option 2 - [END USER direct writing the input in the chat via web browser at the end user side] and than the browser-native AI platform merged with the existing system takes over. The browser-native AI platform makes the complete machine language output of the end user prompt and gives to the SOFTWARE to execute. FIRST execution in the browser-native AI platform, SECOND execution in the SERVER by the SOFTWARE. SOFTWARE FIRST APPROACH. IMPORTANT - FOR END USER THE BROWSER IS THE ONLY WAY TO INTERACT WITH THE SYSTEM."
+- This directly resolved the previously-open ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml entry id=veridian-architecture-v2-target-repo-anchor (now status=approved -- compliance-tracker confirmed correct, since the platform must merge into the existing end-user-facing product, not stand alone).
+- Read ai-os/owner-attachments/VERIDIAN_Architecture_v2.0_extracted.txt in full for the document's own real, specific description of "mode pills", "option chain", and its end-user chat input mechanism -- the Owner's option 1/2 language closely echoes document vocabulary, so find the real source sections and cite them precisely rather than inventing your own interpretation of what these terms mean.
+- The core requirement is a real two-stage execution model: (1) the browser-native platform (built in phases 2/5 onward) does a FIRST pass, producing a complete machine-language output from the end user's input (whether structured mode-pill/option-chain input, per Option 1, or free-text chat, per Option 2) -- this mirrors the same client-side compiler-pipeline work phase_2 already scopes; (2) that machine-language output is then handed to SOFTWARE running on the SERVER for a SECOND, real execution pass -- this must plug into the existing gateway/dispatch infrastructure (the same Gateway G05 "AI" boundary and compliance.prompt_versions table phase_1/phase_2 already cite), not a new parallel execution path.
+- This is a real UX/architecture requirement affecting what the compiler pipeline (phase_2) and the browser execution tiers (phase_5) actually build, not a cosmetic detail -- both phases' SCOPE lists must name it as a real, explicit deliverable (e.g. a real component/interface for structured mode-pill input, a real component for free-text chat input, both converging on the same machine-language-output contract phase_1's Prompt Registry/Version engines define).
+
+## SCOPE
+1. Read the extracted document text in full for its own real description of mode-pill/option-chain UI and chat input mechanisms -- cite exact real sections (line numbers or headers) in your evidence.
+2. Update phase_2_compiler_pipeline_intelligence_engines's scope: add explicit real deliverables for producing the machine-language output contract this two-stage model needs (if not already covered by its existing pipeline-prompt-construction/pipeline-verification scope items -- check first, extend rather than duplicate).
+3. Update phase_5_browser_execution_tiers's scope: add explicit real deliverables for the two end-user input surfaces (structured mode-pill/option-chain, and free-text chat) and the real handoff mechanism from browser-native first-pass execution to the server-side SOFTWARE second pass via the existing Gateway G05 boundary -- name the specific real files/interfaces this must produce.
+4. Check every other phase (3, 4, 6-10) briefly for whether this two-stage/two-input-mode requirement changes anything in their own scope -- most likely only 2 and 5 are directly affected, but verify rather than assume, and note your reasoning for any phase you conclude is unaffected.
+5. Update each amended phase's own scope/objective text in place in ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml. Do not touch phase_1.
+
+## SUCCESS_CRITERIA
+- `python3 -c "import yaml; d=yaml.safe_load(open('ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml')); assert len(d['phases'])==10; print('OK')"` exits 0 and prints OK.
+- `grep -c 'two-stage\|two_stage\|mode-pill\|mode_pill\|SOFTWARE FIRST\|software-first' ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml` returns 2 or more (real evidence both phase_2 and phase_5 were actually amended, not just phase_5).
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on claude-control) with the amended phase plan, real citations to the extracted document's own mode-pill/chat-input sections, and a final checkpoint listing exactly which phases were amended and which were checked-and-found-unaffected with reasoning.
+
+## CONSTRAINTS
+Do not modify phase_1's scope, status, or dispatch state -- it is already in progress.
+
+## COMPLEXITY_TIER
+judgment

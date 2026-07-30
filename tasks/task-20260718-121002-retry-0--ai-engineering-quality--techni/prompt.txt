@@ -1,0 +1,23 @@
+VERIDIAN Review Framework gap-closure: AI Engineering Quality / Technical Debt & Complexity.
+This covers 5 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] Dead Code Detection
+  Gap: No automated dead-code detection tool
+  Recommended approach: Add a dead-code scan (e.g. knip) to CI, matching the existing check-*.mjs guardrail pattern.
+- [High] Duplicate Code Detection
+  Gap: No duplicate-code detection tooling
+  Recommended approach: Add jscpd (or similar) to CI with a report threshold, following the codebase's existing check-*.mjs guardrail pattern.
+- [Medium] Technical Debt Score
+  Gap: Debt is tracked narratively, not scored
+  Recommended approach: Derive a simple composite debt score from existing trackers (open MASTER-TRACKER items + empty-guardrail % + stale-doc count).
+- [Medium] Code Complexity Score
+  Gap: No measured complexity score; only a size-based proxy
+  Recommended approach: Add ESLint's complexity rule with a threshold, starting with the largest orchestration files.
+- [Medium] Refactoring Readiness
+  Gap: Test coverage gap limits safe refactoring
+  Recommended approach: Prioritize adding tests to the largest/most-changed untested files before refactoring them.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

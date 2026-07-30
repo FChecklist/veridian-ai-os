@@ -1,0 +1,25 @@
+## OBJECTIVE
+Resolve a real, confirmed git merge conflict on PR #12 (github.com/FChecklist/claude-control/pull/12, branch worker/task-20260724-042659-veridian-auditor-engine-phase0-inventory) so it can merge into master cleanly. Instruction INS-20260724-072314-b490.
+
+## SCOPE
+1. Confirm conflict is real: `gh pr view 12 --repo FChecklist/claude-control --json mergeable,mergeStateStatus` (expect mergeable=CONFLICTING, mergeStateStatus=DIRTY as of this task's start).
+2. In a fresh checkout of the branch, run `git fetch origin && git merge origin/master` (or rebase, whichever preserves history more cleanly given this branch has only 1 real commit ahead), resolve every conflicting file by hand-reading both sides -- do not take one side blindly. Known likely conflict area: MASTER_INDEX.yaml and/or knowledge_engine-adjacent registry files, since master gained 3 other merged PRs (self-sustaining-system-engine cleanup, 20-Engines Phase0, Testing-Engine Phase0) after this branch diverged. Both this branch's Auditor Engine registrations AND master's other engines' registrations must survive the resolution.
+3. Push the resolved branch, then run `python3 /opt/veridian/scripts/task-gateway.py log --task-id task-20260724-042659-veridian-auditor-engine-phase0-inventory --event "conflict resolved, pushed"`.
+4. Verify post-push: `gh pr view 12 --json mergeable,mergeStateStatus` shows mergeable=MERGEABLE.
+
+## KNOWN_CONTEXT
+- This is real conflict-resolution work, not the previously-fixed gh-pr-merge---delete-branch false-negative bug (that bug is already fixed and merged via PR #15).
+- The task's real content (Auditor Engine Phase0 inventory + tool smoketest evidence + phase plan) is genuine, already-completed, verified real work from earlier this session -- the goal here is only to land it cleanly, not redo it.
+
+## SUCCESS_CRITERIA
+- PR #12 shows mergeable=MERGEABLE after this task's push.
+- No content from either side (Auditor Engine's own registrations, or the other 3 already-merged engines' registrations) was silently dropped -- spot-check both are present in the resolved MASTER_INDEX.yaml / knowledge_engine registration files.
+
+## EXPECTED_OUTPUT
+A real pushed commit resolving the conflict, and a final checkpoint confirming mergeable=MERGEABLE via a real `gh pr view` call.
+
+## CONSTRAINTS
+Do not merge PR #12 yourself in this task -- leave that to the normal supervisor review pipeline once mergeable=MERGEABLE. Do not touch any other open PR.
+
+## COMPLEXITY_TIER
+mechanical

@@ -1,0 +1,203 @@
+id: task-20260724-143010-phase6-extend-intent-engine-beyond-mode
+title: phase6-extend-intent-engine-beyond-mode-pill
+status: completed
+repo: claude-control
+branch: worker/task-20260724-143010-phase6-extend-intent-engine-beyond-mode
+workspace: /opt/veridian/ai-os/tasks/task-20260724-143010-phase6-extend-intent-engine-beyond-mode/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260724-143010-phase6-extend-intent-engine-beyond-mode
+service: veridian-worker@task-20260724-143010-phase6-extend-intent-engine-beyond-mode.service
+created_at: '2026-07-24T14:30:11.249190+00:00'
+last_checkpoint_at: '2026-07-24T14:43:14.499096+00:00'
+completed_steps: &id002
+- Read full phase plan yaml + all 5 grounding files in compliance-tracker (read-only)
+- Inspected superboss-register.py's knowledge_engine/capability_registry/automation_rules
+- Write scripts/intent_engine.py, live-tested against real DB (miss logging + gap-report
+  verdicts)
+- Write scripts/context_engine.py, live-tested against real DB (2-turn session, recall-context)
+- Write scripts/plan_generator.py, live-tested against real DB (3-step DAG, 2/3 resolved)
+- Write scripts/learning_engine.py, live-tested end-to-end (degrade->disable->evaluate-rules
+- Write ai-os/PHASE6_INTENT_CONTEXT_PLANNING_LEARNING_2026-07-24.yaml contract
+- Register phase_6 + all 4 scripts in knowledge_engine (query-knowledge check returns
+  found=1)
+- 'Update 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml phase_6 status: done +
+  status_detail'
+remaining_steps: &id003
+- Commit + push, open PR
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-24T14:30:12.882359+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '85f0d12 Merge pull request #43 from FChecklist/worker/task-20260724-140446-fix-terminology-phase3-pr552-review-gap'
+  - '673c002 Close phase_3_ci_enforcement_wiring: real review + merge of compliance-tracker#552
+    (#41)'
+  - '8f14673 Close phase_3_ci_enforcement_wiring: real review + merge of compliance-tracker#552'
+  - 'c3edabd Merge pull request #40 from FChecklist/worker/task-20260724-135834-phase5-reconcile-master-index-yaml-s-reg'
+  - '2df7dea Phase 5: close out phase_5_metadata_knowledge_consolidation'
+  - 'c85ce94 Phase 5: metadata/knowledge reconciliation mechanism + Supabase token
+    gap mitigation'
+  - 9962112 Auto-sync 3 server task(s) to master controller
+  - 'e018dc1 Merge pull request #39 from FChecklist/worker/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener'
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  - '65bacb1 Merge pull request #37 from FChecklist/worker/task-20260724-122143-phase3-data-model-static-quality-linting'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-24T14:35:13.944173+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/intent_engine.py
+  completed_steps:
+  - Read full phase plan yaml + all 5 grounding files in compliance-tracker (read-only)
+  - Inspected superboss-register.py's knowledge_engine/capability_registry/automation_rules
+  remaining_steps:
+  - Write scripts/intent_engine.py, live-test against real DB
+  - Write scripts/context_engine.py, live-test against real DB
+  - Write scripts/plan_generator.py, live-test against real DB
+  - Write scripts/learning_engine.py, live-test end-to-end (verdict -> is_active flip
+    -> evaluate-rules stops firing)
+  - Write ai-os/PHASE6_INTENT_CONTEXT_PLANNING_LEARNING_2026-07-24.yaml contract
+  - Register phase_6 in knowledge_engine (query-knowledge check must return >=1 row)
+  - 'Update 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml phase_6 status: done
+    + status_detail'
+  - Commit + push, open PR
+  recent_commits:
+  - '85f0d12 Merge pull request #43 from FChecklist/worker/task-20260724-140446-fix-terminology-phase3-pr552-review-gap'
+  - '673c002 Close phase_3_ci_enforcement_wiring: real review + merge of compliance-tracker#552
+    (#41)'
+  - '8f14673 Close phase_3_ci_enforcement_wiring: real review + merge of compliance-tracker#552'
+  - 'c3edabd Merge pull request #40 from FChecklist/worker/task-20260724-135834-phase5-reconcile-master-index-yaml-s-reg'
+  - '2df7dea Phase 5: close out phase_5_metadata_knowledge_consolidation'
+  - 'c85ce94 Phase 5: metadata/knowledge reconciliation mechanism + Supabase token
+    gap mitigation'
+  - 9962112 Auto-sync 3 server task(s) to master controller
+  - 'e018dc1 Merge pull request #39 from FChecklist/worker/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener'
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  - '65bacb1 Merge pull request #37 from FChecklist/worker/task-20260724-122143-phase3-data-model-static-quality-linting'
+  note: periodic checkpoint
+- at: '2026-07-24T14:40:15.042268+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml
+  - ai-os/PHASE6_INTENT_CONTEXT_PLANNING_LEARNING_2026-07-24.yaml
+  - scripts/context_engine.py
+  - scripts/intent_engine.py
+  - scripts/learning_engine.py
+  - scripts/plan_generator.py
+  completed_steps:
+  - Read full phase plan yaml + all 5 grounding files in compliance-tracker (read-only)
+  - Inspected superboss-register.py's knowledge_engine/capability_registry/automation_rules
+  remaining_steps:
+  - Write scripts/intent_engine.py, live-test against real DB
+  - Write scripts/context_engine.py, live-test against real DB
+  - Write scripts/plan_generator.py, live-test against real DB
+  - Write scripts/learning_engine.py, live-test end-to-end (verdict -> is_active flip
+    -> evaluate-rules stops firing)
+  - Write ai-os/PHASE6_INTENT_CONTEXT_PLANNING_LEARNING_2026-07-24.yaml contract
+  - Register phase_6 in knowledge_engine (query-knowledge check must return >=1 row)
+  - 'Update 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml phase_6 status: done
+    + status_detail'
+  - Commit + push, open PR
+  recent_commits:
+  - '85f0d12 Merge pull request #43 from FChecklist/worker/task-20260724-140446-fix-terminology-phase3-pr552-review-gap'
+  - '673c002 Close phase_3_ci_enforcement_wiring: real review + merge of compliance-tracker#552
+    (#41)'
+  - '8f14673 Close phase_3_ci_enforcement_wiring: real review + merge of compliance-tracker#552'
+  - 'c3edabd Merge pull request #40 from FChecklist/worker/task-20260724-135834-phase5-reconcile-master-index-yaml-s-reg'
+  - '2df7dea Phase 5: close out phase_5_metadata_knowledge_consolidation'
+  - 'c85ce94 Phase 5: metadata/knowledge reconciliation mechanism + Supabase token
+    gap mitigation'
+  - 9962112 Auto-sync 3 server task(s) to master controller
+  - 'e018dc1 Merge pull request #39 from FChecklist/worker/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener'
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  - '65bacb1 Merge pull request #37 from FChecklist/worker/task-20260724-122143-phase3-data-model-static-quality-linting'
+  note: periodic checkpoint
+- at: '2026-07-24T14:41:16.887715+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read full phase plan yaml + all 5 grounding files in compliance-tracker (read-only)
+  - Inspected superboss-register.py's knowledge_engine/capability_registry/automation_rules
+  - Write scripts/intent_engine.py, live-tested against real DB (miss logging + gap-report
+    verdicts)
+  - Write scripts/context_engine.py, live-tested against real DB (2-turn session,
+    recall-context)
+  - Write scripts/plan_generator.py, live-tested against real DB (3-step DAG, 2/3
+    resolved)
+  - Write scripts/learning_engine.py, live-tested end-to-end (degrade->disable->evaluate-rules
+  - Write ai-os/PHASE6_INTENT_CONTEXT_PLANNING_LEARNING_2026-07-24.yaml contract
+  - Register phase_6 + all 4 scripts in knowledge_engine (query-knowledge check returns
+    found=1)
+  - 'Update 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml phase_6 status: done
+    + status_detail'
+  remaining_steps:
+  - Commit + push, open PR
+  recent_commits:
+  - '19e9c1d Phase 6: extend Intent/Context/Planning/Learning Engines with real, live-tested
+    mechanisms'
+  - '85f0d12 Merge pull request #43 from FChecklist/worker/task-20260724-140446-fix-terminology-phase3-pr552-review-gap'
+  - '673c002 Close phase_3_ci_enforcement_wiring: real review + merge of compliance-tracker#552
+    (#41)'
+  - '8f14673 Close phase_3_ci_enforcement_wiring: real review + merge of compliance-tracker#552'
+  - 'c3edabd Merge pull request #40 from FChecklist/worker/task-20260724-135834-phase5-reconcile-master-index-yaml-s-reg'
+  - '2df7dea Phase 5: close out phase_5_metadata_knowledge_consolidation'
+  - 'c85ce94 Phase 5: metadata/knowledge reconciliation mechanism + Supabase token
+    gap mitigation'
+  - 9962112 Auto-sync 3 server task(s) to master controller
+  - 'e018dc1 Merge pull request #39 from FChecklist/worker/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener'
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  note: quality gates passed, pushed branch worker/task-20260724-143010-phase6-extend-intent-engine-beyond-mode,
+    awaiting review
+- at: '2026-07-24T14:43:14.499096+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '19e9c1d Phase 6: extend Intent/Context/Planning/Learning Engines with real, live-tested
+    mechanisms'
+  - '85f0d12 Merge pull request #43 from FChecklist/worker/task-20260724-140446-fix-terminology-phase3-pr552-review-gap'
+  - '673c002 Close phase_3_ci_enforcement_wiring: real review + merge of compliance-tracker#552
+    (#41)'
+  - '8f14673 Close phase_3_ci_enforcement_wiring: real review + merge of compliance-tracker#552'
+  - 'c3edabd Merge pull request #40 from FChecklist/worker/task-20260724-135834-phase5-reconcile-master-index-yaml-s-reg'
+  - '2df7dea Phase 5: close out phase_5_metadata_knowledge_consolidation'
+  - 'c85ce94 Phase 5: metadata/knowledge reconciliation mechanism + Supabase token
+    gap mitigation'
+  - 9962112 Auto-sync 3 server task(s) to master controller
+  - 'e018dc1 Merge pull request #39 from FChecklist/worker/task-20260724-133622-phase4-unify-document-pipeline-pdf-gener'
+  - '9e045c2 Phase 4: unify Document Engine facade + Notification Engine contract,
+    honest no-ETL finding for Data Engine'
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/47'
+execution_seconds: 663
+restart_count: 0
+token_usage:
+  input_tokens: 100
+  cache_creation_input_tokens: 171173
+  cache_read_input_tokens: 7002071
+  output_tokens: 63915
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 171173
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 452
+    cache_read_input_tokens: 193358
+    cache_creation_input_tokens: 1406
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1406
+    type: message
+  speed: standard
+master_synced_at: '2026-07-24T15:00:08.856772+00:00'

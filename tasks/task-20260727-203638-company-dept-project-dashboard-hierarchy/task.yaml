@@ -1,0 +1,290 @@
+id: task-20260727-203638-company-dept-project-dashboard-hierarchy
+title: Company/Dept/Project dashboard hierarchy (PROJEXA)
+status: blocked
+repo: projexa
+branch: feat/company-dept-project-dashboard
+workspace: /opt/veridian/ai-os/tasks/task-20260727-203638-company-dept-project-dashboard-hierarchy/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-203638-company-dept-project-dashboard-hierarchy
+service: veridian-worker@task-20260727-203638-company-dept-project-dashboard-hierarchy.service
+created_at: '2026-07-27T20:36:39.790186+00:00'
+last_checkpoint_at: '2026-07-27T20:59:16.612719+00:00'
+completed_steps: &id002
+- 'Investigated whether Company/Department already exist (SCOPE item 1). Findings:'
+- Built the real Company -> Department -> Project drill-down (`/dashboard/hierarchy`),
+  each level filtering the next via real VERIDIAN calls, with membership-verified
+  `companyId` scoping (`src/lib/company-scope.ts`) so a caller can never read another
+  company's data by guessing an org UUID.
+- Added the Details view's date-range filter for Revenue/Expense/Progress (Budget
+  is disclosed as a period-invariant annual total, not date-sliceable).
+- Built the category-distribution pie chart (share of BOQ total) + bar chart (completed
+  vs. total amount per category), sourced from real BOQ line-item amounts (grouped
+  via `activityId -> category`) and real WPR completion %.
+- Built the separate, lightweight multi-project status-bar overview (`/dashboard/overview`)
+  -- one horizontal % complete bar per project, intentionally not folded into the
+  drill-down.
+- Added sidebar nav entries ("Company Dashboard", "Projects Overview") + en/hi i18n
+  strings.
+- 'Tests: `src/lib/company-scope.test.ts` (membership-boundary scoping) + 2 route-level
+  test files under `src/app/api/dashboard-hierarchy/**` (cross-company scoping, department
+  filter passthrough, category-distribution percentages sum to 100% and match seeded
+  BOQ amounts). 12/12 pass.'
+- '`npx tsc --noEmit` -- clean, zero errors.'
+- '`npx eslint` on all new/changed files -- clean.'
+remaining_steps: &id003
+- Supervisor decision + push/PR for the compliance-tracker companion change above
+  (or an alternative if the supervisor prefers a different approach).
+- Fresh supervisor audit of the projexa PR before merge (per task protocol -- not
+  to be merged by this worker).
+- '`bun test` was run scoped to the new dashboard files (12/12 pass) and `npx tsc
+  --noEmit` for the whole project (clean) -- the full existing `bun test` suite was
+  not re-run end-to-end due to session budget; worth a full run in CI/audit.'
+- UI was not visually verified in a running browser (session budget) -- functional
+  correctness verified via tsc + unit/route tests only, per instructions this is disclosed
+  rather than claiming visual confirmation.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T20:36:41.969897+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '638330f Merge pull request #54 from FChecklist/feat/pwa-offline-infra'
+  - '5af1723 merge: resolve conflict with main'
+  - '36766eb Merge pull request #56 from FChecklist/worker/task-20260727-133855-fix-pr-53--last-owner-admin-demotion-pro'
+  - '537ec33 merge: resolve conflict with main'
+  - 114d0ee Guard PATCH /api/org-members/[id] against demoting an org's last owner/admin
+  - 'd99cbf6 Merge PR #53 branch (worker/task-20260727-122935-...) to get org-members
+    PATCH endpoint'
+  - c6e0351 Initialize PROGRESS.md for last-owner/admin demotion fix task
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T20:41:43.231959+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '638330f Merge pull request #54 from FChecklist/feat/pwa-offline-infra'
+  - '5af1723 merge: resolve conflict with main'
+  - '36766eb Merge pull request #56 from FChecklist/worker/task-20260727-133855-fix-pr-53--last-owner-admin-demotion-pro'
+  - '537ec33 merge: resolve conflict with main'
+  - 114d0ee Guard PATCH /api/org-members/[id] against demoting an org's last owner/admin
+  - 'd99cbf6 Merge PR #53 branch (worker/task-20260727-122935-...) to get org-members
+    PATCH endpoint'
+  - c6e0351 Initialize PROGRESS.md for last-owner/admin demotion fix task
+  note: periodic checkpoint
+- at: '2026-07-27T20:46:44.637746+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '638330f Merge pull request #54 from FChecklist/feat/pwa-offline-infra'
+  - '5af1723 merge: resolve conflict with main'
+  - '36766eb Merge pull request #56 from FChecklist/worker/task-20260727-133855-fix-pr-53--last-owner-admin-demotion-pro'
+  - '537ec33 merge: resolve conflict with main'
+  - 114d0ee Guard PATCH /api/org-members/[id] against demoting an org's last owner/admin
+  - 'd99cbf6 Merge PR #53 branch (worker/task-20260727-122935-...) to get org-members
+    PATCH endpoint'
+  - c6e0351 Initialize PROGRESS.md for last-owner/admin demotion fix task
+  note: periodic checkpoint
+- at: '2026-07-27T20:51:45.923414+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/(app)/dashboard/hierarchy/
+  - src/app/(app)/dashboard/overview/
+  - src/app/api/dashboard-hierarchy/
+  - src/components/CategoryDistributionCharts.tsx
+  - src/components/DashboardHierarchyClient.tsx
+  - src/lib/company-scope.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '638330f Merge pull request #54 from FChecklist/feat/pwa-offline-infra'
+  - '5af1723 merge: resolve conflict with main'
+  - '36766eb Merge pull request #56 from FChecklist/worker/task-20260727-133855-fix-pr-53--last-owner-admin-demotion-pro'
+  - '537ec33 merge: resolve conflict with main'
+  - 114d0ee Guard PATCH /api/org-members/[id] against demoting an org's last owner/admin
+  - 'd99cbf6 Merge PR #53 branch (worker/task-20260727-122935-...) to get org-members
+    PATCH endpoint'
+  - c6e0351 Initialize PROGRESS.md for last-owner/admin demotion fix task
+  note: periodic checkpoint
+- at: '2026-07-27T20:56:47.289886+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Investigated whether Company/Department already exist (SCOPE item 1). Findings:'
+  - Built the real Company -> Department -> Project drill-down (`/dashboard/hierarchy`),
+    each level filtering the next via real VERIDIAN calls, with membership-verified
+    `companyId` scoping (`src/lib/company-scope.ts`) so a caller can never read another
+    company's data by guessing an org UUID.
+  - Added the Details view's date-range filter for Revenue/Expense/Progress (Budget
+    is disclosed as a period-invariant annual total, not date-sliceable).
+  - Built the category-distribution pie chart (share of BOQ total) + bar chart (completed
+    vs. total amount per category), sourced from real BOQ line-item amounts (grouped
+    via `activityId -> category`) and real WPR completion %.
+  - Built the separate, lightweight multi-project status-bar overview (`/dashboard/overview`)
+    -- one horizontal % complete bar per project, intentionally not folded into the
+    drill-down.
+  - Added sidebar nav entries ("Company Dashboard", "Projects Overview") + en/hi i18n
+    strings.
+  - 'Tests: `src/lib/company-scope.test.ts` (membership-boundary scoping) + 2 route-level
+    test files under `src/app/api/dashboard-hierarchy/**` (cross-company scoping,
+    department filter passthrough, category-distribution percentages sum to 100% and
+    match seeded BOQ amounts). 12/12 pass.'
+  - '`npx tsc --noEmit` -- clean, zero errors.'
+  - '`npx eslint` on all new/changed files -- clean.'
+  remaining_steps:
+  - Supervisor decision + push/PR for the compliance-tracker companion change above
+    (or an alternative if the supervisor prefers a different approach).
+  - Fresh supervisor audit of the projexa PR before merge (per task protocol -- not
+    to be merged by this worker).
+  - '`bun test` was run scoped to the new dashboard files (12/12 pass) and `npx tsc
+    --noEmit` for the whole project (clean) -- the full existing `bun test` suite
+    was not re-run end-to-end due to session budget; worth a full run in CI/audit.'
+  - UI was not visually verified in a running browser (session budget) -- functional
+    correctness verified via tsc + unit/route tests only, per instructions this is
+    disclosed rather than claiming visual confirmation.
+  recent_commits:
+  - aa311e2 Add Company -> Department -> Project dashboard drill-down + category charts
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '638330f Merge pull request #54 from FChecklist/feat/pwa-offline-infra'
+  - '5af1723 merge: resolve conflict with main'
+  - '36766eb Merge pull request #56 from FChecklist/worker/task-20260727-133855-fix-pr-53--last-owner-admin-demotion-pro'
+  - '537ec33 merge: resolve conflict with main'
+  - 114d0ee Guard PATCH /api/org-members/[id] against demoting an org's last owner/admin
+  - 'd99cbf6 Merge PR #53 branch (worker/task-20260727-122935-...) to get org-members
+    PATCH endpoint'
+  note: periodic checkpoint
+- at: '2026-07-27T20:57:35.863890+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Investigated whether Company/Department already exist (SCOPE item 1). Findings:'
+  - Built the real Company -> Department -> Project drill-down (`/dashboard/hierarchy`),
+    each level filtering the next via real VERIDIAN calls, with membership-verified
+    `companyId` scoping (`src/lib/company-scope.ts`) so a caller can never read another
+    company's data by guessing an org UUID.
+  - Added the Details view's date-range filter for Revenue/Expense/Progress (Budget
+    is disclosed as a period-invariant annual total, not date-sliceable).
+  - Built the category-distribution pie chart (share of BOQ total) + bar chart (completed
+    vs. total amount per category), sourced from real BOQ line-item amounts (grouped
+    via `activityId -> category`) and real WPR completion %.
+  - Built the separate, lightweight multi-project status-bar overview (`/dashboard/overview`)
+    -- one horizontal % complete bar per project, intentionally not folded into the
+    drill-down.
+  - Added sidebar nav entries ("Company Dashboard", "Projects Overview") + en/hi i18n
+    strings.
+  - 'Tests: `src/lib/company-scope.test.ts` (membership-boundary scoping) + 2 route-level
+    test files under `src/app/api/dashboard-hierarchy/**` (cross-company scoping,
+    department filter passthrough, category-distribution percentages sum to 100% and
+    match seeded BOQ amounts). 12/12 pass.'
+  - '`npx tsc --noEmit` -- clean, zero errors.'
+  - '`npx eslint` on all new/changed files -- clean.'
+  remaining_steps:
+  - Supervisor decision + push/PR for the compliance-tracker companion change above
+    (or an alternative if the supervisor prefers a different approach).
+  - Fresh supervisor audit of the projexa PR before merge (per task protocol -- not
+    to be merged by this worker).
+  - '`bun test` was run scoped to the new dashboard files (12/12 pass) and `npx tsc
+    --noEmit` for the whole project (clean) -- the full existing `bun test` suite
+    was not re-run end-to-end due to session budget; worth a full run in CI/audit.'
+  - UI was not visually verified in a running browser (session budget) -- functional
+    correctness verified via tsc + unit/route tests only, per instructions this is
+    disclosed rather than claiming visual confirmation.
+  recent_commits:
+  - aa311e2 Add Company -> Department -> Project dashboard drill-down + category charts
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '638330f Merge pull request #54 from FChecklist/feat/pwa-offline-infra'
+  - '5af1723 merge: resolve conflict with main'
+  - '36766eb Merge pull request #56 from FChecklist/worker/task-20260727-133855-fix-pr-53--last-owner-admin-demotion-pro'
+  - '537ec33 merge: resolve conflict with main'
+  - 114d0ee Guard PATCH /api/org-members/[id] against demoting an org's last owner/admin
+  - 'd99cbf6 Merge PR #53 branch (worker/task-20260727-122935-...) to get org-members
+    PATCH endpoint'
+  note: quality gates passed, pushed branch worker/task-20260727-203638-company-dept-project-dashboard-hierarchy,
+    awaiting review
+- at: '2026-07-27T20:59:16.612719+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - aa311e2 Add Company -> Department -> Project dashboard drill-down + category charts
+  - 'a2f59d4 Merge pull request #57 from FChecklist/worker/task-20260727-190032-scope-of-works-revision-variation-tracki'
+  - 'bba6f49 Add scope-of-work revision/variation screen: create, compare, hard-block
+    guard'
+  - '89a267f Worker task-20260727-190032-scope-of-works-revision-variation-tracki:
+    checkpoint commit (invocation failed, exit 1)'
+  - '638330f Merge pull request #54 from FChecklist/feat/pwa-offline-infra'
+  - '5af1723 merge: resolve conflict with main'
+  - '36766eb Merge pull request #56 from FChecklist/worker/task-20260727-133855-fix-pr-53--last-owner-admin-demotion-pro'
+  - '537ec33 merge: resolve conflict with main'
+  - 114d0ee Guard PATCH /api/org-members/[id] against demoting an org's last owner/admin
+  - 'd99cbf6 Merge PR #53 branch (worker/task-20260727-122935-...) to get org-members
+    PATCH endpoint'
+  note: "Superboss rejected: https://github.com/FChecklist/projexa/pull/60 \u2014\
+    \ see review.json for issues"
+execution_seconds: 1219
+restart_count: 0
+token_usage:
+  input_tokens: 222
+  cache_creation_input_tokens: 188214
+  cache_read_input_tokens: 15211538
+  output_tokens: 87516
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 188214
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 802
+    cache_read_input_tokens: 211494
+    cache_creation_input_tokens: 404
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 404
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:26.248644+00:00'

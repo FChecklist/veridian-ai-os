@@ -1,0 +1,29 @@
+## OBJECTIVE
+Fix a real, audit-confirmed CSV/formula-injection vulnerability (OWASP-documented class) on PR #599 ("Reporting API gateway: external-AI scoped access to report engine + export wiring", branch `worker/task-20260727-101145-reporting-api-gateway--external-ai-scope`) before it can merge. Read the full audit verdict first: `gh api repos/FChecklist/compliance-tracker/issues/599/comments --jq '.[-1].body' | fold -w 150` (the comment has one very long "Evidence Recorded" line -- do not trust a truncated terminal view).
+
+## KNOWN_CONTEXT
+Real, audit-confirmed finding, do not re-derive:
+- `rowsToCSV()` in `src/lib/report-export-shared.ts` has zero CSV/formula-injection sanitization. Report rows routinely contain user-controlled free text (vendor/supplier names, custom-field values, AI-recipe-generated notes -- confirmed by the auditor reading `report-engine-service.ts`), so a value starting with `=`, `+`, `-`, or `@` flows unescaped into the CSV response and is interpreted as a live formula by Excel/Sheets when a downstream human opens it -- a well-known, real attack class (data exfiltration via formulas that call external URLs, or worse in older Excel/DDE contexts).
+- This is materially more severe than prior gaps this codebase has shipped, specifically because this route's entire purpose is external consumption by AI agents/resellers -- the exact threat model where an attacker-controlled data value is most likely to reach this path.
+- The tenant-isolation work in this same PR is genuinely solid and does NOT need changes (orgId comes from the authenticated context, verified by a real spoofing test, reuses the existing `executeReportDefinition()`/`getFullReportCatalog()` dispatch already used at ~30 call sites) -- do not touch that part.
+- The XLSX export path (`utils.json_to_sheet`) already writes explicit string-typed cells and does NOT have this vulnerability -- only the CSV path needs fixing.
+- A separate, minor, explicitly non-blocking inconsistency was also noted: `GET /api/v1/reports/catalog` returns 200 with an empty array when `ctx.orgId` is null, while `.../run` returns 400 "No organisation found" for the same condition. Fix this too since you're already in the file, but it is not the blocking issue.
+
+## SCOPE
+1. Fix `rowsToCSV()` in `src/lib/report-export-shared.ts`: prefix any cell value that starts with `=`, `+`, `-`, or `@` with a safe leading character (a single quote is the standard convention for this mitigation) before joining into the CSV output. Apply this to every cell, not just specific known-risky columns -- the whole point is defense-in-depth against any user-controlled field.
+2. Align `GET /api/v1/reports/catalog`'s null-orgId behavior with `.../run`'s (400 "No organisation found"), for consistency.
+
+## SUCCESS_CRITERIA
+- A real test proving: a report row containing a cell value like `=1+1` or `@SUM(A1:A9)` or `-2+3` is exported with a safe-prefixed value in the CSV output, and that value round-trips back to the original text if re-imported (not corrupted, just neutralized as a formula).
+- A real test proving normal, non-formula-shaped text is completely unaffected (byte-identical output).
+- A real test proving the catalog/run null-orgId consistency fix.
+- `npx tsc --noEmit` clean, `bun test` passing.
+
+## EXPECTED_OUTPUT
+Push the fix to the SAME branch (`worker/task-20260727-101145-reporting-api-gateway--external-ai-scope`, PR #599 already open) -- do not open a new PR. Requires a fresh supervisor audit before merge per AGENTS.md Rule 7c; do not merge it yourself.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not touch the tenant-isolation/auth logic in this PR -- the audit confirmed it is already correct. Do not touch the XLSX export path -- it does not have this vulnerability.
+
+## COMPLEXITY_TIER
+judgment

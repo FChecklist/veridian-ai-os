@@ -1,0 +1,31 @@
+## OBJECTIVE
+PROJEXA (projexa-ai.com, repo FChecklist/projexa) is meant to be a thin, PROJEXA-branded client surfacing the COMPLETE VERIDIAN AI OS module set (GRC, ERP, HR, general CRM -- everything compliance-tracker has) in addition to its own construction-specific screens, not just construction-only functionality. Right now PROJEXA's own chat only offers a narrow "Construction Intelligence" mode (confirmed live on production: logging in as democeo@projexa-ai.com shows only "Discuss / Chats / To Do / Construction Intelligence", with the composer placeholder text literally reading "general questions only, not live project data" -- no VERI GRC/ERP module chain at all). Wire in the full module chain.
+
+## KNOWN_CONTEXT
+Real, already-working integration exists and must be reused, not rebuilt:
+- `src/lib/veridian-client.ts` in the projexa repo already has a real, working authenticated API bridge to compliance-tracker: `getVeridianApiKey()`, `callVeridian()`, `callVeridianRaw()`, `provisionVeridianOrg()` -- each PROJEXA org has a real linked VERIDIAN org via `veridian_credentials` (schema confirmed in both repos). Proof this bridge genuinely works today: PROJEXA's dashboard "TOTAL REVENUE"/"TOTAL EXPENSES" fields are live-sourced from VERIDIAN ERP sales invoices through this exact bridge (confirmed live on production, org `bc689d97-2dd8-47ab-b5f7-5eb3d696ad34` / "Demo Organization", showing real non-zero figures).
+- compliance-tracker's `/chat` page already has the full, real chain-selector offering "VERI GRC AI" / "PROJEXA" / "VERI ERP" as top-level module chips, each cascading into real entity types (Product/Customer/Vendor/Compliance Item/etc.) and real records -- implemented in `src/components/veri-chat/ChainSelector.tsx` (a large, actively-maintained local component, NOT a thin wrapper -- read its own header comment for its real history) plus `src/components/veri-chat/VeriComposer.tsx` and `veri-chat-context.tsx`.
+- Both repos depend on the SAME shared package version, `@fchecklist/veridian-ui-kit#v0.2.2`, which ALSO contains its own `composer/ChainSelector.tsx`. It's unclear whether this shared-package version is the real, current one or a stale/abandoned parallel implementation compliance-tracker stopped using in favor of its own local copy -- investigate this first (check the shared package's git history/README, check if compliance-tracker's local ChainSelector.tsx re-exports or wraps it) before deciding whether to (a) update the shared package to be the real, current, single source of truth both repos consume, or (b) build PROJEXA's own thin ChainSelector UI that calls compliance-tracker's chain-resolution logic via a new authenticated API route through the existing `callVeridian()` bridge (reusing compliance-tracker's server-side chain logic, not its React component, if the two frontends' UI needs genuinely differ). Do NOT create a third, independent implementation of chain-selection logic -- resolve the existing duplication as part of this task, don't add to it.
+
+## SCOPE
+1. Determine the real state of the `veridian-ui-kit` package's ChainSelector vs compliance-tracker's local one (investigation step above) and pick ONE real path forward, documented in your PR description with your reasoning.
+2. Expose whatever real API surface is needed on compliance-tracker's side (likely a new authenticated route under `src/app/api` if one doesn't already exist) for an external, cross-tenant caller (PROJEXA, via `callVeridian()` + `veridian_credentials`) to fetch the same chain options (module -> entity type -> record -> action) that compliance-tracker's own `/chat` page uses internally. Reuse compliance-tracker's existing chain-resolution logic/data source for this -- do not reimplement entity-listing queries from scratch.
+3. Wire PROJEXA's own chat UI (`src/app/(app)/...` -- find PROJEXA's real current chat page/component) to call this new endpoint and render the full module chain (VERI GRC AI / VERI ERP / PROJEXA, at minimum -- match compliance-tracker's real current top-level module set) alongside PROJEXA's existing "Construction Intelligence" mode, not replacing it.
+4. Respect PROJEXA's own branding (colors/theme/copy) -- do not import compliance-tracker's raw UI/copy verbatim (e.g. do not show "compliance dashboard" text inside PROJEXA).
+
+## SUCCESS_CRITERIA
+- A real test proving: PROJEXA's chat, for an org with real `veridian_credentials`, can fetch and render a top-level module list including at least "VERI ERP" (or whatever compliance-tracker's real current top-level set is at the time of this fix).
+- A real test proving: selecting a module and drilling into an entity type returns real records scoped to that org's linked VERIDIAN org, not another org's data (tenant-isolation regression guard).
+- Verify by actually running:
+`npx tsc --noEmit` (in both repos, for whichever files you touch)
+`bun test` (scoped to touched files, in both repos)
+`grep -rn "not live project data" src/` (in projexa repo -- confirm this stale placeholder copy was updated if the composer's actual capability changed)
+
+## EXPECTED_OUTPUT
+Real PRs (one per repo touched) on new branches. Requires a fresh supervisor audit on each before merge; do not merge either one yourself even after a PASS verdict.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not modify PROJEXA's existing construction-specific screens (Projects/BoQ/site-diary/etc.) or its existing revenue/expense VERIDIAN integration -- both are already working, this task only adds the missing module-chain exposure alongside them.
+
+## COMPLEXITY_TIER
+judgment

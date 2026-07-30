@@ -1,0 +1,24 @@
+## OBJECTIVE
+Close a real, confirmed gap in the TASK/STATUS/COMPLETE-IT software: a worker task can currently write a false `status: done` (or similar completion field) directly into a shared phase-plan YAML file as part of its own PR diff, bypassing the legitimate backfill_phase_self_report.py verification mechanism entirely. Real incident: 2026-07-26, PR #562's phase_4 entry in claude-control's ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml was set to status: done by commit 4611924, authored by the worker task itself, citing only a branch name -- while the real PR #562 was still OPEN with mergeStateStatus DIRTY/CONFLICTING. This was only caught because a human/AI session happened to manually cross-check `gh pr view` instead of trusting the file. Fix this at the root with real software (a CI check), not another one-off manual catch.
+
+## KNOWN_CONTEXT
+Read scripts/backfill_phase_self_report.py and scripts/supervisor-entrypoint.sh (both in claude-control) first -- backfill_phase_self_report.py is the ONLY legitimate writer of status/completed_by_task/evidence fields in *_PHASE_PLAN_*.yaml files today: supervisor-entrypoint.sh calls it (grep confirms 2 call sites around lines 302 and 309) only after independently confirming a real merged PR via `gh pr view --json state,mergedAt`. The gap is that the phase-plan YAML files themselves are ordinary repo files with no protection -- any worker's own PR commit can write directly into them, mimicking the same commit-message pattern the legitimate backfill script uses, with none of the underlying verification. claude-control is a docs/config-only repo (per existing session precedent) with no AGENTS.md/branch-protection apparatus of its own yet, unlike compliance-tracker's real PR/CI gate (Rule 6).
+
+## SCOPE
+1. Add a CI check (GitHub Actions workflow in claude-control, or an equivalent enforced gate if claude-control doesn't currently run any CI -- check `.github/workflows/` there first) that runs on every pull_request touching any `ai-os/*_PHASE_PLAN_*.yaml` file: diff the PR against its base, and if any changed hunk touches the `status`, `completed_by_task`, or `evidence` keys of a phase entry, FAIL the check UNLESS the commit author/message matches the exact convention backfill_phase_self_report.py uses (read that script to find its real, exact commit message format/pattern) AND (if feasible) the PR is confirmed to be pushed by the automation itself rather than a worker branch.
+2. If claude-control has no CI runner today, the simpler, real, working alternative: make backfill_phase_self_report.py itself defensive -- have it detect and simply overwrite/correct any status/completed_by_task/evidence field that was NOT set by its own last run (i.e. if the field changed since the last known-good backfilled value without a matching real merged-PR cross-reference at the time of the change), reverting it and logging a real incident record. Pick whichever of these two is actually achievable with the existing toolset -- do not invent a new framework; use claude-control's existing repo/CI setup as-is.
+3. Add a regression test (tests/ directory, matching the existing tests/backfill_phase_self_report_test.py and tests/supervisor_audit_rerun_test.sh convention) that reproduces the exact 2026-07-26 phase_4 incident (a worker-authored commit writing status: done without a real merged PR) and asserts the new gate catches/reverts it.
+
+## SUCCESS_CRITERIA
+- `git log --oneline -- ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml | head -5` still shows history is intact after the fix is applied (no destructive rewrite).
+- The new regression test reproduces the real 2026-07-26 phase_4 incident and fails without the fix, passes with it -- run it directly: `bash tests/supervisor_audit_rerun_test.sh` style invocation matching whichever exact test file this task adds.
+- `grep -rn "status\|completed_by_task\|evidence" scripts/backfill_phase_self_report.py` still shows this script as the sole real writer path after the fix.
+
+## EXPECTED_OUTPUT
+A real PR against claude-control implementing the fix (CI check or defensive backfill-script correction, whichever is genuinely achievable), the regression test, and a short section in the repo's own protocol/memory doc (ai-os/OWNER_DIRECTIVES/PROTOCOL_OWNER_AI.yaml or MEMORY_OWNER_AI.yaml, whichever already covers completion-discipline -- check both, edit the correct one, do not create a third file) documenting this as a closed gap with the real incident reference.
+
+## CONSTRAINTS
+Do not create a new protocol or memory file -- there is exactly one of each in claude-control's ai-os/OWNER_DIRECTIVES/ already (PROTOCOL_OWNER_AI.yaml, MEMORY_OWNER_AI.yaml, enforced by scripts/check_single_protocol_file.py); edit one of those two only. Do not touch compliance-tracker in this task -- this gap is specific to claude-control's phase-plan files.
+
+## COMPLEXITY_TIER
+judgment

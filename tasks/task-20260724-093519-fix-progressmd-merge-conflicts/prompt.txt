@@ -1,0 +1,25 @@
+## OBJECTIVE
+Permanently fix the recurring PROGRESS.md merge-conflict pattern that has hit 4 real PRs this session (PR12, PR23, PR24, PR27), always the same file, whenever 2+ task branches diverge from and merge back into master close in time. Instruction INS-20260724-093434-0b4d.
+
+## SCOPE
+1. Read how PROGRESS.md is written today (veridian-task.py's cmd_create, worker-entrypoint.sh) and confirm every worker writes its own narrative into this one tracked file per branch.
+2. Implement a fix so PROGRESS.md no longer causes merge conflicts between unrelated task branches. Two acceptable approaches, pick whichever fits the existing script structure with least disruption: (a) stop tracking PROGRESS.md in git entirely -- add it to .gitignore, keep it as a local-only per-workspace file, and if a durable record is wanted, generate a per-task PROGRESS_<task_id>.md or write the narrative into task.yaml/knowledge_engine instead; (b) add a `.gitattributes` entry giving PROGRESS.md a `merge=union` strategy (with the corresponding `merge.union.driver` config committed too) so simultaneous edits auto-concatenate instead of conflicting.
+3. Prove the fix with a real test: create two throwaway branches off the same master commit, have each append a different line to PROGRESS.md, merge both into a test integration branch, confirm no conflict occurs. Clean up the test branches after.
+4. Update any documentation/registry entries that reference PROGRESS.md's old behavior.
+
+## KNOWN_CONTEXT
+- Real, repeated incidents this session: PR12, PR23, PR24, PR27 all hit this exact conflict, always resolved manually the same way (keep the branch's own PROGRESS.md content, discard master's side) -- confirming it is always safe to prefer either side's content over the other, which is exactly what a union merge strategy would do automatically.
+- Owner directive: fix real issues found without asking, using this server's own resources, through this same task-gateway.py pipeline.
+
+## SUCCESS_CRITERIA
+- The real 2-branch test in SCOPE item 3 merges cleanly with zero conflicts.
+- No existing task/worker functionality that depends on PROGRESS.md's current behavior (e.g. resume-context reading it) is broken -- check veridian-task.py's resume-context command still works after the change.
+
+## EXPECTED_OUTPUT
+Real committed and pushed fix (PR on claude-control), the real 2-branch test evidence, and a final checkpoint confirming the fix works and nothing else broke.
+
+## CONSTRAINTS
+Limit this fix to the PROGRESS.md conflict mechanism only -- do not change any other part of the task lifecycle scripts.
+
+## COMPLEXITY_TIER
+mechanical

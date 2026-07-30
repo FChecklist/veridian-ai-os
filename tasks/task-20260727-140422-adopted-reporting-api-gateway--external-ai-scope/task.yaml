@@ -1,0 +1,61 @@
+id: task-20260727-140422-adopted-reporting-api-gateway--external-ai-scope
+title: 'Reporting API gateway: external-AI scoped access + CSV-injection fix'
+status: blocked
+repo: compliance-tracker
+branch: fix/csv-formula-injection-reporting-gateway
+workspace: /opt/veridian/ai-os/tasks/task-20260727-140422-adopted-reporting-api-gateway--external-ai-scope/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-140422-adopted-reporting-api-gateway--external-ai-scope
+service: veridian-supervisor@task-20260727-140422-adopted-reporting-api-gateway--external-ai-scope.service
+created_at: '2026-07-27T14:04:23.789363+00:00'
+last_checkpoint_at: '2026-07-27T14:07:22.546314+00:00'
+completed_steps: &id002
+- 'Read audit verdict on PR #599 (`AUDIT: FAIL`, medium severity): confirmed `rowsToCSV()`
+  in'
+- 'Fixed `rowsToCSV()`''s `csvEscape()`: any cell value starting with `=`, `+`, `-`,
+  or `@` now'
+- 'Added tests proving: formula-injection payloads are neutralized and recoverable'
+- 'Aligned `GET /api/v1/reports/catalog`''s null-orgId response with `.../run`''s:
+  now 400'
+- '`npx tsc --noEmit` clean (needed `NODE_OPTIONS=--max-old-space-size=6144`, default
+  heap OOMs'
+- 'Pushed the fix directly to PR #599''s existing branch'
+remaining_steps: &id003
+- 'Fresh supervisor audit on PR #599 (Rule 7c) -- not this session''s to perform;
+  do not merge.'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T14:04:23.789363+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'fix/csv-formula-injection-reporting-gateway' (https://github.com/FChecklist/compliance-tracker/pull/600)
+    -- registered for real audit, not a fresh worker dispatch
+- at: '2026-07-27T14:07:22.546314+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'a7212050 chore: trigger CI re-run (previous push did not fire a fresh workflow
+    run)'
+  - '755f0b1b merge: resolve conflicts with main + exempt real dated comments in auth-guard.ts'
+  - 76c2bf9d Merge remote-tracking branch 'origin/main' into worker/task-20260727-130600-fix-pr-599-csv-formula-injection-vulnera
+  - 'd7d278b3 Merge pull request #598 from FChecklist/feat/pms-dependency-blocking-enforcement'
+  - '16c55c1b merge: resolve conflict with main'
+  - '3ce59531 docs: record progress for PR #599 CSV-formula-injection fix'
+  - '07cd2d29 Merge pull request #595 from FChecklist/chore/close-out-dependabot-alert34-claim'
+  - ad161ea1 Merge branch 'main' into chore/close-out-dependabot-alert34-claim
+  - e3a247c1 Real dependency-blocking enforcement in pms-issue-service.ts
+  - 'e13e6cca merge: resolve ACTIVE-CLAIMS.yaml conflict with main, remove reintroduced
+    stale sharp-claim duplicate'
+  note: "Superboss rejected: https://github.com/FChecklist/compliance-tracker/pull/600\
+    \ \u2014 see review.json for issues"
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/600
+master_synced_at: '2026-07-29T21:04:26.062919+00:00'

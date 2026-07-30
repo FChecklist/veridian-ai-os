@@ -1,0 +1,845 @@
+id: task-20260726-171926-remove-anthropic-api-key-dead-code-path
+title: Remove ANTHROPIC_API_KEY dead code path
+status: superseded
+repo: compliance-tracker
+branch: worker/task-20260726-171926-remove-anthropic-api-key-dead-code-path
+workspace: /opt/veridian/ai-os/tasks/task-20260726-171926-remove-anthropic-api-key-dead-code-path/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-171926-remove-anthropic-api-key-dead-code-path
+service: veridian-worker@task-20260726-171926-remove-anthropic-api-key-dead-code-path.service
+created_at: '2026-07-26T17:19:27.498131+00:00'
+last_checkpoint_at: '2026-07-26T19:53:09.207904+00:00'
+completed_steps: &id002
+- Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+- 'Re-verified the dead path live in the repo (did not trust the triage evidence blindly):'
+- '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+- 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+- Reworded the two remaining comment references so they no longer name the removed
+- Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as pending
+- Verified the success-criteria grep is clean except for the one intentionally-preserved,
+- Validated YAML syntax of both edited workflow files
+remaining_steps: &id003
+- Wait for CI to finish running on the newly-pushed commit, then re-check
+- '`audit-check` in particular may need a fresh `AUDIT: PASS` comment re-affirming
+  the audit'
+- 'Once required checks are green: retitle the PR to drop `[WIP]`, merge it, then
+  move this'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T17:19:29.139103+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  - 'aedcbb06 PROGRESS.md: start task-20260726-102520 (resolve PR #563 conflict, refresh
+    DB catalog)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T17:24:30.460111+00:00'
+  status: in_progress
+  files_modified:
+  - .github/workflows/ai-dispatch.yml
+  - .github/workflows/ai-team-workforce.yml
+  - .github/workflows/claude.yml
+  - AGENTS.md
+  - PROGRESS.md
+  - src/lib/ai-team/roster.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  - 'aedcbb06 PROGRESS.md: start task-20260726-102520 (resolve PR #563 conflict, refresh
+    DB catalog)'
+  note: periodic checkpoint
+- at: '2026-07-26T17:29:31.746942+00:00'
+  status: in_progress
+  files_modified:
+  - .github/workflows/ai-dispatch.yml
+  - .github/workflows/ai-team-workforce.yml
+  - scripts/no-dead-anthropic-dispatch-path.test.ts
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Someone/some session with `workflow` OAuth scope (or the Owner) needs to push
+    the local
+  - Move this claim from `active` to `recently_completed` in `ai-os/boss/ACTIVE-CLAIMS.yaml`
+  recent_commits:
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T18:17:25.716707+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Someone/some session with `workflow` OAuth scope (or the Owner) needs to push
+    the local
+  - Move this claim from `active` to `recently_completed` in `ai-os/boss/ACTIVE-CLAIMS.yaml`
+  recent_commits:
+  - '879508fc V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: 'PRE-FLIGHT REJECTED (memory_low, transient): 186MB available, need >=300MB
+    -- likely resource contention from concurrent workers (Group B failure pattern)
+    -- no model call made, no cost incurred'
+- at: '2026-07-26T18:23:01.903716+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Someone/some session with `workflow` OAuth scope (or the Owner) needs to push
+    the local
+  - Move this claim from `active` to `recently_completed` in `ai-os/boss/ACTIVE-CLAIMS.yaml`
+  recent_commits:
+  - '879508fc V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: worker started (resume=1, lifetime invocation 3/20, pre-flight passed)
+- at: '2026-07-26T18:31:51.181346+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Someone/some session with `workflow` OAuth scope (or the Owner) needs to push
+    the local
+  - Move this claim from `active` to `recently_completed` in `ai-os/boss/ACTIVE-CLAIMS.yaml`
+  recent_commits:
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  note: periodic checkpoint
+- at: '2026-07-26T18:37:06.593067+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Someone/some session with `workflow` OAuth scope (or the Owner) needs to push
+    the local
+  - Move this claim from `active` to `recently_completed` in `ai-os/boss/ACTIVE-CLAIMS.yaml`
+  recent_commits:
+  - '4e611fe2 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  note: periodic checkpoint
+- at: '2026-07-26T18:51:00.132465+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Someone/some session with `workflow` OAuth scope (or the Owner) needs to push
+    the local
+  - Move this claim from `active` to `recently_completed` in `ai-os/boss/ACTIVE-CLAIMS.yaml`
+  recent_commits:
+  - '4e611fe2 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  note: periodic checkpoint
+- at: '2026-07-26T18:56:13.610749+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Someone/some session with `workflow` OAuth scope (or the Owner) needs to push
+    the local
+  - Move this claim from `active` to `recently_completed` in `ai-os/boss/ACTIVE-CLAIMS.yaml`
+  recent_commits:
+  - '023b5104 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '1633fabe V2-23: add terminology-guardrail exemption baseline for roster.ts'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: periodic checkpoint
+- at: '2026-07-26T19:01:15.921938+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Confirm `audit-check`'s re-run (triggered after posting the audit comment) actually
+    passes,
+  - Someone/some session with `workflow` OAuth scope (or the Owner) needs to push
+    the local
+  - 'Once merged: move this claim from `active` to `recently_completed` in'
+  recent_commits:
+  - '023b5104 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '1633fabe V2-23: add terminology-guardrail exemption baseline for roster.ts'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: periodic checkpoint
+- at: '2026-07-26T19:12:44.483105+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Someone/some session with `workflow` OAuth scope (or the Owner) needs to push
+    the local
+  - 'Once that commit lands and CI re-passes: retitle the PR to drop `[WIP]`, merge
+    it, then move'
+  recent_commits:
+  - '023b5104 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '1633fabe V2-23: add terminology-guardrail exemption baseline for roster.ts'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: worker started (resume=1, lifetime invocation 4/20, pre-flight passed)
+- at: '2026-07-26T19:19:58.109287+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Wait for CI to finish running on the newly-pushed commit, then re-check
+  - '`audit-check` in particular may need a fresh `AUDIT: PASS` comment re-affirming
+    the audit'
+  - 'Once required checks are green: retitle the PR to drop `[WIP]`, merge it, then
+    move this'
+  recent_commits:
+  - '023b5104 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '1633fabe V2-23: add terminology-guardrail exemption baseline for roster.ts'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  note: periodic checkpoint
+- at: '2026-07-26T19:36:12.884267+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Wait for CI to finish running on the newly-pushed commit, then re-check
+  - '`audit-check` in particular may need a fresh `AUDIT: PASS` comment re-affirming
+    the audit'
+  - 'Once required checks are green: retitle the PR to drop `[WIP]`, merge it, then
+    move this'
+  recent_commits:
+  - 'bbae3656 V2-23: record workflow-commit push unblock via fine-grained GITHUB_PAT'
+  - '023b5104 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '1633fabe V2-23: add terminology-guardrail exemption baseline for roster.ts'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:36:58.523214+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Wait for CI to finish running on the newly-pushed commit, then re-check
+  - '`audit-check` in particular may need a fresh `AUDIT: PASS` comment re-affirming
+    the audit'
+  - 'Once required checks are green: retitle the PR to drop `[WIP]`, merge it, then
+    move this'
+  recent_commits:
+  - 'bbae3656 V2-23: record workflow-commit push unblock via fine-grained GITHUB_PAT'
+  - '023b5104 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '1633fabe V2-23: add terminology-guardrail exemption baseline for roster.ts'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:37:32.626396+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Wait for CI to finish running on the newly-pushed commit, then re-check
+  - '`audit-check` in particular may need a fresh `AUDIT: PASS` comment re-affirming
+    the audit'
+  - 'Once required checks are green: retitle the PR to drop `[WIP]`, merge it, then
+    move this'
+  recent_commits:
+  - 'bbae3656 V2-23: record workflow-commit push unblock via fine-grained GITHUB_PAT'
+  - '023b5104 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '1633fabe V2-23: add terminology-guardrail exemption baseline for roster.ts'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:48:20.495819+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Wait for CI to finish running on the newly-pushed commit, then re-check
+  - '`audit-check` in particular may need a fresh `AUDIT: PASS` comment re-affirming
+    the audit'
+  - 'Once required checks are green: retitle the PR to drop `[WIP]`, merge it, then
+    move this'
+  recent_commits:
+  - 'bbae3656 V2-23: record workflow-commit push unblock via fine-grained GITHUB_PAT'
+  - '023b5104 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '1633fabe V2-23: add terminology-guardrail exemption baseline for roster.ts'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:49:06.404786+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Wait for CI to finish running on the newly-pushed commit, then re-check
+  - '`audit-check` in particular may need a fresh `AUDIT: PASS` comment re-affirming
+    the audit'
+  - 'Once required checks are green: retitle the PR to drop `[WIP]`, merge it, then
+    move this'
+  recent_commits:
+  - 'bbae3656 V2-23: record workflow-commit push unblock via fine-grained GITHUB_PAT'
+  - '023b5104 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '1633fabe V2-23: add terminology-guardrail exemption baseline for roster.ts'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:49:40.715074+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Wait for CI to finish running on the newly-pushed commit, then re-check
+  - '`audit-check` in particular may need a fresh `AUDIT: PASS` comment re-affirming
+    the audit'
+  - 'Once required checks are green: retitle the PR to drop `[WIP]`, merge it, then
+    move this'
+  recent_commits:
+  - 'bbae3656 V2-23: record workflow-commit push unblock via fine-grained GITHUB_PAT'
+  - '023b5104 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '1633fabe V2-23: add terminology-guardrail exemption baseline for roster.ts'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:51:49.305336+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Wait for CI to finish running on the newly-pushed commit, then re-check
+  - '`audit-check` in particular may need a fresh `AUDIT: PASS` comment re-affirming
+    the audit'
+  - 'Once required checks are green: retitle the PR to drop `[WIP]`, merge it, then
+    move this'
+  recent_commits:
+  - 'bbae3656 V2-23: record workflow-commit push unblock via fine-grained GITHUB_PAT'
+  - '023b5104 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '1633fabe V2-23: add terminology-guardrail exemption baseline for roster.ts'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:52:36.663562+00:00'
+  status: failed
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no collision on this file scope; registered
+  - 'Re-verified the dead path live in the repo (did not trust the triage evidence
+    blindly):'
+  - '**Judgment call, documented per this task''s own "re-verify, don''t assume" instruction:**'
+  - 'Prepared the removal: drop `claude-task` from `.github/workflows/ai-dispatch.yml`''s'
+  - Reworded the two remaining comment references so they no longer name the removed
+  - Updated `AGENTS.md`'s "Claude Code (Secondary Agent)" entry to record this as
+    pending
+  - Verified the success-criteria grep is clean except for the one intentionally-preserved,
+  - Validated YAML syntax of both edited workflow files
+  remaining_steps:
+  - Wait for CI to finish running on the newly-pushed commit, then re-check
+  - '`audit-check` in particular may need a fresh `AUDIT: PASS` comment re-affirming
+    the audit'
+  - 'Once required checks are green: retitle the PR to drop `[WIP]`, merge it, then
+    move this'
+  recent_commits:
+  - 'bbae3656 V2-23: record workflow-commit push unblock via fine-grained GITHUB_PAT'
+  - '023b5104 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '1633fabe V2-23: add terminology-guardrail exemption baseline for roster.ts'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+- at: '2026-07-26T19:53:09.207904+00:00'
+  status: failed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'bbae3656 V2-23: record workflow-commit push unblock via fine-grained GITHUB_PAT'
+  - '023b5104 V2-23: remove dead claude-task dispatch event + dead claude.yml workflow'
+  - '1633fabe V2-23: add terminology-guardrail exemption baseline for roster.ts'
+  - 46a4c666 Merge main into V2-23 branch to resolve PROGRESS.md scratch-file conflict
+    (unrelated task's PR landed on main first)
+  - '8be2e731 V2-23: record PR #578 link in claim + PROGRESS.md'
+  - '76b60cd2 V2-23: document pending removal of dead ANTHROPIC_API_KEY/claude-task
+    path'
+  - '336c22e3 Merge pull request #572 from FChecklist/worker/task-20260726-171200-tier2-fix--pr-566-pr-83-stale-pr-81-stil'
+  - '7098ba70 PROGRESS.md: record correction of stale PR #79/#82 claims (PR #566 +
+    PR #83)'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  note: 'PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient): live crontab
+    differs from the last-known-approved snapshot at /opt/veridian/ai-os/CRONTAB_APPROVED_SNAPSHOT.txt,
+    and prompt.txt does not cite a verified-approved OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry for this exact change. Per AI_ENGINEERING_POLICY.yaml''s genuinely_irreversible_actions
+    standing exception, crontab modifications require explicit Owner confirmation
+    before execution -- this is not a code bug, it is the policy working as designed.
+    If this change was Owner-approved, cite it in prompt.txt as: ''OWNER_DECISIONS_NEEDED_2026-07-23.yaml
+    entry id=<id> status=approved'' and ensure that entry''s status is actually ''approved''
+    in the live decisions file. -- no model call made, no cost incurred'
+execution_seconds: 729
+restart_count: 2
+token_usage:
+  input_tokens: 150
+  cache_creation_input_tokens: 133268
+  cache_read_input_tokens: 8213816
+  output_tokens: 58593
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 133268
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 657
+    cache_read_input_tokens: 156719
+    cache_creation_input_tokens: 233
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 233
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+duplicate_of: task-20260726-181517-rca-task-20260726-171926-remove-anthropi
+superseded_reason: Collapsed by plan_backlog_completion.py dedup 2026-07-27 -- same
+  underlying issue as task-20260726-181517-rca-task-20260726-171926-remove-anthropi
+  (5 total attempts in chain).
+superseded_at: '2026-07-27T03:38:36.731323+00:00'

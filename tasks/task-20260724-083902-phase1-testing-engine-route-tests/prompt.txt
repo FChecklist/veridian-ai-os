@@ -1,0 +1,27 @@
+## OBJECTIVE
+Execute Phase 1 of the real, already-designed VERIDIAN Testing Engine (IRVF) plan for real: live route-test auto-generation, not more design. Plan file: ai-os/TESTING_ENGINE_PHASE_PLAN_2026-07-24.yaml (repo path claude-control/ai-os/), phase entry id=phase_1_route_test_autogeneration.
+
+## SCOPE
+1. Read ai-os/TESTING_ENGINE_PHASE_PLAN_2026-07-24.yaml's phase_1_route_test_autogeneration entry in full, plus ai-os/ROUTE_REGISTRY_SCHEMA_2026-07-24.yaml (the real routes already registered from Phase 0).
+2. Implement a real, runnable script that, given a route already in the route registry, auto-generates a real route test (a script/test file that actually exercises the route's real endpoint/handler chain if one exists in compliance-tracker's code, or documents the concrete blocker if the route's underlying capability isn't live software yet).
+3. Run it for real against at least 3 real routes from the registry, capture real pass/fail output, update each route's test_status field in the registry accordingly.
+4. Update the phase plan marking phase 1 status done with this real evidence.
+
+## KNOWN_CONTEXT
+- Owner directive: 100% real live implementation, no more shallow planning-only work.
+- Standing rules: crontab changes need an OWNER_DECISIONS_NEEDED_2026-07-23.yaml approval entry (Owner's blanket approval covers it); registry writes come from scripts not hand-authored prose; verify real PR/merge state via `gh pr view`, never trust task.yaml's self-report alone.
+- Many routes in the registry may point at capabilities/engines that are themselves only Phase-0-planned, not live yet (per this session's own honest status check) -- for those, the correct, honest output is a documented blocker on that specific route, not a fabricated passing test.
+
+## SUCCESS_CRITERIA
+- A real route-test-generation script exists and has been run for real against at least 3 registry routes.
+- Each of those 3 routes' test_status field reflects a real outcome (pass, fail, or blocked-with-reason) -- not a placeholder.
+- Phase 1 shows completed status with this real evidence in the phase plan file.
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on claude-control), the real test run output as evidence, and a final checkpoint stating what Phase 1 delivered vs what's deferred.
+
+## CONSTRAINTS
+Limit this task to Phase 1 (route test auto-generation for existing registry routes) only -- do not attempt trace verification or route replay phases in this same task. Any crontab need follows the existing Owner-approval-citation pattern rather than a fresh confirmation.
+
+## COMPLEXITY_TIER
+integrative

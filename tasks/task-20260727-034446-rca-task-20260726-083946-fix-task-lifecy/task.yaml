@@ -1,0 +1,225 @@
+id: task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy
+title: rca-task-20260726-083946-fix-task-lifecycle--real-branch-resoluti
+status: completed
+repo: claude-control
+branch: worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy
+workspace: /opt/veridian/ai-os/tasks/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy
+service: veridian-worker@task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy.service
+created_at: '2026-07-27T03:44:47.029170+00:00'
+last_checkpoint_at: '2026-07-27T03:59:36.611752+00:00'
+completed_steps: &id002
+- Read task.yaml/worker.log/systemd.log for the stalled task
+- 'Found the real root cause: dispatch-layer hard-stop/transient misclassification,
+  not a bug in check_crontab_unauthorized_change() itself'
+- Pulled worker-entrypoint.sh and doc-worker-entrypoint.sh into the repo (previously
+  live-only)
+- 'Fixed both entrypoints: added crontab_unauthorized_change to the hard-stop list'
+- Added tests/preflight_guard_hardstop_test.sh regression test (passes)
+- Confirmed no regression in tests/worker_noop_pending_review_test.sh
+- Confirmed preflight-guard.py's own check_crontab_unauthorized_change tests still
+  pass
+- Registered fix in known_fixes via superboss-register.py log-fix
+- Commit + push (PR ships fix live via existing merge -> sync-repos.sh -> deploy-live-scripts.sh
+  path, not hand-deployed)
+remaining_steps: &id003
+- None
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T03:44:48.968915+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  - c8a746d Add phase-continuation-tick.py (refactor of auto_phase_continuation.py)
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T03:49:50.204347+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  - c8a746d Add phase-continuation-tick.py (refactor of auto_phase_continuation.py)
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  - 1b6cb7e Auto-sync 5 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-27T03:54:51.560287+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read task.yaml/worker.log/systemd.log for the stalled task
+  - 'Found the real root cause: dispatch-layer hard-stop/transient misclassification,
+    not a bug in check_crontab_unauthorized_change() itself'
+  - Pulled worker-entrypoint.sh and doc-worker-entrypoint.sh into the repo (previously
+    live-only)
+  - 'Fixed both entrypoints: added crontab_unauthorized_change to the hard-stop list'
+  - Added tests/preflight_guard_hardstop_test.sh regression test (passes)
+  - Confirmed no regression in tests/worker_noop_pending_review_test.sh
+  - Confirmed preflight-guard.py's own check_crontab_unauthorized_change tests still
+    pass
+  - Registered fix in known_fixes via superboss-register.py log-fix
+  - Commit + push (PR ships fix live via existing merge -> sync-repos.sh -> deploy-live-scripts.sh
+    path, not hand-deployed)
+  remaining_steps:
+  - None
+  recent_commits:
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  - c8a746d Add phase-continuation-tick.py (refactor of auto_phase_continuation.py)
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  note: periodic checkpoint
+- at: '2026-07-27T03:54:52.962308+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read task.yaml/worker.log/systemd.log for the stalled task
+  - 'Found the real root cause: dispatch-layer hard-stop/transient misclassification,
+    not a bug in check_crontab_unauthorized_change() itself'
+  - Pulled worker-entrypoint.sh and doc-worker-entrypoint.sh into the repo (previously
+    live-only)
+  - 'Fixed both entrypoints: added crontab_unauthorized_change to the hard-stop list'
+  - Added tests/preflight_guard_hardstop_test.sh regression test (passes)
+  - Confirmed no regression in tests/worker_noop_pending_review_test.sh
+  - Confirmed preflight-guard.py's own check_crontab_unauthorized_change tests still
+    pass
+  - Registered fix in known_fixes via superboss-register.py log-fix
+  - Commit + push (PR ships fix live via existing merge -> sync-repos.sh -> deploy-live-scripts.sh
+    path, not hand-deployed)
+  remaining_steps:
+  - None
+  recent_commits:
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  - c8a746d Add phase-continuation-tick.py (refactor of auto_phase_continuation.py)
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  note: 'Root cause: worker-entrypoint.sh/doc-worker-entrypoint.sh never added crontab_unauthorized_change
+    to their preflight hard-stop reason list (unlike tight_task_schema_violation,
+    fixed for the identical bug class 2026-07-23) -- a deterministic, retry-proof
+    rejection fell through to the transient branch, burning 9 identical restarts on
+    task-20260726-083946. Fix: added crontab_unauthorized_change to both hard-stop
+    lists (PR #104), plus tests/preflight_guard_hardstop_test.sh regression test.
+    known_fixes row registered: signature=''PRE-FLIGHT REJECTED (crontab_unauthorized_change,
+    transient)'' fix_action=hardstop_crontab_unauthorized_change success_count=1.'
+- at: '2026-07-27T03:55:10.166947+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read task.yaml/worker.log/systemd.log for the stalled task
+  - 'Found the real root cause: dispatch-layer hard-stop/transient misclassification,
+    not a bug in check_crontab_unauthorized_change() itself'
+  - Pulled worker-entrypoint.sh and doc-worker-entrypoint.sh into the repo (previously
+    live-only)
+  - 'Fixed both entrypoints: added crontab_unauthorized_change to the hard-stop list'
+  - Added tests/preflight_guard_hardstop_test.sh regression test (passes)
+  - Confirmed no regression in tests/worker_noop_pending_review_test.sh
+  - Confirmed preflight-guard.py's own check_crontab_unauthorized_change tests still
+    pass
+  - Registered fix in known_fixes via superboss-register.py log-fix
+  - Commit + push (PR ships fix live via existing merge -> sync-repos.sh -> deploy-live-scripts.sh
+    path, not hand-deployed)
+  remaining_steps:
+  - None
+  recent_commits:
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  - c8a746d Add phase-continuation-tick.py (refactor of auto_phase_continuation.py)
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  note: quality gates passed, pushed branch worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy,
+    awaiting review
+- at: '2026-07-27T03:59:36.611752+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  - c8a746d Add phase-continuation-tick.py (refactor of auto_phase_continuation.py)
+  - a03d938 Add dispatch_core.py shared concurrency-gating lib + dispatch-tick.py
+  - 'fa3d6fd Merge pull request #100 from FChecklist/worker/task-20260726-180000-rca-task-20260726-171957-crm-performance'
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/104'
+execution_seconds: 620
+restart_count: 0
+token_usage:
+  input_tokens: 110
+  cache_creation_input_tokens: 83199
+  cache_read_input_tokens: 4199432
+  output_tokens: 30767
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 83199
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 717
+    cache_read_input_tokens: 106372
+    cache_creation_input_tokens: 511
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 511
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:25.514447+00:00'

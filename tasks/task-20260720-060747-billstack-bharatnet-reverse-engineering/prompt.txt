@@ -1,0 +1,24 @@
+You are reverse-engineering a live web application from the front end only (no source code access — black-box exploration via Playwright MCP browser tools). Authorized exercise, credentials provided directly by the system's owner.
+
+## Target
+- URL: https://bharatnet.infisuite.in
+- Username: billstack_admin@bharatnet.infisuite.in
+- Password: 1234
+
+This is a Billstack (billing) system on the same infisuite platform as an already-documented CRM tenant (see `docs/crm-bharatnet/` in this repo for the reference depth/format — read a couple of those files first).
+
+## Job
+Full page-by-page, function-by-function documentation: 1. Purpose. 2. Navigation path. 3. UI/page design. 4. Data fields (name/type/required/validation). 5. Underlying data structure (inferred entities + relationships). 6. Functionality/logic (actions, business rules, conditions). 7. Inputs and outputs. 8. Data conditions (status-dependent UI, role-dependent visibility, filters). Billstack-specific: pay close attention to invoice/plan/subscription/payment lifecycle states, billing cycles, tax/GST handling, and any payment-gateway integration points (do not submit/trigger a real payment).
+
+## Methodology
+1. Log in, screenshot dashboard.
+2. Map full navigation to `docs/billstack-bharatnet/00-navigation-map.md`, commit+push before diving deeper.
+3. Work through each module systematically: list view, detail view, create form, edit form, bulk actions/filters/exports.
+4. One markdown file per module under `docs/billstack-bharatnet/<module-slug>.md`. Screenshots under `screenshots/billstack-bharatnet/`.
+5. Final `docs/billstack-bharatnet/SUMMARY.md`: data model, function list, Known Gaps.
+
+## Hard rules
+- No password in committed files. No fabricating unobserved functionality — mark inferences as inferred. Document errors/bugs as-is.
+- Commit+push after each module, not just at the end.
+- Read-only: no creating/editing/deleting real records, no submitting forms with data, no triggering payments/emails/SMS. Open empty create forms to see fields only.
+- Maintain PROGRESS.md (## Completed / ## Remaining, checkboxes), update after each step, commit+push incrementally — this task may be interrupted and resumed.

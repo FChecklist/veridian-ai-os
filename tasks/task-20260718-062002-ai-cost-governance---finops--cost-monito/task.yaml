@@ -1,0 +1,1300 @@
+id: task-20260718-062002-ai-cost-governance---finops--cost-monito
+title: 'AI Cost Governance & FinOps: Cost Monitoring & Forecasting'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260718-062002-ai-cost-governance---finops--cost-monito
+workspace: /opt/veridian/ai-os/tasks/task-20260718-062002-ai-cost-governance---finops--cost-monito/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-062002-ai-cost-governance---finops--cost-monito
+service: veridian-worker@task-20260718-062002-ai-cost-governance---finops--cost-monito.service
+created_at: '2026-07-18T06:20:02.992969+00:00'
+last_checkpoint_at: '2026-07-20T18:43:20.256226+00:00'
+completed_steps: &id002
+- Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+  11).
+- Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+  `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+  idle-detection precedent) before writing any code.
+- "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+  \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+  \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+  \ Simple/explainable per the finding's own recommended approach: `recentSpend /\
+  \ baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid flagging\
+  \ trivial noise, plus a distinct \"new spender\" case (real spend above the floor\
+  \ with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests); DB wrapper\
+  \ `detectCostAnomalies()` not unit-tested, matching this codebase's established\
+  \ pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+  \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+  \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+  \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+  \ its sibling cadence reports."
+- '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+  (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`), unit-tested
+  (11 tests). Wired into two real, already-live surfaces rather than building a new
+  dashboard:'
+- "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+  \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3) rows\
+  \ with a real configured API key ARE this schema's \"provisioned AI capacity\" records,\
+  \ and both already carry `lastUsedAt` for exactly this purpose (same field `orchestra-model-resolver.ts`'s\
+  \ `borrowFromSharedPool()` already reads to compute idleness for a different, 5-minute-cutoff\
+  \ question). Idle = unused (or never used since `createdAt`) for 90+ days (quarterly).\
+  \ Pure `classifyIdleCapacity()` unit-tested (4 tests); DB wrapper `findIdleAiCapacity()`\
+  \ not unit-tested. New cron entry point `GET /api/internal/idle-ai-capacity/run`\
+  \ + quarterly `vercel.json` cron line (`0 10 1 1,4,7,10 *`). Per the finding's own\
+  \ recommended approach (\"simple quarterly query, not worth dedicated tooling at\
+  \ current scale\") \u2014 one deterministic query, no new table, no dashboard."
+- "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed file;\
+  \ full `bun test` \u2014 1443 pass / 0 fail (was already passing before this change;\
+  \ no regressions)."
+- "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+  \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+  \ already existed."
+- "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+  \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+remaining_steps: &id003
+- "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+  \ real code, 1 explicitly deferred above."
+files_modified: &id001
+- ai-os/boss/ACTIVE-CLAIMS.yaml
+checkpoints:
+- at: '2026-07-18T06:20:03.584945+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  note: worker started (resume=0)
+- at: '2026-07-18T06:25:03.880116+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/components/OrgLimitsSection.tsx
+  - src/lib/cost-guard.ts
+  - src/lib/spend-forecast.test.ts
+  - src/lib/spend-forecast.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  note: periodic checkpoint
+- at: '2026-07-18T06:30:04.042546+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: periodic checkpoint
+- at: '2026-07-18T06:30:50.757722+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-18T06:31:21.218622+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: worker started (resume=1)
+- at: '2026-07-18T06:31:23.282307+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-18T06:31:53.678910+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: worker started (resume=1)
+- at: '2026-07-18T06:31:55.432103+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T15:32:25.527943+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: 'PRE-FLIGHT REJECTED (credit_accountant_rejected, transient): OpenRouter balance
+    $-0.0676 below $0.1 floor -- real money problem, not a code gap -- no model call
+    made, no cost incurred'
+- at: '2026-07-20T15:33:11.281836+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: 'PRE-FLIGHT REJECTED (credit_accountant_rejected, transient): OpenRouter balance
+    $-0.0676 below $0.1 floor -- real money problem, not a code gap -- no model call
+    made, no cost incurred'
+- at: '2026-07-20T15:33:56.688352+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: 'PRE-FLIGHT REJECTED (credit_accountant_rejected, transient): OpenRouter balance
+    $-0.0676 below $0.1 floor -- real money problem, not a code gap -- no model call
+    made, no cost incurred'
+- at: '2026-07-20T15:47:47.962313+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: 'PRE-FLIGHT REJECTED (credit_accountant_rejected, transient): OpenRouter balance
+    $-0.0676 below $0.1 floor -- real money problem, not a code gap -- no model call
+    made, no cost incurred'
+- at: '2026-07-20T15:49:04.560848+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: 'PRE-FLIGHT REJECTED (credit_accountant_rejected, transient): OpenRouter balance
+    $-0.0676 below $0.1 floor -- real money problem, not a code gap -- no model call
+    made, no cost incurred'
+- at: '2026-07-20T15:49:48.992506+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: 'PRE-FLIGHT REJECTED (credit_accountant_rejected, transient): OpenRouter balance
+    $-0.0676 below $0.1 floor -- real money problem, not a code gap -- no model call
+    made, no cost incurred'
+- at: '2026-07-20T16:00:10.443869+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: 'PRE-FLIGHT REJECTED (credit_accountant_rejected, transient): OpenRouter balance
+    $-0.0676 below $0.1 floor -- real money problem, not a code gap -- no model call
+    made, no cost incurred'
+- at: '2026-07-20T16:01:26.445789+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: 'PRE-FLIGHT REJECTED (credit_accountant_rejected, transient): OpenRouter balance
+    $-0.0676 below $0.1 floor -- real money problem, not a code gap -- no model call
+    made, no cost incurred'
+- at: '2026-07-20T16:02:11.522302+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: 'PRE-FLIGHT REJECTED (credit_accountant_rejected, transient): OpenRouter balance
+    $-0.0676 below $0.1 floor -- real money problem, not a code gap -- no model call
+    made, no cost incurred'
+- at: '2026-07-20T16:09:17.186270+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: 'PRE-FLIGHT REJECTED (credit_accountant_rejected, transient): OpenRouter balance
+    $-0.0676 below $0.1 floor -- real money problem, not a code gap -- no model call
+    made, no cost incurred'
+- at: '2026-07-20T16:10:10.843963+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: 'PRE-FLIGHT REJECTED (credit_accountant_rejected, transient): OpenRouter balance
+    $-0.0676 below $0.1 floor -- real money problem, not a code gap -- no model call
+    made, no cost incurred'
+- at: '2026-07-20T16:10:55.844328+00:00'
+  status: failed
+  files_modified:
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps:
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting (Rule
+    11).
+  - Read the real current implementation first (`cost-guard.ts`, `token-usage-service.ts`,
+    `customerModelConfig`/`clientModelConfig`, `orchestra-model-resolver.ts`'s existing
+    idle-detection precedent) before writing any code.
+  - "**Cost anomaly detection** (Medium): new `src/lib/services/cost-anomaly-service.ts`\
+    \ \u2014 ratio-based recent-vs-baseline deviation check, per org (tenant, `scope='product_orchestra'`)\
+    \ and per AI-Team role (`scope='ai_team_internal'`), sourced from the real `token_usage_ledger`.\
+    \ Simple/explainable per the finding's own recommended approach: `recentSpend\
+    \ / baselineAvgDaily >= 3x` (default), with a `$1` minimum-spend floor to avoid\
+    \ flagging trivial noise, plus a distinct \"new spender\" case (real spend above\
+    \ the floor with zero baseline). Pure `classifyAnomaly()` unit-tested (7 tests);\
+    \ DB wrapper `detectCostAnomalies()` not unit-tested, matching this codebase's\
+    \ established pure/DB-touching test split. New cron entry point `GET /api/internal/cost-anomalies/run`\
+    \ (`CRON_SECRET`-gated, same pattern as every other `/api/internal/*/run` route)\
+    \ + daily `vercel.json` cron line. No dashboard/inbox surface yet \u2014 honestly\
+    \ disclosed scope limit, same posture as `ai-performance-report-service.ts` and\
+    \ its sibling cadence reports."
+  - '**Forecasted vs actual monthly AI spend** (Medium): new shared pure module `src/lib/spend-forecast.ts`
+    (linear run-rate projection: `spend-to-date / days-elapsed * days-in-month`),
+    unit-tested (11 tests). Wired into two real, already-live surfaces rather than
+    building a new dashboard:'
+  - "**Unused/idle AI capacity identified** (Low): new `src/lib/services/idle-ai-capacity-service.ts`.\
+    \ `customerModelConfig` (org/Layer-2) and `clientModelConfig` (client/Layer-3)\
+    \ rows with a real configured API key ARE this schema's \"provisioned AI capacity\"\
+    \ records, and both already carry `lastUsedAt` for exactly this purpose (same\
+    \ field `orchestra-model-resolver.ts`'s `borrowFromSharedPool()` already reads\
+    \ to compute idleness for a different, 5-minute-cutoff question). Idle = unused\
+    \ (or never used since `createdAt`) for 90+ days (quarterly). Pure `classifyIdleCapacity()`\
+    \ unit-tested (4 tests); DB wrapper `findIdleAiCapacity()` not unit-tested. New\
+    \ cron entry point `GET /api/internal/idle-ai-capacity/run` + quarterly `vercel.json`\
+    \ cron line (`0 10 1 1,4,7,10 *`). Per the finding's own recommended approach\
+    \ (\"simple quarterly query, not worth dedicated tooling at current scale\") \u2014\
+    \ one deterministic query, no new table, no dashboard."
+  - "Verified: `bunx tsc --noEmit` clean; `bunx eslint` clean on every new/changed\
+    \ file; full `bun test` \u2014 1443 pass / 0 fail (was already passing before\
+    \ this change; no regressions)."
+  - "No schema/migration changes \u2014 every column needed (`customerModelConfig.lastUsedAt`,\
+    \ `clientModelConfig.lastUsedAt`, `tokenUsageLedger.*`, `organisations.monthlyCostCapUsd`)\
+    \ already existed."
+  - "Did not touch `permission-service.ts` or any other in-flight worker's declared\
+    \ scope (checked `ai-os/boss/ACTIVE-CLAIMS.yaml` first \u2014 no overlap found)."
+  remaining_steps:
+  - "None of the 4 findings' recommended-scope work remains open \u2014 3 closed with\
+    \ real code, 1 explicitly deferred above."
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: 'PRE-FLIGHT REJECTED (credit_accountant_rejected, transient): OpenRouter balance
+    $-0.0676 below $0.1 floor -- real money problem, not a code gap -- no model call
+    made, no cost incurred'
+- at: '2026-07-20T18:43:20.256226+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 2aabcf0d Close AI Cost Governance & FinOps gap-closure findings (3 of 4; 1 deferred)
+  - 'f1291753 Register active claim: AI Cost Governance & FinOps gap-closure'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: 'PRE-FLIGHT HARD STOP (credit_accountant_rejected): OpenRouter balance $-0.0676
+    below $0.1 floor -- real money problem, not a code gap'
+execution_seconds: 652
+restart_count: 2
+token_usage:
+  input_tokens: 0
+  cache_creation_input_tokens: 0
+  cache_read_input_tokens: 0
+  output_tokens: 0
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 0
+    ephemeral_5m_input_tokens: 0
+  inference_geo: ''
+  iterations: []
+  speed: standard
+master_synced_at: '2026-07-18T07:00:02.923027+00:00'

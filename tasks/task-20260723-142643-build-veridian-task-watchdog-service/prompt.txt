@@ -1,0 +1,42 @@
+## OBJECTIVE
+TASK REQUIRING AI JUDGMENT: build the watchdog service specified in ai-os/STANDING_DIRECTIVE.yaml's v2_watchdog_service key (line 471, status currently TO_BE_BUILT). Deciding what counts as "stalled" vs "still working," what counts as a real repeated-failure loop vs coincidental identical text, and how to safely invoke Claude Code CLI for RCA are judgment calls, not mechanical.
+
+## SCOPE
+NEW_FILE: scripts/veridian-task-watchdog.py
+INPUT: none (scans /opt/veridian/ai-os/tasks/*/task.yaml, systemctl --user list-units veridian-worker@*)
+OUTPUT: per run, JSON to ai-os/logs/watchdog.jsonl: {ts, task_id, status, stalled: bool, loop_detected: bool, action_taken: str}
+LOGIC (exact):
+  STALL = active_units>0 AND no new checkpoint entry appended in last 20 minutes (compare task.yaml checkpoints[-1].at to now)
+  LOOP = last 3 checkpoints[].note are identical strings
+  ON STALL_OR_LOOP:
+    step_1: query ai-os/logs/ATTENTION.md + task_audits table for a prior entry whose note contains the same error-signature substring (first 60 chars of the stalled note)
+    step_2: IF found AND that prior entry has a recorded fix action: apply the SAME fix action (documented per-signature in a new table `known_fixes`, columns: signature TEXT PRIMARY KEY, fix_action TEXT, last_applied TEXT, success_count INTEGER), log to known_fixes.last_applied, re-check status once after 60s
+    step_3: IF step_2 not applicable or re-check still stalled/looping: escalate -- call `python3 scripts/veridian-task.py create --title "rca-<original-task-id>" --repo claude-control --prompt "<closed-ended RCA spec: read <original-task-id>'s task.yaml/worker.log/systemd.log, state root cause, apply a real fix, register the fix in the known_fixes table via a new superboss-register.py subcommand log-fix --signature --fix-action, so step_2 auto-resolves this signature next time>"`, then start that task's systemd unit
+
+NEW_DB_TABLE: known_fixes in superboss-register.sqlite (see step_2 schema above), created via ALTER-safe CREATE TABLE IF NOT EXISTS in scripts/superboss-register.py's init_db(), plus a new subcommand `log-fix --signature --fix-action` (INSERT OR REPLACE, increment success_count on repeat)
+
+SYSTEMD_TIMER: veridian-task-watchdog.timer, OnUnitActiveSec=60, calling veridian-task-watchdog.service (Type=oneshot, ExecStart=/usr/bin/python3 /opt/veridian/scripts/veridian-task-watchdog.py)
+
+## KNOWN_CONTEXT
+zero_duplication_check_performed: true
+existing_precedent: scripts/check_latest_task.py (built earlier today by the Owner's laptop-side session) already does a simpler version of "check latest task, auto-start if inactive" -- read it, extend/supersede it, do not build a third parallel checker
+existing_precedent_2: scripts/recover-failed-workers.py already does signature-matched auto-recovery for one specific failure type (402 balance errors) -- same pattern this watchdog generalizes, read it for the established convention
+db_concurrency_constraint: sequential writes only to superboss-register.sqlite
+
+## SUCCESS_CRITERIA
+TEST_1: `systemctl --user status veridian-task-watchdog.timer` shows active, next trigger within 60s
+TEST_2: manually induce a stall (or use a real historical stalled task from today's logs, e.g. task-20260723-112603 which produced no new work) and confirm the watchdog's step_1/2/3 logic runs against it, citing real watchdog.jsonl output
+TEST_3: `python3 scripts/superboss-register.py log-fix --signature test --fix-action test` succeeds and a subsequent identical-signature stall triggers step_2 not step_3 -- cite the real known_fixes row
+
+## EXPECTED_OUTPUT
+COMMIT: scripts/veridian-task-watchdog.py (new), scripts/superboss-register.py diff (known_fixes table + log-fix command), systemd unit files (watchdog.service + watchdog.timer)
+DEPLOY: systemctl --user enable --now veridian-task-watchdog.timer (real, live, not just committed)
+UPDATE_FILE: ai-os/STANDING_DIRECTIVE.yaml v2_watchdog_service.status: TO_BE_BUILT -> LIVE, cite the enabled timer as evidence
+CHECKPOINT: status=pending_review, real systemctl status output as evidence
+NO_SELF_DISPATCH: standalone task, this is infrastructure not a gap-closing-chain phase
+
+## CONSTRAINTS
+Reuse or call scripts/check_latest_task.py and scripts/recover-failed-workers.py where useful, citing exactly what was reused. Every claim of "live"/"working" must cite real systemctl/journalctl output, not a description.
+
+## COMPLEXITY_TIER
+judgment

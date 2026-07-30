@@ -1,0 +1,59 @@
+## OBJECTIVE
+Extend the existing 18-of-44 disabled-worker-unit audit to cover all 44 units listed in /opt/veridian/ai-os/DISABLED_WORKER_UNITS_BACKUP_2026-07-26/list.txt, using the exact verification method already validated on the first 18 (git ahead/behind + dirty-file check + gh pr list cross-reference, never trusting task.yaml's branch field alone), and produce a single disposition manifest categorizing every one of the 44 into CAT1-CAT5. This is a read-only audit task: it must not delete, push, merge, or restart anything.
+
+## KNOWN_CONTEXT
+- Source list: /opt/veridian/ai-os/DISABLED_WORKER_UNITS_BACKUP_2026-07-26/list.txt (44 lines, veridian-worker@<task-id>.service entries) and /opt/veridian/ai-os/DISABLED_WORKER_UNITS_BACKUP_2026-07-26/symlink_targets.txt (44 lines).
+- Each task_id has a matching directory at /opt/veridian/ai-os/tasks/<task_id>/, with task.yaml (status/repo/branch fields) and a workspace/ subdirectory containing the real git checkout.
+- task.yaml's branch field is confirmed stale/wrong in at least 5 of 18 already-sampled cases (examples: task-20260725-131506-task2-dedup-integration-audit records "master" but real HEAD tracks its own branch; task-20260726-055454-migration-drift-audit-and-reconciliation and task-20260726-055619-phase5-browser-execution-lite-llm-npu-bu both record "main" as stale; task-20260726-171129-tier2-fix--pr-563-migration-drift-ci-fai and task-20260726-171157-redispatch--land-unified-bottom-nav-stri both record another, older task's branch name entirely). Do not trust task.yaml's branch field without independently confirming via git.
+- Repos in play: FChecklist/claude-control and FChecklist/compliance-tracker (the correct repo per task is recorded in that task's task.yaml `repo:` field).
+- The following 18 task_ids were already individually verified in a prior pass and only need a lightweight re-confirmation (re-run the same 2 git commands to check nothing has changed since the original sample; do not redo the full gh pr list search unless the re-confirmation shows new local commits):
+  task-20260724-123006-phase3-formalize-task-gateway-py-task-ex,
+  task-20260724-150010-phase7-evaluate-whether-vericomposer-cha,
+  task-20260724-180011-phase7-evaluate-whether-vericomposer-cha,
+  task-20260725-131506-task2-dedup-integration-audit,
+  task-20260726-055454-migration-drift-audit-and-reconciliation,
+  task-20260726-055619-phase5-browser-execution-lite-llm-npu-bu,
+  task-20260726-083946-fix-task-lifecycle--real-branch-resoluti,
+  task-20260726-085132-fix-ddl-gate--privilege-escalation-cover,
+  task-20260726-171129-tier2-fix--pr-563-migration-drift-ci-fai,
+  task-20260726-171157-redispatch--land-unified-bottom-nav-stri,
+  task-20260726-171926-remove-anthropic-api-key-dead-code-path,
+  task-20260726-171942-serverless-resource-limit-tradeoff-doc,
+  task-20260726-171954-storage-rls---backup-pitr---supabase-mon,
+  task-20260726-172000-hr-performance-error-handling---payroll,
+  task-20260726-172016-mother-router-and-roster-persistent-memo,
+  task-20260726-175954-rca-task-20260726-171939-delegation-expi,
+  task-20260726-195246-rca-task-20260726-172000-hr-performance,
+  task-20260726-194920-rca-task-20260726-172016-mother-router-a
+- The remaining 26 task_ids (not in the list above) require the full method from scratch.
+- Category definitions (must match exactly, do not invent new categories):
+  CAT1 = 0 commits ahead of upstream, 0 dirty files, no open PR found -> safe to archive.
+  CAT2 = 0 ahead/behind but has 1+ uncommitted dirty file not yet content-reviewed -> hold for human diff review.
+  CAT3 = ties to a currently OPEN GitHub PR -> do not touch, human PR resolution required.
+  CAT4 = has 1+ commits that exist ONLY on local disk (never pushed to any remote, on any branch) -> highest priority, data-loss risk, needs preservation before any cleanup.
+  CAT5 = branch is pushed and fully synced to a remote but no PR was ever opened for it -> needs human open-or-abandon decision.
+- All 44 systemd units are already correctly disabled; this task does not touch systemd state at all.
+
+## SCOPE
+- Read-only operations only, against exactly these paths and commands:
+  - `cat /opt/veridian/ai-os/DISABLED_WORKER_UNITS_BACKUP_2026-07-26/list.txt` and `symlink_targets.txt` to enumerate all 44 task_ids.
+  - For each task_id: `cat /opt/veridian/ai-os/tasks/<task_id>/task.yaml` to read recorded status/repo/branch (informational only, not authoritative).
+  - For each task_id: `git -C /opt/veridian/ai-os/tasks/<task_id>/workspace status --short` (dirty file check).
+  - For each task_id: `git -C /opt/veridian/ai-os/tasks/<task_id>/workspace rev-list --left-right --count HEAD...@{u}` (ahead/behind upstream check); if no upstream is configured, record that explicitly as its own signal (matches the CAT4 pattern seen in task-20260726-085132).
+  - For each task_id not already CAT1/CAT4-confirmed-no-remote: `gh pr list --repo FChecklist/<repo-from-task.yaml> --head worker/<task_id> --state all` (and a fallback text search by task_id substring across open PR titles/branches, since branch names in task.yaml are sometimes stale/mismatched).
+  - Write the output manifest to a new file, /opt/veridian/ai-os/WORKER_UNIT_DISPOSITION_MANIFEST_2026-07-27.yaml.
+- Explicitly out of scope / forbidden: `rm`, `git push`, `git branch -D`, `gh pr merge`, `gh pr close`, `systemctl start/restart/enable`, any modification to task.yaml, workspace contents, or the DISABLED_WORKER_UNITS_BACKUP_2026-07-26/ directory itself.
+
+## SUCCESS_CRITERIA
+- The manifest file exists and contains exactly 44 entries, each with task_id, category (one of CAT1/CAT2/CAT3/CAT4/CAT5), and the evidence fields (ahead_count, behind_count, dirty_files, pr_status) that justify the category. Verify with:
+  `python3 -c "import yaml; d=yaml.safe_load(open('/opt/veridian/ai-os/WORKER_UNIT_DISPOSITION_MANIFEST_2026-07-27.yaml')); assert len(d['units'])==44, len(d['units']); assert all(u['category'] in ('CAT1','CAT2','CAT3','CAT4','CAT5') for u in d['units']); print('OK', len(d['units']))"`
+- No files were deleted, pushed, merged, or had systemd state changed during this task (verifiable by diffing `git -C /opt/veridian/ai-os status --short` before/after for anything outside the new manifest file, and confirming DISABLED_WORKER_UNITS_BACKUP_2026-07-26/ is untouched).
+
+## EXPECTED_OUTPUT
+A single new YAML file at /opt/veridian/ai-os/WORKER_UNIT_DISPOSITION_MANIFEST_2026-07-27.yaml with top-level key `units` containing a list of 44 objects: `{task_id, repo, recorded_branch, real_upstream_status, ahead_count, behind_count, dirty_files: [...], pr_status, category, notes}`. A short summary count of how many units fell into each category (CAT1 through CAT5) printed to stdout/task log.
+
+## CONSTRAINTS
+This is a strictly read-only investigation task. No write/mutating command of any kind may be executed against any of the 44 units, their workspaces, or GitHub -- only the read commands listed in SCOPE (cat, git status --short, git rev-list, gh pr list). Do not trust task.yaml's branch field as authoritative -- always independently verify via git in the workspace. Do not extrapolate: every one of the 44 must get its own individual evidence-backed category, not a bulk assumption based on the rca-* or primary-task pattern. If a workspace directory is missing or corrupted for any task_id, record that explicitly in the manifest with category CAT2 (hold) and a note -- do not skip the entry silently.
+
+## COMPLEXITY_TIER
+mechanical

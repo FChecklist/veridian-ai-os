@@ -1,0 +1,20 @@
+TASK: V2-7 -- Persistent Vercel staging env + per-env var scoping
+
+### V2-7 — Persistent Vercel staging env + per-env var scoping [D8]
+- READY: yes
+- SOFTWARE TEAM LEVEL: L2 Sequential Worker
+- TASK ID: V2-7-STAGING-ENV
+- MODULE: compliance-tracker
+- OBJECTIVE: Enable a persistent `staging` environment via Vercel env-var scoping (no extra spend at current tier) and extend `sync-vercel-env.yml` to scope variables per environment. Closes CSV rows #37/#39.
+- READ FIRST: `.github/workflows/sync-vercel-env.yml`; `vercel.json`; Vercel env-scoping docs.
+- WHAT TO BUILD: A scoped `staging` env config + workflow update that writes staging-specific vars only to staging. Document the smoke-test expectation on staging previews.
+- CONSTRAINTS: No paid Vercel plan change. CAUTION: gh-token lacks `workflow` scope — a PR touching `*.yml` under `.github/workflows/` cannot be pushed by this token; scope the workflow change for an Owner push or use a token with `workflow` scope. Register claim.
+- DONE CRITERIA: Staging env scoped; workflow updated (or staged for Owner push with the scope limitation documented); PR open.
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

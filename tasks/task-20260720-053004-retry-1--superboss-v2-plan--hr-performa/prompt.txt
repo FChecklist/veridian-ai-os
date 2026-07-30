@@ -1,0 +1,20 @@
+TASK: V2-17 -- HR performance/error-handling + payroll rate audit
+
+### V2-17 — HR performance/error-handling + payroll rate audit [C8]
+- READY: yes
+- SOFTWARE TEAM LEVEL: L3 Feature Worker
+- TASK ID: V2-17-HR-PERF-VALIDATION
+- MODULE: compliance-tracker
+- OBJECTIVE: Employees invite/onboarding validation UX cross-check; payroll rate-table seed audit against current-FY rates (the CA-review half is deferred-on-real-external-reviewer; the seed-audit + GstRt parity is code); load-test harnesses for payroll/recruitment/attendance/vendor scorecards; caching for HR dashboard KPIs. Closes CSV rows #52-#58.
+- READ FIRST: `employee_profiles` validation; `erp_statutory_rules`/`erp_income_tax_slabs`; HR service routes.
+- WHAT TO BUILD: Validation UX fixes + rate-seed audit doc + indexes/caching + load-test harness.
+- CONSTRAINTS: CA/payroll-specialist rate verification = real-external reviewer → that half stays deferred (record in V2-6). Tier2 if schema — supervisor holds. Register claim.
+- DONE CRITERIA: Code halves shipped + audited; deferred half recorded; rows re-scored; PR open.
+
+CONSTRAINTS (apply on top of anything stated above):
+- Server-side only, routes through the Mother Router's software_team scope -> GLM-5.2 via OpenRouter, cheapest real provider at dispatch time.
+- Register your claim in the relevant repo's ai-os/boss/ACTIVE-CLAIMS.yaml before real work, per this repo's own protocol -- check for collisions with any other active claim or open PR on the same file/module scope first.
+- Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.
+- Commit + push incrementally. Open a real PR (even WIP-labeled if you must stop early) rather than holding everything uncommitted.
+- Tier1 (docs/tests/additive-only, no schema/auth/RLS/payment/billing/.env changes) may be merged autonomously once CI is genuinely green on all required checks. Tier2 always holds for Owner sign-off, no exceptions, regardless of audit verdict.
+- If the finding turns out to already be resolved, or doesn't match what you find in the current code, say so in PROGRESS.md rather than making an unnecessary change -- the codebase has moved since this plan was written.

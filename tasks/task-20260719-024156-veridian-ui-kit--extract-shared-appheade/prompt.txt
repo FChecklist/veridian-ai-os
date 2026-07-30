@@ -1,0 +1,34 @@
+You are running headlessly, one-shot, with no ongoing session. Never defer any step to "wait for a notification" -- complete every step synchronously, including waiting for CI via `gh run watch <id> --exit-status`.
+
+TASK: FChecklist/veridian-ui-kit is missing a shared header component entirely. Read the repo's own README.md and every file under src/shell/, src/composer/, src/panel/, src/context/ IN FULL first, to understand its existing generic/callback-prop pattern (AppSidebar.tsx is the closest precedent -- generic layout, product supplies data via props).
+
+The reference mockup this whole package is scoped to is compliance-tracker/veridian-scope-selector-in-home.html (read it in full -- especially its <header> block) on the FChecklist/compliance-tracker repo. It has: a sidebar-toggle icon button, a logo+brand (reuses AppSidebar's own logo/productName convention), a search icon button, a notification bell icon button, a right-panel-toggle icon button, an org/context name label, and a user avatar.
+
+Read FChecklist/compliance-tracker's real, live src/components/AppTopbar.tsx IN FULL -- this is the actual working header (search trigger, notification dropdown backed by a real API, invite-a-team-member button, user avatar dropdown with settings/logout) that the shared component must be extracted FROM, generalized the same way AppSidebar.tsx was: the shared component owns the layout/icon-row/styling exactly per the mockup, but the actual data-bearing pieces (search trigger implementation, notification list/count, user menu items, any org-specific extras like "invite a team member") are passed in as props/slots -- most likely something like:
+```
+export type AppHeaderProps = {
+  logo?: ReactNode; productName?: string;
+  onToggleSidebar?: () => void; sidebarCollapsed?: boolean;
+  searchSlot?: ReactNode;
+  onToggleRightPanel?: () => void;
+  contextLabel?: ReactNode; // org name / project name / etc, product-specific
+  notificationSlot?: ReactNode; // the whole bell+dropdown, product owns the data
+  userMenuSlot?: ReactNode; // the whole avatar+dropdown, product owns the data
+  extraActions?: ReactNode; // e.g. compliance-tracker's "invite a team member" button
+};
+```
+Use your own judgment on the exact prop shape once you've read both real files -- the goal is: the shared component renders the mockup's exact header markup/spacing/icon set, every real behavior stays owned by whichever product supplies it via props, nothing is hardcoded that's actually product-specific.
+
+STEPS:
+1. Read everything named above in full before writing code.
+2. Check ai-os/boss/ACTIVE-CLAIMS.yaml on compliance-tracker (this is where this org's active-claims registry lives even for veridian-ui-kit work) and open PRs on FChecklist/veridian-ui-kit to make sure nobody else is already doing this.
+3. Build src/shell/AppHeader.tsx in veridian-ui-kit following the AppSidebar.tsx pattern exactly (generic layout + callback props for real behavior). Export it from src/shell/index.ts.
+4. Run `bunx tsc --noEmit` and fix everything.
+5. Push, open a PR against master (this repo's default branch is master, not main).
+6. Post a structured `AUDIT: PASS` PR comment with the standard 8 fields (Objective Understood, Standards Reviewed, Scope Confirmed, Evidence Recorded, Severity Classified [bare word], Verdict, Corrective Action Owner, Re-Audit Scheduled).
+7. Wait for CI via `gh run watch`. This repo may have minimal/no CI configured yet -- if so, note that honestly rather than inventing a wait.
+8. Tag a new version once merged: `git tag v0.2.0 && git push origin v0.2.0` (this repo is currently pinned at v0.1.0 by its two consumers).
+9. This PR has no schema/migration files, so it is TIER1 -- self-merge once ready (squash, delete branch).
+10. Report final status: PR number, merged, new tag pushed.
+
+Do NOT touch compliance-tracker or PROJEXA in this task -- this is the shared package only. Their migrations are separate, subsequent tasks.

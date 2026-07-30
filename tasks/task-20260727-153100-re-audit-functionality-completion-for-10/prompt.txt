@@ -1,0 +1,23 @@
+## OBJECTIVE
+Independently re-verify, from real current `main`-branch code and real test output, whether the ERP HR/Project-Management/Helpdesk gap-closure work (functionality_completion, task-20260727-100541) is genuinely 100% complete against its original scope. Verification-only — report gaps, do not fix them.
+
+## KNOWN_CONTEXT
+Real, previously-merged PRs claimed to close this scope: PR #591 (Helpdesk: tiered SLA + team routing + business hours + escalation), PR #592 (PM gaps: timesheet-related items), PR #593 (HR gaps: expense reimbursement + loan-related items). Each PR's own description/PROGRESS.md lists the specific gaps it claims to close — use those lists as the checklist, do not invent a new scope.
+
+## SCOPE
+For each of the 3 PRs: (1) extract the exact list of gaps/features each one's PR description or PROGRESS.md entry claims to close; (2) for every claimed item, find and quote the real current code on `main` implementing it (route handler, schema table/column, service function) — flag as a GAP anything claimed but not actually findable in current code; (3) run the real test suites covering these files and report pass/fail counts; (4) run `npx tsc --noEmit` and report clean/not-clean; (5) confirm each PR has a real supervisor PASS verdict in its GitHub comment history, quote it.
+
+## SUCCESS_CRITERIA
+A structured findings report, one section per PR (591/592/593), each listing: claimed items (from checklist), which are verified present in code (with file:line references), which are missing/stubbed (flagged as GAP), test pass/fail counts, tsc clean yes/no, audit verdict quote. Final verdict per PR: COMPLETE or INCOMPLETE-WITH-GAPS. Verify by actually running:
+`npx tsc --noEmit`
+`bun test src/lib/services src/app/api`
+`git log --oneline -1 -- ai-os/audits/functionality_completion_reaudit_2026-07-27.md`
+
+## EXPECTED_OUTPUT
+A findings report written to a new file `ai-os/audits/functionality_completion_reaudit_2026-07-27.md` on a new branch off current `main` in the compliance-tracker repo, committed, pushed, PR opened containing only this report.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not modify any file outside `ai-os/audits/` — this is a report-only task, not a fix task.
+
+## COMPLEXITY_TIER
+judgment

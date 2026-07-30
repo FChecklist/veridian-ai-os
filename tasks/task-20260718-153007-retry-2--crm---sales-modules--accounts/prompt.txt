@@ -1,0 +1,53 @@
+VERIDIAN Review Framework gap-closure: CRM & Sales Modules / Accounts & Contacts.
+This covers 15 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Critical] Accounts & Contacts: Data Model Completeness & Referential Integrity
+  Gap: No dedicated Accounts/Contacts data model
+  Recommended approach: Design and build crm_accounts + crm_contacts tables (1:many), bridging into existing clients/leadId where applicable
+- [Critical] Accounts & Contacts: CRUD & Approval Workflow Correctness
+  Gap: No CRUD or workflow for Accounts/Contacts
+  Recommended approach: Build CRUD once the data model above exists
+- [Critical] Accounts & Contacts: Business Rule & Validation Accuracy
+  Gap: No business rules exist because there is no entity to validate
+  Recommended approach: Define validation rules (required contact fields, primary-contact-per-account, etc.) as part of the build
+- [Critical] Accounts & Contacts: Multi-Tenant / Multi-Project Isolation
+  Gap: No table exists, so no multi-tenant isolation to evaluate
+  Recommended approach: Ensure orgId + RLS from day one, matching crm_leads/crm_opportunities precedent
+- [Critical] Accounts & Contacts: Reporting & Export Accuracy
+  Gap: No reporting possible for a non-existent entity
+  Recommended approach: Add account/contact coverage to the Reports & Analysis catalog once built
+- [Critical] Accounts & Contacts: AI Copilot / Worker Agent Integration Depth
+  Gap: No AI copilot depth possible for a non-existent entity
+  Recommended approach: Once built, extend Wave 75 CRM Intelligence pattern (aiScore-style enrichment) to accounts
+- [Critical] Accounts & Contacts: Audit Trail & Change History
+  Gap: No audit trail possible for a non-existent entity
+  Recommended approach: Reuse the crm_stage_history pattern (or a generic audit_logs entry) once built
+- [Critical] Accounts & Contacts: Access Control / Role-Based Permissions
+  Gap: No access control to evaluate
+  Recommended approach: Apply the same requireAuth()+orgId model used elsewhere in CRM
+- [Critical] Accounts & Contacts: Search, Filter & Bulk Operations
+  Gap: No search/filter/bulk ops possible
+  Recommended approach: Build with filter/search/bulk affordances from day one, unlike Leads/Opportunities' current flat lists
+- [Critical] Accounts & Contacts: Error Handling & Data Validation Messaging
+  Gap: No error handling to evaluate
+  Recommended approach: Adopt field-level validation error rendering from the start
+- [Critical] Accounts & Contacts: Cross-Module Integration Consistency
+  Gap: No cross-module integration possible
+  Recommended approach: Design the account entity as the unification point between clientId and erpCustomerId
+- [Critical] Accounts & Contacts: Notification & Alert Trigger Correctness
+  Gap: No notifications possible
+  Recommended approach: Add notification triggers (e.g. contact added, account reassigned) once built
+- [Critical] Accounts & Contacts: Documentation & In-App Help Coverage
+  Gap: No documentation exists for a non-existent feature
+  Recommended approach: Document once built
+- [Critical] Accounts & Contacts: Data Import/Export Template Fidelity
+  Gap: No import/export possible
+  Recommended approach: Build CSV import/export alongside the CRUD, high-value for onboarding an org's existing account list
+- [High] Accounts & Contacts: Localization Readiness (multi-currency / multi-language fields)
+  Gap: No localization fields possible
+  Recommended approach: Add locale/currency-aware fields if accounts carry monetary context (contract value, etc.)
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

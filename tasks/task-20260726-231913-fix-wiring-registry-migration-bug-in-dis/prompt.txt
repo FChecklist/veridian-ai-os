@@ -1,0 +1,28 @@
+## OBJECTIVE
+Fix a real, confirmed correctness bug found by AUDIT: REJECT on the current claude-control PR #101 branch (the dispatch-consolidation task). The core concurrency-lock fix (dispatch_core.py, shared flock across all 3 worker-spawn paths) was verified sound and correctly proven under real multi-process contention -- keep it fully intact. This round fixes only the wiring_registry integration bug the review found.
+
+## KNOWN_CONTEXT
+Read scripts/dispatch_core.py's _upsert_wiring_row() and scripts/superboss-register.py's _ensure_wiring_registry_table()/_migrate_wiring_registry_entity_types()/_migrate_schema() (or equivalently-named real functions -- read the actual current code, names may differ slightly) in full first. Real, reproduced finding from the review: _upsert_wiring_row() only calls _ensure_wiring_registry_table(conn), which is a bare table-existence guard -- a no-op against an already-existing table, not a schema alteration. It never calls the migration function that widens the wiring_registry table's CHECK constraint to allow 'dispatch_event' as a valid entity_type.
+
+## NO LIVE DATABASE ACTION REQUESTED
+This entire task is a CODE and TEST fix only. Nothing in this task should execute any statement against the real production database -- all verification happens against local, in-memory or throwaway file-based SQLite fixture databases created and destroyed within the test suite itself. Do not connect to, migrate, or alter the live production database as part of this work. The reviewer built a fixture DB with the literal pre-existing (narrower) CHECK constraint matching the real production DB's current schema, and confirmed record_dispatch_event() raises a real sqlite3 "CHECK constraint failed: entity_type IN (...)" error on every call -- silently swallowed by dispatch_core.py's own best-effort try/except around the write. Net effect: in real production, every dispatch_event row this consolidation is meant to add would silently fail to write forever, contradicting the original commit message's claim that this was "verified... idempotent" against the real write path. None of the 18 existing tests catch this because every one of them builds a brand-new fixture DB whose freshly-created table already has the widened CHECK baked in from the current code's WIRING_ENTITY_TYPES tuple -- none seed the actual pre-migration schema shape.
+
+## SCOPE
+1. Fix _upsert_wiring_row() (or wherever the real write path lives) to call the real schema-migration function (e.g. init_db()/init_db_silent()/_migrate_schema() -- read the actual available functions in superboss-register.py and use whichever one genuinely runs the CHECK-widening migration) before attempting the write, not just the bare table-creation no-op.
+2. Add a new regression test that seeds a fixture DB with the REAL pre-migration schema (the literal old, narrower CHECK constraint that matches what production has today -- read the reviewer's reproduction approach if it's described in the PR's audit comment, or reconstruct the pre-migration constraint from git history/the migration function's own before/after definitions) and asserts record_dispatch_event() succeeds and the row is genuinely queryable afterward against that fixture -- not just against a fresh, already-migrated DB like the existing 18 tests do.
+3. Do not touch the concurrency-lock logic, the 3 consolidated scripts' sub-behavior preservation (gap_queue_paused gate, module dependency graph, phase-plan cross-check, tier2 backfill, mechanical/judgment remediation split), or the renamed-not-deleted original scripts -- all of that was already verified correct.
+4. Separately, the review also flagged a real, minor, pre-existing (not introduced by this task) issue: dispatch-tick.py's module_queue_tick() processes candidates module-by-module rather than round-robin across module queues, contradicting a comment inherited from the original module-queue-dispatcher.py claiming round-robin fairness -- the original script had this exact same non-interleaved behavior despite its own comment. Fix this too while you're in this file: make module_queue_tick() genuinely round-robin across module queues so one module's queue can't starve another's within a single tick, and correct or remove the comment if full round-robin isn't achievable, so the code and its own comment agree.
+
+## SUCCESS_CRITERIA
+- The new regression test (seeded with the real pre-migration CHECK constraint) passes, and fails without the fix (confirm this by temporarily reverting the fix locally and re-running, then reapplying).
+- `python3 -m pytest tests/ -k "dispatch_core or wiring" -v` exits 0 with all 19 tests (18 existing + 1 new) passing.
+- A real, direct call to record_dispatch_event() against a fixture DB with the old CHECK constraint succeeds and the row is retrievable via a SELECT, not just "did not raise."
+
+## EXPECTED_OUTPUT
+Push directly to the existing PR #101 branch in FChecklist/claude-control (branch: worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in). Do not open a new PR.
+
+## CONSTRAINTS
+Do not weaken, remove, or re-architect the already-verified concurrency-lock mechanism -- only fix the two issues named above (the migration-invocation bug and the module-queue round-robin comment/behavior mismatch). Do not touch the live crontab. Do not merge yourself; this needs a fresh audit pass given the prior reject.
+
+## COMPLEXITY_TIER
+judgment

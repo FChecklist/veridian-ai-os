@@ -1,0 +1,365 @@
+id: task-20260725-180624-end-user-prompt-library-generation
+title: end-user-prompt-library-generation
+status: completed
+repo: claude-control
+branch: worker/task-20260725-180624-end-user-prompt-library-generation
+workspace: /opt/veridian/ai-os/tasks/task-20260725-180624-end-user-prompt-library-generation/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260725-180624-end-user-prompt-library-generation
+service: veridian-worker@task-20260725-180624-end-user-prompt-library-generation.service
+created_at: '2026-07-25T18:06:25.926965+00:00'
+last_checkpoint_at: '2026-07-25T18:24:42.736662+00:00'
+completed_steps: &id002
+- Verified real capability_registry row count (still 10, unchanged since 2026-07-24).
+- Verified the MASTER_INDEX.yaml-claimed "VCEL 247-engine registry" at
+- 'Decided real anchor: compliance-tracker/src/lib/engines/*.ts (25 real domain-engine
+  files,'
+- Checked ai-os/AI_ROSTER_CATALOG.json (AI-role roster, not applicable) and
+- 'Found real Industry evidence: organisations.regulatoryEntityType + sebi/rbi/irdai'
+- 'Extended ai-os/CHATGPT_PROMPT_SCHEMA_2026-07-24.yaml in place: added `End User
+  Role` and'
+- Extended scripts/generate_chatgpt_promptbatch_request.py with an `enduser_domain`
+  mode
+- Extended scripts/ingest_chatgpt_promptbatch_response.py to validate End User Role
+  enum +
+- 'Ran the new mode for real: batch of 30 (role x domain) combos x 8 prompts = 240
+  expected'
+- 'Computed real total-batch-count for 10,000 prompts: 42 (at this batch''s real 240-prompt'
+- Updated ai-os/CHATGPT_PROMPTLIB_BLOCKER_2026-07-24.yaml (extension_2026-07-25 block).
+- Registered schema extension + new generation mode in ai-os/MASTER_INDEX.yaml (refreshed
+- 'Committed + pushed all changes, opened PR #73:'
+remaining_steps: &id003
+- 'None -- task complete pending Owner review of PR #73.'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-25T18:06:27.761045+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5bc908c Resolve veridian-architecture-v2-target-repo-anchor: Owner clarified
+    in chat 2026-07-25 the browser-native platform merges into the existing end-user
+    product -- compliance-tracker confirmed correct target repo'
+  - '3dbb492 Fix systemic cross-repo auto-dispatch gap: auto_phase_continuation.py
+    always dispatched to a single default repo with no per-phase override, so every
+    phase in VERIDIAN_ARCHITECTURE_V2 (all 9 of its compliance-tracker-scoped phases)
+    would have hit the same manual-intervention wall phase_1 just did. Added target_repo
+    field support (dispatch() now uses next_praw[target_repo] when set), and moved
+    the malformed repo-note text out of external_depends_on (where it was misread
+    as an unparseable, permanently-blocking dependency) into target_repo/target_repo_note
+    for all 8 remaining phases. Verified: dry-run now correctly shows phase_1 as already_dispatched,
+    will correctly auto-target compliance-tracker for phase_2 onward without further
+    manual intervention.'
+  - '836c9c0 Fix phase_1 dispatch-blocking bug: the audit task recorded a non-blocking
+    scope-correction note in external_depends_on (a field auto_phase_continuation.py
+    parses for real cross-plan blocking deps), which made a mechanically-unparseable
+    string permanently block phase_1 despite the note itself saying it proceeds regardless.
+    Moved the real content to target_repo/target_repo_note, cleared external_depends_on
+    to reflect there is no real blocking dependency.'
+  - 6054432 Record Owner-approved resume of auto-phase-continuation cron -- Task 2
+    gap-analysis re-verification (PR 71) confirmed clean
+  - af51040 Auto-sync 1 server task(s) to master controller
+  - '1ede724 Merge pull request #71 from FChecklist/worker/task-20260725-160908-task2-dedup-integration-audit'
+  - e4188b3 Add integration_point to every phase; rescope phase_1 to extend real Prompt
+    OS tables, not duplicate them
+  - '2e3ea9e Correct gap analysis: 12 verdicts changed after finding real Prompt OS
+    + pgvector semantic-cache prior art'
+  - '1955dcc Record Owner-approved temporary pause of auto-phase-continuation cron
+    pending Task 2 gap-analysis re-verification (Owner directive 2026-07-25: check
+    for duplication + correct integration before implementing)'
+  - 3bf26d7 Auto-sync 6 server task(s) to master controller
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-25T18:06:35.164610+00:00'
+  status: failed
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5bc908c Resolve veridian-architecture-v2-target-repo-anchor: Owner clarified
+    in chat 2026-07-25 the browser-native platform merges into the existing end-user
+    product -- compliance-tracker confirmed correct target repo'
+  - '3dbb492 Fix systemic cross-repo auto-dispatch gap: auto_phase_continuation.py
+    always dispatched to a single default repo with no per-phase override, so every
+    phase in VERIDIAN_ARCHITECTURE_V2 (all 9 of its compliance-tracker-scoped phases)
+    would have hit the same manual-intervention wall phase_1 just did. Added target_repo
+    field support (dispatch() now uses next_praw[target_repo] when set), and moved
+    the malformed repo-note text out of external_depends_on (where it was misread
+    as an unparseable, permanently-blocking dependency) into target_repo/target_repo_note
+    for all 8 remaining phases. Verified: dry-run now correctly shows phase_1 as already_dispatched,
+    will correctly auto-target compliance-tracker for phase_2 onward without further
+    manual intervention.'
+  - '836c9c0 Fix phase_1 dispatch-blocking bug: the audit task recorded a non-blocking
+    scope-correction note in external_depends_on (a field auto_phase_continuation.py
+    parses for real cross-plan blocking deps), which made a mechanically-unparseable
+    string permanently block phase_1 despite the note itself saying it proceeds regardless.
+    Moved the real content to target_repo/target_repo_note, cleared external_depends_on
+    to reflect there is no real blocking dependency.'
+  - 6054432 Record Owner-approved resume of auto-phase-continuation cron -- Task 2
+    gap-analysis re-verification (PR 71) confirmed clean
+  - af51040 Auto-sync 1 server task(s) to master controller
+  - '1ede724 Merge pull request #71 from FChecklist/worker/task-20260725-160908-task2-dedup-integration-audit'
+  - e4188b3 Add integration_point to every phase; rescope phase_1 to extend real Prompt
+    OS tables, not duplicate them
+  - '2e3ea9e Correct gap analysis: 12 verdicts changed after finding real Prompt OS
+    + pgvector semantic-cache prior art'
+  - '1955dcc Record Owner-approved temporary pause of auto-phase-continuation cron
+    pending Task 2 gap-analysis re-verification (Owner directive 2026-07-25: check
+    for duplication + correct integration before implementing)'
+  - 3bf26d7 Auto-sync 6 server task(s) to master controller
+  note: worker exited with code 1; failure signature recorded for circuit breaker;
+    pushed whatever progress existed; systemd will retry up to the burst limit
+- at: '2026-07-25T18:07:06.555211+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5bc908c Resolve veridian-architecture-v2-target-repo-anchor: Owner clarified
+    in chat 2026-07-25 the browser-native platform merges into the existing end-user
+    product -- compliance-tracker confirmed correct target repo'
+  - '3dbb492 Fix systemic cross-repo auto-dispatch gap: auto_phase_continuation.py
+    always dispatched to a single default repo with no per-phase override, so every
+    phase in VERIDIAN_ARCHITECTURE_V2 (all 9 of its compliance-tracker-scoped phases)
+    would have hit the same manual-intervention wall phase_1 just did. Added target_repo
+    field support (dispatch() now uses next_praw[target_repo] when set), and moved
+    the malformed repo-note text out of external_depends_on (where it was misread
+    as an unparseable, permanently-blocking dependency) into target_repo/target_repo_note
+    for all 8 remaining phases. Verified: dry-run now correctly shows phase_1 as already_dispatched,
+    will correctly auto-target compliance-tracker for phase_2 onward without further
+    manual intervention.'
+  - '836c9c0 Fix phase_1 dispatch-blocking bug: the audit task recorded a non-blocking
+    scope-correction note in external_depends_on (a field auto_phase_continuation.py
+    parses for real cross-plan blocking deps), which made a mechanically-unparseable
+    string permanently block phase_1 despite the note itself saying it proceeds regardless.
+    Moved the real content to target_repo/target_repo_note, cleared external_depends_on
+    to reflect there is no real blocking dependency.'
+  - 6054432 Record Owner-approved resume of auto-phase-continuation cron -- Task 2
+    gap-analysis re-verification (PR 71) confirmed clean
+  - af51040 Auto-sync 1 server task(s) to master controller
+  - '1ede724 Merge pull request #71 from FChecklist/worker/task-20260725-160908-task2-dedup-integration-audit'
+  - e4188b3 Add integration_point to every phase; rescope phase_1 to extend real Prompt
+    OS tables, not duplicate them
+  - '2e3ea9e Correct gap analysis: 12 verdicts changed after finding real Prompt OS
+    + pgvector semantic-cache prior art'
+  - '1955dcc Record Owner-approved temporary pause of auto-phase-continuation cron
+    pending Task 2 gap-analysis re-verification (Owner directive 2026-07-25: check
+    for duplication + correct integration before implementing)'
+  - 3bf26d7 Auto-sync 6 server task(s) to master controller
+  note: worker started (resume=1, lifetime invocation 2/20, pre-flight passed)
+- at: '2026-07-25T18:12:07.661796+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/CHATGPT_PROMPT_SCHEMA_2026-07-24.yaml
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5bc908c Resolve veridian-architecture-v2-target-repo-anchor: Owner clarified
+    in chat 2026-07-25 the browser-native platform merges into the existing end-user
+    product -- compliance-tracker confirmed correct target repo'
+  - '3dbb492 Fix systemic cross-repo auto-dispatch gap: auto_phase_continuation.py
+    always dispatched to a single default repo with no per-phase override, so every
+    phase in VERIDIAN_ARCHITECTURE_V2 (all 9 of its compliance-tracker-scoped phases)
+    would have hit the same manual-intervention wall phase_1 just did. Added target_repo
+    field support (dispatch() now uses next_praw[target_repo] when set), and moved
+    the malformed repo-note text out of external_depends_on (where it was misread
+    as an unparseable, permanently-blocking dependency) into target_repo/target_repo_note
+    for all 8 remaining phases. Verified: dry-run now correctly shows phase_1 as already_dispatched,
+    will correctly auto-target compliance-tracker for phase_2 onward without further
+    manual intervention.'
+  - '836c9c0 Fix phase_1 dispatch-blocking bug: the audit task recorded a non-blocking
+    scope-correction note in external_depends_on (a field auto_phase_continuation.py
+    parses for real cross-plan blocking deps), which made a mechanically-unparseable
+    string permanently block phase_1 despite the note itself saying it proceeds regardless.
+    Moved the real content to target_repo/target_repo_note, cleared external_depends_on
+    to reflect there is no real blocking dependency.'
+  - 6054432 Record Owner-approved resume of auto-phase-continuation cron -- Task 2
+    gap-analysis re-verification (PR 71) confirmed clean
+  - af51040 Auto-sync 1 server task(s) to master controller
+  - '1ede724 Merge pull request #71 from FChecklist/worker/task-20260725-160908-task2-dedup-integration-audit'
+  - e4188b3 Add integration_point to every phase; rescope phase_1 to extend real Prompt
+    OS tables, not duplicate them
+  - '2e3ea9e Correct gap analysis: 12 verdicts changed after finding real Prompt OS
+    + pgvector semantic-cache prior art'
+  - '1955dcc Record Owner-approved temporary pause of auto-phase-continuation cron
+    pending Task 2 gap-analysis re-verification (Owner directive 2026-07-25: check
+    for duplication + correct integration before implementing)'
+  - 3bf26d7 Auto-sync 6 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-25T18:17:08.758767+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/generate_chatgpt_promptbatch_request.py
+  completed_steps:
+  - Verified real capability_registry row count (still 10, unchanged since 2026-07-24).
+  - Verified the MASTER_INDEX.yaml-claimed "VCEL 247-engine registry" at
+  - 'Decided real anchor: compliance-tracker/src/lib/engines/*.ts (25 real domain-engine
+    files,'
+  - Checked ai-os/AI_ROSTER_CATALOG.json (AI-role roster, not applicable) and
+  - 'Found real Industry evidence: organisations.regulatoryEntityType + sebi/rbi/irdai'
+  - 'Extended ai-os/CHATGPT_PROMPT_SCHEMA_2026-07-24.yaml in place: added `End User
+    Role` and'
+  remaining_steps:
+  - Extend scripts/generate_chatgpt_promptbatch_request.py with an `enduser_domain`
+    mode
+  - Extend scripts/ingest_chatgpt_promptbatch_response.py to validate End User Role
+    enum +
+  - Run the new mode for real, produce first batch (~200-300 prompts) under
+  - Compute + report real total-batch-count for 10,000 prompts.
+  - Update ai-os/CHATGPT_PROMPTLIB_BLOCKER_2026-07-24.yaml with the extended-schema
+    status.
+  - Register schema extension + new mode in ai-os/MASTER_INDEX.yaml and via
+  - Commit + push (PR).
+  recent_commits:
+  - 8ffb7f1 Extend CHATGPT_PROMPT_SCHEMA with End User Role + Industry columns for
+    the end-user prompt library
+  - '5bc908c Resolve veridian-architecture-v2-target-repo-anchor: Owner clarified
+    in chat 2026-07-25 the browser-native platform merges into the existing end-user
+    product -- compliance-tracker confirmed correct target repo'
+  - '3dbb492 Fix systemic cross-repo auto-dispatch gap: auto_phase_continuation.py
+    always dispatched to a single default repo with no per-phase override, so every
+    phase in VERIDIAN_ARCHITECTURE_V2 (all 9 of its compliance-tracker-scoped phases)
+    would have hit the same manual-intervention wall phase_1 just did. Added target_repo
+    field support (dispatch() now uses next_praw[target_repo] when set), and moved
+    the malformed repo-note text out of external_depends_on (where it was misread
+    as an unparseable, permanently-blocking dependency) into target_repo/target_repo_note
+    for all 8 remaining phases. Verified: dry-run now correctly shows phase_1 as already_dispatched,
+    will correctly auto-target compliance-tracker for phase_2 onward without further
+    manual intervention.'
+  - '836c9c0 Fix phase_1 dispatch-blocking bug: the audit task recorded a non-blocking
+    scope-correction note in external_depends_on (a field auto_phase_continuation.py
+    parses for real cross-plan blocking deps), which made a mechanically-unparseable
+    string permanently block phase_1 despite the note itself saying it proceeds regardless.
+    Moved the real content to target_repo/target_repo_note, cleared external_depends_on
+    to reflect there is no real blocking dependency.'
+  - 6054432 Record Owner-approved resume of auto-phase-continuation cron -- Task 2
+    gap-analysis re-verification (PR 71) confirmed clean
+  - af51040 Auto-sync 1 server task(s) to master controller
+  - '1ede724 Merge pull request #71 from FChecklist/worker/task-20260725-160908-task2-dedup-integration-audit'
+  - e4188b3 Add integration_point to every phase; rescope phase_1 to extend real Prompt
+    OS tables, not duplicate them
+  - '2e3ea9e Correct gap analysis: 12 verdicts changed after finding real Prompt OS
+    + pgvector semantic-cache prior art'
+  - '1955dcc Record Owner-approved temporary pause of auto-phase-continuation cron
+    pending Task 2 gap-analysis re-verification (Owner directive 2026-07-25: check
+    for duplication + correct integration before implementing)'
+  note: periodic checkpoint
+- at: '2026-07-25T18:22:01.388040+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Verified real capability_registry row count (still 10, unchanged since 2026-07-24).
+  - Verified the MASTER_INDEX.yaml-claimed "VCEL 247-engine registry" at
+  - 'Decided real anchor: compliance-tracker/src/lib/engines/*.ts (25 real domain-engine
+    files,'
+  - Checked ai-os/AI_ROSTER_CATALOG.json (AI-role roster, not applicable) and
+  - 'Found real Industry evidence: organisations.regulatoryEntityType + sebi/rbi/irdai'
+  - 'Extended ai-os/CHATGPT_PROMPT_SCHEMA_2026-07-24.yaml in place: added `End User
+    Role` and'
+  - Extended scripts/generate_chatgpt_promptbatch_request.py with an `enduser_domain`
+    mode
+  - Extended scripts/ingest_chatgpt_promptbatch_response.py to validate End User Role
+    enum +
+  - 'Ran the new mode for real: batch of 30 (role x domain) combos x 8 prompts = 240
+    expected'
+  - 'Computed real total-batch-count for 10,000 prompts: 42 (at this batch''s real
+    240-prompt'
+  - Updated ai-os/CHATGPT_PROMPTLIB_BLOCKER_2026-07-24.yaml (extension_2026-07-25
+    block).
+  - Registered schema extension + new generation mode in ai-os/MASTER_INDEX.yaml (refreshed
+  - 'Committed + pushed all changes, opened PR #73:'
+  remaining_steps:
+  - 'None -- task complete pending Owner review of PR #73.'
+  recent_commits:
+  - 5d25299 Record end-user prompt library extension + first real batch in blocker
+    doc and MASTER_INDEX
+  - 80ec5c5 Add enduser_domain generation mode targeting (End User Role x Business
+    Domain), extend ingest validation
+  - 8ffb7f1 Extend CHATGPT_PROMPT_SCHEMA with End User Role + Industry columns for
+    the end-user prompt library
+  - '5bc908c Resolve veridian-architecture-v2-target-repo-anchor: Owner clarified
+    in chat 2026-07-25 the browser-native platform merges into the existing end-user
+    product -- compliance-tracker confirmed correct target repo'
+  - '3dbb492 Fix systemic cross-repo auto-dispatch gap: auto_phase_continuation.py
+    always dispatched to a single default repo with no per-phase override, so every
+    phase in VERIDIAN_ARCHITECTURE_V2 (all 9 of its compliance-tracker-scoped phases)
+    would have hit the same manual-intervention wall phase_1 just did. Added target_repo
+    field support (dispatch() now uses next_praw[target_repo] when set), and moved
+    the malformed repo-note text out of external_depends_on (where it was misread
+    as an unparseable, permanently-blocking dependency) into target_repo/target_repo_note
+    for all 8 remaining phases. Verified: dry-run now correctly shows phase_1 as already_dispatched,
+    will correctly auto-target compliance-tracker for phase_2 onward without further
+    manual intervention.'
+  - '836c9c0 Fix phase_1 dispatch-blocking bug: the audit task recorded a non-blocking
+    scope-correction note in external_depends_on (a field auto_phase_continuation.py
+    parses for real cross-plan blocking deps), which made a mechanically-unparseable
+    string permanently block phase_1 despite the note itself saying it proceeds regardless.
+    Moved the real content to target_repo/target_repo_note, cleared external_depends_on
+    to reflect there is no real blocking dependency.'
+  - 6054432 Record Owner-approved resume of auto-phase-continuation cron -- Task 2
+    gap-analysis re-verification (PR 71) confirmed clean
+  - af51040 Auto-sync 1 server task(s) to master controller
+  - '1ede724 Merge pull request #71 from FChecklist/worker/task-20260725-160908-task2-dedup-integration-audit'
+  - e4188b3 Add integration_point to every phase; rescope phase_1 to extend real Prompt
+    OS tables, not duplicate them
+  note: quality gates passed, pushed branch worker/task-20260725-180624-end-user-prompt-library-generation,
+    awaiting review
+- at: '2026-07-25T18:24:42.736662+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 5d25299 Record end-user prompt library extension + first real batch in blocker
+    doc and MASTER_INDEX
+  - 80ec5c5 Add enduser_domain generation mode targeting (End User Role x Business
+    Domain), extend ingest validation
+  - 8ffb7f1 Extend CHATGPT_PROMPT_SCHEMA with End User Role + Industry columns for
+    the end-user prompt library
+  - '5bc908c Resolve veridian-architecture-v2-target-repo-anchor: Owner clarified
+    in chat 2026-07-25 the browser-native platform merges into the existing end-user
+    product -- compliance-tracker confirmed correct target repo'
+  - '3dbb492 Fix systemic cross-repo auto-dispatch gap: auto_phase_continuation.py
+    always dispatched to a single default repo with no per-phase override, so every
+    phase in VERIDIAN_ARCHITECTURE_V2 (all 9 of its compliance-tracker-scoped phases)
+    would have hit the same manual-intervention wall phase_1 just did. Added target_repo
+    field support (dispatch() now uses next_praw[target_repo] when set), and moved
+    the malformed repo-note text out of external_depends_on (where it was misread
+    as an unparseable, permanently-blocking dependency) into target_repo/target_repo_note
+    for all 8 remaining phases. Verified: dry-run now correctly shows phase_1 as already_dispatched,
+    will correctly auto-target compliance-tracker for phase_2 onward without further
+    manual intervention.'
+  - '836c9c0 Fix phase_1 dispatch-blocking bug: the audit task recorded a non-blocking
+    scope-correction note in external_depends_on (a field auto_phase_continuation.py
+    parses for real cross-plan blocking deps), which made a mechanically-unparseable
+    string permanently block phase_1 despite the note itself saying it proceeds regardless.
+    Moved the real content to target_repo/target_repo_note, cleared external_depends_on
+    to reflect there is no real blocking dependency.'
+  - 6054432 Record Owner-approved resume of auto-phase-continuation cron -- Task 2
+    gap-analysis re-verification (PR 71) confirmed clean
+  - af51040 Auto-sync 1 server task(s) to master controller
+  - '1ede724 Merge pull request #71 from FChecklist/worker/task-20260725-160908-task2-dedup-integration-audit'
+  - e4188b3 Add integration_point to every phase; rescope phase_1 to extend real Prompt
+    OS tables, not duplicate them
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/73'
+execution_seconds: 898
+restart_count: 1
+token_usage:
+  input_tokens: 0
+  cache_creation_input_tokens: 0
+  cache_read_input_tokens: 0
+  output_tokens: 0
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 0
+    ephemeral_5m_input_tokens: 0
+  inference_geo: ''
+  iterations: []
+  speed: standard
+master_synced_at: '2026-07-25T18:30:09.501758+00:00'

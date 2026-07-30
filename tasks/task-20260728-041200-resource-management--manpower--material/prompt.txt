@@ -1,0 +1,32 @@
+## OBJECTIVE
+Build 4 real resource-management modules in PROJEXA: Manpower, Material, Budget, and Schedule -- items 7-10 of the Owner's real requirement spec.
+
+## KNOWN_CONTEXT
+Real, Owner-supplied field-level spec, do not invent a different shape:
+- **Manpower**: database (ID/Name/Trade/Salary), daily attendance recorded trade-wise, rolling into a daily cost report. Attendance report columns: S.No | ID | Name | Company | Salary, filterable by trade.
+- **Material**: database (spec/cost/qty), material inbound (receiving) tracking, cost report.
+- **Budget**: per-scope-line-item default 25% (Owner-configurable per line, not hardcoded), tracked against vendor name/vendor amount/material/manpower per scope item. Summary report columns: S.No | Category | Code | Description | Qty | Rate | Amount | Vendor 1 | Vendor Amount, filterable. Real cross-dependency: check if the Scope-of-Works revision tracking feature (real, already built -- search for `constructionScopeRevisions` or similar in this codebase) has landed; if so, budget should reflect the CURRENT revision's scope, not just the original baseline.
+- **Schedule**: upload Excel schedule, track real progress against it over time. Check if the Work Progress Report feature (real, already built -- search for a WPR-related service in this codebase) exists; if so, reuse its progress data rather than tracking a second, separate progress signal.
+
+## SCOPE
+1. Manpower: `constructionManpower` + `constructionAttendance` tables (or matching naming convention), real API routes, real screens (roster + daily attendance entry + cost report).
+2. Material: `constructionMaterials` + `constructionMaterialInbound` tables, real API routes, real screens (catalog + inbound entry + cost report).
+3. Budget: extend or build a real budget table with the configurable-percentage-per-line-item requirement, wired to vendor/material/manpower actuals; real summary report matching the exact column spec above.
+4. Schedule: Excel upload + parse (reuse this codebase's existing Excel-parsing pattern from the BoQ importer, `construction-boq-import-service.ts`, rather than writing a new parser), real progress-tracking screen.
+
+## SUCCESS_CRITERIA
+- A real test proving the Budget module's default-25%-but-overridable-per-line behavior works correctly (one line at default 25%, one line explicitly overridden to a different %, both compute correctly).
+- A real test proving Material/Manpower cost reports aggregate correctly against a realistic multi-entry dataset.
+- Verify by actually running:
+`npx tsc --noEmit`
+`bun test` (scoped to touched files)
+`grep -rn "constructionManpower\|constructionMaterials" src/lib/db/schema.ts` (confirm real tables exist)
+
+## EXPECTED_OUTPUT
+Real PR(s) on new branch(es) in the projexa repo (or compliance-tracker for schema, matching wherever `constructionBoqLineItems` lives). Requires a fresh supervisor audit before merge; do not merge yourself.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not build a second, parallel progress-tracking mechanism if the Work Progress Report feature already provides one -- check first and reuse.
+
+## COMPLEXITY_TIER
+judgment

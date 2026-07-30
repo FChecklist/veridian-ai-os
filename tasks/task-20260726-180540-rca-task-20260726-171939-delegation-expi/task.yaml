@@ -1,0 +1,375 @@
+id: task-20260726-180540-rca-task-20260726-171939-delegation-expi
+title: rca-task-20260726-171939-delegation-expiry-enforcement-audit---te
+status: completed
+repo: claude-control
+branch: worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi
+workspace: /opt/veridian/ai-os/tasks/task-20260726-180540-rca-task-20260726-171939-delegation-expi/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-180540-rca-task-20260726-171939-delegation-expi
+service: veridian-worker@task-20260726-180540-rca-task-20260726-171939-delegation-expi.service
+created_at: '2026-07-26T18:05:41.009149+00:00'
+last_checkpoint_at: '2026-07-26T18:56:27.482451+00:00'
+completed_steps: &id002
+- Read task-20260726-171939-delegation-expiry-enforcement-audit---te's task.yaml/worker.log/systemd.log/result.json
+  in full.
+- 'Established the original task actually SUCCEEDED (73 turns, PR #579 opened against
+  compliance-tracker, 2042 tests green, `tsc` clean) -- this was never a real hang/loop
+  in the AI''s own work.'
+- 'Traced the false STALL flag to worker-entrypoint.sh: the periodic-checkpoint heartbeat
+  background loop (`CHECKPOINT_PID`) was killed (`kill`/`wait`, old lines 242-244)
+  immediately after the main `claude -p` invocation returned -- BEFORE the quality-gate
+  loop (lint/build/test, up to 2 `claude -p --continue` auto-fix retries) that follows
+  it, which has no wall-clock bound.'
+- 'Confirmed live evidence: this task''s own quality-gate phase (`next build`, `bun
+  run build`) ran with 4.3G memory peak / 522.9M swap for up to ~36 minutes wall-clock
+  with almost no further CPU -- i.e. genuinely still working (memory-pressure-slow),
+  not hung. With the heartbeat already dead, task.yaml''s last checkpoint stayed frozen
+  at the pre-gate `"periodic checkpoint"` note the whole time.'
+- Confirmed `veridian-task-watchdog.py`'s STALL check (`evaluate()`) fires purely
+  on checkpoint age (>=20 min), independent of note content -- `LOOP_EXCLUDED_NOTES`
+  only exempts `"periodic checkpoint"` from the *loop* check, not the *stall* check.
+  So any task whose quality-gate phase legitimately runs >20 minutes gets misdiagnosed
+  as stalled off a frozen `"periodic checkpoint"` note, triggering a wasted duplicate
+  RCA task dispatch -- exactly what happened here (this very RCA task).
+- '**Zero-duplication finding**: while investigating, found `task-20260726-175009-rca-task-20260726-171926-remove-anthropi`
+  (a sibling RCA task, independently escalated for a *different* original task, `task-20260726-171926`,
+  same `"periodic checkpoint"` signature) had already root-caused the identical bug
+  and already applied the live fix to `/opt/veridian/scripts/worker-entrypoint.sh`
+  (removed the early `kill/wait`, added a NOTE explaining the fix relies on the existing
+  `trap ''kill $CHECKPOINT_PID'' EXIT` to reap the loop at real script exit instead).
+  Verified the live fix directly (diff reconstructed against the pre-fix content read
+  earlier in this session) -- it is correct, complete, and matches the fix this task
+  would otherwise have made independently. Did NOT re-edit the live file (avoids clobbering
+  a correct concurrent fix); instead documented the already-applied diff as `ai-os/patches/worker-entrypoint-checkpoint-heartbeat-quality-gate-fix-2026-07-26.diff`,
+  per this repo''s established convention for untracked live scripts (see `ai-os/patches/worker-entrypoint-noop-pending-review-fix-2026-07-24.diff`
+  for precedent).'
+- Registered/reconfirmed `known_fixes` row for signature `"periodic checkpoint"` via
+  `superboss-register.py log-fix` (fix_action `restart_unit`, matching the sibling
+  RCA task's registration -- `restart_unit` is a real, whitelisted `FIX_ACTIONS` entry
+  in `veridian-task-watchdog.py`, and safe here because `worker-entrypoint.sh`'s own
+  resume path (`IS_RESUME`) means a watchdog-triggered restart resumes from the last
+  real checkpoint rather than re-doing work).
+remaining_steps: &id003
+- None -- fix is live, patch documented, known_fixes row confirmed (success_count>=1).
+  Awaiting review/merge of this branch's patch-doc commit.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T18:05:43.442988+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T18:10:59.846242+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  note: periodic checkpoint
+- at: '2026-07-26T18:17:25.810987+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  note: periodic checkpoint
+- at: '2026-07-26T18:23:01.519625+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  note: periodic checkpoint
+- at: '2026-07-26T18:31:51.604808+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  note: periodic checkpoint
+- at: '2026-07-26T18:37:02.241743+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  note: periodic checkpoint
+- at: '2026-07-26T18:51:00.464428+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  - 'afcab65 Add Tier 2 audit-fix report: 14 real superboss_rejected_audit_fail tasks'
+  note: periodic checkpoint
+- at: '2026-07-26T18:54:19.374143+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read task-20260726-171939-delegation-expiry-enforcement-audit---te's task.yaml/worker.log/systemd.log/result.json
+    in full.
+  - 'Established the original task actually SUCCEEDED (73 turns, PR #579 opened against
+    compliance-tracker, 2042 tests green, `tsc` clean) -- this was never a real hang/loop
+    in the AI''s own work.'
+  - 'Traced the false STALL flag to worker-entrypoint.sh: the periodic-checkpoint
+    heartbeat background loop (`CHECKPOINT_PID`) was killed (`kill`/`wait`, old lines
+    242-244) immediately after the main `claude -p` invocation returned -- BEFORE
+    the quality-gate loop (lint/build/test, up to 2 `claude -p --continue` auto-fix
+    retries) that follows it, which has no wall-clock bound.'
+  - 'Confirmed live evidence: this task''s own quality-gate phase (`next build`, `bun
+    run build`) ran with 4.3G memory peak / 522.9M swap for up to ~36 minutes wall-clock
+    with almost no further CPU -- i.e. genuinely still working (memory-pressure-slow),
+    not hung. With the heartbeat already dead, task.yaml''s last checkpoint stayed
+    frozen at the pre-gate `"periodic checkpoint"` note the whole time.'
+  - Confirmed `veridian-task-watchdog.py`'s STALL check (`evaluate()`) fires purely
+    on checkpoint age (>=20 min), independent of note content -- `LOOP_EXCLUDED_NOTES`
+    only exempts `"periodic checkpoint"` from the *loop* check, not the *stall* check.
+    So any task whose quality-gate phase legitimately runs >20 minutes gets misdiagnosed
+    as stalled off a frozen `"periodic checkpoint"` note, triggering a wasted duplicate
+    RCA task dispatch -- exactly what happened here (this very RCA task).
+  - '**Zero-duplication finding**: while investigating, found `task-20260726-175009-rca-task-20260726-171926-remove-anthropi`
+    (a sibling RCA task, independently escalated for a *different* original task,
+    `task-20260726-171926`, same `"periodic checkpoint"` signature) had already root-caused
+    the identical bug and already applied the live fix to `/opt/veridian/scripts/worker-entrypoint.sh`
+    (removed the early `kill/wait`, added a NOTE explaining the fix relies on the
+    existing `trap ''kill $CHECKPOINT_PID'' EXIT` to reap the loop at real script
+    exit instead). Verified the live fix directly (diff reconstructed against the
+    pre-fix content read earlier in this session) -- it is correct, complete, and
+    matches the fix this task would otherwise have made independently. Did NOT re-edit
+    the live file (avoids clobbering a correct concurrent fix); instead documented
+    the already-applied diff as `ai-os/patches/worker-entrypoint-checkpoint-heartbeat-quality-gate-fix-2026-07-26.diff`,
+    per this repo''s established convention for untracked live scripts (see `ai-os/patches/worker-entrypoint-noop-pending-review-fix-2026-07-24.diff`
+    for precedent).'
+  - Registered/reconfirmed `known_fixes` row for signature `"periodic checkpoint"`
+    via `superboss-register.py log-fix` (fix_action `restart_unit`, matching the sibling
+    RCA task's registration -- `restart_unit` is a real, whitelisted `FIX_ACTIONS`
+    entry in `veridian-task-watchdog.py`, and safe here because `worker-entrypoint.sh`'s
+    own resume path (`IS_RESUME`) means a watchdog-triggered restart resumes from
+    the last real checkpoint rather than re-doing work).
+  remaining_steps:
+  - None -- fix is live, patch documented, known_fixes row confirmed (success_count>=1).
+    Awaiting review/merge of this branch's patch-doc commit.
+  recent_commits:
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  note: 'ROOT CAUSE (confirmed, not guessed): worker-entrypoint.sh killed the periodic-checkpoint
+    heartbeat loop (CHECKPOINT_PID) right after the main claude invocation returned,
+    BEFORE the unbounded quality-gate loop (lint/build/test + up to 2 auto-fix retries)
+    that follows. task-20260726-171939 itself already succeeded (PR #579, 2042 tests
+    green) but its ''next build'' gate ran long under memory pressure (4.3G peak/522M
+    swap) with the heartbeat already dead, so task.yaml''s last checkpoint stayed
+    frozen on the literal note ''periodic checkpoint'' for >20min. veridian-task-watchdog.py''s
+    STALL check fires on checkpoint age alone (LOOP_EXCLUDED_NOTES only exempts this
+    note from the LOOP check, not STALL), so it escalated this RCA task as a false
+    positive. FIX: sibling RCA task-20260726-175009 (same signature, different original
+    task-20260726-171926) independently root-caused and already applied the real fix
+    live to /opt/veridian/scripts/worker-entrypoint.sh (stopped killing the heartbeat
+    early; the pre-existing ''trap kill $CHECKPOINT_PID EXIT'' now reaps it at actual
+    script exit instead, keeping checkpoints fresh through the whole gate+autofix
+    phase). Verified that live fix directly against the pre-fix content read at the
+    start of this task -- correct and complete; documented as ai-os/patches/worker-entrypoint-checkpoint-heartbeat-quality-gate-fix-2026-07-26.diff
+    (commit 1c2bca8, pushed). known_fixes evidence: signature=''periodic checkpoint'',
+    fix_action=''restart_unit'', success_count=6 (python3 scripts/superboss-register.py
+    log-fix --signature ''periodic checkpoint'' --fix-action restart_unit).'
+- at: '2026-07-26T18:54:37.981507+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read task-20260726-171939-delegation-expiry-enforcement-audit---te's task.yaml/worker.log/systemd.log/result.json
+    in full.
+  - 'Established the original task actually SUCCEEDED (73 turns, PR #579 opened against
+    compliance-tracker, 2042 tests green, `tsc` clean) -- this was never a real hang/loop
+    in the AI''s own work.'
+  - 'Traced the false STALL flag to worker-entrypoint.sh: the periodic-checkpoint
+    heartbeat background loop (`CHECKPOINT_PID`) was killed (`kill`/`wait`, old lines
+    242-244) immediately after the main `claude -p` invocation returned -- BEFORE
+    the quality-gate loop (lint/build/test, up to 2 `claude -p --continue` auto-fix
+    retries) that follows it, which has no wall-clock bound.'
+  - 'Confirmed live evidence: this task''s own quality-gate phase (`next build`, `bun
+    run build`) ran with 4.3G memory peak / 522.9M swap for up to ~36 minutes wall-clock
+    with almost no further CPU -- i.e. genuinely still working (memory-pressure-slow),
+    not hung. With the heartbeat already dead, task.yaml''s last checkpoint stayed
+    frozen at the pre-gate `"periodic checkpoint"` note the whole time.'
+  - Confirmed `veridian-task-watchdog.py`'s STALL check (`evaluate()`) fires purely
+    on checkpoint age (>=20 min), independent of note content -- `LOOP_EXCLUDED_NOTES`
+    only exempts `"periodic checkpoint"` from the *loop* check, not the *stall* check.
+    So any task whose quality-gate phase legitimately runs >20 minutes gets misdiagnosed
+    as stalled off a frozen `"periodic checkpoint"` note, triggering a wasted duplicate
+    RCA task dispatch -- exactly what happened here (this very RCA task).
+  - '**Zero-duplication finding**: while investigating, found `task-20260726-175009-rca-task-20260726-171926-remove-anthropi`
+    (a sibling RCA task, independently escalated for a *different* original task,
+    `task-20260726-171926`, same `"periodic checkpoint"` signature) had already root-caused
+    the identical bug and already applied the live fix to `/opt/veridian/scripts/worker-entrypoint.sh`
+    (removed the early `kill/wait`, added a NOTE explaining the fix relies on the
+    existing `trap ''kill $CHECKPOINT_PID'' EXIT` to reap the loop at real script
+    exit instead). Verified the live fix directly (diff reconstructed against the
+    pre-fix content read earlier in this session) -- it is correct, complete, and
+    matches the fix this task would otherwise have made independently. Did NOT re-edit
+    the live file (avoids clobbering a correct concurrent fix); instead documented
+    the already-applied diff as `ai-os/patches/worker-entrypoint-checkpoint-heartbeat-quality-gate-fix-2026-07-26.diff`,
+    per this repo''s established convention for untracked live scripts (see `ai-os/patches/worker-entrypoint-noop-pending-review-fix-2026-07-24.diff`
+    for precedent).'
+  - Registered/reconfirmed `known_fixes` row for signature `"periodic checkpoint"`
+    via `superboss-register.py log-fix` (fix_action `restart_unit`, matching the sibling
+    RCA task's registration -- `restart_unit` is a real, whitelisted `FIX_ACTIONS`
+    entry in `veridian-task-watchdog.py`, and safe here because `worker-entrypoint.sh`'s
+    own resume path (`IS_RESUME`) means a watchdog-triggered restart resumes from
+    the last real checkpoint rather than re-doing work).
+  remaining_steps:
+  - None -- fix is live, patch documented, known_fixes row confirmed (success_count>=1).
+    Awaiting review/merge of this branch's patch-doc commit.
+  recent_commits:
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  note: quality gates passed, pushed branch worker/task-20260726-180540-rca-task-20260726-171939-delegation-expi,
+    awaiting review
+- at: '2026-07-26T18:56:27.482451+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '1c2bca8 RCA task-20260726-171939: document worker-entrypoint.sh checkpoint-heartbeat
+    fix (watchdog false-stall on "periodic checkpoint")'
+  - 0d0bafd Auto-sync 17 server task(s) to master controller
+  - 80ffa5f Auto-sync 4 server task(s) to master controller
+  - 'f6d3053 Merge pull request #96 from FChecklist/worker/task-20260726-170131-tier1--redispatch-14-now-fixable-tasks'
+  - 'ec95532 Merge pull request #80 from FChecklist/worker/task-20260726-083833-build-interactive-session-write-gate--re'
+  - 075ca1b Merge remote-tracking branch 'origin/master' into pr80-work
+  - 'a2abbf3 Tier1 redispatch: re-derive + relevance-check + redispatch the 14 tasks
+    whose real failure cause is now fixed on master'
+  - '5d0449e Merge pull request #94 from FChecklist/worker/task-20260726-170145-tier2--fix-and-redispatch-14-real-audit'
+  - '2d53ce4 Merge pull request #95 from FChecklist/worker/task-20260726-170501-tier4--crash-no-changes-triage-for-12-ta'
+  - 9652a2f Add Tier4 crash/no-changes triage report for the real 12-task subset
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/99'
+execution_seconds: 2933
+restart_count: 0
+token_usage:
+  input_tokens: 102
+  cache_creation_input_tokens: 112110
+  cache_read_input_tokens: 4849903
+  output_tokens: 43152
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 112110
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 765
+    cache_read_input_tokens: 134905
+    cache_creation_input_tokens: 889
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 889
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-26T19:00:52.528933+00:00'

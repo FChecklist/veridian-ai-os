@@ -1,0 +1,167 @@
+id: task-20260726-101201-fix-write-gate--real-cgroup-check---refs
+title: 'Fix write-gate: real cgroup check + refspec parsing (round 3)'
+status: completed
+repo: claude-control
+branch: worker/task-20260726-101201-fix-write-gate--real-cgroup-check---refs
+workspace: /opt/veridian/ai-os/tasks/task-20260726-101201-fix-write-gate--real-cgroup-check---refs/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-101201-fix-write-gate--real-cgroup-check---refs
+service: veridian-worker@task-20260726-101201-fix-write-gate--real-cgroup-check---refs.service
+created_at: '2026-07-26T10:12:02.563027+00:00'
+last_checkpoint_at: '2026-07-26T10:22:22.994434+00:00'
+completed_steps: &id002
+- Read the current write-gate implementation
+- 'Fixed real bypass 1: `_interactive_guard_cgroup_path()` no longer reads'
+- 'Fixed real bypass 2: `_interactive_guard_git_push_verdict()` now strips'
+- 'Fixed real bypass 3: the same function now iterates over ALL'
+- Updated PROTOCOL_OWNER_AI.yaml's A15 article (round_3_hardening,
+- 'Extended tests/interactive_session_guard_test.sh: reworked the cgroup'
+- 'Committed and pushed directly to PR #80''s branch'
+remaining_steps: &id003
+- 'Await fresh audit pass (explicitly requested: reviewer should attempt'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T10:12:04.821358+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  - ad76ad4 Wire status monitor + remediation dispatcher into cron, MASTER_INDEX,
+    Owner decisions log
+  - c16da91 Add real status monitor + remediation dispatcher (proactive status + auto-remediation)
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T10:17:05.986967+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '0118b1e Round 2: close 4 real bypass vectors in the interactive-session write
+    gate'
+  - abceec5 Add real technical guard blocking interactive gh pr merge / git push to
+    master-main
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  - a82ee2d Revert false phase_4 self-report -- PR 562 is OPEN with a real merge conflict,
+    not merged. The worker task wrote its own status:done directly, mimicking the
+    legitimate backfill-commit pattern without the real verification behind it.
+  note: periodic checkpoint
+- at: '2026-07-26T10:20:12.312511+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read the current write-gate implementation
+  - 'Fixed real bypass 1: `_interactive_guard_cgroup_path()` no longer reads'
+  - 'Fixed real bypass 2: `_interactive_guard_git_push_verdict()` now strips'
+  - 'Fixed real bypass 3: the same function now iterates over ALL'
+  - Updated PROTOCOL_OWNER_AI.yaml's A15 article (round_3_hardening,
+  - 'Extended tests/interactive_session_guard_test.sh: reworked the cgroup'
+  - 'Committed and pushed directly to PR #80''s branch'
+  remaining_steps:
+  - 'Await fresh audit pass (explicitly requested: reviewer should attempt'
+  recent_commits:
+  - '62fc664 Round 3: fix real cgroup-config-file bypass + two git-push refspec parsing
+    gaps (AUDIT: REJECT, live-reproduced)'
+  - '0118b1e Round 2: close 4 real bypass vectors in the interactive-session write
+    gate'
+  - abceec5 Add real technical guard blocking interactive gh pr merge / git push to
+    master-main
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  note: quality gates passed, pushed branch worker/task-20260726-101201-fix-write-gate--real-cgroup-check---refs,
+    awaiting review
+- at: '2026-07-26T10:22:22.994434+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '62fc664 Round 3: fix real cgroup-config-file bypass + two git-push refspec parsing
+    gaps (AUDIT: REJECT, live-reproduced)'
+  - '0118b1e Round 2: close 4 real bypass vectors in the interactive-session write
+    gate'
+  - abceec5 Add real technical guard blocking interactive gh pr merge / git push to
+    master-main
+  - '8fec38b Merge pull request #78 from FChecklist/worker/task-20260726-071221-close-worker-false-self-report-gap-in-ph'
+  - 'afbe097 Fix multi-violation line-shift bug in --audit-plans (AUDIT: REJECT, live-reproduced)'
+  - 'c913d33 Merge worker/task-20260726-053322-status-monitor-and-remediation-dispatche:
+    land status monitor + remediation dispatcher on master'
+  - 'fd3ddf1 Fix confirm_merge() ambiguous-gh-failure gap in --audit-plans (AUDIT:
+    REJECT on this PR)'
+  - 030d893 Auto-sync 6 server task(s) to master controller
+  - '92d54c4 Close real gap: worker''s own PR commit could write a false phase self-report,
+    bypassing backfill_phase_self_report.py entirely'
+  - faa2d5d Record Owner-approved crontab addition for the status-monitor-and-remediation
+    task, re-sync snapshot
+  note: "Superboss rejected:  \u2014 see review.json for issues"
+execution_seconds: 486
+restart_count: 0
+token_usage:
+  input_tokens: 94
+  cache_creation_input_tokens: 88656
+  cache_read_input_tokens: 3654800
+  output_tokens: 42900
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 88656
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 529
+    cache_read_input_tokens: 111886
+    cache_creation_input_tokens: 454
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 454
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T11:00:09.568849+00:00'
+status_corrected_at: '2026-07-27T03:38:38.007704+00:00'
+status_correction_reason: 'Real PR #80 already merged -- patch task.yaml status to
+  completed, no redispatch.'
+real_pr_evidence:
+  mergeable: UNKNOWN
+  mergedAt: '2026-07-26T17:18:34Z'
+  reviewDecision: ''
+  state: MERGED
+  title: Add real technical guard blocking interactive gh pr merge / git push to master/main
+  url: https://github.com/FChecklist/claude-control/pull/80

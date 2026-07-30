@@ -1,0 +1,34 @@
+## OBJECTIVE
+Build 4 real project-records modules in PROJEXA: Permits, Drawings & 3D, Documents, and Minutes of Meeting (MoMs) -- items 1-4 of the Owner's real requirement spec.
+
+## KNOWN_CONTEXT
+Real, Owner-supplied field-level spec, do not invent a different shape:
+- **Permits**: data entry + PDF upload, fields permit name / issue date / end date, per project.
+- **Drawings & 3D**: upload DWG files + 3D walkthrough files/links, per project.
+- **Documents**: generic categorized upload (PDF/email/permit-related), per project.
+- **MoMs**: live meeting-notes creation, export as PDF, send via WhatsApp. Before building new: compliance-tracker already has VERI Meeting Intelligence (`veri-meeting-service.ts`, generates AI summaries/action items from meetings) -- check whether this already covers live MoM creation and just needs wiring into PROJEXA's UI via the existing `callVeridian()` bridge, rather than building a parallel meeting-notes system from scratch.
+Check PROJEXA's existing file-upload/storage pattern (used by the PWA offline queue's photo attachments, or any other existing upload feature) before adding a new storage integration -- reuse it for all 4 modules' file uploads (PDF/DWG/3D files).
+
+## SCOPE
+1. Confirm the real existing storage pattern in PROJEXA/compliance-tracker and reuse it for all 4 modules.
+2. Permits: `constructionPermits` table (or matching naming convention) + real API routes + a real PROJEXA-branded screen (list + create/edit + PDF viewer link).
+3. Drawings & 3D: `constructionDrawings` table + upload + a real screen listing drawings/3D files per project.
+4. Documents: `constructionDocuments` table with a category field + upload + a real screen with category filtering.
+5. MoMs: reuse VERI Meeting Intelligence if it covers this (per KNOWN_CONTEXT); wire a real "create MoM" flow into PROJEXA, PDF export, and check whether a WhatsApp-send integration already exists anywhere in this codebase (check `veri-meeting-service.ts`'s own callers) before building a new one -- if none exists, implement PDF export only and flag WhatsApp-send as a real, disclosed gap rather than fabricating an integration.
+
+## SUCCESS_CRITERIA
+- A real test per module proving create + list + org/project-scoping works correctly (tenant isolation).
+- A real test proving the PDF export for at least one module (Permits or MoMs) produces a real, non-empty PDF.
+- Verify by actually running:
+`npx tsc --noEmit`
+`bun test` (scoped to touched files)
+`grep -rn "constructionPermits\|constructionDrawings\|constructionDocuments" src/lib/db/schema.ts` (confirm tables were actually added, not just planned)
+
+## EXPECTED_OUTPUT
+Real PR(s) on new branch(es) in the projexa repo (or compliance-tracker for schema, matching whichever repo already owns similar construction-domain tables -- check `constructionBoqLineItems`'s location first). Requires a fresh supervisor audit before merge; do not merge yourself.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. For any capability this SCOPE section names that turns out to have no real, working implementation anywhere in the current codebase, write that finding plainly into PROGRESS.md as an open item rather than inventing a stand-in.
+
+## COMPLEXITY_TIER
+judgment

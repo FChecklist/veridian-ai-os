@@ -1,0 +1,259 @@
+id: task-20260729-210307-backend--backend-001--correct-the-opena
+title: '[backend] BACKEND-001: Correct the openai/gpt-oss-120b (Groq) entry in llm-clien'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260729-210307-backend--backend-001--correct-the-opena
+workspace: /opt/veridian/ai-os/tasks/task-20260729-210307-backend--backend-001--correct-the-opena/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260729-210307-backend--backend-001--correct-the-opena
+service: veridian-worker@task-20260729-210307-backend--backend-001--correct-the-opena.service
+created_at: '2026-07-29T21:03:09.770546+00:00'
+last_checkpoint_at: '2026-07-29T21:20:07.330133+00:00'
+completed_steps: &id002
+- Read current src/lib/llm-client.ts and confirmed the `openai/gpt-oss-120b` row and
+  its preceding comment still matched the task's INPUT description (line ~170, values
+  0.000036/0.00018, comment citing 2026-07-10 openrouter.ai cross-check).
+- 'Updated the row to `{ promptPer1k: 0.00015, completionPer1k: 0.0006 }` (Groq''s
+  $0.15/$0.60 per 1M tokens).'
+- Rewrote the preceding comment to cite groq.com/pricing, verified 2026-07-18, and
+  note it replaces the prior 2026-07-10 openrouter.ai-derived figure, which understated
+  real Groq spend ~3.3-4x.
+- Verified via `git diff` that only the `openai/gpt-oss-120b` row + its comment changed;
+  the sibling Cerebras `gpt-oss-120b` row (no `openai/` prefix, line ~179) is untouched.
+- Confirmed no other MODEL_PRICING rows or file logic (e.g. `estimateCostUsd()`) were
+  touched.
+remaining_steps: &id003
+- 'Type-check/build validation: could not run `bun run build` or any TS type-check
+  in this environment -- `bun` binary is not installed/available on PATH, and `node_modules`
+  is not present (`npx tsc` also fails without a local install). The change itself
+  is two numeric literals + a comment, with no change to object shape, so type-check
+  risk is effectively nil, but this step could not be mechanically executed here.
+  Flagging so a supervisor/CI run confirms it (CI on the PR will run the real build).'
+- Commit + push (pending, per protocol, now that the edit is verified).
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-29T21:03:13.188732+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-29T21:08:14.728605+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read current src/lib/llm-client.ts and confirmed the `openai/gpt-oss-120b` row
+    and its preceding comment still matched the task's INPUT description (line ~170,
+    values 0.000036/0.00018, comment citing 2026-07-10 openrouter.ai cross-check).
+  - 'Updated the row to `{ promptPer1k: 0.00015, completionPer1k: 0.0006 }` (Groq''s
+    $0.15/$0.60 per 1M tokens).'
+  - Rewrote the preceding comment to cite groq.com/pricing, verified 2026-07-18, and
+    note it replaces the prior 2026-07-10 openrouter.ai-derived figure, which understated
+    real Groq spend ~3.3-4x.
+  - Verified via `git diff` that only the `openai/gpt-oss-120b` row + its comment
+    changed; the sibling Cerebras `gpt-oss-120b` row (no `openai/` prefix, line ~179)
+    is untouched.
+  - Confirmed no other MODEL_PRICING rows or file logic (e.g. `estimateCostUsd()`)
+    were touched.
+  remaining_steps:
+  - 'Type-check/build validation: could not run `bun run build` or any TS type-check
+    in this environment -- `bun` binary is not installed/available on PATH, and `node_modules`
+    is not present (`npx tsc` also fails without a local install). The change itself
+    is two numeric literals + a comment, with no change to object shape, so type-check
+    risk is effectively nil, but this step could not be mechanically executed here.
+    Flagging so a supervisor/CI run confirms it (CI on the PR will run the real build).'
+  - Commit + push (pending, per protocol, now that the edit is verified).
+  recent_commits:
+  - '56af5e55 fix: correct Groq openai/gpt-oss-120b pricing in MODEL_PRICING'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  note: periodic checkpoint
+- at: '2026-07-29T21:13:37.484662+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read current src/lib/llm-client.ts and confirmed the `openai/gpt-oss-120b` row
+    and its preceding comment still matched the task's INPUT description (line ~170,
+    values 0.000036/0.00018, comment citing 2026-07-10 openrouter.ai cross-check).
+  - 'Updated the row to `{ promptPer1k: 0.00015, completionPer1k: 0.0006 }` (Groq''s
+    $0.15/$0.60 per 1M tokens).'
+  - Rewrote the preceding comment to cite groq.com/pricing, verified 2026-07-18, and
+    note it replaces the prior 2026-07-10 openrouter.ai-derived figure, which understated
+    real Groq spend ~3.3-4x.
+  - Verified via `git diff` that only the `openai/gpt-oss-120b` row + its comment
+    changed; the sibling Cerebras `gpt-oss-120b` row (no `openai/` prefix, line ~179)
+    is untouched.
+  - Confirmed no other MODEL_PRICING rows or file logic (e.g. `estimateCostUsd()`)
+    were touched.
+  remaining_steps:
+  - 'Type-check/build validation: could not run `bun run build` or any TS type-check
+    in this environment -- `bun` binary is not installed/available on PATH, and `node_modules`
+    is not present (`npx tsc` also fails without a local install). The change itself
+    is two numeric literals + a comment, with no change to object shape, so type-check
+    risk is effectively nil, but this step could not be mechanically executed here.
+    Flagging so a supervisor/CI run confirms it (CI on the PR will run the real build).'
+  - Commit + push (pending, per protocol, now that the edit is verified).
+  recent_commits:
+  - '56af5e55 fix: correct Groq openai/gpt-oss-120b pricing in MODEL_PRICING'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  note: periodic checkpoint
+- at: '2026-07-29T21:20:01.221201+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read current src/lib/llm-client.ts and confirmed the `openai/gpt-oss-120b` row
+    and its preceding comment still matched the task's INPUT description (line ~170,
+    values 0.000036/0.00018, comment citing 2026-07-10 openrouter.ai cross-check).
+  - 'Updated the row to `{ promptPer1k: 0.00015, completionPer1k: 0.0006 }` (Groq''s
+    $0.15/$0.60 per 1M tokens).'
+  - Rewrote the preceding comment to cite groq.com/pricing, verified 2026-07-18, and
+    note it replaces the prior 2026-07-10 openrouter.ai-derived figure, which understated
+    real Groq spend ~3.3-4x.
+  - Verified via `git diff` that only the `openai/gpt-oss-120b` row + its comment
+    changed; the sibling Cerebras `gpt-oss-120b` row (no `openai/` prefix, line ~179)
+    is untouched.
+  - Confirmed no other MODEL_PRICING rows or file logic (e.g. `estimateCostUsd()`)
+    were touched.
+  remaining_steps:
+  - 'Type-check/build validation: could not run `bun run build` or any TS type-check
+    in this environment -- `bun` binary is not installed/available on PATH, and `node_modules`
+    is not present (`npx tsc` also fails without a local install). The change itself
+    is two numeric literals + a comment, with no change to object shape, so type-check
+    risk is effectively nil, but this step could not be mechanically executed here.
+    Flagging so a supervisor/CI run confirms it (CI on the PR will run the real build).'
+  - Commit + push (pending, per protocol, now that the edit is verified).
+  recent_commits:
+  - '56af5e55 fix: correct Groq openai/gpt-oss-120b pricing in MODEL_PRICING'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  note: periodic checkpoint
+- at: '2026-07-29T21:20:04.729577+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read current src/lib/llm-client.ts and confirmed the `openai/gpt-oss-120b` row
+    and its preceding comment still matched the task's INPUT description (line ~170,
+    values 0.000036/0.00018, comment citing 2026-07-10 openrouter.ai cross-check).
+  - 'Updated the row to `{ promptPer1k: 0.00015, completionPer1k: 0.0006 }` (Groq''s
+    $0.15/$0.60 per 1M tokens).'
+  - Rewrote the preceding comment to cite groq.com/pricing, verified 2026-07-18, and
+    note it replaces the prior 2026-07-10 openrouter.ai-derived figure, which understated
+    real Groq spend ~3.3-4x.
+  - Verified via `git diff` that only the `openai/gpt-oss-120b` row + its comment
+    changed; the sibling Cerebras `gpt-oss-120b` row (no `openai/` prefix, line ~179)
+    is untouched.
+  - Confirmed no other MODEL_PRICING rows or file logic (e.g. `estimateCostUsd()`)
+    were touched.
+  remaining_steps:
+  - 'Type-check/build validation: could not run `bun run build` or any TS type-check
+    in this environment -- `bun` binary is not installed/available on PATH, and `node_modules`
+    is not present (`npx tsc` also fails without a local install). The change itself
+    is two numeric literals + a comment, with no change to object shape, so type-check
+    risk is effectively nil, but this step could not be mechanically executed here.
+    Flagging so a supervisor/CI run confirms it (CI on the PR will run the real build).'
+  - Commit + push (pending, per protocol, now that the edit is verified).
+  recent_commits:
+  - '56af5e55 fix: correct Groq openai/gpt-oss-120b pricing in MODEL_PRICING'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-29T21:20:07.330133+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '56af5e55 fix: correct Groq openai/gpt-oss-120b pricing in MODEL_PRICING'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 1, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+execution_seconds: 70
+restart_count: 1
+token_usage:
+  input_tokens: 32
+  cache_creation_input_tokens: 24772
+  cache_read_input_tokens: 696250
+  output_tokens: 4251
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 24772
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 307
+    cache_read_input_tokens: 48284
+    cache_creation_input_tokens: 172
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 172
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-30T04:06:42.129878+00:00'

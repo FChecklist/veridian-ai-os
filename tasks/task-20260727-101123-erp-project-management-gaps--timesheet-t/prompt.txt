@@ -1,0 +1,28 @@
+## OBJECTIVE
+Close 3 real, code-verified Project Management gaps in compliance-tracker, found by a Phase 0 investigation on 2026-07-27 (Owner directive DEEP_ERP_FUNCTIONALITY_COMPLETION_VIA_ODOO_ERPNEXT_REFERENCE). This is NOT a "build PM from scratch" task -- compliance-tracker already has an OpenProject-grade issue tracker (pms_* schema/services) plus two separate billing-capable verticals (PROJEXA construction, and a CA-firm engagement/billing module). These are narrow, real gaps confirmed by direct code inspection, not missing modules.
+
+## KNOWN_CONTEXT
+Verified real state as of 2026-07-27, do not re-derive or re-verify from scratch (spot-check only):
+- Full PM core already real: `pmsIssues`/`pmsIssueAssignees`/`pmsIssueRelations`/`pmsSprints`/`pmsMilestones`/`pmsTimeEntries`+`pmsBillableRates`/`pmsBudgets`/`pmsResourceAllocations`/`pmsScheduleBaselines` (schema.ts:3973-4454), 8 real services (pms-issue-service.ts, pms-sprint-service.ts, pms-budget-service.ts, pms-time-service.ts, pms-meeting-service.ts, pms-wiki-service.ts, pms-view-service.ts, pms-taxonomy-service.ts).
+- **Gantt/critical-path BACKEND already exists and is live**: Wave 140 (`src/lib/services/schedule-service.ts`'s `getGanttData()`), exposed via `GET /api/v1/projexa/schedule/gantt` (already uses `requireAuthOrApiKey()`, the same scoped-token pattern as the rest of the v1 API). Also live: `/api/v1/projexa/schedule/{baselines,workload,sprints}`. CONFIRM there is genuinely zero frontend consumer before building UI (grepped `GanttChart`/`gantt` across src/app and src/components as of this investigation: zero .tsx matches) -- the backend/API is done, only the UI is missing. Do NOT rebuild getGanttData() or the API route -- consume them.
+- A separate, already-working invoice-generation PATTERN exists for a DIFFERENT module: `firmEngagements`/`firmStaffAssignments`/`firmTimeEntries`/`firmBillableRates`/`firmInvoices` with `generateInvoiceFromUnbilledTime()` in `firm-billing-service.ts:81` (CA-firm engagement billing). The general PMS/construction module has the same underlying machinery (`resolveBillableRate()` in pms-time-service.ts:85) but it's only ever consumed by pms-budget-service.ts:88 for internal cost-vs-budget math -- never wired to emit a real `erp_sales_invoices` row. Model the new PMS invoice-emission function on firm-billing-service.ts's real pattern, do not invent a new invoicing approach.
+- PROJEXA has no project data of its own -- confirmed via its own AGENTS.md. Any UI you build in PROJEXA is thin-client only, calling compliance-tracker's `/api/v1/projexa/*` routes; all real logic (Gantt data computation, conflict detection, invoice generation) lives in compliance-tracker.
+
+## SCOPE
+1. **PMS timesheet -> client invoice**: build a real invoice-emission function analogous to `firm-billing-service.ts`'s `generateInvoiceFromUnbilledTime()`, but for the general PMS/construction module -- takes unbilled `pmsTimeEntries` for a project, applies `resolveBillableRate()`, emits a real `erp_sales_invoices` row (reuse the existing sales-invoice schema/service, do not invent a parallel invoice table). Add a `requireAuth()`-gated API route to trigger it.
+2. **Gantt/critical-path UI**: build the real frontend view in PROJEXA (`repos/projexa`) consuming the ALREADY-LIVE `GET /api/v1/projexa/schedule/gantt` endpoint -- a real Gantt chart component (task bars, dependencies, critical path highlighted if `getGanttData()`'s response includes that data; if it doesn't, extend `getGanttData()` in compliance-tracker minimally to include real critical-path computation, do not fake it client-side). Confirm PROJEXA has zero existing pivot/chart infra to reuse (a shadcn `chart.tsx`/Recharts wrapper exists at `src/components/ui/chart.tsx` in compliance-tracker but is imported nowhere -- check if PROJEXA has its own copy or needs one added as a dependency).
+3. **Resource-allocation conflict/over-allocation detection**: `pmsResourceAllocations` table exists but has zero conflict-detection logic (confirmed: grepped "conflict"/"overAllocat" across pms-*.ts, zero matches). Build real detection logic (an employee allocated >100% capacity across overlapping date ranges/projects) surfaced via a real API route and a warning in the resource-allocation UI/API response.
+
+## SUCCESS_CRITERIA
+- All 3 features have real service functions, `requireAuth()`-gated API routes (PMS invoice + conflict detection in compliance-tracker; Gantt UI wired to the existing endpoint in PROJEXA), and passing tests.
+- `npx tsc --noEmit` clean in both repos touched.
+- A real test proving: invoice generation produces a correct `erp_sales_invoices` row from real unbilled time entries; conflict detection correctly flags a deliberately-constructed over-allocation case and does NOT flag a legitimate non-overlapping allocation.
+
+## EXPECTED_OUTPUT
+Real PRs against compliance-tracker (invoice emission + conflict detection, possibly extending getGanttData for critical-path) and PROJEXA (Gantt UI), both through the normal task-gateway dispatch pipeline (AGENTS.md Rule 6/7(c) -- structured audit-verdict comment required before merge, no direct push to main).
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do NOT rebuild `getGanttData()`'s existing data-fetching logic or the `/api/v1/projexa/schedule/gantt` route -- only extend it if critical-path data is genuinely missing from its response, and say explicitly whether you extended it or it already had what you needed. Do NOT invent a new invoice table -- reuse the real, existing sales-invoice schema/service.
+
+## COMPLEXITY_TIER
+judgment

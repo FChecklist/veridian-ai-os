@@ -1,0 +1,75 @@
+## OBJECTIVE
+TASK REQUIRING AI JUDGMENT (not a fixed-pattern operation): Parts 38b/39/40 of
+ai-os/VERIDIAN_EXECUTION_RULES_2026-07-23.md ask for a ~77-item A-J Pre-Execution Checklist and a
+per-task Pre/Post-Execution Log (Rule | YES/NO | Evidence). Real, partial mechanisms already exist
+(session_bootstrap.py, MASTER_INDEX.yaml's self_use_task_checklist built by
+scripts/generate_task_checklist.py, veridian_self_check.py) but cover only ~11 items, not the full
+A-J/~38+19-field structure, and produce no per-task YES/NO+evidence log. Extend these existing
+mechanisms (per ai-os/STANDING_DIRECTIVE.yaml zero-duplication precheck and this same audit's own
+roadmap_next_phases.pre_execution_checklist_automation entry) so Parts 38b/39/40 of
+ai-os/EXECUTION_RULES_AUDIT_2026-07-23.yaml move from PARTIAL/MISSING toward DONE. This is the 2nd
+of a hard cap of 3 self-dispatched phases set by task-20260723-052857-execution-rules-phase0-analysis-and-buil.
+Judgment is required because deciding which of the ~38 Pre-Execution and ~19 Post-Execution log
+fields can be backed by REAL evidence this session (vs. which would be a fabricated YES) is a
+per-field factual call, not something a fixed pattern can answer.
+
+## SCOPE
+In scope: (1) extend scripts/generate_task_checklist.py (the script that already builds
+MASTER_INDEX.yaml's self_use_task_checklist) so its output structurally covers Part 39's full A-J
+sections (Recover Context / Search System Knowledge / Reuse Before Create / Understand the Task /
+Break Down the Task / Create Execution Plan / AI Decision / Verification Before Execution / Execute
+/ Post Execution), not just the current ~11-item subset. (2) Add a real per-task Pre-Execution Log /
+Post-Execution Log mechanism, YES/NO + evidence per field per Part 40's own literal field lists --
+extend superboss-register.py (new table, e.g. `execution_log`, linked to work_item_id/software_task_id,
+following the same pattern as the existing task_audits table in postflight_audit_gate.py) rather than
+inventing a parallel logging system; a field may only be logged YES if there is a real, citable piece
+of evidence from this session (a search actually run, a file actually loaded, a check-duplicate
+actually called) -- log NO (not a fabricated YES) for any field with no real evidence. (3) Wire
+session_bootstrap.py and/or postflight_audit_gate.py (whichever is the more natural single call site --
+your judgment call, cite why) to write one real execution_log row per task using the new mechanism,
+so this isn't just a schema no task ever populates. (4) Update
+ai-os/EXECUTION_RULES_AUDIT_2026-07-23.yaml's Part 38b/39/40 entries with the new real evidence
+(before/after: checklist field coverage count, and whether a real execution_log row now exists for
+at least this task itself). Out of scope, do not touch: compliance-tracker's product-layer
+Universal Metadata Registry (platform_assets); Parts 32/33-35 (roadmap already defers these to a
+separate future task, not this one).
+
+## KNOWN_CONTEXT
+This is phase 2 of the roadmap in ai-os/EXECUTION_RULES_AUDIT_2026-07-23.yaml's roadmap_next_phases
+(phase entry: pre_execution_checklist_automation). Phase 0
+(task-20260723-052857-execution-rules-phase0-analysis-and-buil, commit f71aaa9) produced the audit and
+fixed a real superboss-register.sqlite corruption incident. Phase 1
+(task-20260723-060600-execution-rules-phase1-tagging-extension, commit 8f3b587) extended
+superboss-register.py's system_index table with a tags column and tagged 29 real ops scripts (Parts
+14/15/20) -- read that commit's diff (ai-os/patches/superboss-register-tags-column-2026-07-23.diff) for
+the established pattern this phase should follow (additive ALTER TABLE / new table, not a parallel
+store; postflight_audit_gate.py verification with a real audit_cmd; before/after evidence in the audit
+yaml). Check ai-os/STANDING_DIRECTIVE.yaml precheck (zero-duplication mandatory) and run
+superboss-register.py check-duplicate before writing any new table or script.
+
+## SUCCESS_CRITERIA
+generate_task_checklist.py's output demonstrably covers all 10 of Part 39's A-J sections (not
+necessarily all 77 sub-items verbatim, but every lettered section represented with at least its real,
+currently-achievable checks -- document any sub-item that cannot be backed by a real mechanism as NO/
+not-yet-available rather than silently dropped). A real execution_log table exists in
+superboss-register.py, populated with at least one real row (this task's own), every YES field
+traceable to real evidence cited in that row's own data, every field without real evidence marked NO
+(zero fabricated YES values -- this will be spot-checked). ai-os/EXECUTION_RULES_AUDIT_2026-07-23.yaml
+Part 38b/39/40 updated with real before/after evidence. Verified via postflight_audit_gate.py, not
+self-certified.
+
+## EXPECTED_OUTPUT
+Commit and push: the generate_task_checklist.py and superboss-register.py diffs (as a patch file if the
+scripts live outside this git repo, following phase 1's ai-os/patches/ precedent), the updated
+ai-os/EXECUTION_RULES_AUDIT_2026-07-23.yaml. Checkpoint status=pending_review citing the real
+audit_id/work_item_id from postflight_audit_gate.py. Send exactly one notify-owner.py email at the end
+of this phase with real evidence (commit hash, before/after field-coverage counts, audit id). This is
+the 3rd and FINAL self-dispatched phase allowed by the original phase-0 task's cap -- do not
+self-dispatch a further phase after this one; if real follow-up work remains, document it in
+roadmap_next_phases and leave it for Owner-approved future dispatch instead.
+
+## CONSTRAINTS
+Every completion claim in the checkpoint note must cite specific file paths, commit hashes, or command output as evidence, matching this same audit's own methodology (documented in this file's own `method` field).
+
+## COMPLEXITY_TIER
+judgment

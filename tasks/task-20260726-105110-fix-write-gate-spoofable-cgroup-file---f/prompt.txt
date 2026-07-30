@@ -1,0 +1,27 @@
+## OBJECTIVE
+Fix real, live-reproduced AUDIT: REJECT findings on the current claude-control PR #80 branch (interactive-session write-gate, round 3). Round 2 reintroduced the exact same bypass class it claimed to fix, plus two new real gaps -- this round must close all three with prescriptive, verified-live fixes, not another shortcut.
+
+## KNOWN_CONTEXT
+Read ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet in full first. Real findings, each independently reproduced live by the reviewer: (1) _interactive_guard_cgroup_path() reads a path from a plain, user-writable file (~/.claude-interactive-session-guard.d/_cgroup_path) instead of hardcoding /proc/self/cgroup -- any interactive session can overwrite that file to point at a fake cgroup path and fully bypass the guard, reproduced live (a normal blocked push became unblocked after only overwriting this one file, no root needed). The snippet's own comment claiming this "cannot be spoofed the way INVOCATION_ID can" is false and must be corrected or (preferably) made true by removing the indirection. (2) `git push origin +master` (the standard force-push refspec shorthand) is not blocked because the destination-branch parser strips 'refs/heads/' but never strips a leading '+' force-push marker, so it compares against the literal string '+master' which never matches the master|main pattern -- reproduced live. (3) A multi-refspec push (`git push origin feature-branch master`) only inspects the first positional refspec argument and ignores subsequent ones, so a protected ref pushed alongside an unprotected one in the same command is never evaluated -- reproduced live.
+
+## SCOPE
+1. Remove the user-writable indirection file entirely. Read /proc/self/cgroup DIRECTLY and unconditionally in the production code path -- no config file, no runtime-readable override of the path being checked. If a test harness genuinely needs to simulate a systemd-worker context, it must do so via a mechanism that is structurally impossible to reach from a normal interactive shell -- for example, the test script itself sourcing the guard functions with a *different*, clearly-named internal function reference substituted only within the test process's own function table (bash `declare -f`/function override scoped to the test's own subshell), never via any file or env var the guard's real code path reads at runtime. If you cannot find a fully clean separation, document the residual test-only seam explicitly and narrowly, and add a runtime assertion that a real interactive shell can never trigger it (e.g. tie it to a value that would require modifying the guard script's own source, not just an external file/variable).
+2. Fix the refspec destination parser to strip a leading '+' (and any other real git force-push marker syntax) before comparing against the protected-branch pattern, so 'origin +master' is correctly recognized as targeting 'master'.
+3. Fix the parser to inspect ALL positional refspec arguments in a `git push` invocation, not only the first one -- if ANY refspec in a multi-refspec push targets a protected branch, the whole push must be blocked.
+4. Update the KNOWN LIMITATIONS section (both in the snippet's own comment block and in PROTOCOL_OWNER_AI.yaml) to be fully honest about what residual gaps remain after this round, if any -- do not repeat the round-2 mistake of claiming something is unspoofable when it has not been verified live to actually be so.
+5. Extend the regression test to reproduce all three exact live-tested scenarios above and assert each is now blocked, plus a new test proving the cgroup check cannot be redirected via any file the guard's own installed directory contains.
+
+## SUCCESS_CRITERIA
+- A live test proving: overwriting any file under ~/.claude-interactive-session-guard.d/ (or wherever the guard's config lives) has zero effect on the cgroup verification outcome.
+- `git push origin +master` (simulated in a non-systemd shell) is blocked.
+- `git push origin feature-branch master` (simulated in a non-systemd shell) is blocked because master is among the refspecs, even though it is not first.
+- `python3 -m pytest tests/ -k write_gate -v` (or the real test file this round extends) exits 0 with all three new live-reproduced scenarios passing.
+
+## EXPECTED_OUTPUT
+Push directly to the existing PR #80 branch in FChecklist/claude-control (find it via `gh pr view 80 --repo FChecklist/claude-control --json headRefName`). Do not open a new PR.
+
+## CONSTRAINTS
+Do not introduce any new user-writable file or environment variable that the production (non-test) code path reads to determine whether it is running inside a real systemd worker -- this is the exact root cause of both round 1 and round 2's failures and must not recur a third time. Do not merge yourself; this needs a fresh audit pass, and given two prior rejects on this exact file, the reviewer should be explicitly asked to attempt live reproduction of all three fixes, not review the diff alone.
+
+## COMPLEXITY_TIER
+judgment

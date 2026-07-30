@@ -1,0 +1,461 @@
+id: task-20260718-091004-checks---balances--risk--fraud---anomaly
+title: 'Checks & Balances: Risk, Fraud & Anomaly Detection'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-091004-checks---balances--risk--fraud---anomaly
+workspace: /opt/veridian/ai-os/tasks/task-20260718-091004-checks---balances--risk--fraud---anomaly/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-091004-checks---balances--risk--fraud---anomaly
+service: veridian-worker@task-20260718-091004-checks---balances--risk--fraud---anomaly.service
+created_at: '2026-07-18T09:10:05.374953+00:00'
+last_checkpoint_at: '2026-07-18T09:50:21.108772+00:00'
+completed_steps: &id002
+- 'Read governance docs (ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md, PLATFORM_STRATEGY.md
+  #29)'
+- Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`, committed + pushed standalone
+- Full codebase investigation (schema, services, routes) for all 4 findings
+- 'Schema: `risk_anomaly_events` (org-scoped, FORCE RLS) + `auth_failure_events`'
+- '`src/lib/risk-anomaly-detection.ts` -- pure Tier-1 rule functions (bulk export,'
+- '`src/lib/services/risk-escalation-service.ts` -- `recordAndEscalateAnomaly()` +'
+- '`src/lib/services/auth-failure-service.ts` + `POST /api/auth/failure-event`'
+- Fraud rule signals wired into `erp-payment-entries-service.ts::createPaymentEntry`
+- 'After-hours high-impact wiring: `erp-payment-entries-service.ts::decidePaymentEntry`'
+- 'Policy compliance verification gate in `frameworks/controls/[id]/route.ts` PATCH:'
+- 'Risk-based escalation wiring: `risk-register-service.ts::createRisk` (high'
+- 'Bulk export observability: `POST /api/compliance/export-event` + wired into'
+- '`bun test` (1440 pass, 0 fail), `tsc --noEmit` (clean), `eslint .` (0 errors),'
+remaining_steps: &id003
+- Move ACTIVE-CLAIMS.yaml entry to `recently_completed` once this PR merges
+- 'Out of scope, noted for a future pass: Google OAuth / SSO login failures still'
+- "Out of scope: `DEFAULT_PAYMENT_APPROVAL_THRESHOLD` (\u20B9100,000) is a fixed"
+- 'Out of scope: `PATCH /api/risks/[id]/linked-controls` has no UI yet -- a real'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T09:10:06.052899+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  note: worker started (resume=0)
+- at: '2026-07-18T09:15:06.391261+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  note: periodic checkpoint
+- at: '2026-07-18T09:20:06.607121+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  note: periodic checkpoint
+- at: '2026-07-18T09:25:06.808491+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/registry/asset-registry-coverage.yaml
+  - src/lib/db/schema.ts
+  - drizzle/0225_risk_anomaly_detection.sql
+  - src/lib/risk-anomaly-detection.test.ts
+  - src/lib/risk-anomaly-detection.ts
+  - src/lib/services/auth-failure-service.ts
+  - src/lib/services/risk-escalation-service.ts
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS.yaml, CONSTITUTION.yaml context, AGENTS.md,
+    CLAUDE.md)
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`, committed + pushed
+    standalone
+  - Full codebase investigation (schema, services, routes) for all 4 findings
+  - Design finalized (see claim entry in ACTIVE-CLAIMS.yaml for full scope)
+  remaining_steps:
+  - 'Schema: add `risk_anomaly_events` (org-scoped) + `auth_failure_events` (pre-auth,
+    no org) tables'
+  - Migration SQL (RLS/policies/grants matching existing conventions) + asset-registry-coverage.yaml
+    exemption entries
+  - '`src/lib/risk-anomaly-detection.ts` -- pure Tier-1 rule functions (bulk export,
+    after-hours high-impact, repeated failed auth, duplicate payment, round-number/threshold-avoidance)
+    + unit tests'
+  - '`src/lib/services/risk-escalation-service.ts` -- record + escalate to named human
+    owner (dept head / org admin fallback)'
+  - '`src/lib/services/auth-failure-service.ts` + `POST /api/auth/failure-event` route
+    + wire into `login-form.tsx` (password) and `passcode-login-service.ts`'
+  - 'Fraud rule signals wired into `erp-payment-entries-service.ts::createPaymentEntry`
+    -> auto-creates `fraud_cases` row with `detectionSource: ''system_alert''`'
+  - 'After-hours high-impact wiring: payment approval, framework control verification,
+    fraud case confirmation'
+  - Policy compliance verification gate in `frameworks/controls/[id]/route.ts` PATCH
+    (block self-attested 'verified' without linked-risk audit-finding evidence)
+  - 'Risk-based escalation wiring: high-severity risk creation, fraud case confirmed'
+  - 'Bulk export observability: `POST /api/compliance/export-event` + wire into compliance/reports
+    export buttons'
+  - Tests, typecheck, lint clean
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - '6c286153 Register active claim: Checks & Balances / Risk, Fraud & Anomaly Detection'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  note: periodic checkpoint
+- at: '2026-07-18T09:30:06.983190+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/registry/asset-registry-coverage.yaml
+  - src/app/(app)/compliance/page.tsx
+  - src/app/(app)/reports/page.tsx
+  - src/app/api/frameworks/controls/[id]/route.ts
+  - src/app/login/login-form.tsx
+  - src/lib/db/schema.ts
+  - src/lib/passcode-login-service.ts
+  - src/lib/services/erp-payment-entries-service.ts
+  - src/lib/services/fraud-case-service.ts
+  - src/lib/services/risk-register-service.ts
+  - drizzle/0225_risk_anomaly_detection.sql
+  - src/app/api/auth/failure-event/
+  - src/app/api/compliance/export-event/
+  - src/lib/risk-anomaly-detection.test.ts
+  - src/lib/risk-anomaly-detection.ts
+  - src/lib/services/auth-failure-service.ts
+  - src/lib/services/risk-escalation-service.ts
+  completed_steps:
+  - Read governance docs (ACTIVE-CLAIMS.yaml, CONSTITUTION.yaml context, AGENTS.md,
+    CLAUDE.md)
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`, committed + pushed
+    standalone
+  - Full codebase investigation (schema, services, routes) for all 4 findings
+  - Design finalized (see claim entry in ACTIVE-CLAIMS.yaml for full scope)
+  remaining_steps:
+  - 'Schema: add `risk_anomaly_events` (org-scoped) + `auth_failure_events` (pre-auth,
+    no org) tables'
+  - Migration SQL (RLS/policies/grants matching existing conventions) + asset-registry-coverage.yaml
+    exemption entries
+  - '`src/lib/risk-anomaly-detection.ts` -- pure Tier-1 rule functions (bulk export,
+    after-hours high-impact, repeated failed auth, duplicate payment, round-number/threshold-avoidance)
+    + unit tests'
+  - '`src/lib/services/risk-escalation-service.ts` -- record + escalate to named human
+    owner (dept head / org admin fallback)'
+  - '`src/lib/services/auth-failure-service.ts` + `POST /api/auth/failure-event` route
+    + wire into `login-form.tsx` (password) and `passcode-login-service.ts`'
+  - 'Fraud rule signals wired into `erp-payment-entries-service.ts::createPaymentEntry`
+    -> auto-creates `fraud_cases` row with `detectionSource: ''system_alert''`'
+  - 'After-hours high-impact wiring: payment approval, framework control verification,
+    fraud case confirmation'
+  - Policy compliance verification gate in `frameworks/controls/[id]/route.ts` PATCH
+    (block self-attested 'verified' without linked-risk audit-finding evidence)
+  - 'Risk-based escalation wiring: high-severity risk creation, fraud case confirmed'
+  - 'Bulk export observability: `POST /api/compliance/export-event` + wire into compliance/reports
+    export buttons'
+  - Tests, typecheck, lint clean
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed once merged
+  recent_commits:
+  - '6c286153 Register active claim: Checks & Balances / Risk, Fraud & Anomaly Detection'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  note: periodic checkpoint
+- at: '2026-07-18T09:35:07.221575+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/registry/asset-registry-coverage.yaml
+  - src/app/(app)/compliance/page.tsx
+  - src/app/(app)/reports/page.tsx
+  - src/app/api/frameworks/controls/[id]/route.ts
+  - src/app/login/login-form.tsx
+  - src/lib/db/schema.ts
+  - src/lib/passcode-login-service.ts
+  - src/lib/services/erp-payment-entries-service.ts
+  - src/lib/services/fraud-case-service.ts
+  - src/lib/services/risk-register-service.ts
+  - drizzle/0225_risk_anomaly_detection.sql
+  - src/app/api/auth/failure-event/
+  - src/app/api/compliance/export-event/
+  - src/lib/risk-anomaly-detection.test.ts
+  - src/lib/risk-anomaly-detection.ts
+  - src/lib/services/auth-failure-service.ts
+  - src/lib/services/risk-escalation-service.ts
+  completed_steps:
+  - 'Read governance docs (ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md, PLATFORM_STRATEGY.md
+    #29)'
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`, committed + pushed
+    standalone
+  - Full codebase investigation (schema, services, routes) for all 4 findings
+  - 'Schema: `risk_anomaly_events` (org-scoped, FORCE RLS) + `auth_failure_events`'
+  - '`src/lib/risk-anomaly-detection.ts` -- pure Tier-1 rule functions (bulk export,'
+  - '`src/lib/services/risk-escalation-service.ts` -- `recordAndEscalateAnomaly()`
+    +'
+  - '`src/lib/services/auth-failure-service.ts` + `POST /api/auth/failure-event`'
+  - Fraud rule signals wired into `erp-payment-entries-service.ts::createPaymentEntry`
+  - 'After-hours high-impact wiring: `erp-payment-entries-service.ts::decidePaymentEntry`'
+  - 'Policy compliance verification gate in `frameworks/controls/[id]/route.ts` PATCH:'
+  - 'Risk-based escalation wiring: `risk-register-service.ts::createRisk` (high'
+  - 'Bulk export observability: `POST /api/compliance/export-event` + wired into'
+  - '`bun test` (1440 pass, 0 fail), `tsc --noEmit` (clean), `eslint .` (0 errors),'
+  remaining_steps:
+  - Move ACTIVE-CLAIMS.yaml entry to `recently_completed` once this PR merges
+  - 'Out of scope, noted for a future pass: Google OAuth / SSO login failures still'
+  - "Out of scope: `DEFAULT_PAYMENT_APPROVAL_THRESHOLD` (\u20B9100,000) is a fixed"
+  recent_commits:
+  - '6c286153 Register active claim: Checks & Balances / Risk, Fraud & Anomaly Detection'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  note: periodic checkpoint
+- at: '2026-07-18T09:40:07.435082+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/registry/asset-registry-coverage.yaml
+  - src/app/(app)/compliance/page.tsx
+  - src/app/(app)/reports/page.tsx
+  - src/app/api/frameworks/controls/[id]/route.ts
+  - src/app/login/login-form.tsx
+  - src/lib/db/schema.ts
+  - src/lib/passcode-login-service.ts
+  - src/lib/services/erp-payment-entries-service.ts
+  - src/lib/services/fraud-case-service.ts
+  - src/lib/services/risk-register-service.ts
+  - drizzle/0225_risk_anomaly_detection.sql
+  - src/app/api/auth/failure-event/
+  - src/app/api/compliance/export-event/
+  - src/lib/risk-anomaly-detection.test.ts
+  - src/lib/risk-anomaly-detection.ts
+  - src/lib/services/auth-failure-service.ts
+  - src/lib/services/risk-escalation-service.ts
+  completed_steps:
+  - 'Read governance docs (ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md, PLATFORM_STRATEGY.md
+    #29)'
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`, committed + pushed
+    standalone
+  - Full codebase investigation (schema, services, routes) for all 4 findings
+  - 'Schema: `risk_anomaly_events` (org-scoped, FORCE RLS) + `auth_failure_events`'
+  - '`src/lib/risk-anomaly-detection.ts` -- pure Tier-1 rule functions (bulk export,'
+  - '`src/lib/services/risk-escalation-service.ts` -- `recordAndEscalateAnomaly()`
+    +'
+  - '`src/lib/services/auth-failure-service.ts` + `POST /api/auth/failure-event`'
+  - Fraud rule signals wired into `erp-payment-entries-service.ts::createPaymentEntry`
+  - 'After-hours high-impact wiring: `erp-payment-entries-service.ts::decidePaymentEntry`'
+  - 'Policy compliance verification gate in `frameworks/controls/[id]/route.ts` PATCH:'
+  - 'Risk-based escalation wiring: `risk-register-service.ts::createRisk` (high'
+  - 'Bulk export observability: `POST /api/compliance/export-event` + wired into'
+  - '`bun test` (1440 pass, 0 fail), `tsc --noEmit` (clean), `eslint .` (0 errors),'
+  remaining_steps:
+  - Move ACTIVE-CLAIMS.yaml entry to `recently_completed` once this PR merges
+  - 'Out of scope, noted for a future pass: Google OAuth / SSO login failures still'
+  - "Out of scope: `DEFAULT_PAYMENT_APPROVAL_THRESHOLD` (\u20B9100,000) is a fixed"
+  recent_commits:
+  - '6c286153 Register active claim: Checks & Balances / Risk, Fraud & Anomaly Detection'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  note: periodic checkpoint
+- at: '2026-07-18T09:45:07.630006+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/registry/asset-registry-coverage.yaml
+  - src/app/(app)/compliance/page.tsx
+  - src/app/(app)/reports/page.tsx
+  - src/app/api/frameworks/controls/[id]/route.ts
+  - src/app/login/login-form.tsx
+  - src/lib/db/schema.ts
+  - src/lib/passcode-login-service.ts
+  - src/lib/services/erp-payment-entries-service.ts
+  - src/lib/services/fraud-case-service.ts
+  - src/lib/services/risk-register-service.ts
+  - drizzle/0225_risk_anomaly_detection.sql
+  - src/app/api/auth/failure-event/
+  - src/app/api/compliance/export-event/
+  - src/app/api/risks/[id]/
+  - src/lib/risk-anomaly-detection.test.ts
+  - src/lib/risk-anomaly-detection.ts
+  - src/lib/services/auth-failure-service.ts
+  - src/lib/services/risk-escalation-service.ts
+  completed_steps:
+  - 'Read governance docs (ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md, PLATFORM_STRATEGY.md
+    #29)'
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`, committed + pushed
+    standalone
+  - Full codebase investigation (schema, services, routes) for all 4 findings
+  - 'Schema: `risk_anomaly_events` (org-scoped, FORCE RLS) + `auth_failure_events`'
+  - '`src/lib/risk-anomaly-detection.ts` -- pure Tier-1 rule functions (bulk export,'
+  - '`src/lib/services/risk-escalation-service.ts` -- `recordAndEscalateAnomaly()`
+    +'
+  - '`src/lib/services/auth-failure-service.ts` + `POST /api/auth/failure-event`'
+  - Fraud rule signals wired into `erp-payment-entries-service.ts::createPaymentEntry`
+  - 'After-hours high-impact wiring: `erp-payment-entries-service.ts::decidePaymentEntry`'
+  - 'Policy compliance verification gate in `frameworks/controls/[id]/route.ts` PATCH:'
+  - 'Risk-based escalation wiring: `risk-register-service.ts::createRisk` (high'
+  - 'Bulk export observability: `POST /api/compliance/export-event` + wired into'
+  - '`bun test` (1440 pass, 0 fail), `tsc --noEmit` (clean), `eslint .` (0 errors),'
+  remaining_steps:
+  - Move ACTIVE-CLAIMS.yaml entry to `recently_completed` once this PR merges
+  - 'Out of scope, noted for a future pass: Google OAuth / SSO login failures still'
+  - "Out of scope: `DEFAULT_PAYMENT_APPROVAL_THRESHOLD` (\u20B9100,000) is a fixed"
+  recent_commits:
+  - '6c286153 Register active claim: Checks & Balances / Risk, Fraud & Anomaly Detection'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  note: periodic checkpoint
+- at: '2026-07-18T09:50:07.874533+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read governance docs (ACTIVE-CLAIMS.yaml, AGENTS.md, CLAUDE.md, PLATFORM_STRATEGY.md
+    #29)'
+  - Registered active claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`, committed + pushed
+    standalone
+  - Full codebase investigation (schema, services, routes) for all 4 findings
+  - 'Schema: `risk_anomaly_events` (org-scoped, FORCE RLS) + `auth_failure_events`'
+  - '`src/lib/risk-anomaly-detection.ts` -- pure Tier-1 rule functions (bulk export,'
+  - '`src/lib/services/risk-escalation-service.ts` -- `recordAndEscalateAnomaly()`
+    +'
+  - '`src/lib/services/auth-failure-service.ts` + `POST /api/auth/failure-event`'
+  - Fraud rule signals wired into `erp-payment-entries-service.ts::createPaymentEntry`
+  - 'After-hours high-impact wiring: `erp-payment-entries-service.ts::decidePaymentEntry`'
+  - 'Policy compliance verification gate in `frameworks/controls/[id]/route.ts` PATCH:'
+  - 'Risk-based escalation wiring: `risk-register-service.ts::createRisk` (high'
+  - 'Bulk export observability: `POST /api/compliance/export-event` + wired into'
+  - '`bun test` (1440 pass, 0 fail), `tsc --noEmit` (clean), `eslint .` (0 errors),'
+  remaining_steps:
+  - Move ACTIVE-CLAIMS.yaml entry to `recently_completed` once this PR merges
+  - 'Out of scope, noted for a future pass: Google OAuth / SSO login failures still'
+  - "Out of scope: `DEFAULT_PAYMENT_APPROVAL_THRESHOLD` (\u20B9100,000) is a fixed"
+  - 'Out of scope: `PATCH /api/risks/[id]/linked-controls` has no UI yet -- a real'
+  recent_commits:
+  - f119a01b Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps
+  - '6c286153 Register active claim: Checks & Balances / Risk, Fraud & Anomaly Detection'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: periodic checkpoint
+- at: '2026-07-18T09:50:21.108772+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - f119a01b Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps
+  - '6c286153 Register active claim: Checks & Balances / Risk, Fraud & Anomaly Detection'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: worker finished, no changes to commit
+execution_seconds: 2415
+restart_count: 0
+token_usage:
+  input_tokens: 326
+  cache_creation_input_tokens: 330535
+  cache_read_input_tokens: 38835928
+  output_tokens: 119408
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 330535
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 339
+    cache_read_input_tokens: 353563
+    cache_creation_input_tokens: 510
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 510
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T10:30:03.995061+00:00'

@@ -1,0 +1,29 @@
+## OBJECTIVE
+Phase 0 of VERIDIAN 20-ENGINE/10-GATEWAY architecture (instruction INS-20260724-053123-0e5a): real inventory mapping every one of the 20 named engines to what already exists on this server/repos under a different name, plus a phased build plan for real gaps, plus the Capability Registry Engine schema (the one PART4 flags as the most important missing piece). Do not implement all 20 engines in this task -- this task's output is what later phases execute against.
+
+## SCOPE
+1. For each of the 20 engines (Intent, Context, CapabilityRegistry, Planning, Policy, Rule, Decision, Workflow, Automation, Integration, Document, Notification, Data, Metadata, Knowledge, Learning, UIComposition, Analytics, Audit, Observability), search compliance-tracker/projexa/veda-advisors src/ and /opt/veridian/scripts + ai-os/ for a real existing implementation (grep for the concept, not just the word -- e.g. Rule Engine may already exist as compliance-tracker's business-rules code under a different file name). Record: exists_as (real file/module path, or NONE), coverage (full/partial/none against the engine's stated Purpose column), gap_description.
+2. Cross-reference already-known-this-session infrastructure explicitly: Knowledge Engine (ai-os/memory/superboss-register.sqlite knowledge_engine table + query-knowledge CLI) = Engine 15. task-gateway.py's submit/start/log/close lifecycle = partial Workflow Engine (8) + Automation Engine (9). preflight-guard.py + OWNER_DECISIONS_NEEDED_2026-07-23.yaml = partial Policy Engine (5). risk-tier.py = partial Decision Engine (7). MASTER_INDEX.yaml + the new knowledge_engine multi-source rows = partial Metadata Engine (14). The VERIDIAN Auditor Engine (ai-os/AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml, a separate task already in progress) = Engine 19 (Audit) and most of Engine 20 (Observability) -- do not re-plan those two, just link to that plan file. Do not treat compliance-tracker/ai-os/engines/ENGINES.yaml or veda-advisors' copy as related -- confirmed this session to be an unrelated 2026-06-28 AI-agent-authorization config, a namespace collision only.
+3. Design and write ai-os/CAPABILITY_REGISTRY_SCHEMA_2026-07-24.yaml: the real schema for the Capability Registry Engine per PART4's fields (capability name, inputs, business_rules, workflow, automation, documents, reports, apis, ui_screens, permissions, ai_required, confidence, version, owner), plus the lookup contract task-gateway.py or any future Intent/Decision Engine would call before ever considering an AI call. Populate it with the real capabilities that already exist as software today, not a placeholder list -- derive candidates from a real grep of compliance-tracker's route/workflow definitions.
+4. Write ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml: phase-by-phase build plan for every engine/gateway found to be NONE or partial in step 1, a real dependency table (concrete mechanism per edge), and explicit note of which phase closes the Capability Registry gap for real (this task only designs its schema, a later phase wires it live). Register the plan in knowledge_engine and MASTER_INDEX.yaml (registries.engines_gateways_architecture, live file).
+
+## KNOWN_CONTEXT
+- This is the 3rd major initiative dispatched this session, after self-sustaining-system-engine (merged, PR #10) and VERIDIAN Auditor Engine (Phase 0 in progress, ai-os/AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml already exists as of this task's start -- read it, it already covers this directive's Audit/Observability engines, cross-link rather than re-plan).
+- Owner's explicit, repeated instruction this session: no duplication, most engines likely already exist under other names -- treat "engine not found by this exact name" as a signal to search harder before concluding NONE, not as license to build a parallel implementation.
+- Standing rule already established this session: any crontab change requires an entry in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml with status approved (Owner's blanket 95pct-resources/Recommended-default approval this session counts as that approval -- record it, then update ai-os/CRONTAB_APPROVED_SNAPSHOT.txt to match, do not stop to ask again).
+- Owner directive: all registry/catalog data must be produced by scripts, not hand-authored AI prose -- write a generator script for step 1's inventory table rather than typing it by hand.
+
+## SUCCESS_CRITERIA
+- A real per-engine inventory table (20 rows) exists in the phase-plan yaml with exists_as/coverage/gap_description filled from real greps, not assumptions -- spot-checkable: every exists_as path that is not NONE must actually exist on disk (verified by the task itself before writing the row).
+- CAPABILITY_REGISTRY_SCHEMA_2026-07-24.yaml exists, is valid YAML, has the PART4 field set, and is populated with at least 5 real, currently-existing VERIDIAN capabilities (not invented examples).
+- 20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml exists with a real phase breakdown and dependency table.
+- Both new files are registered in knowledge_engine with entity_relationships, and MASTER_INDEX.yaml's live copy has registries.engines_gateways_architecture.
+
+## EXPECTED_OUTPUT
+Real committed and pushed changes (a PR on claude-control), the 2 new YAML files, real knowledge_engine rows, and a final checkpoint summary listing all 20 engines with a one-word coverage verdict (full/partial/none) each.
+
+## CONSTRAINTS
+Limit this task to inventory, the Capability Registry schema design, and the phase plan; leave live wiring of gateways, the pipeline enforcement, and OSS tool installation (OPA/Camunda/n8n/Kong/etc) to the phases this task's own plan defines. Treat the Auditor Engine's existing phase plan as authoritative for Engines 19/20 rather than re-deriving it. Any crontab need follows the existing Owner-approval-citation pattern rather than a fresh chat confirmation.
+
+## COMPLEXITY_TIER
+judgment

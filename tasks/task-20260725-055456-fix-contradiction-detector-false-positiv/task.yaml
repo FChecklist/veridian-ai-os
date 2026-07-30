@@ -1,0 +1,213 @@
+id: task-20260725-055456-fix-contradiction-detector-false-positiv
+title: fix-contradiction-detector-false-positives
+status: completed
+repo: claude-control
+branch: worker/task-20260725-055456-fix-contradiction-detector-false-positiv
+workspace: /opt/veridian/ai-os/tasks/task-20260725-055456-fix-contradiction-detector-false-positiv/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260725-055456-fix-contradiction-detector-false-positiv
+service: veridian-worker@task-20260725-055456-fix-contradiction-detector-false-positiv.service
+created_at: '2026-07-25T05:54:57.343116+00:00'
+last_checkpoint_at: '2026-07-25T06:10:41.251148+00:00'
+completed_steps: &id002
+- Read scripts/tight_task_validation.py's detect_field_contradiction() in full, identified
+  root cause
+- Read scripts/auto_phase_continuation.py's dispatch()/main() handling of a rejected
+  dispatch_result
+- Confirmed via task-gateway.py cmd_start that tight_task_validation.py runs inline
+  before veridian-task.py create
+- Implement fix in detect_field_contradiction (negative-negative + qualifier-scope
+  handling)
+- Write regression tests (4 false-positive patterns + 1 true-positive) in scripts/test_tight_task_validation.py
+- 'Checked /tmp cached auto-generated prompts: both still present. phase1 passed immediately;
+  phase8 still'
+- 'Added 6th regression test for the clustering fix; both cached prompts now validate
+  cleanly (`{"valid": true}`)'
+- Re-verified all 6 tests against the TRUE original pre-fix baseline (`git show 8505a54:...`,
+  not just the
+- Committed + pushed both fix commits (214251b, 05cb166)
+- 'Added visibility improvement to auto_phase_continuation.py''s dispatch(): on a
+  tight_task_validation.py'
+- Final full test suite run (6 passed), all 3 commits pushed to
+remaining_steps: &id003
+- Open PR
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-25T05:54:59.002533+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8505a54 Backfill phase_5 self-report (status/produced_by_task/evidence) -- PR
+    #56 merged 2026-07-24 but the phase-plan entry was never updated, so auto_phase_continuation.py
+    could not detect it as done and kept re-offering it as the next phase'
+  - 'e82b6de Merge pull request #60 from FChecklist/worker/task-20260725-053025-zai-prompt-gateway-integration'
+  - 9a010ee Register prompt_gateway in MASTER_INDEX.yaml + progress checkpoint
+  - 5046780 Integrate Z.AI prompt-gateway pre-processing pipeline under scripts/prompt_gateway/
+  - 'cb7f154 Merge pull request #58 from FChecklist/worker/task-20260725-032718-wiring-engine-phase0-schema-registry'
+  - 7748357 Regenerate wiring registry after live registration (final snapshot)
+  - 530acc9 Register Wiring Engine schema/registry/phase plan in MASTER_INDEX.yaml
+  - 27a559e Wire generate_wiring_registry.py into cron (real crontab entry, 6h cadence)
+  - 'aac9a4a Wiring Engine Phase 0: phase plan + auto-continuation glob fix + mirror-aware
+    source resolution'
+  - '4bedae0 Wiring Engine Phase 0: entity-relationship schema + mechanical registry
+    generator'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-25T06:00:00.122712+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read scripts/tight_task_validation.py's detect_field_contradiction() in full,
+    identified root cause
+  - Read scripts/auto_phase_continuation.py's dispatch()/main() handling of a rejected
+    dispatch_result
+  - Confirmed via task-gateway.py cmd_start that tight_task_validation.py runs inline
+    before veridian-task.py create
+  remaining_steps:
+  - Implement fix in detect_field_contradiction (negative-negative + qualifier-scope
+    handling)
+  - Write regression tests (4 false-positive patterns + 1 true-positive) as a new
+    test file
+  - Run tests against `git stash`'d old code (must fail) and fixed code (must pass)
+  - Check /tmp cached auto-generated prompts, re-validate against fixed validator
+  - Add visibility improvement to auto_phase_continuation.py for rejected dispatches
+  - Run full test suite, commit + push, open PR
+  recent_commits:
+  - '8505a54 Backfill phase_5 self-report (status/produced_by_task/evidence) -- PR
+    #56 merged 2026-07-24 but the phase-plan entry was never updated, so auto_phase_continuation.py
+    could not detect it as done and kept re-offering it as the next phase'
+  - 'e82b6de Merge pull request #60 from FChecklist/worker/task-20260725-053025-zai-prompt-gateway-integration'
+  - 9a010ee Register prompt_gateway in MASTER_INDEX.yaml + progress checkpoint
+  - 5046780 Integrate Z.AI prompt-gateway pre-processing pipeline under scripts/prompt_gateway/
+  - 'cb7f154 Merge pull request #58 from FChecklist/worker/task-20260725-032718-wiring-engine-phase0-schema-registry'
+  - 7748357 Regenerate wiring registry after live registration (final snapshot)
+  - 530acc9 Register Wiring Engine schema/registry/phase plan in MASTER_INDEX.yaml
+  - 27a559e Wire generate_wiring_registry.py into cron (real crontab entry, 6h cadence)
+  - 'aac9a4a Wiring Engine Phase 0: phase plan + auto-continuation glob fix + mirror-aware
+    source resolution'
+  - '4bedae0 Wiring Engine Phase 0: entity-relationship schema + mechanical registry
+    generator'
+  note: periodic checkpoint
+- at: '2026-07-25T06:05:01.283306+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/tight_task_validation.py
+  completed_steps:
+  - Read scripts/tight_task_validation.py's detect_field_contradiction() in full,
+    identified root cause
+  - Read scripts/auto_phase_continuation.py's dispatch()/main() handling of a rejected
+    dispatch_result
+  - Confirmed via task-gateway.py cmd_start that tight_task_validation.py runs inline
+    before veridian-task.py create
+  - Implement fix in detect_field_contradiction (negative-negative + qualifier-scope
+    handling)
+  - Write regression tests (4 false-positive patterns + 1 true-positive) in scripts/test_tight_task_validation.py
+  - 'Confirmed via `git stash`: all 4 false-positive tests FAIL against pre-fix code,
+    PASS against fixed code;'
+  remaining_steps:
+  - Check /tmp cached auto-generated prompts, re-validate against fixed validator
+  - Add visibility improvement to auto_phase_continuation.py for rejected dispatches
+  - Run full test suite, commit + push, open PR
+  recent_commits:
+  - 214251b Fix contradiction detector's negative-negative and qualifier false positives
+  - '8505a54 Backfill phase_5 self-report (status/produced_by_task/evidence) -- PR
+    #56 merged 2026-07-24 but the phase-plan entry was never updated, so auto_phase_continuation.py
+    could not detect it as done and kept re-offering it as the next phase'
+  - 'e82b6de Merge pull request #60 from FChecklist/worker/task-20260725-053025-zai-prompt-gateway-integration'
+  - 9a010ee Register prompt_gateway in MASTER_INDEX.yaml + progress checkpoint
+  - 5046780 Integrate Z.AI prompt-gateway pre-processing pipeline under scripts/prompt_gateway/
+  - 'cb7f154 Merge pull request #58 from FChecklist/worker/task-20260725-032718-wiring-engine-phase0-schema-registry'
+  - 7748357 Regenerate wiring registry after live registration (final snapshot)
+  - 530acc9 Register Wiring Engine schema/registry/phase plan in MASTER_INDEX.yaml
+  - 27a559e Wire generate_wiring_registry.py into cron (real crontab entry, 6h cadence)
+  - 'aac9a4a Wiring Engine Phase 0: phase plan + auto-continuation glob fix + mirror-aware
+    source resolution'
+  note: periodic checkpoint
+- at: '2026-07-25T06:08:53.792650+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read scripts/tight_task_validation.py's detect_field_contradiction() in full,
+    identified root cause
+  - Read scripts/auto_phase_continuation.py's dispatch()/main() handling of a rejected
+    dispatch_result
+  - Confirmed via task-gateway.py cmd_start that tight_task_validation.py runs inline
+    before veridian-task.py create
+  - Implement fix in detect_field_contradiction (negative-negative + qualifier-scope
+    handling)
+  - Write regression tests (4 false-positive patterns + 1 true-positive) in scripts/test_tight_task_validation.py
+  - 'Checked /tmp cached auto-generated prompts: both still present. phase1 passed
+    immediately; phase8 still'
+  - 'Added 6th regression test for the clustering fix; both cached prompts now validate
+    cleanly (`{"valid": true}`)'
+  - Re-verified all 6 tests against the TRUE original pre-fix baseline (`git show
+    8505a54:...`, not just the
+  - Committed + pushed both fix commits (214251b, 05cb166)
+  - 'Added visibility improvement to auto_phase_continuation.py''s dispatch(): on
+    a tight_task_validation.py'
+  - Final full test suite run (6 passed), all 3 commits pushed to
+  remaining_steps:
+  - Open PR
+  recent_commits:
+  - 4fe214a Surface tight_task_validation.py rejections in auto_phase_continuation.py
+  - 05cb166 Require matched contradiction words to cluster locally, not just co-occur
+    anywhere
+  - 214251b Fix contradiction detector's negative-negative and qualifier false positives
+  - '8505a54 Backfill phase_5 self-report (status/produced_by_task/evidence) -- PR
+    #56 merged 2026-07-24 but the phase-plan entry was never updated, so auto_phase_continuation.py
+    could not detect it as done and kept re-offering it as the next phase'
+  - 'e82b6de Merge pull request #60 from FChecklist/worker/task-20260725-053025-zai-prompt-gateway-integration'
+  - 9a010ee Register prompt_gateway in MASTER_INDEX.yaml + progress checkpoint
+  - 5046780 Integrate Z.AI prompt-gateway pre-processing pipeline under scripts/prompt_gateway/
+  - 'cb7f154 Merge pull request #58 from FChecklist/worker/task-20260725-032718-wiring-engine-phase0-schema-registry'
+  - 7748357 Regenerate wiring registry after live registration (final snapshot)
+  - 530acc9 Register Wiring Engine schema/registry/phase plan in MASTER_INDEX.yaml
+  note: quality gates passed, pushed branch worker/task-20260725-055456-fix-contradiction-detector-false-positiv,
+    awaiting review
+- at: '2026-07-25T06:10:41.251148+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 4fe214a Surface tight_task_validation.py rejections in auto_phase_continuation.py
+  - 05cb166 Require matched contradiction words to cluster locally, not just co-occur
+    anywhere
+  - 214251b Fix contradiction detector's negative-negative and qualifier false positives
+  - '8505a54 Backfill phase_5 self-report (status/produced_by_task/evidence) -- PR
+    #56 merged 2026-07-24 but the phase-plan entry was never updated, so auto_phase_continuation.py
+    could not detect it as done and kept re-offering it as the next phase'
+  - 'e82b6de Merge pull request #60 from FChecklist/worker/task-20260725-053025-zai-prompt-gateway-integration'
+  - 9a010ee Register prompt_gateway in MASTER_INDEX.yaml + progress checkpoint
+  - 5046780 Integrate Z.AI prompt-gateway pre-processing pipeline under scripts/prompt_gateway/
+  - 'cb7f154 Merge pull request #58 from FChecklist/worker/task-20260725-032718-wiring-engine-phase0-schema-registry'
+  - 7748357 Regenerate wiring registry after live registration (final snapshot)
+  - 530acc9 Register Wiring Engine schema/registry/phase plan in MASTER_INDEX.yaml
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/63'
+execution_seconds: 834
+restart_count: 0
+token_usage:
+  input_tokens: 166
+  cache_creation_input_tokens: 131341
+  cache_read_input_tokens: 9089512
+  output_tokens: 73091
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 131341
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 510
+    cache_read_input_tokens: 154011
+    cache_creation_input_tokens: 1014
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1014
+    type: message
+  speed: standard
+master_synced_at: '2026-07-25T09:00:08.699179+00:00'

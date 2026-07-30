@@ -1,0 +1,41 @@
+## OBJECTIVE
+For at least the Capability Registry''s real, already-wired capabilities (10 live rows in scripts/superboss-register.py''s capability_registry table as of this run, 5 of which already have a populated_routes entry in ai-os/ROUTE_REGISTRY_SCHEMA_2026-07-24.yaml), trace and prove -- or build, where genuinely missing -- the actual Intent->Context->CapabilityRegistry->Planning->Policy->Rule-> Decision->Workflow->Automation->Integration->Data->Notification->Audit->Observability pipeline hitting real code, not just per-engine wiring documented in isolation. Start from the single strongest existing candidate path (per this run''s own wiring registry: route-RT-gratuity_calculator-001 already hops through 4 real engines -- UI Composition(17), Capability Registry(3), Workflow(8), Rule(6) -- more than any other route) and either (a) find real, currently-uninstrumented call sites that make the remaining 10 stages (Intent/Context/Planning/Policy/Decision/Automation/Integration/Data/Notification/Audit/ Observability) genuinely true for that one request today, with real trace/log evidence per stage, or (b) for any stage with no real call site, build the minimum real wiring so it becomes true, and update ai-os/ROUTE_REGISTRY_SCHEMA_2026-07-24.yaml''s expected_path for that route to reflect it (never mark a hop live_or_planned: live without a real, citable mechanism_path). Then re-run scripts/generate_wiring_registry.py and confirm this route''s hops_through relationships now include a gateway entity_id for at least one real G01-G10 boundary crossed -- the literal, measurable acceptance bar for '''proven''' that this plan (and this session''s prior 20-Engines phases) has not yet met for any route.
+
+## SCOPE
+- Read ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml''s gateway_inventory (10 rows, all coverage: partial) and dependency_table in full before starting -- do not re-investigate what that phase already found.
+- Pick route-RT-gratuity_calculator-001 (or a stronger candidate discovered while re-reading the live capability_registry''s now-10 rows, up from the 5 this session started with) as the one real request this phase proves end-to-end.
+- For each of the 14 named pipeline stages, either cite the real call site (file + function/line) that already executes it for this request, or build the minimal real one and cite it the same way. A stage this phase cannot make real must be reported as a named, honest gap in this phase''s own status_detail -- never marked done by assumption.
+- Re-run scripts/generate_wiring_registry.py after any change and diff the route''s own relationships against this run''s ai-os/WIRING_ENGINE_REGISTRY_2026-07-25.json baseline as the real before/after evidence.
+- Update this phase''s own status/status_detail in this file in place with what shipped and real evidence, per scripts/auto_phase_continuation.py''s own expectation.
+
+## KNOWN_CONTEXT
+This is phase_1_end_to_end_gateway_verification of ai-os/WIRING_ENGINE_PHASE_PLAN_2026-07-25.yaml, part of the VERIDIAN WIRING ENGINE -- Phased Plan (real end-to-end gateway verification + registry hardening) initiative. Read that file in
+full before starting -- this OBJECTIVE/SCOPE text is copied verbatim from its own phases[] entry for
+phase_1_end_to_end_gateway_verification, not invented here. Its depends_on phase(s) are confirmed done via real merged PR(s) for task(s):
+none (entry phase). This task was auto-dispatched by scripts/auto_phase_continuation.py per instruction
+INS-20260724-113032-8032, which exists specifically because this same initiative's phased dispatch had
+previously stalled after an earlier phase with nothing to continue it automatically -- do not stop after
+this phase either without updating the plan file per EXPECTED_OUTPUT below, so the next cron tick can find
+real next-phase work if one exists.
+
+## SUCCESS_CRITERIA
+- `python3 scripts/superboss-register.py query-knowledge "phase_1_end_to_end_gateway_verification" --tag domain:veridian-wiring-engine-phased-plan` returns at least one registered row for this phase's real deliverable once you register it (same convention this plan file's own `registration:` block or prior phases already use).
+- `grep -A3 "id: phase_1_end_to_end_gateway_verification" ai-os/WIRING_ENGINE_PHASE_PLAN_2026-07-25.yaml` shows this phase's own status updated away from its current not-done value (e.g. to `status: done`), committed as part of this task's real diff -- not hand-edited prose, produced by whatever script/process you use to close this phase out.
+
+## EXPECTED_OUTPUT
+Real, committed and pushed code (PR on claude-control) implementing this phase's scope above. Update
+ai-os/WIRING_ENGINE_PHASE_PLAN_2026-07-25.yaml's own phases[] entry for phase_1_end_to_end_gateway_verification in place (same status/status_detail or
+evidence convention the plan file's already-done phases use) to record what shipped and real evidence, so
+a future run of auto_phase_continuation.py can correctly detect this phase as done and move on to whatever
+depends on it.
+
+## CONSTRAINTS
+Stages already proven real by an earlier phase of this same plan file are out of scope here -- only touch
+the stages SCOPE identifies as currently missing for the chosen route. Search for an existing engine/mechanism
+before writing a new one, per this session's standing no-duplication rule (see WIRING_ENGINE_PHASE_PLAN_2026-07-25.yaml's
+own inventory/precedent notes if present). If closing a stage's gap ends up needing a scheduling mechanism,
+record it the same way every earlier crontab addition this session was recorded (ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml
++ ai-os/CRONTAB_APPROVED_SNAPSHOT.txt) before activating it.
+
+## COMPLEXITY_TIER
+judgment

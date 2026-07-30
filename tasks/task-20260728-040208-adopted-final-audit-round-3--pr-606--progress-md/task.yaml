@@ -1,0 +1,77 @@
+id: task-20260728-040208-adopted-final-audit-round-3--pr-606--progress-md
+title: 'Final audit round 3: PR 606 (PROGRESS.md properly reconstructed)'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260727-153104-re-audit-reporting-module-end-user-for-1
+workspace: /opt/veridian/ai-os/tasks/task-20260728-040208-adopted-final-audit-round-3--pr-606--progress-md/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-040208-adopted-final-audit-round-3--pr-606--progress-md
+service: veridian-supervisor@task-20260728-040208-adopted-final-audit-round-3--pr-606--progress-md.service
+created_at: '2026-07-28T04:02:09.317370+00:00'
+last_checkpoint_at: '2026-07-28T04:05:45.155830+00:00'
+completed_steps: &id002
+- Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml (committed/pushed separately,
+  per Rule 11)
+- 'Verified compliance-tracker: csvEscape()/rowsToCSV() present + correct (src/lib/report-export-shared.ts),
+  grepped all call sites (exactly 1: v1 reports run route)'
+- 'Found real GAP: unescaped CSV export bypass in src/app/(app)/reports/page.tsx exportCSV()
+  (pre-existing, not touched by PR #601)'
+- 'Verified compliance-tracker tenant isolation: route-level test is real but mocks
+  the DB; codebase-wide, no real DB-level (RLS) cross-org pen test exists anywhere,
+  despite it being named the task''s own top priority'
+- Ran `bun test src/lib/report-export-shared.test.ts` (7 pass) and `npx tsc --noEmit`
+  (clean) in compliance-tracker
+- 'Quoted real AUDIT: PASS for PR #601 via `gh pr view 601`'
+- 'Verified projexa PR #51: real pivot/chart components, wired into both entry points,
+  unit tests pass (9/9), tsc clean (via disposable git worktree against origin/main)'
+- 'Found real GAP: pivot/chart E2E test has never actually executed (self-disclosed
+  production login-routing bug in the PR''s own tech-decision doc, still unresolved,
+  no CI E2E job either)'
+- 'Quoted real AUDIT: PASS for PR #51 via `gh pr view 51`'
+- Wrote findings to ai-os/audits/reporting_module_reaudit_2026-07-27.md
+- Committed, pushed, opened PR containing the report
+- None -- task complete
+- 'Fresh supervisor audit of PR #607, then merge (not by this session).'
+remaining_steps: &id003
+- This task's migration (drizzle/0265_*.sql) has NOT been applied to any live Supabase
+- Because the migration is unapplied, `get_advisors(security)` has NOT been run
+- 'Open PR -- PR #596, `worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown`'
+- This corrective push needs a fresh supervisor audit (the original audit's FAIL verdict
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T04:02:09.317370+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'worker/task-20260727-153104-re-audit-reporting-module-end-user-for-1'
+    (https://github.com/FChecklist/compliance-tracker/pull/606) -- registered for
+    real audit, not a fresh worker dispatch
+- at: '2026-07-28T04:05:45.155830+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '6a3e1360 merge: resolve with latest main (keep-both, clean reconstruction now)'
+  - '88345186 fix: reconstruct PROGRESS.md correctly -- restore real main history
+    + this task own section only, discard prior bad keep-both merges'
+  - '4edfc273 Merge pull request #607 from FChecklist/worker/task-20260727-182023-fix-veri-erp-product-chain-bug--shows-pr'
+  - '5614a9d1 merge: resolve conflicts with current main (keep-both, append-only)'
+  - '78689161 merge: resolve conflicts with current main (keep-both, append-only)'
+  - 'f32c4006 fix: bump terminology-guardrail exemption count for capability-tree-service
+    dated comments'
+  - '64a68087 Merge pull request #608 from FChecklist/feat/boq-line-items-in-v1-list'
+  - 'a06916bc merge: resolve PROGRESS.md conflict with main, keep both (append-only
+    log convention)'
+  - '214d3a7d merge: resolve PROGRESS.md conflict with main'
+  - 2ecc89ab Merge remote-tracking branch 'origin/main' into feat/boq-line-items-in-v1-list
+  note: "Superboss rejected: https://github.com/FChecklist/compliance-tracker/pull/606\
+    \ \u2014 see review.json for issues"
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/compliance-tracker/pull/606
+master_synced_at: '2026-07-29T21:04:26.344198+00:00'

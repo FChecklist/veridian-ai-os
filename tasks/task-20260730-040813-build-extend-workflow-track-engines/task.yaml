@@ -1,0 +1,406 @@
+id: task-20260730-040813-build-extend-workflow-track-engines
+title: Build/extend workflow-track engines
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260730-040813-build-extend-workflow-track-engines
+workspace: /opt/veridian/ai-os/tasks/task-20260730-040813-build-extend-workflow-track-engines/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260730-040813-build-extend-workflow-track-engines
+service: veridian-worker@task-20260730-040813-build-extend-workflow-track-engines.service
+created_at: '2026-07-30T04:08:14.822844+00:00'
+last_checkpoint_at: '2026-07-30T04:40:04.882124+00:00'
+completed_steps: &id002
+- Read ai-os/boss/ACTIVE-CLAIMS.yaml + AGENTS.md/CONSTITUTION.yaml governance chain
+- 'Located the real PHASE-2-CROSSREF (sap_reports table, `/opt/veridian/ai-os/memory/sap_mapping.sqlite`,
+  not a markdown file -- same fact a prior session already discovered on 2026-07-29).
+  Queried directly: `engine_track=''workflow'' AND veridian_mapping_status IN (''BUILD_NEW'',''EXTEND_EXISTING'')`
+  = exactly 2 rows, SD-002 "Billing Due List" and SD-007 "Sales Order -- Status Overview".
+  Unchanged from yesterday.'
+- 'Found via `git log --all` / `git for-each-ref`: this is a duplicate dispatch of
+  the identical task title. Session task-20260729-112447 (a day earlier) already built
+  both engines in full (`construction-billing-workflow-service.ts`, `constructionProgressClaims`
+  table + status enum, 7 API routes) and opened PR #629 -- but PR #629 was stuck with
+  3 failing CI checks, not incomplete engine logic.'
+- 'Verified PR #629''s actual diff (`gh pr diff 629 --name-only`) and read the full
+  service file + all 7 routes directly -- confirmed the state machine (CLAIM_TRANSITIONS),
+  the SD-002/SD-007 read functions, and requireAuth()+requireRole("manager") gating
+  on the state-advancing routes are all real and correct. Did not rebuild what already
+  exists.'
+- 'Fixed PR #629''s 3 failing checks directly on its branch (`worker/task-20260729-112447-build-extend-workflow-track-engines`,
+  commit 2bbdd87a), pushed to origin:'
+- 'Local verification before pushing: `check-terminology-guardrail.mjs`, `check-asset-registry-coverage.mjs`,
+  `check-guardrail-presence.mjs`, `check-metadata-index-coverage.mjs`, `check-migration-collision.mjs`
+  all pass; `bun test` on construction-billing-workflow-service.test.ts + construction-valuation-service.test.ts
+  (25/25 pass); `tsc --noEmit` clean; `eslint` on all touched files clean'
+- 'Registered a claim entry in this workspace''s own `ai-os/boss/ACTIVE-CLAIMS.yaml`
+  (and on PR #629''s branch) documenting the collision and that this session''s contribution
+  is landing the already-complete work, not new engine code'
+remaining_steps: &id003
+- 'Watch PR #629''s CI re-run to confirm all checks now go green (monitoring in background)'
+- 'No new engine code needed from this session -- the workflow-track scope (2/2 rows)
+  is fully covered by PR #629 once it merges'
+- 'Once green, PR #629 is ready to merge (no separate PR needed from this task/branch)'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-30T04:08:16.636688+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-30T04:13:18.207077+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: periodic checkpoint
+- at: '2026-07-30T04:18:19.492482+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: periodic checkpoint
+- at: '2026-07-30T04:23:20.904703+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml + AGENTS.md/CONSTITUTION.yaml governance chain
+  - 'Located the real PHASE-2-CROSSREF (sap_reports table, `/opt/veridian/ai-os/memory/sap_mapping.sqlite`,
+    not a markdown file -- same fact a prior session already discovered on 2026-07-29).
+    Queried directly: `engine_track=''workflow'' AND veridian_mapping_status IN (''BUILD_NEW'',''EXTEND_EXISTING'')`
+    = exactly 2 rows, SD-002 "Billing Due List" and SD-007 "Sales Order -- Status
+    Overview". Unchanged from yesterday.'
+  - 'Found via `git log --all` / `git for-each-ref`: this is a duplicate dispatch
+    of the identical task title. Session task-20260729-112447 (a day earlier) already
+    built both engines in full (`construction-billing-workflow-service.ts`, `constructionProgressClaims`
+    table + status enum, 7 API routes) and opened PR #629 -- but PR #629 was stuck
+    with 3 failing CI checks, not incomplete engine logic.'
+  - 'Verified PR #629''s actual diff (`gh pr diff 629 --name-only`) and read the full
+    service file + all 7 routes directly -- confirmed the state machine (CLAIM_TRANSITIONS),
+    the SD-002/SD-007 read functions, and requireAuth()+requireRole("manager") gating
+    on the state-advancing routes are all real and correct. Did not rebuild what already
+    exists.'
+  - 'Fixed PR #629''s 3 failing checks directly on its branch (`worker/task-20260729-112447-build-extend-workflow-track-engines`,
+    commit 2bbdd87a), pushed to origin:'
+  - 'Local verification before pushing: `check-terminology-guardrail.mjs`, `check-asset-registry-coverage.mjs`,
+    `check-guardrail-presence.mjs`, `check-metadata-index-coverage.mjs`, `check-migration-collision.mjs`
+    all pass; `bun test` on construction-billing-workflow-service.test.ts + construction-valuation-service.test.ts
+    (25/25 pass); `tsc --noEmit` clean; `eslint` on all touched files clean'
+  - 'Registered a claim entry in this workspace''s own `ai-os/boss/ACTIVE-CLAIMS.yaml`
+    (and on PR #629''s branch) documenting the collision and that this session''s
+    contribution is landing the already-complete work, not new engine code'
+  remaining_steps:
+  - 'Watch PR #629''s CI re-run to confirm all checks now go green (monitoring in
+    background)'
+  - 'No new engine code needed from this session -- the workflow-track scope (2/2
+    rows) is fully covered by PR #629 once it merges'
+  - 'Once green, PR #629 is ready to merge (no separate PR needed from this task/branch)'
+  recent_commits:
+  - '1c9a9eb7 PROGRESS + ACTIVE-CLAIMS: land PR #629 instead of duplicating the workflow-track
+    build'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  note: periodic checkpoint
+- at: '2026-07-30T04:28:22.512426+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml + AGENTS.md/CONSTITUTION.yaml governance chain
+  - 'Located the real PHASE-2-CROSSREF (sap_reports table, `/opt/veridian/ai-os/memory/sap_mapping.sqlite`,
+    not a markdown file -- same fact a prior session already discovered on 2026-07-29).
+    Queried directly: `engine_track=''workflow'' AND veridian_mapping_status IN (''BUILD_NEW'',''EXTEND_EXISTING'')`
+    = exactly 2 rows, SD-002 "Billing Due List" and SD-007 "Sales Order -- Status
+    Overview". Unchanged from yesterday.'
+  - 'Found via `git log --all` / `git for-each-ref`: this is a duplicate dispatch
+    of the identical task title. Session task-20260729-112447 (a day earlier) already
+    built both engines in full (`construction-billing-workflow-service.ts`, `constructionProgressClaims`
+    table + status enum, 7 API routes) and opened PR #629 -- but PR #629 was stuck
+    with 3 failing CI checks, not incomplete engine logic.'
+  - 'Verified PR #629''s actual diff (`gh pr diff 629 --name-only`) and read the full
+    service file + all 7 routes directly -- confirmed the state machine (CLAIM_TRANSITIONS),
+    the SD-002/SD-007 read functions, and requireAuth()+requireRole("manager") gating
+    on the state-advancing routes are all real and correct. Did not rebuild what already
+    exists.'
+  - 'Fixed PR #629''s 3 failing checks directly on its branch (`worker/task-20260729-112447-build-extend-workflow-track-engines`,
+    commit 2bbdd87a), pushed to origin:'
+  - 'Local verification before pushing: `check-terminology-guardrail.mjs`, `check-asset-registry-coverage.mjs`,
+    `check-guardrail-presence.mjs`, `check-metadata-index-coverage.mjs`, `check-migration-collision.mjs`
+    all pass; `bun test` on construction-billing-workflow-service.test.ts + construction-valuation-service.test.ts
+    (25/25 pass); `tsc --noEmit` clean; `eslint` on all touched files clean'
+  - 'Registered a claim entry in this workspace''s own `ai-os/boss/ACTIVE-CLAIMS.yaml`
+    (and on PR #629''s branch) documenting the collision and that this session''s
+    contribution is landing the already-complete work, not new engine code'
+  remaining_steps:
+  - 'Watch PR #629''s CI re-run to confirm all checks now go green (monitoring in
+    background)'
+  - 'No new engine code needed from this session -- the workflow-track scope (2/2
+    rows) is fully covered by PR #629 once it merges'
+  - 'Once green, PR #629 is ready to merge (no separate PR needed from this task/branch)'
+  recent_commits:
+  - '1c9a9eb7 PROGRESS + ACTIVE-CLAIMS: land PR #629 instead of duplicating the workflow-track
+    build'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  note: periodic checkpoint
+- at: '2026-07-30T04:33:26.324232+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml + AGENTS.md/CONSTITUTION.yaml governance chain
+  - 'Located the real PHASE-2-CROSSREF (sap_reports table, `/opt/veridian/ai-os/memory/sap_mapping.sqlite`,
+    not a markdown file -- same fact a prior session already discovered on 2026-07-29).
+    Queried directly: `engine_track=''workflow'' AND veridian_mapping_status IN (''BUILD_NEW'',''EXTEND_EXISTING'')`
+    = exactly 2 rows, SD-002 "Billing Due List" and SD-007 "Sales Order -- Status
+    Overview". Unchanged from yesterday.'
+  - 'Found via `git log --all` / `git for-each-ref`: this is a duplicate dispatch
+    of the identical task title. Session task-20260729-112447 (a day earlier) already
+    built both engines in full (`construction-billing-workflow-service.ts`, `constructionProgressClaims`
+    table + status enum, 7 API routes) and opened PR #629 -- but PR #629 was stuck
+    with 3 failing CI checks, not incomplete engine logic.'
+  - 'Verified PR #629''s actual diff (`gh pr diff 629 --name-only`) and read the full
+    service file + all 7 routes directly -- confirmed the state machine (CLAIM_TRANSITIONS),
+    the SD-002/SD-007 read functions, and requireAuth()+requireRole("manager") gating
+    on the state-advancing routes are all real and correct. Did not rebuild what already
+    exists.'
+  - 'Fixed PR #629''s 3 failing checks directly on its branch (`worker/task-20260729-112447-build-extend-workflow-track-engines`,
+    commit 2bbdd87a), pushed to origin:'
+  - 'Local verification before pushing: `check-terminology-guardrail.mjs`, `check-asset-registry-coverage.mjs`,
+    `check-guardrail-presence.mjs`, `check-metadata-index-coverage.mjs`, `check-migration-collision.mjs`
+    all pass; `bun test` on construction-billing-workflow-service.test.ts + construction-valuation-service.test.ts
+    (25/25 pass); `tsc --noEmit` clean; `eslint` on all touched files clean'
+  - 'Registered a claim entry in this workspace''s own `ai-os/boss/ACTIVE-CLAIMS.yaml`
+    (and on PR #629''s branch) documenting the collision and that this session''s
+    contribution is landing the already-complete work, not new engine code'
+  remaining_steps:
+  - 'Watch PR #629''s CI re-run to confirm all checks now go green (monitoring in
+    background)'
+  - 'No new engine code needed from this session -- the workflow-track scope (2/2
+    rows) is fully covered by PR #629 once it merges'
+  - 'Once green, PR #629 is ready to merge (no separate PR needed from this task/branch)'
+  recent_commits:
+  - '1c9a9eb7 PROGRESS + ACTIVE-CLAIMS: land PR #629 instead of duplicating the workflow-track
+    build'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  note: periodic checkpoint
+- at: '2026-07-30T04:39:55.940841+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml + AGENTS.md/CONSTITUTION.yaml governance chain
+  - 'Located the real PHASE-2-CROSSREF (sap_reports table, `/opt/veridian/ai-os/memory/sap_mapping.sqlite`,
+    not a markdown file -- same fact a prior session already discovered on 2026-07-29).
+    Queried directly: `engine_track=''workflow'' AND veridian_mapping_status IN (''BUILD_NEW'',''EXTEND_EXISTING'')`
+    = exactly 2 rows, SD-002 "Billing Due List" and SD-007 "Sales Order -- Status
+    Overview". Unchanged from yesterday.'
+  - 'Found via `git log --all` / `git for-each-ref`: this is a duplicate dispatch
+    of the identical task title. Session task-20260729-112447 (a day earlier) already
+    built both engines in full (`construction-billing-workflow-service.ts`, `constructionProgressClaims`
+    table + status enum, 7 API routes) and opened PR #629 -- but PR #629 was stuck
+    with 3 failing CI checks, not incomplete engine logic.'
+  - 'Verified PR #629''s actual diff (`gh pr diff 629 --name-only`) and read the full
+    service file + all 7 routes directly -- confirmed the state machine (CLAIM_TRANSITIONS),
+    the SD-002/SD-007 read functions, and requireAuth()+requireRole("manager") gating
+    on the state-advancing routes are all real and correct. Did not rebuild what already
+    exists.'
+  - 'Fixed PR #629''s 3 failing checks directly on its branch (`worker/task-20260729-112447-build-extend-workflow-track-engines`,
+    commit 2bbdd87a), pushed to origin:'
+  - 'Local verification before pushing: `check-terminology-guardrail.mjs`, `check-asset-registry-coverage.mjs`,
+    `check-guardrail-presence.mjs`, `check-metadata-index-coverage.mjs`, `check-migration-collision.mjs`
+    all pass; `bun test` on construction-billing-workflow-service.test.ts + construction-valuation-service.test.ts
+    (25/25 pass); `tsc --noEmit` clean; `eslint` on all touched files clean'
+  - 'Registered a claim entry in this workspace''s own `ai-os/boss/ACTIVE-CLAIMS.yaml`
+    (and on PR #629''s branch) documenting the collision and that this session''s
+    contribution is landing the already-complete work, not new engine code'
+  remaining_steps:
+  - 'Watch PR #629''s CI re-run to confirm all checks now go green (monitoring in
+    background)'
+  - 'No new engine code needed from this session -- the workflow-track scope (2/2
+    rows) is fully covered by PR #629 once it merges'
+  - 'Once green, PR #629 is ready to merge (no separate PR needed from this task/branch)'
+  recent_commits:
+  - '1c9a9eb7 PROGRESS + ACTIVE-CLAIMS: land PR #629 instead of duplicating the workflow-track
+    build'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  note: periodic checkpoint
+- at: '2026-07-30T04:39:56.851066+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml + AGENTS.md/CONSTITUTION.yaml governance chain
+  - 'Located the real PHASE-2-CROSSREF (sap_reports table, `/opt/veridian/ai-os/memory/sap_mapping.sqlite`,
+    not a markdown file -- same fact a prior session already discovered on 2026-07-29).
+    Queried directly: `engine_track=''workflow'' AND veridian_mapping_status IN (''BUILD_NEW'',''EXTEND_EXISTING'')`
+    = exactly 2 rows, SD-002 "Billing Due List" and SD-007 "Sales Order -- Status
+    Overview". Unchanged from yesterday.'
+  - 'Found via `git log --all` / `git for-each-ref`: this is a duplicate dispatch
+    of the identical task title. Session task-20260729-112447 (a day earlier) already
+    built both engines in full (`construction-billing-workflow-service.ts`, `constructionProgressClaims`
+    table + status enum, 7 API routes) and opened PR #629 -- but PR #629 was stuck
+    with 3 failing CI checks, not incomplete engine logic.'
+  - 'Verified PR #629''s actual diff (`gh pr diff 629 --name-only`) and read the full
+    service file + all 7 routes directly -- confirmed the state machine (CLAIM_TRANSITIONS),
+    the SD-002/SD-007 read functions, and requireAuth()+requireRole("manager") gating
+    on the state-advancing routes are all real and correct. Did not rebuild what already
+    exists.'
+  - 'Fixed PR #629''s 3 failing checks directly on its branch (`worker/task-20260729-112447-build-extend-workflow-track-engines`,
+    commit 2bbdd87a), pushed to origin:'
+  - 'Local verification before pushing: `check-terminology-guardrail.mjs`, `check-asset-registry-coverage.mjs`,
+    `check-guardrail-presence.mjs`, `check-metadata-index-coverage.mjs`, `check-migration-collision.mjs`
+    all pass; `bun test` on construction-billing-workflow-service.test.ts + construction-valuation-service.test.ts
+    (25/25 pass); `tsc --noEmit` clean; `eslint` on all touched files clean'
+  - 'Registered a claim entry in this workspace''s own `ai-os/boss/ACTIVE-CLAIMS.yaml`
+    (and on PR #629''s branch) documenting the collision and that this session''s
+    contribution is landing the already-complete work, not new engine code'
+  remaining_steps:
+  - 'Watch PR #629''s CI re-run to confirm all checks now go green (monitoring in
+    background)'
+  - 'No new engine code needed from this session -- the workflow-track scope (2/2
+    rows) is fully covered by PR #629 once it merges'
+  - 'Once green, PR #629 is ready to merge (no separate PR needed from this task/branch)'
+  recent_commits:
+  - '1c9a9eb7 PROGRESS + ACTIVE-CLAIMS: land PR #629 instead of duplicating the workflow-track
+    build'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-30T04:40:04.882124+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '1c9a9eb7 PROGRESS + ACTIVE-CLAIMS: land PR #629 instead of duplicating the workflow-track
+    build'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 1, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+execution_seconds: 956
+restart_count: 1
+token_usage:
+  input_tokens: 244
+  cache_creation_input_tokens: 156299
+  cache_read_input_tokens: 14055896
+  output_tokens: 43170
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 156299
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 34
+    cache_read_input_tokens: 179341
+    cache_creation_input_tokens: 642
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 642
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-30T05:05:26.162581+00:00'

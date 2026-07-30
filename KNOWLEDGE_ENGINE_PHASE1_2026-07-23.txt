@@ -1,0 +1,35 @@
+## OBJECTIVE
+TASK REQUIRING AI JUDGMENT: build the real `knowledge_engine` table per ai-os/KNOWLEDGE_ENGINE_SCHEMA_DESIGN_2026-07-23.yaml (Phase 0, task-20260723-173441, real design already reviewed -- read that file's full create_statement, do not redesign). Populate it with real pointer rows for every artifact in ai-os/KNOWLEDGE_ENGINE_INVENTORY_2026-07-23.yaml. Deciding the real entity_relationships edges (which artifact governs/derives-from/audits which other artifact) requires reading actual content, not just filenames.
+
+## SCOPE
+STEP_1: add `knowledge_engine` table to scripts/superboss-register.py's init_db() (CREATE TABLE IF NOT EXISTS, exact create_statement from the Phase 0 design file), plus FTS5 virtual table + AFTER INSERT trigger following the exact same pattern as instructions_fts/system_index_fts (read scripts/superboss-register.py's existing pattern, copy it, do not invent a new one).
+
+STEP_2: add CLI subcommands to scripts/superboss-register.py: `register-knowledge --path <str> --artifact-type <canonical|derived> --tags <str> --relationships <json_list_of_{path,relationship_type}>` and `query-knowledge "<search>" --tag <optional>`.
+
+STEP_3: populate real rows for every artifact listed in ai-os/KNOWLEDGE_ENGINE_INVENTORY_2026-07-23.yaml's step_1 inventory (read that file, do not re-derive the list), using the real canonical/derived classification and real entity-relationship edges already established in that same file's STEP_2 section -- this phase POPULATES using Phase 0's real findings, does not re-investigate them.
+
+STEP_4: wire `task-gateway.py submit` to ALSO call `query-knowledge` (not just check-duplicate/search) so every future task submission is matched against the Knowledge Engine as the Owner specified ("any Task that comes... also the rules and regulations and knowledge in Knowledge Engine to be matched"). Add the query-knowledge result to submit's existing JSON output under a new key `knowledge_matches`.
+
+## KNOWN_CONTEXT
+zero_duplication_check_performed: true, this phase builds exactly what Phase 0 designed, cite ai-os/KNOWLEDGE_ENGINE_SCHEMA_DESIGN_2026-07-23.yaml directly, do not redesign
+inventory_source: ai-os/KNOWLEDGE_ENGINE_INVENTORY_2026-07-23.yaml (Phase 0 output, real, already committed)
+db_concurrency_constraint: sequential writes only to superboss-register.sqlite -- this phase does a real bulk-insert (10-20+ rows), check no other active veridian-worker@ task before running it (systemctl --user list-units veridian-worker@* --state=active)
+task_gateway_location: scripts/task-gateway.py (live, built 2026-07-23) -- extend its submit function, do not fork a second entrypoint
+
+## SUCCESS_CRITERIA
+`python3 scripts/superboss-register.py query-knowledge "constitution"` returns real rows citing real artifact_paths, run this exact command and cite real output
+`python3 scripts/task-gateway.py submit --text "test knowledge engine wiring" --source ai_agent --session-id ke-test` output JSON includes a non-null `knowledge_matches` key, cite real output
+row count in knowledge_engine table equals the real artifact count from Phase 0's inventory (cite both numbers, they must match or the discrepancy must be explained)
+
+## EXPECTED_OUTPUT
+COMMIT+PUSH: scripts/superboss-register.py diff (table + 2 subcommands), scripts/task-gateway.py diff (submit wiring)
+UPDATE_FILE: ai-os/STANDING_DIRECTIVE.yaml -- add v2_knowledge_engine key: {table: knowledge_engine, status: LIVE, row_count: <real>, query_command: <exact syntax>, wired_into_gateway: true}
+CHECKPOINT: task-gateway.py close --task-id <own-id> --audit-cmd "python3 scripts/superboss-register.py query-knowledge constitution" --evidence <real row citation>
+NEXT_PHASE: this is a standalone infrastructure build -- do not self-dispatch further Knowledge Engine phases automatically; instead write ai-os/KNOWLEDGE_ENGINE_PHASE2_CANDIDATES_2026-07-23.yaml listing real remaining work (e.g. auto-update-on-task-completion wiring, PROJEXA/THE-FIRM brand knowledge once real files exist) for Owner-directed dispatch
+
+## CONSTRAINTS
+This phase populates from Phase 0's real findings, it does not re-investigate which artifacts exist or their relationships
+EVIDENCE_REQUIRED: every SUCCESS_CRITERIA test shows real command output
+
+## COMPLEXITY_TIER
+judgment

@@ -1,0 +1,31 @@
+## OBJECTIVE
+Build PROJEXA's pivot-table/chart/graph reporting UI, per Owner directive CRITICAL_ERP_REPORTING_MODULE_WITH_AI_API_INTEGRATION's phase_2_projexa_thin_client_wiring. A Phase 0 investigation on 2026-07-27 confirmed this is genuinely new work -- PROJEXA has no pivot/chart infrastructure today, only a generic read-only table/key-value JSON renderer.
+
+## KNOWN_CONTEXT
+Verified real state as of 2026-07-27, do not re-derive:
+- PROJEXA's current reports UI: `src/app/(app)/reports/page.tsx` -> `src/components/ReportsClient.tsx` -> `src/components/ReportOutput.tsx` (63 lines) -- a generic adaptive renderer (array -> HTML table, object -> key/value grid, recursing into nested fields). No grouping, no pivot, no charting.
+- compliance-tracker has a shadcn/Recharts chart wrapper at `src/components/ui/chart.tsx` (353 lines) but it is imported NOWHERE in the app (confirmed via grep across src/) -- it's dead scaffolding, not proven infrastructure. Check whether it's a real, working component worth adopting (read it, it may just need a real consumer) or whether it should be treated as unverified/possibly-stale.
+- Grepped for `*pivot*` filenames across compliance-tracker's src/ tree: zero matches anywhere in the codebase (neither repo has pivot infrastructure).
+- **STRICT_THIN_CLIENT_EXTENSION rule**: PROJEXA must contain ONLY UI rendering (charts, pivot tables, menus) -- zero aggregation logic, zero direct DB queries. All data comes from compliance-tracker's report API.
+- **Depends on a sibling task**: this task consumes the new `/api/v1/reports/...` endpoint being built in parallel (compliance-tracker side, task covering "reporting_api_gateway" scope). If that endpoint is not yet merged/available when you start, build against the EXISTING `/api/reports/definitions/[id]/run` route (session-auth only, already real and working today) as an interim data source, and note in your PR that it should be repointed at the new `/api/v1/reports/...` endpoint once that lands -- do not block on the other task, do not duplicate its work by building your own report-execution API.
+
+## SCOPE
+1. Build a real pivot-table component: drag-and-drop or dropdown-configured row/column/value field selection, group-by + aggregate (sum/avg/count) over report_definitions execution results (JSON array in, pivoted table out). Client-side pivoting is fine (the data volume from a single report execution is bounded) -- do not build server-side pivot logic in PROJEXA (that would violate STRICT_THIN_CLIENT_EXTENSION; if a report's result set is too large for client-side pivoting, that's a signal to request server-side pre-aggregation from the report API, not to add DB logic to PROJEXA).
+2. Build real chart/graph components (bar, line, pie at minimum) rendering report_definitions execution results. Evaluate whether compliance-tracker's existing `src/components/ui/chart.tsx` (Recharts wrapper) is real and adoptable, or whether it needs fixes/replacement -- state your finding and justify the choice, same rigor as prior tech-decision docs this initiative has produced (e.g. `ai-os/BROWSER_LITE_LLM_TECH_DECISION_2026-07-27.md` as a structure template).
+3. Wire both into PROJEXA's existing Reports page (`src/app/(app)/reports/page.tsx` / `ReportsClient.tsx`), as new view modes alongside (not replacing) the existing table/key-value renderer -- a user should be able to switch between raw table, pivot, and chart views of the same report result.
+4. Dynamic filters: real UI controls (date range, category dropdowns derived from the report's own parameter schema if `report_definitions` rows carry one -- check) that re-trigger the report API call with new params, not client-side-only filtering of a static result set.
+
+## SUCCESS_CRITERIA
+- A real, working pivot table and at least 2 chart types render correctly against at least 3 real report_definitions from different domains (e.g. one Sales, one Project/Construction, one Interior Design) as manual/E2E-tested proof, not just unit-tested against mock data.
+- `npx tsc --noEmit` clean, `bun test` passing.
+- Zero DB queries or aggregation logic added to PROJEXA's own codebase -- confirm via a real grep/review that all data flows through the report API, not direct Supabase/Drizzle calls.
+- A Playwright E2E test (PROJEXA has real E2E infra per its own `e2e/` dir) covering the pivot + chart view switch on at least one real report.
+
+## EXPECTED_OUTPUT
+A real PR against PROJEXA through the normal task-gateway dispatch pipeline (check PROJEXA's own AGENTS.md for its equivalent of compliance-tracker's Rule 6/7(c) -- structured audit-verdict comment required before merge, no direct push to main).
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do NOT add any aggregation/pivot logic server-side in PROJEXA -- pivoting happens client-side against a report's already-executed JSON result. Do NOT duplicate the reporting_api_gateway task's work by building a parallel report-execution endpoint inside PROJEXA -- consume compliance-tracker's existing API (interim: `/api/reports/definitions/[id]/run`; final: the new `/api/v1/reports/...` once it lands).
+
+## COMPLEXITY_TIER
+judgment

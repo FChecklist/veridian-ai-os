@@ -1,0 +1,599 @@
+id: task-20260719-052950-real-fix--pr-417-ajv-promptfoo-dependenc
+title: 'Real fix: PR 417 ajv/promptfoo dependency conflict'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260719-052950-real-fix--pr-417-ajv-promptfoo-dependenc
+workspace: /opt/veridian/ai-os/tasks/task-20260719-052950-real-fix--pr-417-ajv-promptfoo-dependenc/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260719-052950-real-fix--pr-417-ajv-promptfoo-dependenc
+service: veridian-worker@task-20260719-052950-real-fix--pr-417-ajv-promptfoo-dependenc.service
+created_at: '2026-07-19T05:29:51.730448+00:00'
+last_checkpoint_at: '2026-07-19T06:27:49.469493+00:00'
+completed_steps: &id002
+- 'Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no other active claim on PR #417 or this
+  file'
+- 'PR #417''s real head branch was already checked out in another task''s worktree'
+- The prior rescue session's work was already pushed to the PR (merge + migration
+- Re-verified the drizzle migration situation (task step 6) from scratch rather than
+- '**Root-caused the ajv conflict for real** (not just re-describing it). Root cause:'
+- That fix alone was NOT sufficient -- `bunx promptfoo --version` (via a real, fully
+- 'Given that, reverted the `ajv` override removal (restored `"ajv": "6.14.0"` exactly
+  as'
+- '**Real, isolated verification** (not just "should work"): `npm install -g'
+- 'Updated `.github/workflows/ai-prompt-evals.yml`: removed the `oven-sh/setup-bun`
+  +'
+- '`bunx tsc --noEmit` -- clean, 0 errors.'
+- '`bun run lint` -- 0 errors, same 3 pre-existing warnings (litigation route, data-table'
+- '`bun test` -- **1757 pass, 0 fail**, 3465 expect() calls across 141 files. Console
+  noise'
+- '`bun run build` -- clean production build, all routes compiled.'
+- 'All 6 local governance/guardrail scripts pass: `check-asset-registry-coverage.mjs`'
+remaining_steps: &id003
+- 'Push the merged + fixed branch to PR #417'
+- 'Post structured `AUDIT: PASS` PR comment (8 required fields)'
+- Wait for CI via `gh run watch --exit-status`, including the now-fixed "Promptfoo
+  Evals"
+- Classify TIER (no schema/migration touch remains in this PR's own diff vs main --
+  only
+- Report final status with real command-output evidence
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-19T05:29:52.719696+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  note: worker started (resume=0)
+- at: '2026-07-19T05:34:53.206263+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no conflicting active claim found for this
+    PR's file scope)
+  - '`gh pr checkout 417` (real head branch already held by another task''s worktree
+    -- fetched'
+  - '`git fetch origin main && git merge origin/main --no-edit`'
+  - 'Resolved conflicts: `PROGRESS.md` (kept PR''s own via `--ours`), `ai-os/CONSTITUTION.yaml`'
+  - 'Found and fixed a real migration number collision: this PR''s own'
+  - '`bunx tsc --noEmit` clean, `bun run lint` 0 errors (3 pre-existing warnings,
+    unchanged),'
+  - Ran all 6 governance/guardrail check scripts locally -- all pass (88/88 guardrail
+    markers,
+  - 'Investigated originally-failing "Promptfoo Evals" CI check: `Error: Cannot find
+    module'
+  - Pushed merged branch to `worker/task-20260718-051002-ai-architecture--domain-accuracy---quali`
+  remaining_steps:
+  - Read full PR diff, post structured AUDIT PASS/FAIL comment
+  - Wait for required CI checks green
+  - Classify TIER (this PR touches drizzle/0225 migration + schema.ts -- TIER2 --
+    do NOT merge)
+  - Report final status
+  recent_commits:
+  - 7423f4bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  note: periodic checkpoint
+- at: '2026-07-19T05:39:53.554193+00:00'
+  status: in_progress
+  files_modified:
+  - bun.lock
+  - package.json
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no conflicting active claim found for this
+    PR's file scope)
+  - '`gh pr checkout 417` (real head branch already held by another task''s worktree
+    -- fetched'
+  - '`git fetch origin main && git merge origin/main --no-edit`'
+  - 'Resolved conflicts: `PROGRESS.md` (kept PR''s own via `--ours`), `ai-os/CONSTITUTION.yaml`'
+  - 'Found and fixed a real migration number collision: this PR''s own'
+  - '`bunx tsc --noEmit` clean, `bun run lint` 0 errors (3 pre-existing warnings,
+    unchanged),'
+  - Ran all 6 governance/guardrail check scripts locally -- all pass (88/88 guardrail
+    markers,
+  - 'Investigated originally-failing "Promptfoo Evals" CI check: `Error: Cannot find
+    module'
+  - Pushed merged branch to `worker/task-20260718-051002-ai-architecture--domain-accuracy---quali`
+  remaining_steps:
+  - Read full PR diff, post structured AUDIT PASS/FAIL comment
+  - Wait for required CI checks green
+  - Classify TIER (this PR touches drizzle/0225 migration + schema.ts -- TIER2 --
+    do NOT merge)
+  - Report final status
+  recent_commits:
+  - 7423f4bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  note: periodic checkpoint
+- at: '2026-07-19T05:44:53.922581+00:00'
+  status: in_progress
+  files_modified:
+  - bun.lock
+  - package.json
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no conflicting active claim found for this
+    PR's file scope)
+  - '`gh pr checkout 417` (real head branch already held by another task''s worktree
+    -- fetched'
+  - '`git fetch origin main && git merge origin/main --no-edit`'
+  - 'Resolved conflicts: `PROGRESS.md` (kept PR''s own via `--ours`), `ai-os/CONSTITUTION.yaml`'
+  - 'Found and fixed a real migration number collision: this PR''s own'
+  - '`bunx tsc --noEmit` clean, `bun run lint` 0 errors (3 pre-existing warnings,
+    unchanged),'
+  - Ran all 6 governance/guardrail check scripts locally -- all pass (88/88 guardrail
+    markers,
+  - 'Investigated originally-failing "Promptfoo Evals" CI check: `Error: Cannot find
+    module'
+  - Pushed merged branch to `worker/task-20260718-051002-ai-architecture--domain-accuracy---quali`
+  remaining_steps:
+  - Read full PR diff, post structured AUDIT PASS/FAIL comment
+  - Wait for required CI checks green
+  - Classify TIER (this PR touches drizzle/0225 migration + schema.ts -- TIER2 --
+    do NOT merge)
+  - Report final status
+  recent_commits:
+  - 7423f4bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  note: periodic checkpoint
+- at: '2026-07-19T05:49:54.569262+00:00'
+  status: in_progress
+  files_modified:
+  - bun.lock
+  - package.json
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no conflicting active claim found for this
+    PR's file scope)
+  - '`gh pr checkout 417` (real head branch already held by another task''s worktree
+    -- fetched'
+  - '`git fetch origin main && git merge origin/main --no-edit`'
+  - 'Resolved conflicts: `PROGRESS.md` (kept PR''s own via `--ours`), `ai-os/CONSTITUTION.yaml`'
+  - 'Found and fixed a real migration number collision: this PR''s own'
+  - '`bunx tsc --noEmit` clean, `bun run lint` 0 errors (3 pre-existing warnings,
+    unchanged),'
+  - Ran all 6 governance/guardrail check scripts locally -- all pass (88/88 guardrail
+    markers,
+  - 'Investigated originally-failing "Promptfoo Evals" CI check: `Error: Cannot find
+    module'
+  - Pushed merged branch to `worker/task-20260718-051002-ai-architecture--domain-accuracy---quali`
+  remaining_steps:
+  - Read full PR diff, post structured AUDIT PASS/FAIL comment
+  - Wait for required CI checks green
+  - Classify TIER (this PR touches drizzle/0225 migration + schema.ts -- TIER2 --
+    do NOT merge)
+  - Report final status
+  recent_commits:
+  - 7423f4bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  note: periodic checkpoint
+- at: '2026-07-19T05:54:54.913867+00:00'
+  status: in_progress
+  files_modified:
+  - bun.lock
+  - package.json
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no conflicting active claim found for this
+    PR's file scope)
+  - '`gh pr checkout 417` (real head branch already held by another task''s worktree
+    -- fetched'
+  - '`git fetch origin main && git merge origin/main --no-edit`'
+  - 'Resolved conflicts: `PROGRESS.md` (kept PR''s own via `--ours`), `ai-os/CONSTITUTION.yaml`'
+  - 'Found and fixed a real migration number collision: this PR''s own'
+  - '`bunx tsc --noEmit` clean, `bun run lint` 0 errors (3 pre-existing warnings,
+    unchanged),'
+  - Ran all 6 governance/guardrail check scripts locally -- all pass (88/88 guardrail
+    markers,
+  - 'Investigated originally-failing "Promptfoo Evals" CI check: `Error: Cannot find
+    module'
+  - Pushed merged branch to `worker/task-20260718-051002-ai-architecture--domain-accuracy---quali`
+  remaining_steps:
+  - Read full PR diff, post structured AUDIT PASS/FAIL comment
+  - Wait for required CI checks green
+  - Classify TIER (this PR touches drizzle/0225 migration + schema.ts -- TIER2 --
+    do NOT merge)
+  - Report final status
+  recent_commits:
+  - 7423f4bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  note: periodic checkpoint
+- at: '2026-07-19T05:59:55.296875+00:00'
+  status: in_progress
+  files_modified:
+  - bun.lock
+  - package.json
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no conflicting active claim found for this
+    PR's file scope)
+  - '`gh pr checkout 417` (real head branch already held by another task''s worktree
+    -- fetched'
+  - '`git fetch origin main && git merge origin/main --no-edit`'
+  - 'Resolved conflicts: `PROGRESS.md` (kept PR''s own via `--ours`), `ai-os/CONSTITUTION.yaml`'
+  - 'Found and fixed a real migration number collision: this PR''s own'
+  - '`bunx tsc --noEmit` clean, `bun run lint` 0 errors (3 pre-existing warnings,
+    unchanged),'
+  - Ran all 6 governance/guardrail check scripts locally -- all pass (88/88 guardrail
+    markers,
+  - 'Investigated originally-failing "Promptfoo Evals" CI check: `Error: Cannot find
+    module'
+  - Pushed merged branch to `worker/task-20260718-051002-ai-architecture--domain-accuracy---quali`
+  remaining_steps:
+  - Read full PR diff, post structured AUDIT PASS/FAIL comment
+  - Wait for required CI checks green
+  - Classify TIER (this PR touches drizzle/0225 migration + schema.ts -- TIER2 --
+    do NOT merge)
+  - Report final status
+  recent_commits:
+  - 7423f4bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  note: periodic checkpoint
+- at: '2026-07-19T06:04:55.672742+00:00'
+  status: in_progress
+  files_modified:
+  - .github/workflows/ai-prompt-evals.yml
+  - bun.lock
+  - package.json
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml (no conflicting active claim found for this
+    PR's file scope)
+  - '`gh pr checkout 417` (real head branch already held by another task''s worktree
+    -- fetched'
+  - '`git fetch origin main && git merge origin/main --no-edit`'
+  - 'Resolved conflicts: `PROGRESS.md` (kept PR''s own via `--ours`), `ai-os/CONSTITUTION.yaml`'
+  - 'Found and fixed a real migration number collision: this PR''s own'
+  - '`bunx tsc --noEmit` clean, `bun run lint` 0 errors (3 pre-existing warnings,
+    unchanged),'
+  - Ran all 6 governance/guardrail check scripts locally -- all pass (88/88 guardrail
+    markers,
+  - 'Investigated originally-failing "Promptfoo Evals" CI check: `Error: Cannot find
+    module'
+  - Pushed merged branch to `worker/task-20260718-051002-ai-architecture--domain-accuracy---quali`
+  remaining_steps:
+  - Read full PR diff, post structured AUDIT PASS/FAIL comment
+  - Wait for required CI checks green
+  - Classify TIER (this PR touches drizzle/0225 migration + schema.ts -- TIER2 --
+    do NOT merge)
+  - Report final status
+  recent_commits:
+  - 7423f4bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  note: periodic checkpoint
+- at: '2026-07-19T06:09:56.021635+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no other active claim on PR #417 or this
+    file'
+  - 'PR #417''s real head branch was already checked out in another task''s worktree'
+  - The prior rescue session's work was already pushed to the PR (merge + migration
+  - Re-verified the drizzle migration situation (task step 6) from scratch rather
+    than
+  - '**Root-caused the ajv conflict for real** (not just re-describing it). Root cause:'
+  - That fix alone was NOT sufficient -- `bunx promptfoo --version` (via a real, fully
+  - 'Given that, reverted the `ajv` override removal (restored `"ajv": "6.14.0"` exactly
+    as'
+  - '**Real, isolated verification** (not just "should work"): `npm install -g'
+  - 'Updated `.github/workflows/ai-prompt-evals.yml`: removed the `oven-sh/setup-bun`
+    +'
+  - '`bunx tsc --noEmit` -- clean, 0 errors.'
+  - '`bun run lint` -- 0 errors, same 3 pre-existing warnings (litigation route, data-table'
+  - '`bun test` -- **1757 pass, 0 fail**, 3465 expect() calls across 141 files. Console
+    noise'
+  - '`bun run build` -- clean production build, all routes compiled.'
+  - 'All 6 local governance/guardrail scripts pass: `check-asset-registry-coverage.mjs`'
+  remaining_steps:
+  - 'Push the merged + fixed branch to PR #417'
+  - 'Post structured `AUDIT: PASS` PR comment (8 required fields)'
+  - Wait for CI via `gh run watch --exit-status`, including the now-fixed "Promptfoo
+    Evals"
+  - Classify TIER (no schema/migration touch remains in this PR's own diff vs main
+    -- only
+  - Report final status with real command-output evidence
+  recent_commits:
+  - de91f9bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - '0c3d5d7e Real root-cause fix for ajv/promptfoo conflict: isolate promptfoo from
+    the app''s bun tree'
+  - 815cee95 Add AI Orchestra Hierarchy documentation (4 domains x L0-L5) (#476)
+  - 'a19e4c3c AI Router: registry-backed model resolution (2 gaps + new model + new
+    scope) (#475)'
+  - 7423f4bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  note: periodic checkpoint
+- at: '2026-07-19T06:14:56.415826+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no other active claim on PR #417 or this
+    file'
+  - 'PR #417''s real head branch was already checked out in another task''s worktree'
+  - The prior rescue session's work was already pushed to the PR (merge + migration
+  - Re-verified the drizzle migration situation (task step 6) from scratch rather
+    than
+  - '**Root-caused the ajv conflict for real** (not just re-describing it). Root cause:'
+  - That fix alone was NOT sufficient -- `bunx promptfoo --version` (via a real, fully
+  - 'Given that, reverted the `ajv` override removal (restored `"ajv": "6.14.0"` exactly
+    as'
+  - '**Real, isolated verification** (not just "should work"): `npm install -g'
+  - 'Updated `.github/workflows/ai-prompt-evals.yml`: removed the `oven-sh/setup-bun`
+    +'
+  - '`bunx tsc --noEmit` -- clean, 0 errors.'
+  - '`bun run lint` -- 0 errors, same 3 pre-existing warnings (litigation route, data-table'
+  - '`bun test` -- **1757 pass, 0 fail**, 3465 expect() calls across 141 files. Console
+    noise'
+  - '`bun run build` -- clean production build, all routes compiled.'
+  - 'All 6 local governance/guardrail scripts pass: `check-asset-registry-coverage.mjs`'
+  remaining_steps:
+  - 'Push the merged + fixed branch to PR #417'
+  - 'Post structured `AUDIT: PASS` PR comment (8 required fields)'
+  - Wait for CI via `gh run watch --exit-status`, including the now-fixed "Promptfoo
+    Evals"
+  - Classify TIER (no schema/migration touch remains in this PR's own diff vs main
+    -- only
+  - Report final status with real command-output evidence
+  recent_commits:
+  - de91f9bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - '0c3d5d7e Real root-cause fix for ajv/promptfoo conflict: isolate promptfoo from
+    the app''s bun tree'
+  - 815cee95 Add AI Orchestra Hierarchy documentation (4 domains x L0-L5) (#476)
+  - 'a19e4c3c AI Router: registry-backed model resolution (2 gaps + new model + new
+    scope) (#475)'
+  - 7423f4bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  note: periodic checkpoint
+- at: '2026-07-19T06:19:56.804727+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no other active claim on PR #417 or this
+    file'
+  - 'PR #417''s real head branch was already checked out in another task''s worktree'
+  - The prior rescue session's work was already pushed to the PR (merge + migration
+  - Re-verified the drizzle migration situation (task step 6) from scratch rather
+    than
+  - '**Root-caused the ajv conflict for real** (not just re-describing it). Root cause:'
+  - That fix alone was NOT sufficient -- `bunx promptfoo --version` (via a real, fully
+  - 'Given that, reverted the `ajv` override removal (restored `"ajv": "6.14.0"` exactly
+    as'
+  - '**Real, isolated verification** (not just "should work"): `npm install -g'
+  - 'Updated `.github/workflows/ai-prompt-evals.yml`: removed the `oven-sh/setup-bun`
+    +'
+  - '`bunx tsc --noEmit` -- clean, 0 errors.'
+  - '`bun run lint` -- 0 errors, same 3 pre-existing warnings (litigation route, data-table'
+  - '`bun test` -- **1757 pass, 0 fail**, 3465 expect() calls across 141 files. Console
+    noise'
+  - '`bun run build` -- clean production build, all routes compiled.'
+  - 'All 6 local governance/guardrail scripts pass: `check-asset-registry-coverage.mjs`'
+  remaining_steps:
+  - 'Push the merged + fixed branch to PR #417'
+  - 'Post structured `AUDIT: PASS` PR comment (8 required fields)'
+  - Wait for CI via `gh run watch --exit-status`, including the now-fixed "Promptfoo
+    Evals"
+  - Classify TIER (no schema/migration touch remains in this PR's own diff vs main
+    -- only
+  - Report final status with real command-output evidence
+  recent_commits:
+  - de91f9bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - '0c3d5d7e Real root-cause fix for ajv/promptfoo conflict: isolate promptfoo from
+    the app''s bun tree'
+  - 815cee95 Add AI Orchestra Hierarchy documentation (4 domains x L0-L5) (#476)
+  - 'a19e4c3c AI Router: registry-backed model resolution (2 gaps + new model + new
+    scope) (#475)'
+  - 7423f4bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  note: periodic checkpoint
+- at: '2026-07-19T06:24:57.549091+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read `ai-os/boss/ACTIVE-CLAIMS.yaml` -- no other active claim on PR #417 or this
+    file'
+  - 'PR #417''s real head branch was already checked out in another task''s worktree'
+  - The prior rescue session's work was already pushed to the PR (merge + migration
+  - Re-verified the drizzle migration situation (task step 6) from scratch rather
+    than
+  - '**Root-caused the ajv conflict for real** (not just re-describing it). Root cause:'
+  - That fix alone was NOT sufficient -- `bunx promptfoo --version` (via a real, fully
+  - 'Given that, reverted the `ajv` override removal (restored `"ajv": "6.14.0"` exactly
+    as'
+  - '**Real, isolated verification** (not just "should work"): `npm install -g'
+  - 'Updated `.github/workflows/ai-prompt-evals.yml`: removed the `oven-sh/setup-bun`
+    +'
+  - '`bunx tsc --noEmit` -- clean, 0 errors.'
+  - '`bun run lint` -- 0 errors, same 3 pre-existing warnings (litigation route, data-table'
+  - '`bun test` -- **1757 pass, 0 fail**, 3465 expect() calls across 141 files. Console
+    noise'
+  - '`bun run build` -- clean production build, all routes compiled.'
+  - 'All 6 local governance/guardrail scripts pass: `check-asset-registry-coverage.mjs`'
+  remaining_steps:
+  - 'Push the merged + fixed branch to PR #417'
+  - 'Post structured `AUDIT: PASS` PR comment (8 required fields)'
+  - Wait for CI via `gh run watch --exit-status`, including the now-fixed "Promptfoo
+    Evals"
+  - Classify TIER (no schema/migration touch remains in this PR's own diff vs main
+    -- only
+  - Report final status with real command-output evidence
+  recent_commits:
+  - de91f9bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - '0c3d5d7e Real root-cause fix for ajv/promptfoo conflict: isolate promptfoo from
+    the app''s bun tree'
+  - 815cee95 Add AI Orchestra Hierarchy documentation (4 domains x L0-L5) (#476)
+  - 'a19e4c3c AI Router: registry-backed model resolution (2 gaps + new model + new
+    scope) (#475)'
+  - 7423f4bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  note: periodic checkpoint
+- at: '2026-07-19T06:27:49.469493+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - de91f9bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - '0c3d5d7e Real root-cause fix for ajv/promptfoo conflict: isolate promptfoo from
+    the app''s bun tree'
+  - 815cee95 Add AI Orchestra Hierarchy documentation (4 domains x L0-L5) (#476)
+  - 'a19e4c3c AI Router: registry-backed model resolution (2 gaps + new model + new
+    scope) (#475)'
+  - 7423f4bb Merge remote-tracking branch 'origin/main' into pr417-fix
+  - a386e808 Move projexa veridian-ui-kit migration claim to recently_completed (#474)
+  - '1ff39e7c Claim: migrate projexa to consume veridian-ui-kit shell components (#473)'
+  - e0ff1134 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+    (#471)
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  note: worker finished, no changes to commit
+execution_seconds: 3477
+restart_count: 0
+token_usage:
+  input_tokens: 412
+  cache_creation_input_tokens: 241361
+  cache_read_input_tokens: 31524411
+  output_tokens: 106495
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 241361
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 170
+    cache_read_input_tokens: 264538
+    cache_creation_input_tokens: 361
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 361
+    type: message
+  speed: standard
+master_synced_at: '2026-07-19T06:30:05.336441+00:00'

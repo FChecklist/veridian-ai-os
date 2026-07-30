@@ -1,0 +1,303 @@
+id: task-20260718-092002-checks---balances--separation-of-duties
+title: 'Checks & Balances: Separation of Duties & Approval Controls'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-092002-checks---balances--separation-of-duties
+workspace: /opt/veridian/ai-os/tasks/task-20260718-092002-checks---balances--separation-of-duties/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-092002-checks---balances--separation-of-duties
+service: veridian-worker@task-20260718-092002-checks---balances--separation-of-duties.service
+created_at: '2026-07-18T09:20:03.487586+00:00'
+last_checkpoint_at: '2026-07-18T09:41:16.113815+00:00'
+completed_steps: &id002
+- 'Read the shared Approval Workflow Engine (`approval-workflow-service.ts`) first:
+  it already has a real, tested `isSelfApproval()` hard check (added in a prior wave,
+  commit `52bc3aa7`) -- the finding''s premise that "only role-based gating" exists
+  there is now out of date. Not re-adding it there, reused it everywhere below instead.'
+- Audited every other approve/reject/decide call site in the codebase (via a dedicated
+  research pass across ~30 candidate files/routes) for a hard requester-vs-approver
+  equality check, not just role-rank.
+- 'Fixed real, confirmed gaps (role-rank check only, no self-check before this PR):'
+- 'Confirmed already-fixed, left untouched: `erp-payment-entries-service.ts:canDecidePaymentEntry`
+  (explicit `isSelfApproval` check) and `construction-kpi-service.ts:approveKpiEntry`
+  (explicit inline check).'
+- '`bun test` (full suite): 1428 pass / 0 fail. `bunx tsc --noEmit`: clean. `bunx
+  eslint` on every changed file: clean.'
+- 'Read `high-impact-action-detector.ts` (9 categories: delete/archive/payment/approval/rejection/compliance_submission/access_changes/data_export/configuration_changes)
+  and every existing consumer (AI Team dispatch risk classification, task/chat confirmation
+  gate) before changing anything.'
+- 'Cross-wired the same detector into `approval-workflow-service.ts`: a step whose
+  `entityType`/`name` text matches one of the 9 categories now gets `requiredApprovals`
+  **floored at 2** (not just defaulted) -- enforced at `createWorkflowDefinition`
+  (so new definitions are correct from the start) AND again at `startApprovalWorkflow`''s
+  step-instance creation (so a stored definition from before this change, or edited
+  directly, still gets the floor at the real gating chokepoint -- no data migration
+  needed, the floor is live-enforced where it actually matters).'
+- Extended `delete`'s trigger phrases with "dispose"/"disposal" (additive) so fixed-asset
+  disposal -- a real permanent removal, just not literally named "delete" -- is correctly
+  caught; this benefits every existing consumer of the detector, not just this PR.
+- 'New pure, exported, directly-testable functions: `detectCriticalActionCategory()`,
+  `enforceFourEyesFloor()`. 7 new unit tests added to `approval-workflow-service.test.ts`.'
+- 'Confirmed no aggregate view existed: `GET /api/approval-workflows` already returns
+  every workflow definition + steps across all entity types when `entityType` is omitted
+  (this was already true), but nothing in the UI rendered that holistically -- the
+  only admin-facing "who approves what" view was the unrelated, manually-entered `src/app/(app)/doa`
+  (Delegation of Authority) table.'
+- Annotated `listWorkflowDefinitions()`'s response with each step's inferred `highImpactCategory`
+  and `fourEyesSatisfied` flag (derived from the same four-eyes cross-wire above),
+  so the matrix view can show, at a glance, any step that names a critical action
+  but doesn't yet meet the four-eyes floor (e.g. a definition created before this
+  PR).
+- New `ApprovalMatrixSection` component (`src/components/home/ApprovalMatrixSection.tsx`),
+  added to the existing `/approvals` page alongside `ApprovalTab` and `WorkflowApprovalsSection`
+  -- one table, every entity type's workflow steps, approver role, required approvals,
+  four-eyes badge, and critical-category badge.
+- Audited `entity_relationships` real usage before assuming the finding's premise
+  was still accurate. Every `relationshipType` value actually written today (`triggers_approval`,
+  `depends_on`, `owned_by`, `sourced_from`, `supersedes`, `executed_by`) is a system/asset/chain
+  graph edge -- **zero personal or vendor relationship edges exist**.
+- Checked for any other pre-existing COI mechanism (`related_party_transactions` table)
+  -- confirmed it's a manually-entered board/audit-committee disclosure log, not a
+  queryable approver-vs-requester relationship check, and not applicable here.
+- 'Conclusion: the finding''s own recommended approach ("scope a COI-flagging feature
+  once entity_relationships has real relationship data to query") is still exactly
+  the right call as of this session -- there is no real relationship data to query
+  yet, so building a detector now would be a feature that can never actually fire.
+  Not building it. When a future wave adds real personal/vendor `entity_relationships`
+  edges (e.g. `reports_to`, `related_to`, `vendor_contact_of`), the natural next step
+  is a `checkConflictOfInterest(orgId, requesterId, approverId)` query against those
+  edges, callable from the same approval decision paths this PR just hardened with
+  `isSelfApproval()` checks.'
+remaining_steps: &id003
+- None for this task's 4 findings. COI detection (finding 4) is intentionally deferred
+  per its own recommended approach -- see note above, not a TODO for this PR.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T09:20:04.148762+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  note: worker started (resume=0)
+- at: '2026-07-18T09:25:04.512477+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  note: periodic checkpoint
+- at: '2026-07-18T09:30:04.703609+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  - '9318fcad Worker task-20260717-194819-fx-live-rate-feed: automated checkpoint
+    commit'
+  note: periodic checkpoint
+- at: '2026-07-18T09:35:04.919213+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/api/approvals/[id]/route.ts
+  - src/lib/services/access-review-service.ts
+  - src/lib/services/construction-boq-service.ts
+  - src/lib/services/construction-field-workflow-service.ts
+  - src/lib/services/erp-contract-service.ts
+  - src/lib/services/erp-returns-service.ts
+  - src/lib/services/erp-selling-service.ts
+  - src/lib/services/hr-service.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '4b1253f8 Register active claim: Checks & Balances / Separation of Duties task'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  note: periodic checkpoint
+- at: '2026-07-18T09:40:05.097973+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/app/(app)/approvals/page.tsx
+  - src/app/api/approvals/[id]/route.ts
+  - src/lib/high-impact-action-detector.ts
+  - src/lib/services/access-review-service.ts
+  - src/lib/services/approval-workflow-service.test.ts
+  - src/lib/services/approval-workflow-service.ts
+  - src/lib/services/construction-boq-service.ts
+  - src/lib/services/construction-field-workflow-service.ts
+  - src/lib/services/erp-contract-service.ts
+  - src/lib/services/erp-returns-service.ts
+  - src/lib/services/erp-selling-service.ts
+  - src/lib/services/hr-service.ts
+  - src/components/home/ApprovalMatrixSection.tsx
+  completed_steps:
+  - 'Read the shared Approval Workflow Engine (`approval-workflow-service.ts`) first:
+    it already has a real, tested `isSelfApproval()` hard check (added in a prior
+    wave, commit `52bc3aa7`) -- the finding''s premise that "only role-based gating"
+    exists there is now out of date. Not re-adding it there, reused it everywhere
+    below instead.'
+  - Audited every other approve/reject/decide call site in the codebase (via a dedicated
+    research pass across ~30 candidate files/routes) for a hard requester-vs-approver
+    equality check, not just role-rank.
+  - 'Fixed real, confirmed gaps (role-rank check only, no self-check before this PR):'
+  - 'Confirmed already-fixed, left untouched: `erp-payment-entries-service.ts:canDecidePaymentEntry`
+    (explicit `isSelfApproval` check) and `construction-kpi-service.ts:approveKpiEntry`
+    (explicit inline check).'
+  - '`bun test` (full suite): 1428 pass / 0 fail. `bunx tsc --noEmit`: clean. `bunx
+    eslint` on every changed file: clean.'
+  - 'Read `high-impact-action-detector.ts` (9 categories: delete/archive/payment/approval/rejection/compliance_submission/access_changes/data_export/configuration_changes)
+    and every existing consumer (AI Team dispatch risk classification, task/chat confirmation
+    gate) before changing anything.'
+  - 'Cross-wired the same detector into `approval-workflow-service.ts`: a step whose
+    `entityType`/`name` text matches one of the 9 categories now gets `requiredApprovals`
+    **floored at 2** (not just defaulted) -- enforced at `createWorkflowDefinition`
+    (so new definitions are correct from the start) AND again at `startApprovalWorkflow`''s
+    step-instance creation (so a stored definition from before this change, or edited
+    directly, still gets the floor at the real gating chokepoint -- no data migration
+    needed, the floor is live-enforced where it actually matters).'
+  - Extended `delete`'s trigger phrases with "dispose"/"disposal" (additive) so fixed-asset
+    disposal -- a real permanent removal, just not literally named "delete" -- is
+    correctly caught; this benefits every existing consumer of the detector, not just
+    this PR.
+  - 'New pure, exported, directly-testable functions: `detectCriticalActionCategory()`,
+    `enforceFourEyesFloor()`. 7 new unit tests added to `approval-workflow-service.test.ts`.'
+  - 'Confirmed no aggregate view existed: `GET /api/approval-workflows` already returns
+    every workflow definition + steps across all entity types when `entityType` is
+    omitted (this was already true), but nothing in the UI rendered that holistically
+    -- the only admin-facing "who approves what" view was the unrelated, manually-entered
+    `src/app/(app)/doa` (Delegation of Authority) table.'
+  - Annotated `listWorkflowDefinitions()`'s response with each step's inferred `highImpactCategory`
+    and `fourEyesSatisfied` flag (derived from the same four-eyes cross-wire above),
+    so the matrix view can show, at a glance, any step that names a critical action
+    but doesn't yet meet the four-eyes floor (e.g. a definition created before this
+    PR).
+  - New `ApprovalMatrixSection` component (`src/components/home/ApprovalMatrixSection.tsx`),
+    added to the existing `/approvals` page alongside `ApprovalTab` and `WorkflowApprovalsSection`
+    -- one table, every entity type's workflow steps, approver role, required approvals,
+    four-eyes badge, and critical-category badge.
+  - Audited `entity_relationships` real usage before assuming the finding's premise
+    was still accurate. Every `relationshipType` value actually written today (`triggers_approval`,
+    `depends_on`, `owned_by`, `sourced_from`, `supersedes`, `executed_by`) is a system/asset/chain
+    graph edge -- **zero personal or vendor relationship edges exist**.
+  - Checked for any other pre-existing COI mechanism (`related_party_transactions`
+    table) -- confirmed it's a manually-entered board/audit-committee disclosure log,
+    not a queryable approver-vs-requester relationship check, and not applicable here.
+  - 'Conclusion: the finding''s own recommended approach ("scope a COI-flagging feature
+    once entity_relationships has real relationship data to query") is still exactly
+    the right call as of this session -- there is no real relationship data to query
+    yet, so building a detector now would be a feature that can never actually fire.
+    Not building it. When a future wave adds real personal/vendor `entity_relationships`
+    edges (e.g. `reports_to`, `related_to`, `vendor_contact_of`), the natural next
+    step is a `checkConflictOfInterest(orgId, requesterId, approverId)` query against
+    those edges, callable from the same approval decision paths this PR just hardened
+    with `isSelfApproval()` checks.'
+  remaining_steps:
+  - None for this task's 4 findings. COI detection (finding 4) is intentionally deferred
+    per its own recommended approach -- see note above, not a TODO for this PR.
+  recent_commits:
+  - '4b1253f8 Register active claim: Checks & Balances / Separation of Duties task'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  - 8891bed3 Re-trigger CI after human sign-off audit comment
+  note: periodic checkpoint
+- at: '2026-07-18T09:41:16.113815+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 942bb519 Close Checks & Balances / Separation of Duties gap-closure (4 findings)
+  - '4b1253f8 Register active claim: Checks & Balances / Separation of Duties task'
+  - '016c7761 Merge pull request #416 from FChecklist/worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo'
+  - 162ba95d Merge branch 'main' into worker/task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo
+  - 'ffaadc37 Merge pull request #406 from FChecklist/wave4-erp-rbac-batch2'
+  - df6b18eb Re-trigger CI (retry 3/3 before approved one-time override)
+  - 18a75738 Merge branch 'main' into wave4-erp-rbac-batch2
+  - 'a934b85c Worker task-20260718-050114-cost-estimate--5-orgs-x-10-users--all-mo:
+    automated checkpoint commit'
+  - '2dbcea92 Merge pull request #411 from FChecklist/worker/task-20260717-194819-fx-live-rate-feed'
+  - aa0447b1 Re-trigger CI after corrected audit comment
+  note: worker finished, no changes to commit
+execution_seconds: 1272
+restart_count: 0
+token_usage:
+  input_tokens: 578
+  cache_creation_input_tokens: 191307
+  cache_read_input_tokens: 17385734
+  output_tokens: 67954
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 191307
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 23
+    cache_read_input_tokens: 214746
+    cache_creation_input_tokens: 99
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 99
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T10:30:04.021765+00:00'

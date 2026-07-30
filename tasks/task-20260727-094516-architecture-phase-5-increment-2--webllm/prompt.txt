@@ -1,0 +1,34 @@
+## OBJECTIVE
+Implement phase_5_browser_execution_tiers increment 2 of N from ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml (repo claude-control), continuing directly from increment 1 (merged compliance-tracker PR #586, commit range on main includes tier-detection.ts, tier-orchestrator.ts, client-compile.ts, execute/route.ts, BROWSER_LITE_LLM_TECH_DECISION_2026-07-27.md). Increment 1's own PROGRESS.md entry (task-20260726-171942-serverless-resource-limit-tradeoff-doc, now on compliance-tracker main) lists its own explicit "Remaining" checklist -- this task implements exactly that list, verbatim, not a re-derivation.
+
+## KNOWN_CONTEXT
+Do not re-derive, use directly -- verified real state as of 2026-07-27.
+- Increment 1 already shipped, on main: tier-detection.ts (real feature detection for all 5 tiers: NPU/navigator.ml, Built-in AI/window.ai, Lite LLM/navigator.gpu, Transformers, Server), tier-orchestrator.ts (engine-browser-execution master orchestrator + engine-model-selection + engine-execution-planner + engine-server-escalation deepened), client-compile.ts (browser-native first pass reusing phase_2's analyzeLightweight), execute/route.ts (deterministic second-pass server execution), and the WebLLM-vs-LiteRT tech DECISION (adopt WebLLM for text-gen, NOT yet installed).
+- `src/components/veri-chat/VeriComposer.tsx` already has runBrowserFirstPass() wired into its live `discuss` send path -- any new engine work integrates through the existing tier-orchestrator's fallback chain, it does NOT touch VeriComposer.tsx's UI again unless the orchestrator's public interface changes shape.
+- litert-spike/litert-spike-embeddings are registered in claude-control's MASTER_INDEX.yaml (PR #111) and knowledge_engine (KE-20260727-071611-3ed0) -- already done, do not re-register.
+- IMPORTANT SCOPE BOUNDARY: engine-browser-storage and engine-browser-sync's FULL cache hierarchy is explicitly phase_6's scope, per increment 1's own PROGRESS.md note ("engine-browser-mcp, engine-browser-function, engine-browser-storage, engine-browser-sync (full cache hierarchy is phase_6's scope)"). This task should NOT build phase_6's cache hierarchy. If storage/sync need any browser-execution-tier-local state (e.g. caching a loaded WebLLM/Transformers.js model weights in IndexedDB so it isn't re-downloaded every session), that is in scope as tier-local engine plumbing -- a shared, cross-engine cache hierarchy (phase_6) is not.
+
+## SCOPE
+Verbatim from increment 1's own Remaining checklist.
+1. Real WebLLM model install + wiring behind the `lite-llm` tier's `gpuAccelerated` branch in tier-orchestrator.ts (the tech-decision doc's own follow-up item). Pick one small, real WebLLM model appropriate for browser deployment (justify the choice, do not pick the largest available), wire it through the existing tier-orchestrator fallback chain, add a real test proving the WebLLM path is reachable and falls back correctly when navigator.gpu is absent.
+2. engine-browser-mcp -- browser-native MCP (Model Context Protocol) tool-calling support for the Lite LLM/Transformers tiers, distinct from ai-os/BROWSER_AUTOMATION_PROFILE_2026-07-25.yaml's own session-tooling scope (already explicitly rejected as a match by the original phase_5 gap analysis -- do not reuse that file's scope).
+3. engine-browser-function -- real browser-native function-calling/tool-execution support for the browser-native tiers.
+4. engine-browser-worker deepening -- pool/SharedArrayBuffer coordination beyond litert-spike's existing single-worker pattern (worker-src/inference-worker.ts).
+5. engine-browser-transformers -- real Transformers.js model integration (only feature-detection shipped in increment 1; wire an actual small real Transformers.js model behind the transformers tier).
+6. stack-browser-compute / stack-parallelism deepening beyond the tier orchestrator shipped in increment 1.
+7. Tier-local model-weight caching (IndexedDB) for WebLLM/Transformers.js so repeat loads don't re-download -- explicitly scoped as engine-local plumbing, NOT phase_6's shared cache hierarchy (see KNOWN_CONTEXT boundary above -- if genuinely unsure whether something belongs here or in phase_6, flag it as an explicit named decision in your PR description rather than silently building it either way).
+8. Update `ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml`'s phase_5 gap-item checklist (or the equivalent OWNER_ENGINE_TASK2_GAP_ANALYSIS_2026-07-27.yaml entries) to reflect real, evidenced status for engine-browser-mcp, engine-browser-function, engine-browser-worker, engine-browser-transformers, engine-browser-lite-llm (install) -- do not mark anything done that this task did not actually build and test.
+
+## SUCCESS_CRITERIA
+- A real, runnable test suite proving: (a) the WebLLM path loads and falls back correctly, (b) a real MCP/function-call round-trip works through at least one browser tier, (c) a real Transformers.js model executes and its output flows through the same tier-orchestrator contract as the other tiers, (d) worker-pool coordination is exercised by a real test (not just type-checked).
+- `bun test` and `npx tsc --noEmit` both clean.
+- `PROGRESS.md` documents which of increment 1's Remaining items this increment closed vs. still leaves open (if the full list can't fit in one pass, checkpoint honestly like increment 1 did -- "increment 2 of N" is fine).
+
+## EXPECTED_OUTPUT
+A real PR against compliance-tracker (worker branch, through the normal task-gateway dispatch pipeline, subject to AGENTS.md Rule 6/7(c) -- structured audit-verdict comment required before merge, no direct push to main).
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do NOT build phase_6's shared cache hierarchy (storage/sync full scope) -- flag any ambiguity as an explicit named decision rather than guessing. Do NOT touch VeriComposer.tsx's UI/composer contract unless the tier-orchestrator's public interface genuinely needs to change shape to support one of the new engines -- integrate through the existing orchestrator, do not rebuild the UI wiring increment 1 already did.
+
+## COMPLEXITY_TIER
+judgment

@@ -1,0 +1,751 @@
+id: task-20260726-171420-phase5-browser-execution-lite-llm-npu-bu
+title: phase5-browser-execution-lite-llm-npu-built
+status: not_needed
+repo: compliance-tracker
+branch: worker/task-20260726-171420-phase5-browser-execution
+workspace: /opt/veridian/ai-os/tasks/task-20260726-171420-phase5-browser-execution-lite-llm-npu-bu/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-171420-phase5-browser-execution-lite-llm-npu-bu
+service: veridian-worker@task-20260726-171420-phase5-browser-execution-lite-llm-npu-bu.service
+created_at: '2026-07-26T17:14:21.263373+00:00'
+last_checkpoint_at: '2026-07-27T03:57:22.123904+00:00'
+completed_steps: &id002
+- Registered this session's claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting
+  work.
+- 'FIRST STEP per spec: registered `litert-spike` + `litert-spike-embeddings` prior
+  art in `ai-os/MASTER_INDEX.yaml` (`litert_spike_prior_art` entry).'
+- '**Key scoping finding** (avoided duplicate build): `src/components/veri-chat/VeriComposer.tsx`
+  + `ChainSelector.tsx` already realize the Owner''s "dynamic mode pills + dynamic
+  option chain" (Option 1) and free-text chat (Option 2) UX, already mounted in `(app)/home`.
+  Did not build new duplicate input components.'
+- 'Technology decisions made and justified (not silently kept LiteRT by default):
+  WebLLM (`@mlc-ai/web-llm`) adopted for the Lite-LLM tier (LiteRT-LM.js is a separate,
+  unevaluated product per `ai-os/MASTER-TRACKER.yaml` GAP-LITERT-EDGE-INFERENCE);
+  Transformers.js (`@huggingface/transformers`) adopted for the embeddings/classification
+  tier, sidestepping litert-spike-embeddings'' documented int64/dynamic-shape API
+  blocker. Both added as real `package.json` dependencies.'
+- '**Portability fix required for phase_2''s compiler to run in-browser at all**:
+  extracted `estimateCostUsd`/`estimateCacheSavingsUsd`/`MODEL_PRICING`/`LLMUsage`
+  out of `llm-client.ts` (a ~750-line, 5-provider server module) into a new dependency-free
+  `src/lib/llm-pricing.ts`, re-exported unchanged from `llm-client.ts` for every existing
+  call site. `src/lib/prompt-compiler/verification-pipeline.ts` now imports from `llm-pricing.ts`
+  instead.'
+- "Replaced Node's `crypto.createHash` (unavailable in a browser bundle) with a new\
+  \ dependency-free, synchronous `src/lib/universal-hash.ts` (`sha256Hex`), verified\
+  \ byte-for-byte against Node's own `crypto` for many inputs incl. block-boundary\
+  \ edge cases (`universal-hash.test.ts`). Wired into `prompt-compiler/prompt-construction.ts`'s\
+  \ `hashContent`/`computeFingerprint`. This was the real, concrete blocker preventing\
+  \ phase_2's `runPipeline()` from executing client-side; confirmed the full call\
+  \ chain (`pipeline.ts` \u2192 `context-assembly.ts`/`prompt-construction.ts`/`verification-pipeline.ts`/`confidence-engine.ts`/`intent-classifier.ts`/`entity-variable-extraction.ts`)\
+  \ has zero remaining Node-only imports."
+- 'Built `src/lib/browser-execution/` (new module, imports `prompt-compiler` submodules
+  directly, never the barrel, since the barrel re-exports DB-backed/Node-crypto modules
+  unsafe for a client bundle):'
+- 'Found and fixed a real cross-test bug during verification: the in-memory cache
+  fallback is module-scope and persisted across tests in the same file/process (since
+  `contentHash` depends only on normalized text, not on tier-refined classification)
+  -- added `resetInMemoryCacheForTests()` and wired it into `beforeEach` in the affected
+  test files.'
+remaining_steps: &id003
+- '**Re-run the full `src/lib/browser-execution/` test suite after the cache-pollution
+  fix above and confirm green.** The suite was run once before the fix (32 pass /
+  7 fail, all 7 attributable to either the cache-pollution bug just fixed, or a one-time
+  ~300s module-resolution cost `bun test` incurs the first time it statically analyzes
+  the dynamic `import()` targets in `tier-runners.ts` for `@mlc-ai/web-llm`/`@huggingface/transformers`,
+  tripping several unrelated tests'' default 5000ms timeouts). Needs a re-run (likely
+  with a longer `--timeout`) to confirm the logic fix actually resolves it and to
+  characterize the real one-time cost.'
+- 'Wire `src/lib/browser-execution/`''s `runBrowserExecutionTiers()` into `VeriComposer.tsx`''s
+  send/dispatch path as an additive pre-send step (per spec: "the browser-to-server
+  handoff itself"). Not started -- `VeriComposer.tsx` is untouched this session.'
+- Playwright proof (`e2e/browser-execution.spec.ts`) of capability-detection/fallback
+  executing in a real headless-Chromium context, per this phase's own success_criteria
+  ("A real command proving at least a 2-tier fallback... executes end to end in a
+  browser context"). Not started. `@playwright/test` is already a devDependency; `e2e/`
+  is currently empty.
+- Full repo `tsc`/lint pass has NOT been run this session -- only the new/touched
+  files' own `bun test` suite. Must run before merge.
+- '`ai-os/MASTER_INDEX.yaml`: add a second registries entry for the new `src/lib/browser-execution/`
+  engine itself (only the prior-art litert-spike entry was added so far).'
+- '`ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml` (claude-control repo,
+  `/opt/veridian/repos/claude-control/`) phase_5 status has NOT been updated yet --
+  still `not_started`. Do not mark `status: done` until the above items are complete
+  and a real PR exists (see phase_4''s own corrected-status entry in that file for
+  why: a prior session''s premature "done" claim citing an unmerged/conflicting PR
+  was reverted -- don''t repeat that).'
+- No PR opened yet for this branch (`worker/task-20260726-171420-phase5-browser-execution`).
+  Only the ACTIVE-CLAIMS registration commit has been pushed so far; the browser-execution
+  module itself is uncommitted in the working tree as of this PROGRESS.md update.
+- 'engine-browser-worker (deepen): not addressed this session -- the litert-spike
+  esbuild-separate-worker-bundling pattern was not reused/extended for the new tiers
+  (WebLLM/Transformers.js manage their own internal worker/WASM threading, which may
+  make a dedicated custom worker unnecessary, but this was not investigated).'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T17:14:23.084759+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  - 'aedcbb06 PROGRESS.md: start task-20260726-102520 (resolve PR #563 conflict, refresh
+    DB catalog)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T17:19:24.554435+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  - 'aedcbb06 PROGRESS.md: start task-20260726-102520 (resolve PR #563 conflict, refresh
+    DB catalog)'
+  note: periodic checkpoint
+- at: '2026-07-26T17:24:25.740506+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b9ad7645 ai-os/boss/ACTIVE-CLAIMS.yaml: register phase_5 browser-execution claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T17:29:27.345108+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/MASTER_INDEX.yaml
+  - src/lib/llm-client.ts
+  - src/lib/prompt-compiler/prompt-construction.ts
+  - src/lib/prompt-compiler/verification-pipeline.ts
+  - src/lib/llm-pricing.ts
+  - src/lib/universal-hash.test.ts
+  - src/lib/universal-hash.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b9ad7645 ai-os/boss/ACTIVE-CLAIMS.yaml: register phase_5 browser-execution claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T17:40:22.280985+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/MASTER_INDEX.yaml
+  - bun.lock
+  - package.json
+  - src/lib/llm-client.ts
+  - src/lib/prompt-compiler/prompt-construction.ts
+  - src/lib/prompt-compiler/verification-pipeline.ts
+  - src/lib/llm-pricing.ts
+  - src/lib/universal-hash.test.ts
+  - src/lib/universal-hash.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b9ad7645 ai-os/boss/ACTIVE-CLAIMS.yaml: register phase_5 browser-execution claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T17:47:30.828910+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/MASTER_INDEX.yaml
+  - bun.lock
+  - package.json
+  - src/lib/llm-client.ts
+  - src/lib/prompt-compiler/prompt-construction.ts
+  - src/lib/prompt-compiler/verification-pipeline.ts
+  - src/lib/browser-execution/
+  - src/lib/llm-pricing.ts
+  - src/lib/universal-hash.test.ts
+  - src/lib/universal-hash.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b9ad7645 ai-os/boss/ACTIVE-CLAIMS.yaml: register phase_5 browser-execution claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T17:59:45.955197+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/MASTER_INDEX.yaml
+  - bun.lock
+  - package.json
+  - src/lib/llm-client.ts
+  - src/lib/prompt-compiler/prompt-construction.ts
+  - src/lib/prompt-compiler/verification-pipeline.ts
+  - src/lib/browser-execution/
+  - src/lib/llm-pricing.ts
+  - src/lib/universal-hash.test.ts
+  - src/lib/universal-hash.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b9ad7645 ai-os/boss/ACTIVE-CLAIMS.yaml: register phase_5 browser-execution claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T18:05:26.108461+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/MASTER_INDEX.yaml
+  - bun.lock
+  - package.json
+  - src/lib/llm-client.ts
+  - src/lib/prompt-compiler/prompt-construction.ts
+  - src/lib/prompt-compiler/verification-pipeline.ts
+  - src/lib/browser-execution/
+  - src/lib/llm-pricing.ts
+  - src/lib/universal-hash.test.ts
+  - src/lib/universal-hash.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b9ad7645 ai-os/boss/ACTIVE-CLAIMS.yaml: register phase_5 browser-execution claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T18:10:59.893423+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/MASTER_INDEX.yaml
+  - bun.lock
+  - package.json
+  - src/lib/llm-client.ts
+  - src/lib/prompt-compiler/prompt-construction.ts
+  - src/lib/prompt-compiler/verification-pipeline.ts
+  - scratch-check.ts
+  - src/lib/browser-execution/
+  - src/lib/llm-pricing.ts
+  - src/lib/universal-hash.test.ts
+  - src/lib/universal-hash.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b9ad7645 ai-os/boss/ACTIVE-CLAIMS.yaml: register phase_5 browser-execution claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T18:17:25.672757+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/MASTER_INDEX.yaml
+  - bun.lock
+  - package.json
+  - src/lib/llm-client.ts
+  - src/lib/prompt-compiler/prompt-construction.ts
+  - src/lib/prompt-compiler/verification-pipeline.ts
+  - scratch-check.ts
+  - scratch-check2.ts
+  - src/lib/browser-execution/
+  - src/lib/llm-pricing.ts
+  - src/lib/universal-hash.test.ts
+  - src/lib/universal-hash.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b9ad7645 ai-os/boss/ACTIVE-CLAIMS.yaml: register phase_5 browser-execution claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T18:23:01.309298+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/MASTER_INDEX.yaml
+  - bun.lock
+  - package.json
+  - src/lib/llm-client.ts
+  - src/lib/prompt-compiler/prompt-construction.ts
+  - src/lib/prompt-compiler/verification-pipeline.ts
+  - src/lib/browser-execution/
+  - src/lib/llm-pricing.ts
+  - src/lib/universal-hash.test.ts
+  - src/lib/universal-hash.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b9ad7645 ai-os/boss/ACTIVE-CLAIMS.yaml: register phase_5 browser-execution claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T18:31:51.581720+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/MASTER_INDEX.yaml
+  - bun.lock
+  - package.json
+  - src/lib/llm-client.ts
+  - src/lib/prompt-compiler/prompt-construction.ts
+  - src/lib/prompt-compiler/verification-pipeline.ts
+  - src/lib/browser-execution/
+  - src/lib/llm-pricing.ts
+  - src/lib/universal-hash.test.ts
+  - src/lib/universal-hash.ts
+  completed_steps:
+  - Registered this session's claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting
+    work.
+  - 'FIRST STEP per spec: registered `litert-spike` + `litert-spike-embeddings` prior
+    art in `ai-os/MASTER_INDEX.yaml` (`litert_spike_prior_art` entry).'
+  - '**Key scoping finding** (avoided duplicate build): `src/components/veri-chat/VeriComposer.tsx`
+    + `ChainSelector.tsx` already realize the Owner''s "dynamic mode pills + dynamic
+    option chain" (Option 1) and free-text chat (Option 2) UX, already mounted in
+    `(app)/home`. Did not build new duplicate input components.'
+  - 'Technology decisions made and justified (not silently kept LiteRT by default):
+    WebLLM (`@mlc-ai/web-llm`) adopted for the Lite-LLM tier (LiteRT-LM.js is a separate,
+    unevaluated product per `ai-os/MASTER-TRACKER.yaml` GAP-LITERT-EDGE-INFERENCE);
+    Transformers.js (`@huggingface/transformers`) adopted for the embeddings/classification
+    tier, sidestepping litert-spike-embeddings'' documented int64/dynamic-shape API
+    blocker. Both added as real `package.json` dependencies.'
+  - '**Portability fix required for phase_2''s compiler to run in-browser at all**:
+    extracted `estimateCostUsd`/`estimateCacheSavingsUsd`/`MODEL_PRICING`/`LLMUsage`
+    out of `llm-client.ts` (a ~750-line, 5-provider server module) into a new dependency-free
+    `src/lib/llm-pricing.ts`, re-exported unchanged from `llm-client.ts` for every
+    existing call site. `src/lib/prompt-compiler/verification-pipeline.ts` now imports
+    from `llm-pricing.ts` instead.'
+  - "Replaced Node's `crypto.createHash` (unavailable in a browser bundle) with a\
+    \ new dependency-free, synchronous `src/lib/universal-hash.ts` (`sha256Hex`),\
+    \ verified byte-for-byte against Node's own `crypto` for many inputs incl. block-boundary\
+    \ edge cases (`universal-hash.test.ts`). Wired into `prompt-compiler/prompt-construction.ts`'s\
+    \ `hashContent`/`computeFingerprint`. This was the real, concrete blocker preventing\
+    \ phase_2's `runPipeline()` from executing client-side; confirmed the full call\
+    \ chain (`pipeline.ts` \u2192 `context-assembly.ts`/`prompt-construction.ts`/`verification-pipeline.ts`/`confidence-engine.ts`/`intent-classifier.ts`/`entity-variable-extraction.ts`)\
+    \ has zero remaining Node-only imports."
+  - 'Built `src/lib/browser-execution/` (new module, imports `prompt-compiler` submodules
+    directly, never the barrel, since the barrel re-exports DB-backed/Node-crypto
+    modules unsafe for a client bundle):'
+  - 'Found and fixed a real cross-test bug during verification: the in-memory cache
+    fallback is module-scope and persisted across tests in the same file/process (since
+    `contentHash` depends only on normalized text, not on tier-refined classification)
+    -- added `resetInMemoryCacheForTests()` and wired it into `beforeEach` in the
+    affected test files.'
+  remaining_steps:
+  - '**Re-run the full `src/lib/browser-execution/` test suite after the cache-pollution
+    fix above and confirm green.** The suite was run once before the fix (32 pass
+    / 7 fail, all 7 attributable to either the cache-pollution bug just fixed, or
+    a one-time ~300s module-resolution cost `bun test` incurs the first time it statically
+    analyzes the dynamic `import()` targets in `tier-runners.ts` for `@mlc-ai/web-llm`/`@huggingface/transformers`,
+    tripping several unrelated tests'' default 5000ms timeouts). Needs a re-run (likely
+    with a longer `--timeout`) to confirm the logic fix actually resolves it and to
+    characterize the real one-time cost.'
+  - 'Wire `src/lib/browser-execution/`''s `runBrowserExecutionTiers()` into `VeriComposer.tsx`''s
+    send/dispatch path as an additive pre-send step (per spec: "the browser-to-server
+    handoff itself"). Not started -- `VeriComposer.tsx` is untouched this session.'
+  - Playwright proof (`e2e/browser-execution.spec.ts`) of capability-detection/fallback
+    executing in a real headless-Chromium context, per this phase's own success_criteria
+    ("A real command proving at least a 2-tier fallback... executes end to end in
+    a browser context"). Not started. `@playwright/test` is already a devDependency;
+    `e2e/` is currently empty.
+  - Full repo `tsc`/lint pass has NOT been run this session -- only the new/touched
+    files' own `bun test` suite. Must run before merge.
+  - '`ai-os/MASTER_INDEX.yaml`: add a second registries entry for the new `src/lib/browser-execution/`
+    engine itself (only the prior-art litert-spike entry was added so far).'
+  - '`ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml` (claude-control repo,
+    `/opt/veridian/repos/claude-control/`) phase_5 status has NOT been updated yet
+    -- still `not_started`. Do not mark `status: done` until the above items are complete
+    and a real PR exists (see phase_4''s own corrected-status entry in that file for
+    why: a prior session''s premature "done" claim citing an unmerged/conflicting
+    PR was reverted -- don''t repeat that).'
+  - No PR opened yet for this branch (`worker/task-20260726-171420-phase5-browser-execution`).
+    Only the ACTIVE-CLAIMS registration commit has been pushed so far; the browser-execution
+    module itself is uncommitted in the working tree as of this PROGRESS.md update.
+  - 'engine-browser-worker (deepen): not addressed this session -- the litert-spike
+    esbuild-separate-worker-bundling pattern was not reused/extended for the new tiers
+    (WebLLM/Transformers.js manage their own internal worker/WASM threading, which
+    may make a dedicated custom worker unnecessary, but this was not investigated).'
+  recent_commits:
+  - 'b9ad7645 ai-os/boss/ACTIVE-CLAIMS.yaml: register phase_5 browser-execution claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T18:32:09.920474+00:00'
+  status: blocked
+  files_modified:
+  - PROGRESS.md
+  - ai-os/MASTER_INDEX.yaml
+  - bun.lock
+  - package.json
+  - src/lib/llm-client.ts
+  - src/lib/prompt-compiler/prompt-construction.ts
+  - src/lib/prompt-compiler/verification-pipeline.ts
+  - src/lib/browser-execution/
+  - src/lib/llm-pricing.ts
+  - src/lib/universal-hash.test.ts
+  - src/lib/universal-hash.ts
+  completed_steps:
+  - Registered this session's claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting
+    work.
+  - 'FIRST STEP per spec: registered `litert-spike` + `litert-spike-embeddings` prior
+    art in `ai-os/MASTER_INDEX.yaml` (`litert_spike_prior_art` entry).'
+  - '**Key scoping finding** (avoided duplicate build): `src/components/veri-chat/VeriComposer.tsx`
+    + `ChainSelector.tsx` already realize the Owner''s "dynamic mode pills + dynamic
+    option chain" (Option 1) and free-text chat (Option 2) UX, already mounted in
+    `(app)/home`. Did not build new duplicate input components.'
+  - 'Technology decisions made and justified (not silently kept LiteRT by default):
+    WebLLM (`@mlc-ai/web-llm`) adopted for the Lite-LLM tier (LiteRT-LM.js is a separate,
+    unevaluated product per `ai-os/MASTER-TRACKER.yaml` GAP-LITERT-EDGE-INFERENCE);
+    Transformers.js (`@huggingface/transformers`) adopted for the embeddings/classification
+    tier, sidestepping litert-spike-embeddings'' documented int64/dynamic-shape API
+    blocker. Both added as real `package.json` dependencies.'
+  - '**Portability fix required for phase_2''s compiler to run in-browser at all**:
+    extracted `estimateCostUsd`/`estimateCacheSavingsUsd`/`MODEL_PRICING`/`LLMUsage`
+    out of `llm-client.ts` (a ~750-line, 5-provider server module) into a new dependency-free
+    `src/lib/llm-pricing.ts`, re-exported unchanged from `llm-client.ts` for every
+    existing call site. `src/lib/prompt-compiler/verification-pipeline.ts` now imports
+    from `llm-pricing.ts` instead.'
+  - "Replaced Node's `crypto.createHash` (unavailable in a browser bundle) with a\
+    \ new dependency-free, synchronous `src/lib/universal-hash.ts` (`sha256Hex`),\
+    \ verified byte-for-byte against Node's own `crypto` for many inputs incl. block-boundary\
+    \ edge cases (`universal-hash.test.ts`). Wired into `prompt-compiler/prompt-construction.ts`'s\
+    \ `hashContent`/`computeFingerprint`. This was the real, concrete blocker preventing\
+    \ phase_2's `runPipeline()` from executing client-side; confirmed the full call\
+    \ chain (`pipeline.ts` \u2192 `context-assembly.ts`/`prompt-construction.ts`/`verification-pipeline.ts`/`confidence-engine.ts`/`intent-classifier.ts`/`entity-variable-extraction.ts`)\
+    \ has zero remaining Node-only imports."
+  - 'Built `src/lib/browser-execution/` (new module, imports `prompt-compiler` submodules
+    directly, never the barrel, since the barrel re-exports DB-backed/Node-crypto
+    modules unsafe for a client bundle):'
+  - 'Found and fixed a real cross-test bug during verification: the in-memory cache
+    fallback is module-scope and persisted across tests in the same file/process (since
+    `contentHash` depends only on normalized text, not on tier-refined classification)
+    -- added `resetInMemoryCacheForTests()` and wired it into `beforeEach` in the
+    affected test files.'
+  remaining_steps:
+  - '**Re-run the full `src/lib/browser-execution/` test suite after the cache-pollution
+    fix above and confirm green.** The suite was run once before the fix (32 pass
+    / 7 fail, all 7 attributable to either the cache-pollution bug just fixed, or
+    a one-time ~300s module-resolution cost `bun test` incurs the first time it statically
+    analyzes the dynamic `import()` targets in `tier-runners.ts` for `@mlc-ai/web-llm`/`@huggingface/transformers`,
+    tripping several unrelated tests'' default 5000ms timeouts). Needs a re-run (likely
+    with a longer `--timeout`) to confirm the logic fix actually resolves it and to
+    characterize the real one-time cost.'
+  - 'Wire `src/lib/browser-execution/`''s `runBrowserExecutionTiers()` into `VeriComposer.tsx`''s
+    send/dispatch path as an additive pre-send step (per spec: "the browser-to-server
+    handoff itself"). Not started -- `VeriComposer.tsx` is untouched this session.'
+  - Playwright proof (`e2e/browser-execution.spec.ts`) of capability-detection/fallback
+    executing in a real headless-Chromium context, per this phase's own success_criteria
+    ("A real command proving at least a 2-tier fallback... executes end to end in
+    a browser context"). Not started. `@playwright/test` is already a devDependency;
+    `e2e/` is currently empty.
+  - Full repo `tsc`/lint pass has NOT been run this session -- only the new/touched
+    files' own `bun test` suite. Must run before merge.
+  - '`ai-os/MASTER_INDEX.yaml`: add a second registries entry for the new `src/lib/browser-execution/`
+    engine itself (only the prior-art litert-spike entry was added so far).'
+  - '`ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml` (claude-control repo,
+    `/opt/veridian/repos/claude-control/`) phase_5 status has NOT been updated yet
+    -- still `not_started`. Do not mark `status: done` until the above items are complete
+    and a real PR exists (see phase_4''s own corrected-status entry in that file for
+    why: a prior session''s premature "done" claim citing an unmerged/conflicting
+    PR was reverted -- don''t repeat that).'
+  - No PR opened yet for this branch (`worker/task-20260726-171420-phase5-browser-execution`).
+    Only the ACTIVE-CLAIMS registration commit has been pushed so far; the browser-execution
+    module itself is uncommitted in the working tree as of this PROGRESS.md update.
+  - 'engine-browser-worker (deepen): not addressed this session -- the litert-spike
+    esbuild-separate-worker-bundling pattern was not reused/extended for the new tiers
+    (WebLLM/Transformers.js manage their own internal worker/WASM threading, which
+    may make a dedicated custom worker unnecessary, but this was not investigated).'
+  recent_commits:
+  - 'b9ad7645 ai-os/boss/ACTIVE-CLAIMS.yaml: register phase_5 browser-execution claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: 'CLI HARD STOP (max_budget_usd): this invocation''s own self-reported cost
+    hit the $10 per-task cap (/opt/veridian/ai-os/tasks/task-20260726-171420-phase5-browser-execution-lite-llm-npu-bu/.claude-out-main.json).
+    Stopping rather than retrying -- a retry will very likely spend another $10 hitting
+    the identical wall. Needs human review: either the task is too large for one invocation
+    (split it) or it is genuinely stuck/looping.'
+- at: '2026-07-27T03:45:08.587904+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Registered this session's claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before starting
+    work.
+  - 'FIRST STEP per spec: registered `litert-spike` + `litert-spike-embeddings` prior
+    art in `ai-os/MASTER_INDEX.yaml` (`litert_spike_prior_art` entry).'
+  - '**Key scoping finding** (avoided duplicate build): `src/components/veri-chat/VeriComposer.tsx`
+    + `ChainSelector.tsx` already realize the Owner''s "dynamic mode pills + dynamic
+    option chain" (Option 1) and free-text chat (Option 2) UX, already mounted in
+    `(app)/home`. Did not build new duplicate input components.'
+  - 'Technology decisions made and justified (not silently kept LiteRT by default):
+    WebLLM (`@mlc-ai/web-llm`) adopted for the Lite-LLM tier (LiteRT-LM.js is a separate,
+    unevaluated product per `ai-os/MASTER-TRACKER.yaml` GAP-LITERT-EDGE-INFERENCE);
+    Transformers.js (`@huggingface/transformers`) adopted for the embeddings/classification
+    tier, sidestepping litert-spike-embeddings'' documented int64/dynamic-shape API
+    blocker. Both added as real `package.json` dependencies.'
+  - '**Portability fix required for phase_2''s compiler to run in-browser at all**:
+    extracted `estimateCostUsd`/`estimateCacheSavingsUsd`/`MODEL_PRICING`/`LLMUsage`
+    out of `llm-client.ts` (a ~750-line, 5-provider server module) into a new dependency-free
+    `src/lib/llm-pricing.ts`, re-exported unchanged from `llm-client.ts` for every
+    existing call site. `src/lib/prompt-compiler/verification-pipeline.ts` now imports
+    from `llm-pricing.ts` instead.'
+  - "Replaced Node's `crypto.createHash` (unavailable in a browser bundle) with a\
+    \ new dependency-free, synchronous `src/lib/universal-hash.ts` (`sha256Hex`),\
+    \ verified byte-for-byte against Node's own `crypto` for many inputs incl. block-boundary\
+    \ edge cases (`universal-hash.test.ts`). Wired into `prompt-compiler/prompt-construction.ts`'s\
+    \ `hashContent`/`computeFingerprint`. This was the real, concrete blocker preventing\
+    \ phase_2's `runPipeline()` from executing client-side; confirmed the full call\
+    \ chain (`pipeline.ts` \u2192 `context-assembly.ts`/`prompt-construction.ts`/`verification-pipeline.ts`/`confidence-engine.ts`/`intent-classifier.ts`/`entity-variable-extraction.ts`)\
+    \ has zero remaining Node-only imports."
+  - 'Built `src/lib/browser-execution/` (new module, imports `prompt-compiler` submodules
+    directly, never the barrel, since the barrel re-exports DB-backed/Node-crypto
+    modules unsafe for a client bundle):'
+  - 'Found and fixed a real cross-test bug during verification: the in-memory cache
+    fallback is module-scope and persisted across tests in the same file/process (since
+    `contentHash` depends only on normalized text, not on tier-refined classification)
+    -- added `resetInMemoryCacheForTests()` and wired it into `beforeEach` in the
+    affected test files.'
+  remaining_steps:
+  - '**Re-run the full `src/lib/browser-execution/` test suite after the cache-pollution
+    fix above and confirm green.** The suite was run once before the fix (32 pass
+    / 7 fail, all 7 attributable to either the cache-pollution bug just fixed, or
+    a one-time ~300s module-resolution cost `bun test` incurs the first time it statically
+    analyzes the dynamic `import()` targets in `tier-runners.ts` for `@mlc-ai/web-llm`/`@huggingface/transformers`,
+    tripping several unrelated tests'' default 5000ms timeouts). Needs a re-run (likely
+    with a longer `--timeout`) to confirm the logic fix actually resolves it and to
+    characterize the real one-time cost.'
+  - 'Wire `src/lib/browser-execution/`''s `runBrowserExecutionTiers()` into `VeriComposer.tsx`''s
+    send/dispatch path as an additive pre-send step (per spec: "the browser-to-server
+    handoff itself"). Not started -- `VeriComposer.tsx` is untouched this session.'
+  - Playwright proof (`e2e/browser-execution.spec.ts`) of capability-detection/fallback
+    executing in a real headless-Chromium context, per this phase's own success_criteria
+    ("A real command proving at least a 2-tier fallback... executes end to end in
+    a browser context"). Not started. `@playwright/test` is already a devDependency;
+    `e2e/` is currently empty.
+  - Full repo `tsc`/lint pass has NOT been run this session -- only the new/touched
+    files' own `bun test` suite. Must run before merge.
+  - '`ai-os/MASTER_INDEX.yaml`: add a second registries entry for the new `src/lib/browser-execution/`
+    engine itself (only the prior-art litert-spike entry was added so far).'
+  - '`ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml` (claude-control repo,
+    `/opt/veridian/repos/claude-control/`) phase_5 status has NOT been updated yet
+    -- still `not_started`. Do not mark `status: done` until the above items are complete
+    and a real PR exists (see phase_4''s own corrected-status entry in that file for
+    why: a prior session''s premature "done" claim citing an unmerged/conflicting
+    PR was reverted -- don''t repeat that).'
+  - No PR opened yet for this branch (`worker/task-20260726-171420-phase5-browser-execution`).
+    Only the ACTIVE-CLAIMS registration commit has been pushed so far; the browser-execution
+    module itself is uncommitted in the working tree as of this PROGRESS.md update.
+  - 'engine-browser-worker (deepen): not addressed this session -- the litert-spike
+    esbuild-separate-worker-bundling pattern was not reused/extended for the new tiers
+    (WebLLM/Transformers.js manage their own internal worker/WASM threading, which
+    may make a dedicated custom worker unnecessary, but this was not investigated).'
+  recent_commits:
+  - '7d628128 Worker task-20260726-171420-phase5-browser-execution-lite-llm-npu-bu:
+    automated checkpoint commit (CLI hit its own max-budget-usd cap)'
+  - 'b9ad7645 ai-os/boss/ACTIVE-CLAIMS.yaml: register phase_5 browser-execution claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  note: "tier1, Superboss-approved, but the merge itself FAILED (gh pr view confirms\
+    \ state=OPEN, mergedAt=; see supervisor.log) \u2014 needs manual attention, NOT\
+    \ actually merged: https://github.com/FChecklist/compliance-tracker/pull/584"
+- at: '2026-07-27T03:57:22.123904+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '7d628128 Worker task-20260726-171420-phase5-browser-execution-lite-llm-npu-bu:
+    automated checkpoint commit (CLI hit its own max-budget-usd cap)'
+  - 'b9ad7645 ai-os/boss/ACTIVE-CLAIMS.yaml: register phase_5 browser-execution claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  note: "Superboss rejected: https://github.com/FChecklist/compliance-tracker/pull/584\
+    \ \u2014 see review.json for issues"
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-26T19:00:52.418945+00:00'
+opened_pr_url: https://github.com/FChecklist/compliance-tracker/pull/584
+routed_to_supervisor_at: '2026-07-27T03:40:16.370333+00:00'
+branch_corrected_at: '2026-07-27T03:52:40.807073+00:00'
+branch_correction_note: 'round-1 left branch=master (or wrong repo); corrected to
+  real PR #584 headRefName'
+closed_at: '2026-07-27T06:23:02.602796+00:00'
+closed_reason: 'Owner directive 2026-07-27: remaining blocked backlog items declared
+  not needed -- deliberately not fixed, not redispatched. Real workspace/branch left
+  intact (not deleted) in case reopened later.'

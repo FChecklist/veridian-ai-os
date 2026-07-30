@@ -1,0 +1,38 @@
+VERIDIAN Review Framework gap-closure: AI Documentation / AI-Readable Technical Documentation.
+This covers 10 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Low] AI-Readable Architecture Documentation
+  Gap: Architecture docs are a manual snapshot, not continuously synced
+  Recommended approach: Add a periodic (e.g. monthly) re-run of the same Explore-agent methodology, or a lighter continuous diff-check against schema/route counts.
+- [Medium] AI-Readable API Documentation
+  Gap: OpenAPI coverage is partial (roughly one-third of domains)
+  Recommended approach: Extend /api/v1 + generate.ts coverage to the remaining ~30 domains incrementally, prioritized by external-integration demand.
+- [Low] AI-Readable Database Documentation
+  Gap: Same staleness risk as row 53 -- manual snapshot
+  Recommended approach: Add a CI check comparing schema.ts's table count against the documented count, failing if they diverge significantly.
+- [Medium] AI-Readable Workflow Documentation
+  Gap: One-third of domains lack documented workflow
+  Recommended approach: Prioritize filling empty workflow fields for the highest-change-frequency domains first.
+- [High] AI-Readable Business Rules Documentation
+  Gap: No consolidated business-rules documentation
+  Recommended approach: Build a consolidated business-rules registry (e.g. per-domain YAML) cross-referencing the code that enforces each rule.
+- [Low] AI-Readable Metadata Documentation
+  Gap: No gap of note for the registry itself
+  Recommended approach: Maintain the existing CI-gated registry.
+- [Low] AI-Readable Module Documentation
+  Gap: Not indexed centrally
+  Recommended approach: Optional: generate a lightweight per-file doc-comment index as part of CI.
+- [Medium] AI-Readable Prompt Documentation
+  Gap: Prompt documentation incomplete
+  Recommended approach: Complete the previously-scoped Prompt Directory build.
+- [Medium] AI-Readable Configuration Documentation
+  Gap: No consolidated configuration reference
+  Recommended approach: Add a CONFIGURATION.md indexing both env vars and notable in-code constants/flags.
+- [Low] AI-Readable Calculation Documentation
+  Gap: Registry is only ~17% implemented against its own catalogue
+  Recommended approach: Continue implementing engines prioritized by which reports/modules need them most.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

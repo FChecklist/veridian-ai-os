@@ -1,0 +1,28 @@
+## OBJECTIVE
+Append 4 new real, already-fetched X post analyses to the existing ai-os/X_POST_AI_ANALYSIS_2026-07-23.md file (claude-control repo), matching its exact existing table format and methodology. Do not re-fetch or re-analyze these posts -- the real content below was already gathered this session via a live browser session (X posts require login for WebFetch, a real browser was used instead, confirmed working).
+
+## KNOWN_CONTEXT
+The existing file's table has columns: post_url | accessible | linked_github_repo | what_it_does. The 4 new rows, with real, already-verified content:
+1. https://x.com/i/status/2081004547384975838 | accessible=true | linked_github_repo=https://github.com/anthropics/knowledge-work-plugins | what_it_does="This repository is an open-source collection of plugins that enhance Claude's capabilities for specific knowledge work roles by bundling domain expertise, tool connectors, and slash commands for functions like sales, marketing, finance, legal, product management, and more." (real README-sourced description, confirmed via WebFetch against the live repo)
+2. https://x.com/i/status/2081253476374561198 | accessible=true | linked_github_repo=none found | what_it_does=N/A (post is about an open-source browser-based 3D building/architecture editor; the post's own text does not contain a hyperlinked GitHub repo, confirmed via live browser page-structure read -- do not guess the tool's name or repo from partial text)
+3. https://x.com/i/status/2080689998848778523 | accessible=true | linked_github_repo=none found | what_it_does=N/A (post is about "Graph Engineering" for agent loops, links to an X-native article, not a GitHub repo, confirmed via live browser page-structure read)
+4. https://x.com/i/status/2081066452694556956 | accessible=true | linked_github_repo=none found | what_it_does=N/A (Spanish-language post about Graph Engineering for multi-agent systems, links to an X-native article, not a GitHub repo, confirmed via live browser page-structure read)
+
+## SCOPE
+1. Read the current, live ai-os/X_POST_AI_ANALYSIS_2026-07-23.md in full first.
+2. Append the 4 new rows above to the existing markdown table, in the exact same column format as the existing rows.
+3. Update the "## Summary" section's counts: add 4 to "Total URLs analyzed", add 4 to "Accessible" (all 4 are accessible=true), add 1 to "Distinct GitHub repos found across all posts/direct links" and to "Confirmed to exist and indexed" (github.com/anthropics/knowledge-work-plugins is a real, confirmed-existing repo).
+4. Register the new repo via `python3 scripts/superboss-register.py index-add` with category="external_reference", layer="documentation", status="live", purpose="This repository is an open-source collection of plugins that enhance Claude's capabilities for specific knowledge work roles by bundling domain expertise, tool connectors, and slash commands for functions like sales, marketing, finance, legal, product management, and more.", tags="source:x-analysis-2026-07-26,type:ai-tool" -- matching the exact convention the original file's companion prompt (ai-os/X_ANALYSIS_PROMPT_2026-07-23.txt) established, first checking it is not already registered (search before insert, avoid a duplicate row for the same repo if some other analysis already indexed it).
+
+## SUCCESS_CRITERIA
+- `grep -c "2081004547384975838\|2081253476374561198\|2080689998848778523\|2081066452694556956" ai-os/X_POST_AI_ANALYSIS_2026-07-23.md` returns 4 (all new URLs present).
+- `python3 scripts/superboss-register.py query-knowledge "knowledge-work-plugins"` (or equivalent lookup) shows the new repo registered, with no duplicate row if it was already present.
+
+## EXPECTED_OUTPUT
+Commit and push the updated ai-os/X_POST_AI_ANALYSIS_2026-07-23.md directly to claude-control's default branch (this is a low-risk documentation/data file, not application code -- matching the original file's own precedent of a direct commit+push, no PR needed for this kind of low-priority data-tracking file, consistent with the companion prompt's own EXPECTED_OUTPUT).
+
+## CONSTRAINTS
+Do not re-fetch or fabricate any additional content -- use exactly the real, already-gathered data provided above. Do not touch any other section of the file.
+
+## COMPLEXITY_TIER
+mechanical

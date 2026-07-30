@@ -1,0 +1,28 @@
+## OBJECTIVE
+Execute Phase 1 of the real, already-designed VERIDIAN Auditor Engine plan for real: live running audit pipeline for the deterministic scanners, not more design. Plan file: /opt/veridian/ai-os/AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml (live path -- this file exists live, not in the claude-control git repo copy; commit a copy into the repo as part of this task's own PR to start closing that drift, in addition to keeping the live copy current).
+
+## SCOPE
+1. Read /opt/veridian/ai-os/AUDITOR_ENGINE_PHASE_PLAN_2026-07-24.yaml's phases[1] entry in full ("Deterministic scanners with no authoring prerequisite" -- security domain, gitleaks and other already-installed/smoke-tested scanners from Phase 0).
+2. Wire the already-installed scanners (Gitleaks, Trivy, Spectral -- confirmed installed+smoke-tested in Phase 0) into a real, runnable audit pipeline script that: runs each scanner against a real repo (compliance-tracker), captures real findings in the machine-readable finding-record schema Phase 0 designed, and writes results into knowledge_engine / a dedicated audit-findings table.
+3. Wire this pipeline into a cron entry (following the existing run-logged.sh pattern, Owner-approval-citation already covers new cron entries this session) so it runs on a schedule without AI involvement, per the Owner's "audit run by software, not AI" mandate.
+4. Update the phase plan (both live and now also the repo copy) marking phase 1 status done with real evidence (a real run's findings count, not zero).
+
+## KNOWN_CONTEXT
+- Owner directive: 100% real live implementation, no more shallow planning-only work.
+- A real drift exists: this plan file is currently live-only, not committed to the claude-control repo -- fix this as part of the task, don't just note it.
+- Standing rules: crontab changes need an OWNER_DECISIONS_NEEDED_2026-07-23.yaml approval entry (Owner's blanket approval covers it, record then update CRONTAB_APPROVED_SNAPSHOT.txt); registry writes come from scripts not hand-authored prose; verify real PR/merge state via `gh pr view`, never trust task.yaml's self-report alone.
+- Audit execution itself must be 100% software/cron -- no LLM call inside the scanner-run path. AI's role is limited to reading results afterward.
+
+## SUCCESS_CRITERIA
+- A real audit pipeline script exists, runs the installed scanners against a real repo, and produces real, non-zero findings in a real, queryable location.
+- A real cron entry runs this pipeline on a schedule.
+- Phase 1 shows completed status with real evidence in both the live and repo copies of the phase plan.
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on claude-control) including the phase-plan file itself now in the repo, real findings from a real run as evidence, and a final checkpoint stating what Phase 1 delivered vs what's deferred to Phase 2+.
+
+## CONSTRAINTS
+Limit this task to Phase 1 (security-domain deterministic scanners) only -- do not attempt other domains' phases in this same task. Any crontab need follows the existing Owner-approval-citation pattern rather than a fresh confirmation.
+
+## COMPLEXITY_TIER
+integrative

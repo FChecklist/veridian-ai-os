@@ -1,0 +1,245 @@
+id: task-20260725-112909-veridian-architecture-v2-task2-phase0-ga
+title: veridian-architecture-v2-task2-phase0-gap-analysis-plan
+status: completed
+repo: claude-control
+branch: worker/task-20260725-112909-veridian-architecture-v2-task2-phase0-ga
+workspace: /opt/veridian/ai-os/tasks/task-20260725-112909-veridian-architecture-v2-task2-phase0-ga/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260725-112909-veridian-architecture-v2-task2-phase0-ga
+service: veridian-worker@task-20260725-112909-veridian-architecture-v2-task2-phase0-ga.service
+created_at: '2026-07-25T11:29:10.676997+00:00'
+last_checkpoint_at: '2026-07-25T11:51:41.078286+00:00'
+completed_steps: &id002
+- Read ai-os/owner-attachments/VERIDIAN_Architecture_v2.0_extracted.txt in full (564
+  lines)
+- Read reference plan schema (WIRING_ENGINE_PHASE_PLAN, AUDITOR_ENGINE_PHASE_PLAN,
+  TESTING_ENGINE_PHASE_PLAN) and scripts/auto_phase_continuation.py to match the exact
+  phases[] schema
+- Cross-referenced document requirements against real system state (MASTER_INDEX.yaml's
+  103 registries, 20_ENGINES_10_GATEWAYS architecture, prompt_gateway, knowledge_engine,
+  compliance-tracker's litert-spike/llm-client.ts/permission-service.ts)
+- Produced ai-os/VERIDIAN_ARCHITECTURE_V2_GAP_ANALYSIS_2026-07-25.yaml -- 105 itemized
+  real requirements (85 not_implemented, 20 partially_implemented, 0 already_implemented),
+  each with real evidence, explicitly rejecting 9 naming-coincidence false matches
+  with the existing 20-Engines architecture
+- Produced ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml -- 10 phases
+  sequenced by real dependency, matching scripts/auto_phase_continuation.py's exact
+  schema
+- 'Verified pickup: temporarily copied both files into live /opt/veridian/ai-os/,
+  ran `python3 scripts/auto_phase_continuation.py --dry-run --limit 0`, confirmed
+  real output showing `next_phase: phase_1_prompt_registry_lifecycle_foundation, would_dispatch:
+  true`, then removed the temporary live copies (to avoid the real 30-min cron prematurely
+  dispatching before this task''s own PR is reviewed)'
+- Registered plan in ai-os/MASTER_INDEX.yaml (registries.veridian_architecture_v2_implementation)
+- Registered via `python3 scripts/superboss-register.py register-knowledge` (KE-20260725-114622-5506),
+  verified query-knowledge retrieval works
+- Filed ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml id veridian-architecture-v2-target-repo-anchor
+  (target-repo confirmation for phases 2-10's application code)
+remaining_steps: &id003
+- Commit + push
+- Open PR
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-25T11:29:12.347279+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8463596 Merge pull request #69 from FChecklist/worker/task-20260725-104606-owner-engine-document-accuracy-convergen'
+  - '80c1dfe Fix reviewer-caught regression: self-heal engine/ onto sys.path before
+    import document_engine, mirroring the existing config-import self-heal one directory
+    up -- fixes ModuleNotFoundError when classifier.py is imported via the package
+    convention (scripts/prompt_gateway/__init__.py) instead of gateway.py own bootstrap.
+    Verified: reproduced the exact failing scenario pre-fix, confirmed fixed post-fix;
+    standalone script mode and gateway.py --mode stdin both still work.'
+  - 'acc9534 Close OWNER_ENGINE document-accuracy gap: 93.94% -> 0.0%, converged'
+  - 'b41e71f Merge pull request #67 from FChecklist/worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i'
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-25T11:34:13.568744+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8463596 Merge pull request #69 from FChecklist/worker/task-20260725-104606-owner-engine-document-accuracy-convergen'
+  - '80c1dfe Fix reviewer-caught regression: self-heal engine/ onto sys.path before
+    import document_engine, mirroring the existing config-import self-heal one directory
+    up -- fixes ModuleNotFoundError when classifier.py is imported via the package
+    convention (scripts/prompt_gateway/__init__.py) instead of gateway.py own bootstrap.
+    Verified: reproduced the exact failing scenario pre-fix, confirmed fixed post-fix;
+    standalone script mode and gateway.py --mode stdin both still work.'
+  - 'acc9534 Close OWNER_ENGINE document-accuracy gap: 93.94% -> 0.0%, converged'
+  - 'b41e71f Merge pull request #67 from FChecklist/worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i'
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  note: periodic checkpoint
+- at: '2026-07-25T11:39:14.810689+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8463596 Merge pull request #69 from FChecklist/worker/task-20260725-104606-owner-engine-document-accuracy-convergen'
+  - '80c1dfe Fix reviewer-caught regression: self-heal engine/ onto sys.path before
+    import document_engine, mirroring the existing config-import self-heal one directory
+    up -- fixes ModuleNotFoundError when classifier.py is imported via the package
+    convention (scripts/prompt_gateway/__init__.py) instead of gateway.py own bootstrap.
+    Verified: reproduced the exact failing scenario pre-fix, confirmed fixed post-fix;
+    standalone script mode and gateway.py --mode stdin both still work.'
+  - 'acc9534 Close OWNER_ENGINE document-accuracy gap: 93.94% -> 0.0%, converged'
+  - 'b41e71f Merge pull request #67 from FChecklist/worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i'
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  note: periodic checkpoint
+- at: '2026-07-25T11:44:15.926358+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/VERIDIAN_ARCHITECTURE_V2_GAP_ANALYSIS_2026-07-25.yaml
+  - ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '8463596 Merge pull request #69 from FChecklist/worker/task-20260725-104606-owner-engine-document-accuracy-convergen'
+  - '80c1dfe Fix reviewer-caught regression: self-heal engine/ onto sys.path before
+    import document_engine, mirroring the existing config-import self-heal one directory
+    up -- fixes ModuleNotFoundError when classifier.py is imported via the package
+    convention (scripts/prompt_gateway/__init__.py) instead of gateway.py own bootstrap.
+    Verified: reproduced the exact failing scenario pre-fix, confirmed fixed post-fix;
+    standalone script mode and gateway.py --mode stdin both still work.'
+  - 'acc9534 Close OWNER_ENGINE document-accuracy gap: 93.94% -> 0.0%, converged'
+  - 'b41e71f Merge pull request #67 from FChecklist/worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i'
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  note: periodic checkpoint
+- at: '2026-07-25T11:48:40.601844+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read ai-os/owner-attachments/VERIDIAN_Architecture_v2.0_extracted.txt in full
+    (564 lines)
+  - Read reference plan schema (WIRING_ENGINE_PHASE_PLAN, AUDITOR_ENGINE_PHASE_PLAN,
+    TESTING_ENGINE_PHASE_PLAN) and scripts/auto_phase_continuation.py to match the
+    exact phases[] schema
+  - Cross-referenced document requirements against real system state (MASTER_INDEX.yaml's
+    103 registries, 20_ENGINES_10_GATEWAYS architecture, prompt_gateway, knowledge_engine,
+    compliance-tracker's litert-spike/llm-client.ts/permission-service.ts)
+  - Produced ai-os/VERIDIAN_ARCHITECTURE_V2_GAP_ANALYSIS_2026-07-25.yaml -- 105 itemized
+    real requirements (85 not_implemented, 20 partially_implemented, 0 already_implemented),
+    each with real evidence, explicitly rejecting 9 naming-coincidence false matches
+    with the existing 20-Engines architecture
+  - Produced ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml -- 10 phases
+    sequenced by real dependency, matching scripts/auto_phase_continuation.py's exact
+    schema
+  - 'Verified pickup: temporarily copied both files into live /opt/veridian/ai-os/,
+    ran `python3 scripts/auto_phase_continuation.py --dry-run --limit 0`, confirmed
+    real output showing `next_phase: phase_1_prompt_registry_lifecycle_foundation,
+    would_dispatch: true`, then removed the temporary live copies (to avoid the real
+    30-min cron prematurely dispatching before this task''s own PR is reviewed)'
+  - Registered plan in ai-os/MASTER_INDEX.yaml (registries.veridian_architecture_v2_implementation)
+  - Registered via `python3 scripts/superboss-register.py register-knowledge` (KE-20260725-114622-5506),
+    verified query-knowledge retrieval works
+  - Filed ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml id veridian-architecture-v2-target-repo-anchor
+    (target-repo confirmation for phases 2-10's application code)
+  remaining_steps:
+  - Commit + push
+  - Open PR
+  recent_commits:
+  - '839b74f Phase 0: VERIDIAN_Architecture_v2.0.docx gap analysis + auto-dispatchable
+    phase plan'
+  - '8463596 Merge pull request #69 from FChecklist/worker/task-20260725-104606-owner-engine-document-accuracy-convergen'
+  - '80c1dfe Fix reviewer-caught regression: self-heal engine/ onto sys.path before
+    import document_engine, mirroring the existing config-import self-heal one directory
+    up -- fixes ModuleNotFoundError when classifier.py is imported via the package
+    convention (scripts/prompt_gateway/__init__.py) instead of gateway.py own bootstrap.
+    Verified: reproduced the exact failing scenario pre-fix, confirmed fixed post-fix;
+    standalone script mode and gateway.py --mode stdin both still work.'
+  - 'acc9534 Close OWNER_ENGINE document-accuracy gap: 93.94% -> 0.0%, converged'
+  - 'b41e71f Merge pull request #67 from FChecklist/worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i'
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  note: quality gates passed, pushed branch worker/task-20260725-112909-veridian-architecture-v2-task2-phase0-ga,
+    awaiting review
+- at: '2026-07-25T11:51:41.078286+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '839b74f Phase 0: VERIDIAN_Architecture_v2.0.docx gap analysis + auto-dispatchable
+    phase plan'
+  - '8463596 Merge pull request #69 from FChecklist/worker/task-20260725-104606-owner-engine-document-accuracy-convergen'
+  - '80c1dfe Fix reviewer-caught regression: self-heal engine/ onto sys.path before
+    import document_engine, mirroring the existing config-import self-heal one directory
+    up -- fixes ModuleNotFoundError when classifier.py is imported via the package
+    convention (scripts/prompt_gateway/__init__.py) instead of gateway.py own bootstrap.
+    Verified: reproduced the exact failing scenario pre-fix, confirmed fixed post-fix;
+    standalone script mode and gateway.py --mode stdin both still work.'
+  - 'acc9534 Close OWNER_ENGINE document-accuracy gap: 93.94% -> 0.0%, converged'
+  - 'b41e71f Merge pull request #67 from FChecklist/worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i'
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/70'
+execution_seconds: 1167
+restart_count: 0
+token_usage:
+  input_tokens: 158
+  cache_creation_input_tokens: 207185
+  cache_read_input_tokens: 13459202
+  output_tokens: 92989
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 207185
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 613
+    cache_read_input_tokens: 229254
+    cache_creation_input_tokens: 1615
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1615
+    type: message
+  speed: standard
+master_synced_at: '2026-07-25T13:30:09.559010+00:00'

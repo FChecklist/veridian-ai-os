@@ -1,0 +1,31 @@
+## OBJECTIVE
+Implement phase_8_dspy_learning_distribution_engines increment 1 of N from ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml (repo claude-control). This phase depends only on phase_2_compiler_pipeline_intelligence_engines (status: done) and phase_4_defense_in_depth_security_quality (status: done, merged compliance-tracker PR #562 today, 2026-07-27) -- both real dependencies are now satisfied, this phase is genuinely unblocked. Scope is large (DSPy evaluation + 6 named engines with zero prior art) -- this is increment 1, checkpoint honestly like phase_5's increment 1 did if the full scope doesn't fit in one pass.
+
+## KNOWN_CONTEXT
+Verified real state as of 2026-07-27, do not re-derive:
+- phase_2's real compiler pipeline (keyword-based, wired to compliance.prompt_versions and Gateway G05) is the thing DSPy would replace/augment -- read it before proposing anything.
+- services/doc-processing/ already runs a standalone Python microservice (confirmed real per AUDITOR_ENGINE_PHASE_PLAN's stack_confirmed_2026-07-24) -- this is the real, existing Python surface any DSPy Python runtime integrates into. Do NOT stand up a fresh Python deployment for DSPy.
+- IMPORTANT PRIOR ART for engine-ai-learning (do not rebuild): a separate investigation (Priority 12 Universal Builder gap analysis, 2026-07-13) found `capability-learning-service.ts` already exists with live rolling counters, part of the already-closed Priority 5/6 "Software Orchestrator" + "UMR<->Software Orchestrator integration" work (task_capabilities/instruction_packages/capability_improvement_proposals schema, software-coverage-service.ts's deterministic classifier, capability-audit-service.ts's Auditor->Higher-AI escalation code). Verify this is still real and current (re-read the actual file, the note is 14 days old), then WIRE phase_8's engine-ai-learning gap item onto this existing service rather than building a second AI-learning/feedback-loop system. If on re-verification this file has been removed or repurposed, say so explicitly rather than silently building a duplicate.
+- engine-prompt-translation, engine-prompt-localization, engine-prompt-marketplace, engine-prompt-export, engine-prompt-import have confirmed ZERO prior art anywhere in the system (per the phase plan's own integration_point note: "integration_point: none -- standalone... no natural existing registry/gateway boundary governs them; they should register as new MASTER_INDEX.yaml entries once built, not be forced onto an unrelated existing system"). These are genuinely new work.
+- Gateway G09 ("ObservabilityAudit") and testing_engine_irvf's trace_id/span_id convention exist for a DIFFERENT phase (phase_7) -- do not pull phase_7 scope into this task.
+
+## SCOPE
+Increment 1 covers the two items with the clearest path to real, evidenced completion this pass:
+1. DSPy evaluation and decision (engine-dspy-integration): confirm DSPy's Python package is installable against the real services/doc-processing/ microservice stack. Make a real, justified technology-adoption decision -- adopt DSPy to replace/augment phase_2's keyword-based compiler, or explicitly decide not to and justify why (same rigor as the WebLLM-vs-LiteRT decision doc from phase_5 increment 1, ai-os/BROWSER_LITE_LLM_TECH_DECISION_2026-07-27.md -- follow that doc's structure/rigor as a template). If adopted, wire a real, minimal DSPy signature-based compilation path alongside (not replacing outright) phase_2's existing compiler, with a real before/after quality or token-count comparison on at least one real prompt.
+2. engine-ai-learning: re-verify capability-learning-service.ts's real current state (file:line), then wire phase_8's AI-learning gap item onto it -- extend if genuinely needed, do not duplicate.
+3. Architecture/scoping pass only (not full implementation) for the 5 zero-prior-art engines (translation, localization, marketplace, export, import): read the phase plan's own gap-analysis entries for each, propose a real schema/table design and a rough per-engine build estimate, and register each as a planned MASTER_INDEX.yaml entry (status: planned, not built) so future increments have a concrete starting point instead of re-deriving scope from scratch. Do NOT build these 5 engines in this increment -- scoping only.
+
+## SUCCESS_CRITERIA
+- `python3 scripts/superboss-register.py query-knowledge "veridian_v2_dspy_learning" --tag domain:veridian_architecture_v2` returns found>=1 (currently found=0, independently verify live before claiming otherwise).
+- A real command proving one real prompt compiles through whichever compilation method this phase adopts (DSPy or the justified alternative) with a measurable quality/token-count before/after, exit 0.
+- engine-ai-learning gap item has a real, evidenced wiring decision (extended capability-learning-service.ts, with file:line diff) OR an honest explanation of why re-verification found it unsuitable/absent.
+- The 5 zero-prior-art engines each have a real, reviewable scoping doc + MASTER_INDEX.yaml planned entry -- not built, but not silently skipped either.
+
+## EXPECTED_OUTPUT
+A real PR against compliance-tracker (worker branch, through the normal task-gateway dispatch pipeline, subject to AGENTS.md Rule 6/7(c) -- structured audit-verdict comment required before merge, no direct push to main) for the DSPy/AI-learning code changes, plus claude-control-side MASTER_INDEX.yaml/knowledge_engine registration (direct script execution or a small PR, whichever this repo's own convention is -- check recent phase_9 precedent, PR #112, for the pattern).
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. SCOPE item 3's "scoping only" boundary for the translation/localization/marketplace/export/import engines is a hard limit for this increment -- treat any temptation to write their real implementation code as future-increment work, not this one. Do NOT pull phase_7's observability/telemetry scope into this task even though this phase's own text mentions Gateway G09 elsewhere in the plan -- that reference belongs to a different phase.
+
+## COMPLEXITY_TIER
+judgment

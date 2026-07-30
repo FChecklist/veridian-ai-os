@@ -1,0 +1,360 @@
+id: task-20260719-021227-gap-closure--gp-20-loop-prevention
+title: 'Gap closure: GP-20-loop-prevention'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260719-021227-gap-closure--gp-20-loop-prevention
+workspace: /opt/veridian/ai-os/tasks/task-20260719-021227-gap-closure--gp-20-loop-prevention/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260719-021227-gap-closure--gp-20-loop-prevention
+service: veridian-worker@task-20260719-021227-gap-closure--gp-20-loop-prevention.service
+created_at: '2026-07-19T02:12:28.656466+00:00'
+last_checkpoint_at: '2026-07-19T02:50:07.151779+00:00'
+completed_steps: &id002
+- Read CONSTITUTION.yaml GP-20 section in full
+- Read src/lib/loop-prevention.ts (checkLoopBudget, shouldPromptSelfCheck) in full
+- Checked ACTIVE-CLAIMS.yaml + `gh pr list` for duplicate claims -- none found
+- Read src/lib/task-execution-engine.ts's dispatch/escalation call chain -- confirmed
+  no
+- Registered claim in ACTIVE-CLAIMS.yaml, committed as its own first commit
+- Implemented pure wouldCreateCycle() DFS in src/lib/loop-prevention.ts
+- Implemented DB-touching recordTaskEscalationEdge() in new src/lib/task-dependency-graph.ts
+- Wired into crm-service.ts's createChainedTask()/createFollowUpTaskFromLead/
+- Updated CONSTITUTION.yaml's GP-20 entry to reflect the real, honest new state
+- 'Added unit tests: 2-task cycle, 3-task cycle, non-cyclic chains, independent chains,'
+- bunx tsc --noEmit clean, bun run lint 0 errors, bun test 1741 pass/0 fail
+- All 6 local CI guardrail scripts pass
+- 'Pushed, opened PR #465, posted AUDIT: PASS, CI green, self-merged (TIER1, squash,'
+- 'Follow-up housekeeping PR #467: moved the claim entry to recently_completed in'
+remaining_steps: &id003 []
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-19T02:12:29.546655+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  note: worker started (resume=0)
+- at: '2026-07-19T02:17:30.056375+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:22:30.372722+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:27:30.703924+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/CONSTITUTION.yaml
+  - src/app/api/crm/leads/[id]/follow-up-task/route.ts
+  - src/app/api/crm/opportunities/[id]/follow-up-task/route.ts
+  - src/lib/loop-prevention.test.ts
+  - src/lib/loop-prevention.ts
+  - src/lib/services/crm-service.ts
+  - src/lib/task-dependency-graph.ts
+  completed_steps:
+  - Read CONSTITUTION.yaml GP-20 section in full
+  - Read src/lib/loop-prevention.ts (checkLoopBudget, shouldPromptSelfCheck) in full
+  - Checked ACTIVE-CLAIMS.yaml + `gh pr list` for duplicate claims -- none found
+  - Read src/lib/task-execution-engine.ts's dispatch/escalation call chain -- confirmed
+    no
+  - Registered claim in ACTIVE-CLAIMS.yaml, committed as its own first commit
+  remaining_steps:
+  - Implement pure wouldCreateCycle() DFS in src/lib/loop-prevention.ts
+  - Implement DB-touching recordTaskEscalationEdge() in new src/lib/task-dependency-graph.ts
+  - Wire into crm-service.ts's createChainedTask()/createFollowUpTaskFromLead/
+  - Update CONSTITUTION.yaml's GP-20 entry to reflect the real, honest new state
+  - 'Add unit tests: 2-task cycle, 3-task cycle, non-cyclic chain not blocked, self-loop'
+  - Run bunx tsc --noEmit, bun run lint, bun test -- fix everything
+  - Push, open PR against main
+  - 'Post structured AUDIT: PASS PR comment (8 fields)'
+  - Wait for CI via gh run watch
+  - Classify tier (expect TIER1 -- no schema.ts/drizzle changes) and self-merge if
+    green
+  - Report final status
+  recent_commits:
+  - 748ae4f1 Register GP-20 Loop Prevention Phase 2 claim in ACTIVE-CLAIMS.yaml
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:32:31.035637+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read CONSTITUTION.yaml GP-20 section in full
+  - Read src/lib/loop-prevention.ts (checkLoopBudget, shouldPromptSelfCheck) in full
+  - Checked ACTIVE-CLAIMS.yaml + `gh pr list` for duplicate claims -- none found
+  - Read src/lib/task-execution-engine.ts's dispatch/escalation call chain -- confirmed
+    no
+  - Registered claim in ACTIVE-CLAIMS.yaml, committed as its own first commit
+  - Implemented pure wouldCreateCycle() DFS in src/lib/loop-prevention.ts
+  - Implemented DB-touching recordTaskEscalationEdge() in new src/lib/task-dependency-graph.ts
+  - Wired into crm-service.ts's createChainedTask()/createFollowUpTaskFromLead/
+  - Updated CONSTITUTION.yaml's GP-20 entry to reflect the real, honest new state
+  - 'Added unit tests: 2-task cycle, 3-task cycle, non-cyclic chains, independent
+    chains,'
+  - bunx tsc --noEmit clean, bun run lint 0 errors, bun test 1732 pass/0 fail
+  - All 6 local CI guardrail scripts pass (asset-registry-coverage, migration-collision,
+  - Merged origin/main (DMP-06 landed concurrently) -- only conflict was this PROGRESS.md
+  remaining_steps:
+  - Push, open PR against main
+  - 'Post structured AUDIT: PASS PR comment (8 fields)'
+  - Wait for CI via gh run watch
+  - Classify tier (expect TIER1 -- no schema.ts/drizzle changes) and self-merge if
+    green
+  - Report final status
+  recent_commits:
+  - 6d065572 Merge origin/main into GP-20 loop-prevention branch
+  - 'daac4577 Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 748ae4f1 Register GP-20 Loop Prevention Phase 2 claim in ACTIVE-CLAIMS.yaml
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  note: periodic checkpoint
+- at: '2026-07-19T02:37:31.400495+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read CONSTITUTION.yaml GP-20 section in full
+  - Read src/lib/loop-prevention.ts (checkLoopBudget, shouldPromptSelfCheck) in full
+  - Checked ACTIVE-CLAIMS.yaml + `gh pr list` for duplicate claims -- none found
+  - Read src/lib/task-execution-engine.ts's dispatch/escalation call chain -- confirmed
+    no
+  - Registered claim in ACTIVE-CLAIMS.yaml, committed as its own first commit
+  - Implemented pure wouldCreateCycle() DFS in src/lib/loop-prevention.ts
+  - Implemented DB-touching recordTaskEscalationEdge() in new src/lib/task-dependency-graph.ts
+  - Wired into crm-service.ts's createChainedTask()/createFollowUpTaskFromLead/
+  - Updated CONSTITUTION.yaml's GP-20 entry to reflect the real, honest new state
+  - 'Added unit tests: 2-task cycle, 3-task cycle, non-cyclic chains, independent
+    chains,'
+  - bunx tsc --noEmit clean, bun run lint 0 errors, bun test 1732 pass/0 fail
+  - All 6 local CI guardrail scripts pass (asset-registry-coverage, migration-collision,
+  - Merged origin/main (DMP-06 landed concurrently) -- only conflict was this PROGRESS.md
+  remaining_steps:
+  - Push, open PR against main
+  - 'Post structured AUDIT: PASS PR comment (8 fields)'
+  - Wait for CI via gh run watch
+  - Classify tier (expect TIER1 -- no schema.ts/drizzle changes) and self-merge if
+    green
+  - Report final status
+  recent_commits:
+  - a636354a Merge origin/main into GP-20 loop-prevention branch (2)
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - 6d065572 Merge origin/main into GP-20 loop-prevention branch
+  - 'daac4577 Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 748ae4f1 Register GP-20 Loop Prevention Phase 2 claim in ACTIVE-CLAIMS.yaml
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:42:31.794943+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read CONSTITUTION.yaml GP-20 section in full
+  - Read src/lib/loop-prevention.ts (checkLoopBudget, shouldPromptSelfCheck) in full
+  - Checked ACTIVE-CLAIMS.yaml + `gh pr list` for duplicate claims -- none found
+  - Read src/lib/task-execution-engine.ts's dispatch/escalation call chain -- confirmed
+    no
+  - Registered claim in ACTIVE-CLAIMS.yaml, committed as its own first commit
+  - Implemented pure wouldCreateCycle() DFS in src/lib/loop-prevention.ts
+  - Implemented DB-touching recordTaskEscalationEdge() in new src/lib/task-dependency-graph.ts
+  - Wired into crm-service.ts's createChainedTask()/createFollowUpTaskFromLead/
+  - Updated CONSTITUTION.yaml's GP-20 entry to reflect the real, honest new state
+  - 'Added unit tests: 2-task cycle, 3-task cycle, non-cyclic chains, independent
+    chains,'
+  - bunx tsc --noEmit clean, bun run lint 0 errors, bun test 1732 pass/0 fail
+  - All 6 local CI guardrail scripts pass (asset-registry-coverage, migration-collision,
+  - Merged origin/main (DMP-06 landed concurrently) -- only conflict was this PROGRESS.md
+  remaining_steps:
+  - Push, open PR against main
+  - 'Post structured AUDIT: PASS PR comment (8 fields)'
+  - Wait for CI via gh run watch
+  - Classify tier (expect TIER1 -- no schema.ts/drizzle changes) and self-merge if
+    green
+  - Report final status
+  recent_commits:
+  - '87c0bcc8 ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  note: periodic checkpoint
+- at: '2026-07-19T02:47:53.051565+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read CONSTITUTION.yaml GP-20 section in full
+  - Read src/lib/loop-prevention.ts (checkLoopBudget, shouldPromptSelfCheck) in full
+  - Checked ACTIVE-CLAIMS.yaml + `gh pr list` for duplicate claims -- none found
+  - Read src/lib/task-execution-engine.ts's dispatch/escalation call chain -- confirmed
+    no
+  - Registered claim in ACTIVE-CLAIMS.yaml, committed as its own first commit
+  - Implemented pure wouldCreateCycle() DFS in src/lib/loop-prevention.ts
+  - Implemented DB-touching recordTaskEscalationEdge() in new src/lib/task-dependency-graph.ts
+  - Wired into crm-service.ts's createChainedTask()/createFollowUpTaskFromLead/
+  - Updated CONSTITUTION.yaml's GP-20 entry to reflect the real, honest new state
+  - 'Added unit tests: 2-task cycle, 3-task cycle, non-cyclic chains, independent
+    chains,'
+  - bunx tsc --noEmit clean, bun run lint 0 errors, bun test 1741 pass/0 fail
+  - All 6 local CI guardrail scripts pass
+  - 'Pushed, opened PR #465, posted AUDIT: PASS, CI green, self-merged (TIER1, squash,'
+  - 'Follow-up housekeeping PR #467: moved the claim entry to recently_completed in'
+  remaining_steps: []
+  recent_commits:
+  - '067b98cf Worker task-20260719-021227-gap-closure--gp-20-loop-prevention: automated
+    checkpoint commit'
+  - '87c0bcc8 ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  note: quality gates passed, pushed branch worker/task-20260719-021227-gap-closure--gp-20-loop-prevention,
+    awaiting review
+- at: '2026-07-19T02:50:07.151779+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '067b98cf Worker task-20260719-021227-gap-closure--gp-20-loop-prevention: automated
+    checkpoint commit'
+  - '87c0bcc8 ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  note: "tier1, Superboss-approved, but the merge itself FAILED (see supervisor.log)\
+    \ \u2014 needs manual attention, NOT actually merged: "
+execution_seconds: 2023
+restart_count: 0
+token_usage:
+  input_tokens: 266
+  cache_creation_input_tokens: 209064
+  cache_read_input_tokens: 21522227
+  output_tokens: 90302
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 209064
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 722
+    cache_read_input_tokens: 231976
+    cache_creation_input_tokens: 626
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 626
+    type: message
+  speed: standard
+master_synced_at: '2026-07-19T03:00:04.484365+00:00'

@@ -1,0 +1,849 @@
+id: task-20260719-025216-migrate-compliance-tracker-to-consume-ve
+title: Migrate compliance-tracker to consume veridian-ui-kit
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260719-025216-migrate-compliance-tracker-to-consume-ve
+workspace: /opt/veridian/ai-os/tasks/task-20260719-025216-migrate-compliance-tracker-to-consume-ve/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260719-025216-migrate-compliance-tracker-to-consume-ve
+service: veridian-worker@task-20260719-025216-migrate-compliance-tracker-to-consume-ve.service
+created_at: '2026-07-19T02:52:17.574755+00:00'
+last_checkpoint_at: '2026-07-19T03:43:55.184277+00:00'
+completed_steps: &id002
+- 'Read ai-os/CONSTITUTION.yaml navigation_and_intent context, ACTIVE-CLAIMS.yaml,
+  `gh pr list` -- no collision (closest prior entry, PR #436, explicitly scoped this
+  exact swap OUT as a "separate, larger follow-on" -- confirmed this task IS that
+  follow-on)'
+- Registered claim in ACTIVE-CLAIMS.yaml, pushed as branch's first commit
+- Read veridian-ui-kit README + every file under src/shell/, src/composer/, src/panel/,
+  src/context/ at the v0.2.0 tag, in full
+- Read this repo's real AppShell.tsx, AppSidebar.tsx, AppTopbar.tsx, VeriComposer.tsx,
+  VeriChatPanel.tsx, veri-chat-context.tsx, home/page.tsx in full
+- Bumped package.json to veridian-ui-kit (ended at v0.2.2, see below for why not v0.2.0),
+  bun install clean
+- 'globals.css + layout.tsx: `@import "@fchecklist/veridian-ui-kit/tokens/globals.css"`
+  + `veridianHeadingFont`/`veridianSansFont`, removed locally-duplicated core tokens/fonts,
+  kept this repo''s real extra tokens (semantic/pendency colors, shadcn mappings)'
+- veri-chat-context.tsx rewritten as a thin wrapper around `createVeriChatContext()`,
+  layering this repo's own multi-thread-AI state (aiThreadId/activeAiThreadId/aiThreads/switchAiThread/createNewAiThread)
+  as a composed inner context, `rightPanelView`/`setRightPanelView` aliasing the factory's
+  `activeView`/`setActiveView` for zero call-site churn
+- 'AppShell.tsx rewritten to use `AppShellFrame` for the veriChatV2Enabled branch
+  (sidebar/header/composer/panel/homeThreadSlot/homeRoute="/home"); legacy branch
+  untouched (AppShellFrame doesn''t apply there). Every widget preserved: HealthRibbon,
+  TrialBanner, OnboardingChecklist, GlobalChatDock(+isDockHiddenForPath, legacy branch
+  only), HelpWidget, TaskVisibilityPanel, stage_0 redirect, BYOB CSS vars, unread
+  chat/AI/connector polling'
+- 'New src/components/veri-chat/HomeThreadSlot.tsx: wires AppShellFrame''s `homeThreadSlot`
+  to the shared `ThreadView`, reading the real active AI thread''s messages (6s resilient
+  poll) -- closes a real, confirmed gap (before this migration, /home for veriChatV2Enabled
+  orgs showed zero thread content, just a composer)'
+- AppSidebar.tsx rewritten to use the shared `AppSidebar` -- top-pinned Home/Dashboard/Chat/Connectors/FDE
+  links folded into an unlabeled first section, all module sections converted to shared
+  NavSection/NavItem shape, desktop wrapped in `hidden lg:flex`, mobile Sheet preserved
+  (and its unreadable text-white-on-light-header contrast bug fixed while touching
+  this code)
+- AppTopbar.tsx rewritten to use the shared `AppHeader` -- searchSlot/notificationSlot/userMenuSlot/extraActions
+  (invite button + ThemeToggle + LanguageSwitcher, relocated from the sidebar footer)
+  wired through real logic unchanged
+- VeriChatPanel.tsx rewritten to use the shared `PanelShell` for the outer header+tabs
+  shell (all 7 tabs incl. real Meetings/Approvals/Voice via the generic View type
+  param) -- every real list/thread component (TaskList/ChatList/MeetingsList/ApprovalsList/VoiceList/TodoList/Overview/TaskThread/ConvoThread/MeetingThread/EmailThread)
+  unchanged, rendered as children
+- 'VeriComposer.tsx: investigated fully, confirmed real feature loss (VCEL calculator
+  structured inputs, FDE fallback leaf, calculator-suggestion chips, chain-picker
+  search box all have zero representation in the shared VeriComposer''s props) --
+  kept local render per this task''s own "report the blocker, don''t paper over it"
+  instruction; no direct package import needed since types already flow through transitively
+  via veri-chat-context.tsx'
+- 'Found and fixed 3 real, confirmed bugs in the shared package itself (upstream PRs,
+  not papered over locally):'
+- '`bunx tsc --noEmit` clean, `bun run lint` clean (pre-existing warnings only, unrelated
+  to this diff), `bun run build` succeeds (every route in the app compiles, confirms
+  no import/bundle regressions since AppShell wraps every authenticated route), `bun
+  test`: 1754 pass / 0 fail'
+- 'Visual verification: built a temporary, unprotected `/preview-appshell` route (deleted
+  before finalizing) mirroring AppShell''s real veriChatV2Enabled composition with
+  mock data (dev server has no real DB/Supabase credentials in this environment),
+  screenshotted with a locally-extracted Chromium (Playwright + manually `apt-get
+  download`''d shared libs, no root available) at desktop (both home and non-home
+  routes) and mobile viewports. Confirmed: header+sidebar+composer+panel compose with
+  zero clipping, sidebar footer renders correctly below the nav, panel tabs/badges/empty-states
+  render correctly, mobile Sheet trigger works and its contrast bug is fixed. Found
+  and fixed the 2 real upstream bugs above via this process.'
+- 'Confirmed, disclosed (not silently accepted) tradeoffs found during implementation/visual
+  verification:'
+remaining_steps: &id003
+- Push branch, open PR
+- 'Post structured `AUDIT: PASS` comment'
+- '`gh run watch --exit-status` until all required checks green'
+- Self-merge (TIER1 -- no schema/migration touched) if green, squash + delete branch
+- Move ACTIVE-CLAIMS.yaml entry to recently_completed
+- 'Final report to Owner: PR number, tier, CI result, merged status, preserved-behavior
+  checklist'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-19T02:52:18.505382+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  note: worker started (resume=0)
+- at: '2026-07-19T02:57:18.986147+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  note: periodic checkpoint
+- at: '2026-07-19T03:02:19.341056+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/boss/ACTIVE-CLAIMS.yaml
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  note: periodic checkpoint
+- at: '2026-07-19T03:07:19.700288+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - bun.lock
+  - package.json
+  - src/app/globals.css
+  - src/app/layout.tsx
+  - src/components/veri-chat/veri-chat-context.tsx
+  completed_steps:
+  - 'Read ai-os/CONSTITUTION.yaml navigation_and_intent context, ACTIVE-CLAIMS.yaml,
+    `gh pr list` -- no collision (closest prior entry, PR #436, explicitly scoped
+    this exact swap OUT as a "separate, larger follow-on" -- confirmed this task IS
+    that follow-on)'
+  - Registered claim in ACTIVE-CLAIMS.yaml, pushed as branch's first commit
+  - Read veridian-ui-kit README + every file under src/shell/, src/composer/, src/panel/,
+    src/context/ at the v0.2.0 tag, in full
+  - Read this repo's real AppShell.tsx, AppSidebar.tsx, AppTopbar.tsx, VeriComposer.tsx,
+    VeriChatPanel.tsx, veri-chat-context.tsx, home/page.tsx in full
+  - 'Confirmed, with evidence from the shared package''s actual source (not assumed):
+    VeriComposer''s onDispatch/onSendMessage callback props have NO representation
+    for VCEL calculator structured-input collection, the FDE "my option isn''t here"
+    fallback leaf, AI-suggested-calculator chips, or the chain-picker search/filter
+    box -- these are real, currently-shipped features with no prop/slot to preserve
+    them through a literal `<VeriComposer>` swap'
+  - Confirmed AppShellFrame's internal resize (useResizableWidth) has no prop surface
+    for persisted width -- conflicts with current useDefaultLayout/ssrSafeLocalStorage
+    persistence
+  - 'Confirmed AppSidebar (shared)''s template has no footer/mobile-Sheet/top-pinned-link
+    slot -- plan: fold top-pinned links as an unlabeled first section (mockup-aligned
+    drift correction, same class as PR #436''s home-merge fix), wrap in own Sheet
+    for mobile, verify footer placement visually via dev server'
+  - Confirmed PanelShell/ThreadView/Lists compose cleanly with zero feature loss (generic
+    tabs prop already supports Meetings/Approvals/Voice; all real list/thread rendering
+    stays as children)
+  - Confirmed createVeriChatContext() factory composes cleanly via a layered inner
+    context for this repo's own multi-thread AI state
+  remaining_steps:
+  - Bump package.json to veridian-ui-kit v0.2.0 + bun install
+  - Consume package tokens/fonts in globals.css + layout.tsx
+  - Rewrite veri-chat-context.tsx as thin wrapper around createVeriChatContext()
+  - Rewrite AppShell.tsx to use AppShellFrame
+  - Rewrite AppSidebar.tsx to use shared AppSidebar
+  - Rewrite AppTopbar.tsx to use shared AppHeader
+  - Rewrite VeriChatPanel.tsx to use shared PanelShell
+  - 'VeriComposer.tsx: adopt package''s pure utils/types, keep local render (documented
+    blocker)'
+  - Wire homeThreadSlot on /home for real AI-thread inline view
+  - Run tsc/lint/test, fix issues
+  - Visual verification via dev server
+  - 'Push, open PR, post AUDIT: PASS, wait for CI, merge if TIER1+green'
+  - 'Final report: PR number, tier, CI result, merged status, preserved-behavior checklist'
+  recent_commits:
+  - '840fb4f0 ACTIVE-CLAIMS.yaml: register claim for veridian-ui-kit real-component
+    migration'
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  note: periodic checkpoint
+- at: '2026-07-19T03:12:20.065925+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - bun.lock
+  - package.json
+  - src/app/globals.css
+  - src/app/layout.tsx
+  - src/components/AppShell.tsx
+  - src/components/veri-chat/veri-chat-context.tsx
+  - src/components/veri-chat/HomeThreadSlot.tsx
+  completed_steps:
+  - 'Read ai-os/CONSTITUTION.yaml navigation_and_intent context, ACTIVE-CLAIMS.yaml,
+    `gh pr list` -- no collision (closest prior entry, PR #436, explicitly scoped
+    this exact swap OUT as a "separate, larger follow-on" -- confirmed this task IS
+    that follow-on)'
+  - Registered claim in ACTIVE-CLAIMS.yaml, pushed as branch's first commit
+  - Read veridian-ui-kit README + every file under src/shell/, src/composer/, src/panel/,
+    src/context/ at the v0.2.0 tag, in full
+  - Read this repo's real AppShell.tsx, AppSidebar.tsx, AppTopbar.tsx, VeriComposer.tsx,
+    VeriChatPanel.tsx, veri-chat-context.tsx, home/page.tsx in full
+  - 'Confirmed, with evidence from the shared package''s actual source (not assumed):
+    VeriComposer''s onDispatch/onSendMessage callback props have NO representation
+    for VCEL calculator structured-input collection, the FDE "my option isn''t here"
+    fallback leaf, AI-suggested-calculator chips, or the chain-picker search/filter
+    box -- these are real, currently-shipped features with no prop/slot to preserve
+    them through a literal `<VeriComposer>` swap'
+  - Confirmed AppShellFrame's internal resize (useResizableWidth) has no prop surface
+    for persisted width -- conflicts with current useDefaultLayout/ssrSafeLocalStorage
+    persistence
+  - 'Confirmed AppSidebar (shared)''s template has no footer/mobile-Sheet/top-pinned-link
+    slot -- plan: fold top-pinned links as an unlabeled first section (mockup-aligned
+    drift correction, same class as PR #436''s home-merge fix), wrap in own Sheet
+    for mobile, verify footer placement visually via dev server'
+  - Confirmed PanelShell/ThreadView/Lists compose cleanly with zero feature loss (generic
+    tabs prop already supports Meetings/Approvals/Voice; all real list/thread rendering
+    stays as children)
+  - Confirmed createVeriChatContext() factory composes cleanly via a layered inner
+    context for this repo's own multi-thread AI state
+  remaining_steps:
+  - Bump package.json to veridian-ui-kit v0.2.0 + bun install
+  - Consume package tokens/fonts in globals.css + layout.tsx
+  - Rewrite veri-chat-context.tsx as thin wrapper around createVeriChatContext()
+  - Rewrite AppShell.tsx to use AppShellFrame
+  - Rewrite AppSidebar.tsx to use shared AppSidebar
+  - Rewrite AppTopbar.tsx to use shared AppHeader
+  - Rewrite VeriChatPanel.tsx to use shared PanelShell
+  - 'VeriComposer.tsx: adopt package''s pure utils/types, keep local render (documented
+    blocker)'
+  - Wire homeThreadSlot on /home for real AI-thread inline view
+  - Run tsc/lint/test, fix issues
+  - Visual verification via dev server
+  - 'Push, open PR, post AUDIT: PASS, wait for CI, merge if TIER1+green'
+  - 'Final report: PR number, tier, CI result, merged status, preserved-behavior checklist'
+  recent_commits:
+  - '840fb4f0 ACTIVE-CLAIMS.yaml: register claim for veridian-ui-kit real-component
+    migration'
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  note: periodic checkpoint
+- at: '2026-07-19T03:17:20.426358+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - bun.lock
+  - package.json
+  - src/app/globals.css
+  - src/app/layout.tsx
+  - src/components/AppShell.tsx
+  - src/components/AppSidebar.tsx
+  - src/components/veri-chat/veri-chat-context.tsx
+  - src/components/veri-chat/HomeThreadSlot.tsx
+  completed_steps:
+  - 'Read ai-os/CONSTITUTION.yaml navigation_and_intent context, ACTIVE-CLAIMS.yaml,
+    `gh pr list` -- no collision (closest prior entry, PR #436, explicitly scoped
+    this exact swap OUT as a "separate, larger follow-on" -- confirmed this task IS
+    that follow-on)'
+  - Registered claim in ACTIVE-CLAIMS.yaml, pushed as branch's first commit
+  - Read veridian-ui-kit README + every file under src/shell/, src/composer/, src/panel/,
+    src/context/ at the v0.2.0 tag, in full
+  - Read this repo's real AppShell.tsx, AppSidebar.tsx, AppTopbar.tsx, VeriComposer.tsx,
+    VeriChatPanel.tsx, veri-chat-context.tsx, home/page.tsx in full
+  - 'Confirmed, with evidence from the shared package''s actual source (not assumed):
+    VeriComposer''s onDispatch/onSendMessage callback props have NO representation
+    for VCEL calculator structured-input collection, the FDE "my option isn''t here"
+    fallback leaf, AI-suggested-calculator chips, or the chain-picker search/filter
+    box -- these are real, currently-shipped features with no prop/slot to preserve
+    them through a literal `<VeriComposer>` swap'
+  - Confirmed AppShellFrame's internal resize (useResizableWidth) has no prop surface
+    for persisted width -- conflicts with current useDefaultLayout/ssrSafeLocalStorage
+    persistence
+  - 'Confirmed AppSidebar (shared)''s template has no footer/mobile-Sheet/top-pinned-link
+    slot -- plan: fold top-pinned links as an unlabeled first section (mockup-aligned
+    drift correction, same class as PR #436''s home-merge fix), wrap in own Sheet
+    for mobile, verify footer placement visually via dev server'
+  - Confirmed PanelShell/ThreadView/Lists compose cleanly with zero feature loss (generic
+    tabs prop already supports Meetings/Approvals/Voice; all real list/thread rendering
+    stays as children)
+  - Confirmed createVeriChatContext() factory composes cleanly via a layered inner
+    context for this repo's own multi-thread AI state
+  remaining_steps:
+  - Bump package.json to veridian-ui-kit v0.2.0 + bun install
+  - Consume package tokens/fonts in globals.css + layout.tsx
+  - Rewrite veri-chat-context.tsx as thin wrapper around createVeriChatContext()
+  - Rewrite AppShell.tsx to use AppShellFrame
+  - Rewrite AppSidebar.tsx to use shared AppSidebar
+  - Rewrite AppTopbar.tsx to use shared AppHeader
+  - Rewrite VeriChatPanel.tsx to use shared PanelShell
+  - 'VeriComposer.tsx: adopt package''s pure utils/types, keep local render (documented
+    blocker)'
+  - Wire homeThreadSlot on /home for real AI-thread inline view
+  - Run tsc/lint/test, fix issues
+  - Visual verification via dev server
+  - 'Push, open PR, post AUDIT: PASS, wait for CI, merge if TIER1+green'
+  - 'Final report: PR number, tier, CI result, merged status, preserved-behavior checklist'
+  recent_commits:
+  - '840fb4f0 ACTIVE-CLAIMS.yaml: register claim for veridian-ui-kit real-component
+    migration'
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  note: periodic checkpoint
+- at: '2026-07-19T03:22:20.804943+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - bun.lock
+  - package.json
+  - src/app/globals.css
+  - src/app/layout.tsx
+  - src/components/AppShell.tsx
+  - src/components/AppSidebar.tsx
+  - src/components/AppTopbar.tsx
+  - src/components/veri-chat/VeriChatPanel.tsx
+  - src/components/veri-chat/veri-chat-context.tsx
+  - src/components/veri-chat/HomeThreadSlot.tsx
+  completed_steps:
+  - 'Read ai-os/CONSTITUTION.yaml navigation_and_intent context, ACTIVE-CLAIMS.yaml,
+    `gh pr list` -- no collision (closest prior entry, PR #436, explicitly scoped
+    this exact swap OUT as a "separate, larger follow-on" -- confirmed this task IS
+    that follow-on)'
+  - Registered claim in ACTIVE-CLAIMS.yaml, pushed as branch's first commit
+  - Read veridian-ui-kit README + every file under src/shell/, src/composer/, src/panel/,
+    src/context/ at the v0.2.0 tag, in full
+  - Read this repo's real AppShell.tsx, AppSidebar.tsx, AppTopbar.tsx, VeriComposer.tsx,
+    VeriChatPanel.tsx, veri-chat-context.tsx, home/page.tsx in full
+  - 'Confirmed, with evidence from the shared package''s actual source (not assumed):
+    VeriComposer''s onDispatch/onSendMessage callback props have NO representation
+    for VCEL calculator structured-input collection, the FDE "my option isn''t here"
+    fallback leaf, AI-suggested-calculator chips, or the chain-picker search/filter
+    box -- these are real, currently-shipped features with no prop/slot to preserve
+    them through a literal `<VeriComposer>` swap'
+  - Confirmed AppShellFrame's internal resize (useResizableWidth) has no prop surface
+    for persisted width -- conflicts with current useDefaultLayout/ssrSafeLocalStorage
+    persistence
+  - 'Confirmed AppSidebar (shared)''s template has no footer/mobile-Sheet/top-pinned-link
+    slot -- plan: fold top-pinned links as an unlabeled first section (mockup-aligned
+    drift correction, same class as PR #436''s home-merge fix), wrap in own Sheet
+    for mobile, verify footer placement visually via dev server'
+  - Confirmed PanelShell/ThreadView/Lists compose cleanly with zero feature loss (generic
+    tabs prop already supports Meetings/Approvals/Voice; all real list/thread rendering
+    stays as children)
+  - Confirmed createVeriChatContext() factory composes cleanly via a layered inner
+    context for this repo's own multi-thread AI state
+  remaining_steps:
+  - Bump package.json to veridian-ui-kit v0.2.0 + bun install
+  - Consume package tokens/fonts in globals.css + layout.tsx
+  - Rewrite veri-chat-context.tsx as thin wrapper around createVeriChatContext()
+  - Rewrite AppShell.tsx to use AppShellFrame
+  - Rewrite AppSidebar.tsx to use shared AppSidebar
+  - Rewrite AppTopbar.tsx to use shared AppHeader
+  - Rewrite VeriChatPanel.tsx to use shared PanelShell
+  - 'VeriComposer.tsx: adopt package''s pure utils/types, keep local render (documented
+    blocker)'
+  - Wire homeThreadSlot on /home for real AI-thread inline view
+  - Run tsc/lint/test, fix issues
+  - Visual verification via dev server
+  - 'Push, open PR, post AUDIT: PASS, wait for CI, merge if TIER1+green'
+  - 'Final report: PR number, tier, CI result, merged status, preserved-behavior checklist'
+  recent_commits:
+  - '840fb4f0 ACTIVE-CLAIMS.yaml: register claim for veridian-ui-kit real-component
+    migration'
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  note: periodic checkpoint
+- at: '2026-07-19T03:27:21.151956+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - bun.lock
+  - next.config.ts
+  - package.json
+  - src/app/globals.css
+  - src/app/layout.tsx
+  - src/components/AppShell.tsx
+  - src/components/AppSidebar.tsx
+  - src/components/AppTopbar.tsx
+  - src/components/veri-chat/VeriChatPanel.tsx
+  - src/components/veri-chat/veri-chat-context.tsx
+  - src/app/preview-appshell/
+  - src/components/veri-chat/HomeThreadSlot.tsx
+  - tmp-screenshot.mjs
+  completed_steps:
+  - 'Read ai-os/CONSTITUTION.yaml navigation_and_intent context, ACTIVE-CLAIMS.yaml,
+    `gh pr list` -- no collision (closest prior entry, PR #436, explicitly scoped
+    this exact swap OUT as a "separate, larger follow-on" -- confirmed this task IS
+    that follow-on)'
+  - Registered claim in ACTIVE-CLAIMS.yaml, pushed as branch's first commit
+  - Read veridian-ui-kit README + every file under src/shell/, src/composer/, src/panel/,
+    src/context/ at the v0.2.0 tag, in full
+  - Read this repo's real AppShell.tsx, AppSidebar.tsx, AppTopbar.tsx, VeriComposer.tsx,
+    VeriChatPanel.tsx, veri-chat-context.tsx, home/page.tsx in full
+  - 'Confirmed, with evidence from the shared package''s actual source (not assumed):
+    VeriComposer''s onDispatch/onSendMessage callback props have NO representation
+    for VCEL calculator structured-input collection, the FDE "my option isn''t here"
+    fallback leaf, AI-suggested-calculator chips, or the chain-picker search/filter
+    box -- these are real, currently-shipped features with no prop/slot to preserve
+    them through a literal `<VeriComposer>` swap'
+  - Confirmed AppShellFrame's internal resize (useResizableWidth) has no prop surface
+    for persisted width -- conflicts with current useDefaultLayout/ssrSafeLocalStorage
+    persistence
+  - 'Confirmed AppSidebar (shared)''s template has no footer/mobile-Sheet/top-pinned-link
+    slot -- plan: fold top-pinned links as an unlabeled first section (mockup-aligned
+    drift correction, same class as PR #436''s home-merge fix), wrap in own Sheet
+    for mobile, verify footer placement visually via dev server'
+  - Confirmed PanelShell/ThreadView/Lists compose cleanly with zero feature loss (generic
+    tabs prop already supports Meetings/Approvals/Voice; all real list/thread rendering
+    stays as children)
+  - Confirmed createVeriChatContext() factory composes cleanly via a layered inner
+    context for this repo's own multi-thread AI state
+  remaining_steps:
+  - Bump package.json to veridian-ui-kit v0.2.0 + bun install
+  - Consume package tokens/fonts in globals.css + layout.tsx
+  - Rewrite veri-chat-context.tsx as thin wrapper around createVeriChatContext()
+  - Rewrite AppShell.tsx to use AppShellFrame
+  - Rewrite AppSidebar.tsx to use shared AppSidebar
+  - Rewrite AppTopbar.tsx to use shared AppHeader
+  - Rewrite VeriChatPanel.tsx to use shared PanelShell
+  - 'VeriComposer.tsx: adopt package''s pure utils/types, keep local render (documented
+    blocker)'
+  - Wire homeThreadSlot on /home for real AI-thread inline view
+  - Run tsc/lint/test, fix issues
+  - Visual verification via dev server
+  - 'Push, open PR, post AUDIT: PASS, wait for CI, merge if TIER1+green'
+  - 'Final report: PR number, tier, CI result, merged status, preserved-behavior checklist'
+  recent_commits:
+  - '840fb4f0 ACTIVE-CLAIMS.yaml: register claim for veridian-ui-kit real-component
+    migration'
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  note: periodic checkpoint
+- at: '2026-07-19T03:32:21.503847+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - bun.lock
+  - next.config.ts
+  - package.json
+  - src/app/globals.css
+  - src/app/layout.tsx
+  - src/components/AppShell.tsx
+  - src/components/AppSidebar.tsx
+  - src/components/AppTopbar.tsx
+  - src/components/veri-chat/VeriChatPanel.tsx
+  - src/components/veri-chat/veri-chat-context.tsx
+  - libnspr4_2%3a4.35-1.1build1_amd64.deb
+  - src/app/preview-appshell/
+  - src/components/veri-chat/HomeThreadSlot.tsx
+  - tmp-screenshot.mjs
+  - tmp-screenshot2.mjs
+  completed_steps:
+  - 'Read ai-os/CONSTITUTION.yaml navigation_and_intent context, ACTIVE-CLAIMS.yaml,
+    `gh pr list` -- no collision (closest prior entry, PR #436, explicitly scoped
+    this exact swap OUT as a "separate, larger follow-on" -- confirmed this task IS
+    that follow-on)'
+  - Registered claim in ACTIVE-CLAIMS.yaml, pushed as branch's first commit
+  - Read veridian-ui-kit README + every file under src/shell/, src/composer/, src/panel/,
+    src/context/ at the v0.2.0 tag, in full
+  - Read this repo's real AppShell.tsx, AppSidebar.tsx, AppTopbar.tsx, VeriComposer.tsx,
+    VeriChatPanel.tsx, veri-chat-context.tsx, home/page.tsx in full
+  - 'Confirmed, with evidence from the shared package''s actual source (not assumed):
+    VeriComposer''s onDispatch/onSendMessage callback props have NO representation
+    for VCEL calculator structured-input collection, the FDE "my option isn''t here"
+    fallback leaf, AI-suggested-calculator chips, or the chain-picker search/filter
+    box -- these are real, currently-shipped features with no prop/slot to preserve
+    them through a literal `<VeriComposer>` swap'
+  - Confirmed AppShellFrame's internal resize (useResizableWidth) has no prop surface
+    for persisted width -- conflicts with current useDefaultLayout/ssrSafeLocalStorage
+    persistence
+  - 'Confirmed AppSidebar (shared)''s template has no footer/mobile-Sheet/top-pinned-link
+    slot -- plan: fold top-pinned links as an unlabeled first section (mockup-aligned
+    drift correction, same class as PR #436''s home-merge fix), wrap in own Sheet
+    for mobile, verify footer placement visually via dev server'
+  - Confirmed PanelShell/ThreadView/Lists compose cleanly with zero feature loss (generic
+    tabs prop already supports Meetings/Approvals/Voice; all real list/thread rendering
+    stays as children)
+  - Confirmed createVeriChatContext() factory composes cleanly via a layered inner
+    context for this repo's own multi-thread AI state
+  remaining_steps:
+  - Bump package.json to veridian-ui-kit v0.2.0 + bun install
+  - Consume package tokens/fonts in globals.css + layout.tsx
+  - Rewrite veri-chat-context.tsx as thin wrapper around createVeriChatContext()
+  - Rewrite AppShell.tsx to use AppShellFrame
+  - Rewrite AppSidebar.tsx to use shared AppSidebar
+  - Rewrite AppTopbar.tsx to use shared AppHeader
+  - Rewrite VeriChatPanel.tsx to use shared PanelShell
+  - 'VeriComposer.tsx: adopt package''s pure utils/types, keep local render (documented
+    blocker)'
+  - Wire homeThreadSlot on /home for real AI-thread inline view
+  - Run tsc/lint/test, fix issues
+  - Visual verification via dev server
+  - 'Push, open PR, post AUDIT: PASS, wait for CI, merge if TIER1+green'
+  - 'Final report: PR number, tier, CI result, merged status, preserved-behavior checklist'
+  recent_commits:
+  - '840fb4f0 ACTIVE-CLAIMS.yaml: register claim for veridian-ui-kit real-component
+    migration'
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  note: periodic checkpoint
+- at: '2026-07-19T03:37:21.875102+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/CONSTITUTION.yaml navigation_and_intent context, ACTIVE-CLAIMS.yaml,
+    `gh pr list` -- no collision (closest prior entry, PR #436, explicitly scoped
+    this exact swap OUT as a "separate, larger follow-on" -- confirmed this task IS
+    that follow-on)'
+  - Registered claim in ACTIVE-CLAIMS.yaml, pushed as branch's first commit
+  - Read veridian-ui-kit README + every file under src/shell/, src/composer/, src/panel/,
+    src/context/ at the v0.2.0 tag, in full
+  - Read this repo's real AppShell.tsx, AppSidebar.tsx, AppTopbar.tsx, VeriComposer.tsx,
+    VeriChatPanel.tsx, veri-chat-context.tsx, home/page.tsx in full
+  - Bumped package.json to veridian-ui-kit (ended at v0.2.2, see below for why not
+    v0.2.0), bun install clean
+  - 'globals.css + layout.tsx: `@import "@fchecklist/veridian-ui-kit/tokens/globals.css"`
+    + `veridianHeadingFont`/`veridianSansFont`, removed locally-duplicated core tokens/fonts,
+    kept this repo''s real extra tokens (semantic/pendency colors, shadcn mappings)'
+  - veri-chat-context.tsx rewritten as a thin wrapper around `createVeriChatContext()`,
+    layering this repo's own multi-thread-AI state (aiThreadId/activeAiThreadId/aiThreads/switchAiThread/createNewAiThread)
+    as a composed inner context, `rightPanelView`/`setRightPanelView` aliasing the
+    factory's `activeView`/`setActiveView` for zero call-site churn
+  - 'AppShell.tsx rewritten to use `AppShellFrame` for the veriChatV2Enabled branch
+    (sidebar/header/composer/panel/homeThreadSlot/homeRoute="/home"); legacy branch
+    untouched (AppShellFrame doesn''t apply there). Every widget preserved: HealthRibbon,
+    TrialBanner, OnboardingChecklist, GlobalChatDock(+isDockHiddenForPath, legacy
+    branch only), HelpWidget, TaskVisibilityPanel, stage_0 redirect, BYOB CSS vars,
+    unread chat/AI/connector polling'
+  - 'New src/components/veri-chat/HomeThreadSlot.tsx: wires AppShellFrame''s `homeThreadSlot`
+    to the shared `ThreadView`, reading the real active AI thread''s messages (6s
+    resilient poll) -- closes a real, confirmed gap (before this migration, /home
+    for veriChatV2Enabled orgs showed zero thread content, just a composer)'
+  - AppSidebar.tsx rewritten to use the shared `AppSidebar` -- top-pinned Home/Dashboard/Chat/Connectors/FDE
+    links folded into an unlabeled first section, all module sections converted to
+    shared NavSection/NavItem shape, desktop wrapped in `hidden lg:flex`, mobile Sheet
+    preserved (and its unreadable text-white-on-light-header contrast bug fixed while
+    touching this code)
+  - AppTopbar.tsx rewritten to use the shared `AppHeader` -- searchSlot/notificationSlot/userMenuSlot/extraActions
+    (invite button + ThemeToggle + LanguageSwitcher, relocated from the sidebar footer)
+    wired through real logic unchanged
+  - VeriChatPanel.tsx rewritten to use the shared `PanelShell` for the outer header+tabs
+    shell (all 7 tabs incl. real Meetings/Approvals/Voice via the generic View type
+    param) -- every real list/thread component (TaskList/ChatList/MeetingsList/ApprovalsList/VoiceList/TodoList/Overview/TaskThread/ConvoThread/MeetingThread/EmailThread)
+    unchanged, rendered as children
+  - 'VeriComposer.tsx: investigated fully, confirmed real feature loss (VCEL calculator
+    structured inputs, FDE fallback leaf, calculator-suggestion chips, chain-picker
+    search box all have zero representation in the shared VeriComposer''s props) --
+    kept local render per this task''s own "report the blocker, don''t paper over
+    it" instruction; no direct package import needed since types already flow through
+    transitively via veri-chat-context.tsx'
+  - 'Found and fixed 3 real, confirmed bugs in the shared package itself (upstream
+    PRs, not papered over locally):'
+  - '`bunx tsc --noEmit` clean, `bun run lint` clean (pre-existing warnings only,
+    unrelated to this diff), `bun run build` succeeds (every route in the app compiles,
+    confirms no import/bundle regressions since AppShell wraps every authenticated
+    route), `bun test`: 1754 pass / 0 fail'
+  - 'Visual verification: built a temporary, unprotected `/preview-appshell` route
+    (deleted before finalizing) mirroring AppShell''s real veriChatV2Enabled composition
+    with mock data (dev server has no real DB/Supabase credentials in this environment),
+    screenshotted with a locally-extracted Chromium (Playwright + manually `apt-get
+    download`''d shared libs, no root available) at desktop (both home and non-home
+    routes) and mobile viewports. Confirmed: header+sidebar+composer+panel compose
+    with zero clipping, sidebar footer renders correctly below the nav, panel tabs/badges/empty-states
+    render correctly, mobile Sheet trigger works and its contrast bug is fixed. Found
+    and fixed the 2 real upstream bugs above via this process.'
+  - 'Confirmed, disclosed (not silently accepted) tradeoffs found during implementation/visual
+    verification:'
+  remaining_steps:
+  - Push branch, open PR
+  - 'Post structured `AUDIT: PASS` comment'
+  - '`gh run watch --exit-status` until all required checks green'
+  - Self-merge (TIER1 -- no schema/migration touched) if green, squash + delete branch
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed
+  - 'Final report to Owner: PR number, tier, CI result, merged status, preserved-behavior
+    checklist'
+  recent_commits:
+  - 7e0a7d27 Merge remote-tracking branch 'origin/main' into worker/task-20260719-025216-migrate-compliance-tracker-to-consume-ve
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 0d2ca6b2 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - '840fb4f0 ACTIVE-CLAIMS.yaml: register claim for veridian-ui-kit real-component
+    migration'
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  note: periodic checkpoint
+- at: '2026-07-19T03:42:22.246598+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/CONSTITUTION.yaml navigation_and_intent context, ACTIVE-CLAIMS.yaml,
+    `gh pr list` -- no collision (closest prior entry, PR #436, explicitly scoped
+    this exact swap OUT as a "separate, larger follow-on" -- confirmed this task IS
+    that follow-on)'
+  - Registered claim in ACTIVE-CLAIMS.yaml, pushed as branch's first commit
+  - Read veridian-ui-kit README + every file under src/shell/, src/composer/, src/panel/,
+    src/context/ at the v0.2.0 tag, in full
+  - Read this repo's real AppShell.tsx, AppSidebar.tsx, AppTopbar.tsx, VeriComposer.tsx,
+    VeriChatPanel.tsx, veri-chat-context.tsx, home/page.tsx in full
+  - Bumped package.json to veridian-ui-kit (ended at v0.2.2, see below for why not
+    v0.2.0), bun install clean
+  - 'globals.css + layout.tsx: `@import "@fchecklist/veridian-ui-kit/tokens/globals.css"`
+    + `veridianHeadingFont`/`veridianSansFont`, removed locally-duplicated core tokens/fonts,
+    kept this repo''s real extra tokens (semantic/pendency colors, shadcn mappings)'
+  - veri-chat-context.tsx rewritten as a thin wrapper around `createVeriChatContext()`,
+    layering this repo's own multi-thread-AI state (aiThreadId/activeAiThreadId/aiThreads/switchAiThread/createNewAiThread)
+    as a composed inner context, `rightPanelView`/`setRightPanelView` aliasing the
+    factory's `activeView`/`setActiveView` for zero call-site churn
+  - 'AppShell.tsx rewritten to use `AppShellFrame` for the veriChatV2Enabled branch
+    (sidebar/header/composer/panel/homeThreadSlot/homeRoute="/home"); legacy branch
+    untouched (AppShellFrame doesn''t apply there). Every widget preserved: HealthRibbon,
+    TrialBanner, OnboardingChecklist, GlobalChatDock(+isDockHiddenForPath, legacy
+    branch only), HelpWidget, TaskVisibilityPanel, stage_0 redirect, BYOB CSS vars,
+    unread chat/AI/connector polling'
+  - 'New src/components/veri-chat/HomeThreadSlot.tsx: wires AppShellFrame''s `homeThreadSlot`
+    to the shared `ThreadView`, reading the real active AI thread''s messages (6s
+    resilient poll) -- closes a real, confirmed gap (before this migration, /home
+    for veriChatV2Enabled orgs showed zero thread content, just a composer)'
+  - AppSidebar.tsx rewritten to use the shared `AppSidebar` -- top-pinned Home/Dashboard/Chat/Connectors/FDE
+    links folded into an unlabeled first section, all module sections converted to
+    shared NavSection/NavItem shape, desktop wrapped in `hidden lg:flex`, mobile Sheet
+    preserved (and its unreadable text-white-on-light-header contrast bug fixed while
+    touching this code)
+  - AppTopbar.tsx rewritten to use the shared `AppHeader` -- searchSlot/notificationSlot/userMenuSlot/extraActions
+    (invite button + ThemeToggle + LanguageSwitcher, relocated from the sidebar footer)
+    wired through real logic unchanged
+  - VeriChatPanel.tsx rewritten to use the shared `PanelShell` for the outer header+tabs
+    shell (all 7 tabs incl. real Meetings/Approvals/Voice via the generic View type
+    param) -- every real list/thread component (TaskList/ChatList/MeetingsList/ApprovalsList/VoiceList/TodoList/Overview/TaskThread/ConvoThread/MeetingThread/EmailThread)
+    unchanged, rendered as children
+  - 'VeriComposer.tsx: investigated fully, confirmed real feature loss (VCEL calculator
+    structured inputs, FDE fallback leaf, calculator-suggestion chips, chain-picker
+    search box all have zero representation in the shared VeriComposer''s props) --
+    kept local render per this task''s own "report the blocker, don''t paper over
+    it" instruction; no direct package import needed since types already flow through
+    transitively via veri-chat-context.tsx'
+  - 'Found and fixed 3 real, confirmed bugs in the shared package itself (upstream
+    PRs, not papered over locally):'
+  - '`bunx tsc --noEmit` clean, `bun run lint` clean (pre-existing warnings only,
+    unrelated to this diff), `bun run build` succeeds (every route in the app compiles,
+    confirms no import/bundle regressions since AppShell wraps every authenticated
+    route), `bun test`: 1754 pass / 0 fail'
+  - 'Visual verification: built a temporary, unprotected `/preview-appshell` route
+    (deleted before finalizing) mirroring AppShell''s real veriChatV2Enabled composition
+    with mock data (dev server has no real DB/Supabase credentials in this environment),
+    screenshotted with a locally-extracted Chromium (Playwright + manually `apt-get
+    download`''d shared libs, no root available) at desktop (both home and non-home
+    routes) and mobile viewports. Confirmed: header+sidebar+composer+panel compose
+    with zero clipping, sidebar footer renders correctly below the nav, panel tabs/badges/empty-states
+    render correctly, mobile Sheet trigger works and its contrast bug is fixed. Found
+    and fixed the 2 real upstream bugs above via this process.'
+  - 'Confirmed, disclosed (not silently accepted) tradeoffs found during implementation/visual
+    verification:'
+  remaining_steps:
+  - Push branch, open PR
+  - 'Post structured `AUDIT: PASS` comment'
+  - '`gh run watch --exit-status` until all required checks green'
+  - Self-merge (TIER1 -- no schema/migration touched) if green, squash + delete branch
+  - Move ACTIVE-CLAIMS.yaml entry to recently_completed
+  - 'Final report to Owner: PR number, tier, CI result, merged status, preserved-behavior
+    checklist'
+  recent_commits:
+  - 7e0a7d27 Merge remote-tracking branch 'origin/main' into worker/task-20260719-025216-migrate-compliance-tracker-to-consume-ve
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 0d2ca6b2 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - '840fb4f0 ACTIVE-CLAIMS.yaml: register claim for veridian-ui-kit real-component
+    migration'
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  note: periodic checkpoint
+- at: '2026-07-19T03:43:55.184277+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 7e0a7d27 Merge remote-tracking branch 'origin/main' into worker/task-20260719-025216-migrate-compliance-tracker-to-consume-ve
+  - '235e7ce1 ACTIVE-CLAIMS.yaml: move schema.ts platform-schema migration claim to
+    recently_completed (PR #469 merged) (#470)'
+  - 0d2ca6b2 Migrate compliance-tracker to consume veridian-ui-kit's real shell components
+  - 'bb8bfbe5 schema.ts: reflect live platform schema move (22 tables + 3 enums) (#469)'
+  - 16bad6f7 Add platform schema compartment migration (applied live via Supabase
+    MCP) (#468)
+  - '840fb4f0 ACTIVE-CLAIMS.yaml: register claim for veridian-ui-kit real-component
+    migration'
+  - 'b0318a45 Close GP-08/GP-09: grep-verifiable claim confidence scoring (#463)'
+  - '33b615ba ACTIVE-CLAIMS.yaml: move GP-20 loop-prevention claim to recently_completed
+    (PR #465 merged) (#467)'
+  - '4cffe82d Close GP-20 Loop Prevention gap: task-dependency-graph cycle detection
+    (#465)'
+  - '6fa8742e ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged) (#464)'
+  note: worker finished, no changes to commit
+execution_seconds: 3096
+restart_count: 0
+token_usage:
+  input_tokens: 546
+  cache_creation_input_tokens: 703855
+  cache_read_input_tokens: 97838290
+  output_tokens: 209425
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 703855
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 122
+    cache_read_input_tokens: 529614
+    cache_creation_input_tokens: 159
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 159
+    type: message
+  speed: standard
+master_synced_at: '2026-07-19T04:00:05.247087+00:00'

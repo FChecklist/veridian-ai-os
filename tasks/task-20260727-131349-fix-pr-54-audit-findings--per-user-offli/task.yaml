@@ -1,0 +1,265 @@
+id: task-20260727-131349-fix-pr-54-audit-findings--per-user-offli
+title: 'Fix PR 54 audit findings: per-user offline queue isolation + sync race condition'
+status: blocked
+repo: projexa
+branch: feat/pwa-offline-infra
+workspace: /opt/veridian/ai-os/tasks/task-20260727-131349-fix-pr-54-audit-findings--per-user-offli/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-131349-fix-pr-54-audit-findings--per-user-offli
+service: veridian-worker@task-20260727-131349-fix-pr-54-audit-findings--per-user-offli.service
+created_at: '2026-07-27T13:13:50.627881+00:00'
+last_checkpoint_at: '2026-07-27T13:26:38.093251+00:00'
+completed_steps: &id002
+- Read full audit verdict -- 2 real blocking findings (cross-user data
+- 'Finding #1 (cross-user leak, the primary blocker): every'
+- 'Finding #2 (sync race): added a real mutex to'
+- 'New tests in `work-progress-queue.test.ts`:'
+- '`npx tsc --noEmit` clean.'
+- '`bun test src`: 30/30 pass (bare `bun test` also picks up Playwright'
+- 'Committed + pushed directly to `feat/pwa-offline-infra` (same PR #54,'
+- 'Time-permitting follow-up (non-blocking per audit): added a'
+remaining_steps: &id003
+- Fresh supervisor audit required before merge (per this repo's review
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T13:13:52.698443+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '91cf239 Merge pull request #52 from FChecklist/worker/task-20260727-122445-projexa--fix-veridian-ui-kit-appheader-e'
+  - 'a1a3ac2 Mark PR #52 opened in progress log'
+  - f4031d9 Wire homeThreadSlot into AppShellFrame; correct stale AppHeader-bug premise
+  - '5441c50 Merge pull request #51 from FChecklist/worker/task-20260727-101157-projexa-pivot-table---chart-ui-for-repor'
+  - 8cf5cab Add pivot/chart E2E test; document real-data verification + a discovered
+    prod login-routing issue
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  - 1d6fc9c Merge remote-tracking branch 'origin/main' into worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d
+  - '0ce522f Worker task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d:
+    automated checkpoint commit'
+  - '1dceb4e Phase 2 Batch B: real Playwright E2E tests for Resources/Field/Design
+    modules (#48)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T13:18:53.968878+00:00'
+  status: in_progress
+  files_modified:
+  - src/components/WorkProgressClient.tsx
+  - src/lib/offline/work-progress-queue.ts
+  completed_steps:
+  - 'Phase 0 investigation confirmed (per SPEC KNOWN_CONTEXT): PWA infra absent, offline/IndexedDB
+    absent, dependency-blocking absent in compliance-tracker''s pms-issue-service.ts'
+  - Checked ai-os/boss/ACTIVE-CLAIMS.yaml in both repos, no real conflicting active
+    claims found
+  - Claimed scope in PROJEXA's ACTIVE-CLAIMS.yaml
+  - Cloned compliance-tracker fresh into a dedicated task workspace (repo dir /opt/veridian/repos/compliance-tracker
+    was dirty with unrelated in-flight sessions -- avoided editing it directly)
+  - Claimed scope in compliance-tracker's ACTIVE-CLAIMS.yaml (branch feat/pms-dependency-blocking-enforcement),
+    pushed
+  - 'compliance-tracker: pms-issue-service.ts -- updateIssue() now checks pmsIssueRelations
+    before allowing a transition into a "completed"-group status (rejects with a specific
+    409 ServiceError naming the incomplete predecessor); addIssueRelation() rejects
+    a new blocks/blocked_by edge that would immediately leave an already-completed
+    successor with an incomplete predecessor. No-relation issues (the common case)
+    are untouched. Pure edge-normalization logic extracted as exported `predecessorIdsOf()`.'
+  - 'compliance-tracker: src/lib/services/pms-issue-service.test.ts -- 7 bun:test
+    cases for predecessorIdsOf() (matches this repo''s existing convention of testing
+    pure logic, not withTenantContext/live DB, in .test.ts files -- no test-DB harness
+    exists in this environment). `bun test` passes (7/7), `npx tsc --noEmit` clean
+    (needed NODE_OPTIONS=--max-old-space-size=6144 -- default heap OOMs on this repo''s
+    full project graph).'
+  - 'PROJEXA: src/app/manifest.ts -- Next.js native manifest route, adapted from compliance-tracker''s
+    real working manifest.ts (same mechanism), PROJEXA''s own branding/colors (verified
+    against globals.css''s real --background/--foreground tokens), no share_target
+    (that''s VERI Chat-specific, doesn''t apply to PROJEXA).'
+  - 'PROJEXA: public/sw.js -- hand-written service worker (justification in the file''s
+    own header comment: no next-pwa/workbox dependency exists in this repo today,
+    and a small first-party SW matches this codebase''s general convention over adopting
+    a heavy build-plugin). Network-first navigations with app-shell cache fallback,
+    cache-first for static GETs, explicitly bypasses /api/* (offline queue''s job,
+    not the SW''s -- avoids silently serving stale org/project data). Registered from
+    src/components/ServiceWorkerRegister.tsx, mounted in src/app/layout.tsx.'
+  - 'PROJEXA: src/lib/offline/work-progress-queue.ts -- idb-keyval-backed (added as
+    a new dependency, confirmed not already present anywhere in the monorepo) local
+    queue for work-progress entries (quantity/percent/remarks/photo Blob). "Always
+    queue, sync opportunistically" design: every submission enqueues first, then syncs
+    immediately if online; an `online` event listener drains the queue on reconnect.
+    Wired into src/components/WorkProgressClient.tsx with a real, visible amber "N
+    entries queued, will sync" panel (not silent), a manual "Sync now" button, and
+    a photo file input on the Log Progress dialog.'
+  - '`npx tsc --noEmit` clean on PROJEXA (also needed the increased heap).'
+  - 'PROJEXA: e2e/offline-work-progress-sync.spec.ts written (real Playwright spec:
+    context.setOffline(true), log progress, assert the real "queued, will sync" panel
+    + queue-item content, assert nothing landed server-side yet; context.setOffline(false),
+    assert the queue drains via the real `online` listener, reload, assert the entry
+    now appears in the real entries table). **NOT executed against the live site**:
+    confirmed via a direct `curl https://projexa-ai.com/login` during this task that
+    it still serves compliance-tracker''s own login UI, not PROJEXA''s (the exact
+    pre-existing prod routing bug the immediately-prior PR (8cf5cab) already documented
+    and was blocked by) -- auth.setup.ts''s real login flow can''t complete for ANY
+    spec in this suite right now, not something specific to this feature. No local
+    dev server alternative either: this checkout has no NEXT_PUBLIC_SUPABASE_URL/ANON_KEY
+    env vars, so `next dev` can''t authenticate locally.'
+  - 'PROJEXA: src/lib/offline/work-progress-queue.test.ts -- real substitute proof
+    (same honest-substitution pattern as 8cf5cab), exercising the ACTUAL production
+    work-progress-queue.ts module against a real IndexedDB (fake-indexeddb, added
+    as a new devDependency -- this is real browser-local storage, not a "live backend",
+    so it''s a different case from this repo''s live-DB-test exclusion convention).
+    5 tests: enqueue persists a real record; sync-while-offline leaves it queued with
+    status ''error'' (not silently dropped); sync-once-reconnected POSTs the real
+    payload shape to /api/work-progress and empties the queue; a previously-failed
+    entry retries and lands on the next sync; a real photo Blob round-trips through
+    IndexedDB. `bun test src` -- 26/26 pass repo-wide (note: bare `bun test` also
+    picks up e2e/*.spec.ts and fails on all of them with a pre-existing, unrelated
+    Playwright/bun-test harness conflict -- confirmed this predates this task''s changes;
+    `bun test src` is the correct unit-test scope).'
+  - 'PWA manifest validity check: `bun run build` succeeded for real (production build),
+    `/manifest.webmanifest` compiled as a static route. Started the real built server
+    (`bun run start`, dummy Supabase env vars only to get past middleware''s client-construction
+    guard -- the manifest route itself needs no auth) and curled it for real: `GET
+    /manifest.webmanifest` -> HTTP 200, valid JSON with all Web-App-Manifest installability
+    fields present (name, short_name, start_url, display:"standalone", theme_color,
+    background_color, icons with real sizes/type) matching the real logo-mark.svg
+    in public/; `GET /sw.js` -> HTTP 200. A full Lighthouse CLI PWA-category run was
+    attempted (`npx lighthouse ... --only-audits=installable-manifest,service-worker,...`)
+    but did not complete cleanly in this headless/sandboxed environment (Chrome launch
+    friction) within remaining budget -- the curl-verified real 200s + valid manifest
+    JSON + successful production build are the executed, real verification; full Lighthouse
+    automation is a disclosed gap, not claimed as done.'
+  remaining_steps:
+  - Open PRs against both repos through normal dispatch/review pipeline (no direct
+    push to main)
+  recent_commits:
+  - '9480fb4 PROGRESS: PWA manifest validity verified via real build+serve+curl'
+  - '783ccb4 Add offline queue+sync tests: real e2e spec + real IndexedDB substitute
+    proof'
+  - 5a72cbf Add real PWA manifest, offline-shell service worker, and IndexedDB work-progress
+    sync queue
+  - 2613ae6 Claim PWA/offline scope in ACTIVE-CLAIMS.yaml; update PROGRESS.md
+  - '5441c50 Merge pull request #51 from FChecklist/worker/task-20260727-101157-projexa-pivot-table---chart-ui-for-repor'
+  - 8cf5cab Add pivot/chart E2E test; document real-data verification + a discovered
+    prod login-routing issue
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  - 1d6fc9c Merge remote-tracking branch 'origin/main' into worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d
+  - '0ce522f Worker task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d:
+    automated checkpoint commit'
+  note: periodic checkpoint
+- at: '2026-07-27T13:23:55.281637+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read full audit verdict -- 2 real blocking findings (cross-user data
+  - 'Finding #1 (cross-user leak, the primary blocker): every'
+  - 'Finding #2 (sync race): added a real mutex to'
+  - 'New tests in `work-progress-queue.test.ts`:'
+  - '`npx tsc --noEmit` clean.'
+  - '`bun test src`: 30/30 pass (bare `bun test` also picks up Playwright'
+  - 'Committed + pushed directly to `feat/pwa-offline-infra` (same PR #54,'
+  - 'Time-permitting follow-up (non-blocking per audit): added a'
+  remaining_steps:
+  - Fresh supervisor audit required before merge (per this repo's review
+  recent_commits:
+  - 173b9ab Add max-attempt cap for permanently-failing sync entries (audit follow-up)
+  - 'b5014d9 Fix PR #54 audit findings: per-user IndexedDB scoping + concurrent-sync
+    mutex'
+  - '9480fb4 PROGRESS: PWA manifest validity verified via real build+serve+curl'
+  - '783ccb4 Add offline queue+sync tests: real e2e spec + real IndexedDB substitute
+    proof'
+  - 5a72cbf Add real PWA manifest, offline-shell service worker, and IndexedDB work-progress
+    sync queue
+  - 2613ae6 Claim PWA/offline scope in ACTIVE-CLAIMS.yaml; update PROGRESS.md
+  - '5441c50 Merge pull request #51 from FChecklist/worker/task-20260727-101157-projexa-pivot-table---chart-ui-for-repor'
+  - 8cf5cab Add pivot/chart E2E test; document real-data verification + a discovered
+    prod login-routing issue
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  note: periodic checkpoint
+- at: '2026-07-27T13:24:56.541067+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read full audit verdict -- 2 real blocking findings (cross-user data
+  - 'Finding #1 (cross-user leak, the primary blocker): every'
+  - 'Finding #2 (sync race): added a real mutex to'
+  - 'New tests in `work-progress-queue.test.ts`:'
+  - '`npx tsc --noEmit` clean.'
+  - '`bun test src`: 30/30 pass (bare `bun test` also picks up Playwright'
+  - 'Committed + pushed directly to `feat/pwa-offline-infra` (same PR #54,'
+  - 'Time-permitting follow-up (non-blocking per audit): added a'
+  remaining_steps:
+  - Fresh supervisor audit required before merge (per this repo's review
+  recent_commits:
+  - 173b9ab Add max-attempt cap for permanently-failing sync entries (audit follow-up)
+  - 'b5014d9 Fix PR #54 audit findings: per-user IndexedDB scoping + concurrent-sync
+    mutex'
+  - '9480fb4 PROGRESS: PWA manifest validity verified via real build+serve+curl'
+  - '783ccb4 Add offline queue+sync tests: real e2e spec + real IndexedDB substitute
+    proof'
+  - 5a72cbf Add real PWA manifest, offline-shell service worker, and IndexedDB work-progress
+    sync queue
+  - 2613ae6 Claim PWA/offline scope in ACTIVE-CLAIMS.yaml; update PROGRESS.md
+  - '5441c50 Merge pull request #51 from FChecklist/worker/task-20260727-101157-projexa-pivot-table---chart-ui-for-repor'
+  - 8cf5cab Add pivot/chart E2E test; document real-data verification + a discovered
+    prod login-routing issue
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  note: quality gates passed, pushed branch worker/task-20260727-131349-fix-pr-54-audit-findings--per-user-offli,
+    awaiting review
+- at: '2026-07-27T13:26:38.093251+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 173b9ab Add max-attempt cap for permanently-failing sync entries (audit follow-up)
+  - 'b5014d9 Fix PR #54 audit findings: per-user IndexedDB scoping + concurrent-sync
+    mutex'
+  - '9480fb4 PROGRESS: PWA manifest validity verified via real build+serve+curl'
+  - '783ccb4 Add offline queue+sync tests: real e2e spec + real IndexedDB substitute
+    proof'
+  - 5a72cbf Add real PWA manifest, offline-shell service worker, and IndexedDB work-progress
+    sync queue
+  - 2613ae6 Claim PWA/offline scope in ACTIVE-CLAIMS.yaml; update PROGRESS.md
+  - '5441c50 Merge pull request #51 from FChecklist/worker/task-20260727-101157-projexa-pivot-table---chart-ui-for-repor'
+  - 8cf5cab Add pivot/chart E2E test; document real-data verification + a discovered
+    prod login-routing issue
+  - 447b455 Add pivot table + chart view modes to Reports (client-side, thin-client
+    compliant)
+  - '9156e2e Merge pull request #49 from FChecklist/worker/task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d'
+  note: "tier1, Superboss-approved, but the merge itself FAILED (gh pr view confirms\
+    \ state=OPEN, mergedAt=; see supervisor.log) \u2014 needs manual attention, NOT\
+    \ actually merged: https://github.com/FChecklist/projexa/pull/54"
+execution_seconds: 630
+restart_count: 0
+token_usage:
+  input_tokens: 146
+  cache_creation_input_tokens: 126569
+  cache_read_input_tokens: 7445528
+  output_tokens: 53169
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 126569
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 523
+    cache_read_input_tokens: 149979
+    cache_creation_input_tokens: 274
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 274
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:26.022319+00:00'

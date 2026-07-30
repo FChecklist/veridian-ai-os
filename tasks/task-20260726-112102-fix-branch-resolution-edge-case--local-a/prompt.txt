@@ -1,0 +1,24 @@
+## OBJECTIVE
+Fix a real, precisely-diagnosed edge case in the branch-resolution fix merged earlier today as claude-control PR #87 (real incident evidence: task-20260726-105110's worker.log shows "On branch pr80-work / Your branch is up to date with 'origin/worker/task-20260726-083833-build-interactive-session-write-gate--re'" -- the worker checked out a LOCAL branch named 'pr80-work' that tracks the real remote branch worker/task-20260726-083833-..., committed and pushed there correctly via the tracking relationship, but the branch-resolution fix reads the LOCAL checked-out branch name via `git rev-parse --abbrev-ref HEAD` (which returns 'pr80-work'), not the REMOTE branch it actually tracks and pushes to -- so supervisor-entrypoint.sh then tried `gh pr create --head pr80-work` / `gh pr list --head pr80-work`, found nothing (no remote branch is literally named 'pr80-work'), and the task got stuck exactly the way this whole class of bug was supposed to be fixed.
+
+## KNOWN_CONTEXT
+Read the real, current branch-resolution logic added by PR #87 first (search scripts/veridian-task.py and/or wherever task.yaml's 'branch' field now gets set at completion time for the exact function this session added). It currently uses local HEAD branch name resolution. Git tracks a real, queryable upstream relationship for any branch checked out with `git checkout -b <local-name> <remote-ref>` or `git branch --set-upstream-to`: `git rev-parse --abbrev-ref --symbolic-full-name @{upstream}` returns the real remote tracking branch (e.g. `origin/worker/task-20260726-083833-...`) even when the local branch name differs. This is the real fix: prefer the upstream tracking branch name when one exists, falling back to the local HEAD branch name only when no upstream is set (e.g. for a genuinely new branch with nothing to track yet).
+
+## SCOPE
+1. Fix the branch-resolution logic to check for a real upstream tracking branch first (`git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2>/dev/null`, stripping the leading `origin/` remote prefix to get the real branch name), and only fall back to the plain local HEAD branch name when no upstream tracking relationship exists.
+2. Add a regression test reproducing this exact scenario: a workspace where the local checked-out branch name differs from its real remote tracking branch (simulate via `git checkout -b differently-named-local <remote-ref>`), asserting the resolved branch name is the real remote one, not the local alias.
+3. Verify this doesn't regress the original fix's own test case (a worker using its own task-derived branch name with no alias, where local and remote names match) -- both cases must resolve correctly.
+
+## SUCCESS_CRITERIA
+- The new regression test (local/remote branch-name mismatch scenario) passes.
+- The original PR #87 regression test (branch-resolution for a worker that pushed real commits to a pre-existing branch) still passes -- no regression.
+- `git checkout -b test-alias origin/some-real-branch && <the fixed resolution function>` returns 'some-real-branch', not 'test-alias', when run against a real test fixture repo.
+
+## EXPECTED_OUTPUT
+A real PR against claude-control fixing this specific edge case plus the regression test.
+
+## CONSTRAINTS
+Do not change the fallback behavior for a worker with no upstream tracking branch (a genuinely new branch) -- it should continue resolving to the local HEAD branch name in that case, unchanged from PR #87's original behavior. Do not merge yourself.
+
+## COMPLEXITY_TIER
+mechanical

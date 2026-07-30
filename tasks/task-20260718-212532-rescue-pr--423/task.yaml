@@ -1,0 +1,319 @@
+id: task-20260718-212532-rescue-pr--423
+title: 'Rescue PR #423'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260718-212532-rescue-pr--423
+workspace: /opt/veridian/ai-os/tasks/task-20260718-212532-rescue-pr--423/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260718-212532-rescue-pr--423
+service: veridian-worker@task-20260718-212532-rescue-pr--423.service
+created_at: '2026-07-18T21:25:33.165081+00:00'
+last_checkpoint_at: '2026-07-18T21:47:42.757522+00:00'
+completed_steps: &id002
+- Read `ai-os/boss/ACTIVE-CLAIMS.yaml`, `ai-os/CONSTITUTION.yaml` context, and registered
+  this session's claim before starting work.
+- 'Investigated the gap live rather than trusting the finding text: confirmed `recordPromptCacheMetric()`
+  (`src/lib/prompt-cache/metrics.ts`), called from `chat-service.ts`''s `generateAiReply()`,
+  wrote only to `prompt_cache_metrics` (an observability table) and never touched
+  `token_usage_ledger` (the table `cost-guard.ts`/`getTokenUsageSummary()` actually
+  read for Finance/cost-cap purposes). The gap description matched current code --
+  not already resolved.'
+- Added `estimateCacheSavingsUsd(model, usage)` to `src/lib/llm-client.ts` -- computes
+  real $ saved from Anthropic prompt-cache reads (documented 90% discount on cache-read
+  tokens), returning `null` when caching wasn't attempted or the model has no pricing
+  row (same "absence means not attempted" contract as `cacheReadTokens` itself).
+- Added `cache_savings_usd` nullable numeric column to `token_usage_ledger` (`src/lib/db/schema.ts`
+  + `drizzle/0225_token_usage_ledger_cache_savings.sql`).
+- '`logTokenUsage()` (`src/lib/services/token-usage-service.ts`) now computes and
+  stores `cacheSavingsUsd` on every row via `estimateCacheSavingsUsd`.'
+- '`recordPromptCacheMetric()` now also calls `logTokenUsage()` (scope `product_orchestra`)
+  alongside its existing `prompt_cache_metrics` write, so this call site''s real spend
+  *and* its cache savings both land in the ledger Finance actually reads. `chat-service.ts`''s
+  one call site updated to pass `userId` through.'
+- '`getTokenUsageSummary()` now surfaces `totalCacheSavingsUsd` plus a `cacheSavingsUsd`
+  column on every grouped row (by scope/role/model/org), so the savings are visible
+  in the existing Finance report (`/api/ai/team/token-usage`), not just a column nobody
+  queries.'
+- Added regression tests for `estimateCacheSavingsUsd` in `src/lib/llm-client.test.ts`
+  (null when not attempted, 0 for cache-creation-only calls, correct 90%-discount
+  math, null for unpriced models).
+- 'Verified: full test suite 1328 pass / 0 fail, `tsc --noEmit` clean, `eslint` 0
+  errors, `scripts/check-guardrail-presence.mjs` 88/88 markers present.'
+- Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`.
+remaining_steps: &id003
+- Owner sign-off + merge (TIER2 -- schema/migration-touching PR, this session will
+  not self-merge).
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-18T21:25:34.134140+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  - 097ae295 Add proactive AI cost-ceiling alerts and default free-tier spend cap
+    (#422)
+  note: worker started (resume=0)
+- at: '2026-07-18T21:30:34.539679+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml`, `ai-os/CONSTITUTION.yaml` context, and registered
+    this session's claim before starting work.
+  - 'Investigated the gap live rather than trusting the finding text: confirmed `recordPromptCacheMetric()`
+    (`src/lib/prompt-cache/metrics.ts`), called from `chat-service.ts`''s `generateAiReply()`,
+    wrote only to `prompt_cache_metrics` (an observability table) and never touched
+    `token_usage_ledger` (the table `cost-guard.ts`/`getTokenUsageSummary()` actually
+    read for Finance/cost-cap purposes). The gap description matched current code
+    -- not already resolved.'
+  - Added `estimateCacheSavingsUsd(model, usage)` to `src/lib/llm-client.ts` -- computes
+    real $ saved from Anthropic prompt-cache reads (documented 90% discount on cache-read
+    tokens), returning `null` when caching wasn't attempted or the model has no pricing
+    row (same "absence means not attempted" contract as `cacheReadTokens` itself).
+  - Added `cache_savings_usd` nullable numeric column to `token_usage_ledger` (`src/lib/db/schema.ts`
+    + `drizzle/0225_token_usage_ledger_cache_savings.sql`).
+  - '`logTokenUsage()` (`src/lib/services/token-usage-service.ts`) now computes and
+    stores `cacheSavingsUsd` on every row via `estimateCacheSavingsUsd`.'
+  - '`recordPromptCacheMetric()` now also calls `logTokenUsage()` (scope `product_orchestra`)
+    alongside its existing `prompt_cache_metrics` write, so this call site''s real
+    spend *and* its cache savings both land in the ledger Finance actually reads.
+    `chat-service.ts`''s one call site updated to pass `userId` through.'
+  - '`getTokenUsageSummary()` now surfaces `totalCacheSavingsUsd` plus a `cacheSavingsUsd`
+    column on every grouped row (by scope/role/model/org), so the savings are visible
+    in the existing Finance report (`/api/ai/team/token-usage`), not just a column
+    nobody queries.'
+  - Added regression tests for `estimateCacheSavingsUsd` in `src/lib/llm-client.test.ts`
+    (null when not attempted, 0 for cache-creation-only calls, correct 90%-discount
+    math, null for unpriced models).
+  - 'Verified: full test suite 1328 pass / 0 fail, `tsc --noEmit` clean, `eslint`
+    0 errors, `scripts/check-guardrail-presence.mjs` 88/88 markers present.'
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`.
+  remaining_steps:
+  - None for this finding. Open the PR for review/merge (per Rule 6, no direct push
+    to `main`).
+  recent_commits:
+  - 3bad8e62 Merge remote-tracking branch 'origin/main' into rescue-423-local
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  - 'b9c98736 chore: register active claim for PR #422 rescue (#446)'
+  note: periodic checkpoint
+- at: '2026-07-18T21:35:34.888344+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml`, `ai-os/CONSTITUTION.yaml` context, and registered
+    this session's claim before starting work.
+  - 'Investigated the gap live rather than trusting the finding text: confirmed `recordPromptCacheMetric()`
+    (`src/lib/prompt-cache/metrics.ts`), called from `chat-service.ts`''s `generateAiReply()`,
+    wrote only to `prompt_cache_metrics` (an observability table) and never touched
+    `token_usage_ledger` (the table `cost-guard.ts`/`getTokenUsageSummary()` actually
+    read for Finance/cost-cap purposes). The gap description matched current code
+    -- not already resolved.'
+  - Added `estimateCacheSavingsUsd(model, usage)` to `src/lib/llm-client.ts` -- computes
+    real $ saved from Anthropic prompt-cache reads (documented 90% discount on cache-read
+    tokens), returning `null` when caching wasn't attempted or the model has no pricing
+    row (same "absence means not attempted" contract as `cacheReadTokens` itself).
+  - Added `cache_savings_usd` nullable numeric column to `token_usage_ledger` (`src/lib/db/schema.ts`
+    + `drizzle/0225_token_usage_ledger_cache_savings.sql`).
+  - '`logTokenUsage()` (`src/lib/services/token-usage-service.ts`) now computes and
+    stores `cacheSavingsUsd` on every row via `estimateCacheSavingsUsd`.'
+  - '`recordPromptCacheMetric()` now also calls `logTokenUsage()` (scope `product_orchestra`)
+    alongside its existing `prompt_cache_metrics` write, so this call site''s real
+    spend *and* its cache savings both land in the ledger Finance actually reads.
+    `chat-service.ts`''s one call site updated to pass `userId` through.'
+  - '`getTokenUsageSummary()` now surfaces `totalCacheSavingsUsd` plus a `cacheSavingsUsd`
+    column on every grouped row (by scope/role/model/org), so the savings are visible
+    in the existing Finance report (`/api/ai/team/token-usage`), not just a column
+    nobody queries.'
+  - Added regression tests for `estimateCacheSavingsUsd` in `src/lib/llm-client.test.ts`
+    (null when not attempted, 0 for cache-creation-only calls, correct 90%-discount
+    math, null for unpriced models).
+  - 'Verified: full test suite 1328 pass / 0 fail, `tsc --noEmit` clean, `eslint`
+    0 errors, `scripts/check-guardrail-presence.mjs` 88/88 markers present.'
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`.
+  remaining_steps:
+  - None for this finding. Open the PR for review/merge (per Rule 6, no direct push
+    to `main`).
+  recent_commits:
+  - '6b30dc5c PROGRESS.md: document rescue session for PR #423'
+  - 3bad8e62 Merge remote-tracking branch 'origin/main' into rescue-423-local
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  - 'cc1af35d AI Cost Governance & FinOps: anomaly detection, spend forecast, idle
+    capacity (#424)'
+  note: periodic checkpoint
+- at: '2026-07-18T21:40:35.257063+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml`, `ai-os/CONSTITUTION.yaml` context, and registered
+    this session's claim before starting work.
+  - 'Investigated the gap live rather than trusting the finding text: confirmed `recordPromptCacheMetric()`
+    (`src/lib/prompt-cache/metrics.ts`), called from `chat-service.ts`''s `generateAiReply()`,
+    wrote only to `prompt_cache_metrics` (an observability table) and never touched
+    `token_usage_ledger` (the table `cost-guard.ts`/`getTokenUsageSummary()` actually
+    read for Finance/cost-cap purposes). The gap description matched current code
+    -- not already resolved.'
+  - Added `estimateCacheSavingsUsd(model, usage)` to `src/lib/llm-client.ts` -- computes
+    real $ saved from Anthropic prompt-cache reads (documented 90% discount on cache-read
+    tokens), returning `null` when caching wasn't attempted or the model has no pricing
+    row (same "absence means not attempted" contract as `cacheReadTokens` itself).
+  - Added `cache_savings_usd` nullable numeric column to `token_usage_ledger` (`src/lib/db/schema.ts`
+    + `drizzle/0225_token_usage_ledger_cache_savings.sql`).
+  - '`logTokenUsage()` (`src/lib/services/token-usage-service.ts`) now computes and
+    stores `cacheSavingsUsd` on every row via `estimateCacheSavingsUsd`.'
+  - '`recordPromptCacheMetric()` now also calls `logTokenUsage()` (scope `product_orchestra`)
+    alongside its existing `prompt_cache_metrics` write, so this call site''s real
+    spend *and* its cache savings both land in the ledger Finance actually reads.
+    `chat-service.ts`''s one call site updated to pass `userId` through.'
+  - '`getTokenUsageSummary()` now surfaces `totalCacheSavingsUsd` plus a `cacheSavingsUsd`
+    column on every grouped row (by scope/role/model/org), so the savings are visible
+    in the existing Finance report (`/api/ai/team/token-usage`), not just a column
+    nobody queries.'
+  - Added regression tests for `estimateCacheSavingsUsd` in `src/lib/llm-client.test.ts`
+    (null when not attempted, 0 for cache-creation-only calls, correct 90%-discount
+    math, null for unpriced models).
+  - 'Verified: full test suite 1328 pass / 0 fail, `tsc --noEmit` clean, `eslint`
+    0 errors, `scripts/check-guardrail-presence.mjs` 88/88 markers present.'
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`.
+  remaining_steps:
+  - None for this finding. Open the PR for review/merge (per Rule 6, no direct push
+    to `main`).
+  recent_commits:
+  - '77bd86ab ai-os/boss/ACTIVE-CLAIMS.yaml: log rescue outcome for PR #423 (TIER2,
+    not merged)'
+  - '6b30dc5c PROGRESS.md: document rescue session for PR #423'
+  - 3bad8e62 Merge remote-tracking branch 'origin/main' into rescue-423-local
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  - '9fe9a7e9 chore: register active claim for PR #414 rescue (#448)'
+  - '27c7a805 PROGRESS.md: rescue PR #413 complete (#449)'
+  - 3ea9aa38 Instrument capability-backfill-service with independent coverage measurement
+    (#413)
+  - 'd7ae6301 chore: register + close active claim for PR #424 rescue (#447)'
+  note: periodic checkpoint
+- at: '2026-07-18T21:45:35.604094+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read `ai-os/boss/ACTIVE-CLAIMS.yaml`, `ai-os/CONSTITUTION.yaml` context, and registered
+    this session's claim before starting work.
+  - 'Investigated the gap live rather than trusting the finding text: confirmed `recordPromptCacheMetric()`
+    (`src/lib/prompt-cache/metrics.ts`), called from `chat-service.ts`''s `generateAiReply()`,
+    wrote only to `prompt_cache_metrics` (an observability table) and never touched
+    `token_usage_ledger` (the table `cost-guard.ts`/`getTokenUsageSummary()` actually
+    read for Finance/cost-cap purposes). The gap description matched current code
+    -- not already resolved.'
+  - Added `estimateCacheSavingsUsd(model, usage)` to `src/lib/llm-client.ts` -- computes
+    real $ saved from Anthropic prompt-cache reads (documented 90% discount on cache-read
+    tokens), returning `null` when caching wasn't attempted or the model has no pricing
+    row (same "absence means not attempted" contract as `cacheReadTokens` itself).
+  - Added `cache_savings_usd` nullable numeric column to `token_usage_ledger` (`src/lib/db/schema.ts`
+    + `drizzle/0225_token_usage_ledger_cache_savings.sql`).
+  - '`logTokenUsage()` (`src/lib/services/token-usage-service.ts`) now computes and
+    stores `cacheSavingsUsd` on every row via `estimateCacheSavingsUsd`.'
+  - '`recordPromptCacheMetric()` now also calls `logTokenUsage()` (scope `product_orchestra`)
+    alongside its existing `prompt_cache_metrics` write, so this call site''s real
+    spend *and* its cache savings both land in the ledger Finance actually reads.
+    `chat-service.ts`''s one call site updated to pass `userId` through.'
+  - '`getTokenUsageSummary()` now surfaces `totalCacheSavingsUsd` plus a `cacheSavingsUsd`
+    column on every grouped row (by scope/role/model/org), so the savings are visible
+    in the existing Finance report (`/api/ai/team/token-usage`), not just a column
+    nobody queries.'
+  - Added regression tests for `estimateCacheSavingsUsd` in `src/lib/llm-client.test.ts`
+    (null when not attempted, 0 for cache-creation-only calls, correct 90%-discount
+    math, null for unpriced models).
+  - 'Verified: full test suite 1328 pass / 0 fail, `tsc --noEmit` clean, `eslint`
+    0 errors, `scripts/check-guardrail-presence.mjs` 88/88 markers present.'
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml`.
+  remaining_steps:
+  - Owner sign-off + merge (TIER2 -- schema/migration-touching PR, this session will
+    not self-merge).
+  recent_commits:
+  - 947e6142 Merge remote-tracking branch 'origin/main' into rescue-423-local
+  - bbf0139f Empty commit to retrigger CI (GitHub Actions did not create a check-suite
+    for the prior commit)
+  - 'a8689528 PROGRESS.md: rescue session final status -- TIER2, CI green, awaiting
+    sign-off'
+  - 'ff480283 chore: close active claim for PR #425 rescue (#453)'
+  - '77bd86ab ai-os/boss/ACTIVE-CLAIMS.yaml: log rescue outcome for PR #423 (TIER2,
+    not merged)'
+  - '6b30dc5c PROGRESS.md: document rescue session for PR #423'
+  - 3bad8e62 Merge remote-tracking branch 'origin/main' into rescue-423-local
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  note: periodic checkpoint
+- at: '2026-07-18T21:47:42.757522+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 947e6142 Merge remote-tracking branch 'origin/main' into rescue-423-local
+  - bbf0139f Empty commit to retrigger CI (GitHub Actions did not create a check-suite
+    for the prior commit)
+  - 'a8689528 PROGRESS.md: rescue session final status -- TIER2, CI green, awaiting
+    sign-off'
+  - 'ff480283 chore: close active claim for PR #425 rescue (#453)'
+  - '77bd86ab ai-os/boss/ACTIVE-CLAIMS.yaml: log rescue outcome for PR #423 (TIER2,
+    not merged)'
+  - '6b30dc5c PROGRESS.md: document rescue session for PR #423'
+  - 3bad8e62 Merge remote-tracking branch 'origin/main' into rescue-423-local
+  - '986f8c56 chore: close active claim for PR #412 rescue (#452)'
+  - '759da994 chore: register + close active claim for PR #415 rescue (#451)'
+  - 'e15a220f chore: register active claim for PR #412 rescue (#450)'
+  note: worker finished, no changes to commit
+execution_seconds: 1329
+restart_count: 0
+token_usage:
+  input_tokens: 6
+  cache_creation_input_tokens: 595
+  cache_read_input_tokens: 525071
+  output_tokens: 174
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 595
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 32
+    cache_read_input_tokens: 175226
+    cache_creation_input_tokens: 80
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 80
+    type: message
+  speed: standard
+master_synced_at: '2026-07-18T22:00:04.507127+00:00'

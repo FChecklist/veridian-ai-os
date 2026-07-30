@@ -1,0 +1,21 @@
+## OBJECTIVE
+TASK REQUIRING AI JUDGMENT: task-20260726-171954-storage-rls---backup-pitr---supabase-mon is stalled or looping (watchdog signature: "PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient)"). Read its task.yaml/worker.log/systemd.log, determine the real root cause (not a guess), and apply a real, reusable fix -- not a manual one-off patch.
+
+## SCOPE
+INPUT: /opt/veridian/ai-os/tasks/task-20260726-171954-storage-rls---backup-pitr---supabase-mon/task.yaml, worker.log, systemd.log.
+OUTPUT: a real fix applied to whatever file/service/config caused the stall or loop, PLUS one new row in the known_fixes table (superboss-register.sqlite) via `python3 scripts/superboss-register.py log-fix --signature "PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient)" --fix-action <name>` -- so this exact signature auto-resolves via step_2 next time, without a second RCA task.
+
+## KNOWN_CONTEXT
+zero_duplication_check_performed: true. This RCA task was auto-dispatched by scripts/veridian-task-watchdog.py's step_3 escalation (task-20260723-142643) after step_1 (search ai-os/logs/ATTENTION.md + task_audits for this signature) and step_2 (known_fixes lookup) found no existing recorded fix for this signature.
+
+## SUCCESS_CRITERIA
+`python3 scripts/superboss-register.py log-fix --signature "PRE-FLIGHT REJECTED (crontab_unauthorized_change, transient)" --fix-action <name>` succeeds and returns success_count>=1 for this signature. Cite the real known_fixes row.
+
+## EXPECTED_OUTPUT
+COMMIT: whatever file(s) the real root cause requires. CHECKPOINT: status=pending_review, note=root cause + fix + known_fixes row as evidence.
+
+## CONSTRAINTS
+State the root cause honestly even if it is outside task-20260726-171954-storage-rls---backup-pitr---supabase-mon's own code (e.g. a shared script or DB). Register the fix in known_fixes even if the fix itself lives elsewhere.
+
+## COMPLEXITY_TIER
+judgment

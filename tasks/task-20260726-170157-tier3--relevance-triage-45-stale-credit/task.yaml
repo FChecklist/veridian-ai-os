@@ -1,0 +1,250 @@
+id: task-20260726-170157-tier3--relevance-triage-45-stale-credit
+title: 'Tier3: relevance-triage 45 stale credit/openrouter-blocked tasks'
+status: completed
+repo: claude-control
+branch: worker/task-20260726-170157-tier3--relevance-triage-45-stale-credit
+workspace: /opt/veridian/ai-os/tasks/task-20260726-170157-tier3--relevance-triage-45-stale-credit/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-170157-tier3--relevance-triage-45-stale-credit
+service: veridian-worker@task-20260726-170157-tier3--relevance-triage-45-stale-credit.service
+created_at: '2026-07-26T17:01:58.436869+00:00'
+last_checkpoint_at: '2026-07-26T17:25:26.609347+00:00'
+completed_steps: &id002
+- Read ai-os/TASK_COMPLETION_AUDIT_2026-07-26.json, understood schema
+- 'Live-derived the real 45-task bucket: within the audit''s 219-row window, tasks
+  whose'
+- Deduplicated the 45 rows into 21 unique logical objectives (many are retry-1/retry-2
+- Read prompt.txt for the primary task of each of the 21 objectives
+- 'Located tracker files: /opt/veridian/repos/compliance-tracker/ai-os/boss/ACTIVE-CLAIMS.yaml,'
+- Dispatched 4 parallel research agents (batches A/B/C/D) to check real current repo
+  state
+- Collected all 4 batch findings; resolved final classification per objective (classifications.py)
+- Wrote ai-os/TIER3_RELEVANCE_TRIAGE_REPORT_2026-07-26.md with all 45 explicit classifications
+  + evidence
+- Verified success criteria script passes (73 classification-enum mentions >= 45)
+- Redispatched all 12 GENUINELY_STILL_OPEN objectives (one fresh task each, not per
+  duplicate row)
+- Verified task-gateway.py status for redispatched tasks (spot-checked, all in_progress/systemd
+  active)
+remaining_steps: &id003
+- Commit + push, open PR against claude-control (do not merge)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T17:02:00.256866+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T17:07:01.580166+00:00'
+  status: in_progress
+  files_modified:
+  - bucket.py
+  - bucket_result.json
+  - build_list.py
+  - objectives_45.json
+  - triage_45.json
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  note: periodic checkpoint
+- at: '2026-07-26T17:12:02.739279+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/TASK_COMPLETION_AUDIT_2026-07-26.json, understood schema
+  - 'Live-derived the real 45-task bucket: within the audit''s 219-row window, tasks
+    whose'
+  - Deduplicated the 45 rows into 21 unique logical objectives (many are retry-1/retry-2
+  - Read prompt.txt for the primary task of each of the 21 objectives
+  - 'Located tracker files: /opt/veridian/repos/compliance-tracker/ai-os/boss/ACTIVE-CLAIMS.yaml,'
+  - Dispatched 4 parallel research agents (batches A/B/C/D) to check real current
+    repo state
+  remaining_steps:
+  - Collect batch A/B/C/D findings, resolve into final classification per objective
+  - Apply each objective's classification to all its duplicate task rows (45 total
+    explicit classifications)
+  - 'For GENUINELY_STILL_OPEN objectives only: dispatch fresh via scripts/task-gateway.py
+    submit'
+  - Write ai-os/TIER3_RELEVANCE_TRIAGE_REPORT_2026-07-26.md with all 45 classifications
+    + evidence
+  - Verify success criteria script passes
+  - Verify task-gateway.py status for each redispatched task
+  - Commit + push, open PR against claude-control (do not merge)
+  recent_commits:
+  - '5c79ac9 Triage: derive real 45-task bucket (29 credit_accountant_rejected + 16
+    openrouter_balance_exhausted), dedup into 21 objectives'
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  note: periodic checkpoint
+- at: '2026-07-26T17:17:03.899480+00:00'
+  status: in_progress
+  files_modified:
+  - ai-os/TIER3_RELEVANCE_TRIAGE_REPORT_2026-07-26.md
+  - classifications.py
+  - dispatch.py
+  - gen_report.py
+  - report_body.md
+  completed_steps:
+  - Read ai-os/TASK_COMPLETION_AUDIT_2026-07-26.json, understood schema
+  - 'Live-derived the real 45-task bucket: within the audit''s 219-row window, tasks
+    whose'
+  - Deduplicated the 45 rows into 21 unique logical objectives (many are retry-1/retry-2
+  - Read prompt.txt for the primary task of each of the 21 objectives
+  - 'Located tracker files: /opt/veridian/repos/compliance-tracker/ai-os/boss/ACTIVE-CLAIMS.yaml,'
+  - Dispatched 4 parallel research agents (batches A/B/C/D) to check real current
+    repo state
+  remaining_steps:
+  - Collect batch A/B/C/D findings, resolve into final classification per objective
+  - Apply each objective's classification to all its duplicate task rows (45 total
+    explicit classifications)
+  - 'For GENUINELY_STILL_OPEN objectives only: dispatch fresh via scripts/task-gateway.py
+    submit'
+  - Write ai-os/TIER3_RELEVANCE_TRIAGE_REPORT_2026-07-26.md with all 45 classifications
+    + evidence
+  - Verify success criteria script passes
+  - Verify task-gateway.py status for each redispatched task
+  - Commit + push, open PR against claude-control (do not merge)
+  recent_commits:
+  - '5c79ac9 Triage: derive real 45-task bucket (29 credit_accountant_rejected + 16
+    openrouter_balance_exhausted), dedup into 21 objectives'
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  - ffa86b8 Merge remote-tracking branch 'origin/master' into worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - 35bda4f Record phase_2's 2026-07-26 follow-up (this task) in the phase plan itself
+  note: periodic checkpoint
+- at: '2026-07-26T17:21:57.507438+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read ai-os/TASK_COMPLETION_AUDIT_2026-07-26.json, understood schema
+  - 'Live-derived the real 45-task bucket: within the audit''s 219-row window, tasks
+    whose'
+  - Deduplicated the 45 rows into 21 unique logical objectives (many are retry-1/retry-2
+  - Read prompt.txt for the primary task of each of the 21 objectives
+  - 'Located tracker files: /opt/veridian/repos/compliance-tracker/ai-os/boss/ACTIVE-CLAIMS.yaml,'
+  - Dispatched 4 parallel research agents (batches A/B/C/D) to check real current
+    repo state
+  - Collected all 4 batch findings; resolved final classification per objective (classifications.py)
+  - Wrote ai-os/TIER3_RELEVANCE_TRIAGE_REPORT_2026-07-26.md with all 45 explicit classifications
+    + evidence
+  - Verified success criteria script passes (73 classification-enum mentions >= 45)
+  - Redispatched all 12 GENUINELY_STILL_OPEN objectives (one fresh task each, not
+    per duplicate row)
+  - Verified task-gateway.py status for redispatched tasks (spot-checked, all in_progress/systemd
+    active)
+  remaining_steps:
+  - Commit + push, open PR against claude-control (do not merge)
+  recent_commits:
+  - 'eb0fccd Worker task-20260726-170157-tier3--relevance-triage-45-stale-credit:
+    automated checkpoint commit'
+  - 45f064b Include the 12 redispatch prompt files used for the genuinely-open objectives
+  - 6129885 Add Tier-3 relevance triage report for 45 stale credit/openrouter-gated
+    tasks; redispatch 12 genuinely-open objectives
+  - '5c79ac9 Triage: derive real 45-task bucket (29 credit_accountant_rejected + 16
+    openrouter_balance_exhausted), dedup into 21 objectives'
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  note: quality gates passed, pushed branch worker/task-20260726-170157-tier3--relevance-triage-45-stale-credit,
+    awaiting review
+- at: '2026-07-26T17:25:26.609347+00:00'
+  status: awaiting_human_approval
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'eb0fccd Worker task-20260726-170157-tier3--relevance-triage-45-stale-credit:
+    automated checkpoint commit'
+  - 45f064b Include the 12 redispatch prompt files used for the genuinely-open objectives
+  - 6129885 Add Tier-3 relevance triage report for 45 stale credit/openrouter-gated
+    tasks; redispatch 12 genuinely-open objectives
+  - '5c79ac9 Triage: derive real 45-task bucket (29 credit_accountant_rejected + 16
+    openrouter_balance_exhausted), dedup into 21 objectives'
+  - '037b1da Merge pull request #93 from FChecklist/worker/task-20260726-163551-real-automated-verification-of-all-218-t'
+  - b58d05e Merge origin/master into worker/task-20260726-163551-real-automated-verification-of-all-218-t
+  - 95cf649 Add real automated 7-day task completion verification audit
+  - '85b9ba4 Merge pull request #92 from FChecklist/worker/task-20260726-162252-extend-wiring-engine-to-full-system--ser'
+  - 39719f0 Extend Wiring Engine to full system (Vercel/Supabase/GitHub/browser) +
+    live-wire Phase 3
+  - '133d714 Merge pull request #89 from FChecklist/worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni'
+  note: 'tier2, Superboss-approved, held for human merge: https://github.com/FChecklist/claude-control/pull/97'
+execution_seconds: 1195
+restart_count: 0
+token_usage:
+  input_tokens: 104
+  cache_creation_input_tokens: 70668
+  cache_read_input_tokens: 8900978
+  output_tokens: 37985
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 70668
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 559
+    cache_read_input_tokens: 200291
+    cache_creation_input_tokens: 300
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 300
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-26T18:05:35.120464+00:00'
+opened_pr_url: https://github.com/FChecklist/claude-control/pull/97
+routed_to_supervisor_at: '2026-07-27T04:43:56.394023+00:00'
+status_corrected_at: '2026-07-27T05:02:45.731948+00:00'
+status_correction_reason: 'PR #97 merged 2026-07-27T05:02:33Z after Owner-approved
+  human merge decision (tier2, Superboss-approved, clean mergeable, no CI configured
+  on this branch).'

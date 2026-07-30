@@ -1,0 +1,139 @@
+id: task-20260723-163003-rca-task-20260723-162833-gap-closing-pha
+title: rca-task-20260723-162833-gap-closing-phase11-item29-auth-verifica
+status: completed
+repo: claude-control
+branch: worker/task-20260723-163003-rca-task-20260723-162833-gap-closing-pha
+workspace: /opt/veridian/ai-os/tasks/task-20260723-163003-rca-task-20260723-162833-gap-closing-pha/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260723-163003-rca-task-20260723-162833-gap-closing-pha
+service: veridian-worker@task-20260723-163003-rca-task-20260723-162833-gap-closing-pha.service
+created_at: '2026-07-23T16:30:04.298093+00:00'
+last_checkpoint_at: '2026-07-23T16:38:24.154621+00:00'
+completed_steps: &id002
+- Read task.yaml/worker.log/systemd.log for task-20260723-162833-gap-closing-phase11-item29-auth-verifica.
+- Determined real root cause (not the surface-level "prompt contradiction" text --
+  see below).
+- Applied a real, reusable fix to the shared infra script(s) that caused it (outside
+  this repo, see below).
+- Registered the fix in known_fixes (superboss-register.sqlite) for this exact signature.
+remaining_steps: &id003
+- None -- task complete pending review.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-23T16:30:05.821534+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 43f3d20 Auto-sync 1 server task(s) to master controller
+  - fdfc791 Auto-sync 2 server task(s) to master controller
+  - 1206c17 Auto-sync 2 server task(s) to master controller
+  - 7ff19e3 Auto-sync 2 server task(s) to master controller
+  - 1760953 Auto-sync 1 server task(s) to master controller
+  - a47119f Auto-sync 1 server task(s) to master controller
+  - b89610d Auto-sync 2 server task(s) to master controller
+  - '628e938 Merge pull request #4 from FChecklist/worker/task-20260723-103551-phase-3--reconcile-compliance-tracker-li'
+  - 'e3c845d Worker task-20260723-103551-phase-3--reconcile-compliance-tracker-li:
+    automated checkpoint commit'
+  - 0557598 Auto-sync 1 server task(s) to master controller
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-23T16:35:06.848794+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 43f3d20 Auto-sync 1 server task(s) to master controller
+  - fdfc791 Auto-sync 2 server task(s) to master controller
+  - 1206c17 Auto-sync 2 server task(s) to master controller
+  - 7ff19e3 Auto-sync 2 server task(s) to master controller
+  - 1760953 Auto-sync 1 server task(s) to master controller
+  - a47119f Auto-sync 1 server task(s) to master controller
+  - b89610d Auto-sync 2 server task(s) to master controller
+  - '628e938 Merge pull request #4 from FChecklist/worker/task-20260723-103551-phase-3--reconcile-compliance-tracker-li'
+  - 'e3c845d Worker task-20260723-103551-phase-3--reconcile-compliance-tracker-li:
+    automated checkpoint commit'
+  - 0557598 Auto-sync 1 server task(s) to master controller
+  note: periodic checkpoint
+- at: '2026-07-23T16:38:10.540017+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read task.yaml/worker.log/systemd.log for task-20260723-162833-gap-closing-phase11-item29-auth-verifica.
+  - Determined real root cause (not the surface-level "prompt contradiction" text
+    -- see below).
+  - Applied a real, reusable fix to the shared infra script(s) that caused it (outside
+    this repo, see below).
+  - Registered the fix in known_fixes (superboss-register.sqlite) for this exact signature.
+  remaining_steps:
+  - None -- task complete pending review.
+  recent_commits:
+  - 'aea07b6 RCA: fix tight_task_schema_violation misclassified as transient in worker-entrypoint.sh/doc-worker-entrypoint.sh'
+  - 43f3d20 Auto-sync 1 server task(s) to master controller
+  - fdfc791 Auto-sync 2 server task(s) to master controller
+  - 1206c17 Auto-sync 2 server task(s) to master controller
+  - 7ff19e3 Auto-sync 2 server task(s) to master controller
+  - 1760953 Auto-sync 1 server task(s) to master controller
+  - a47119f Auto-sync 1 server task(s) to master controller
+  - b89610d Auto-sync 2 server task(s) to master controller
+  - '628e938 Merge pull request #4 from FChecklist/worker/task-20260723-103551-phase-3--reconcile-compliance-tracker-li'
+  - 'e3c845d Worker task-20260723-103551-phase-3--reconcile-compliance-tracker-li:
+    automated checkpoint commit'
+  note: 'Root cause: tight_task_schema_violation is a deterministic content-based
+    pre-flight rejection, missing from worker-entrypoint.sh''s/doc-worker-entrypoint.sh''s
+    hard-stop allowlist, so it fell to the transient/retry branch and systemd blindly
+    retried it -- worse, preflight rejections never call record_failure_signature()
+    so the circuit breaker never saw it either. Fix: added tight_task_schema_violation
+    to the hard-stop condition in both entrypoints (live infra at /opt/veridian/scripts,
+    outside this git repo). Evidence: known_fixes row {signature: ''PRE-FLIGHT REJECTED
+    (tight_task_schema_violation, transient)'', fix_action: ''hardstop_tight_task_schema_violation'',
+    success_count: 1} confirmed via superboss-register.py log-fix. Full writeup in
+    PROGRESS.md, commit aea07b6.'
+- at: '2026-07-23T16:38:24.154621+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'aea07b6 RCA: fix tight_task_schema_violation misclassified as transient in worker-entrypoint.sh/doc-worker-entrypoint.sh'
+  - 43f3d20 Auto-sync 1 server task(s) to master controller
+  - fdfc791 Auto-sync 2 server task(s) to master controller
+  - 1206c17 Auto-sync 2 server task(s) to master controller
+  - 7ff19e3 Auto-sync 2 server task(s) to master controller
+  - 1760953 Auto-sync 1 server task(s) to master controller
+  - a47119f Auto-sync 1 server task(s) to master controller
+  - b89610d Auto-sync 2 server task(s) to master controller
+  - '628e938 Merge pull request #4 from FChecklist/worker/task-20260723-103551-phase-3--reconcile-compliance-tracker-li'
+  - 'e3c845d Worker task-20260723-103551-phase-3--reconcile-compliance-tracker-li:
+    automated checkpoint commit'
+  note: worker finished, no changes to commit
+execution_seconds: 498
+restart_count: 0
+token_usage:
+  input_tokens: 70
+  cache_creation_input_tokens: 72114
+  cache_read_input_tokens: 2519933
+  output_tokens: 20632
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 72114
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 540
+    cache_read_input_tokens: 95125
+    cache_creation_input_tokens: 580
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 580
+    type: message
+  speed: standard
+master_synced_at: '2026-07-23T17:00:08.827459+00:00'

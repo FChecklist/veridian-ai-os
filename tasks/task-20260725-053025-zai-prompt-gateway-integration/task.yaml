@@ -1,0 +1,219 @@
+id: task-20260725-053025-zai-prompt-gateway-integration
+title: zai-prompt-gateway-integration
+status: completed
+repo: claude-control
+branch: worker/task-20260725-053025-zai-prompt-gateway-integration
+workspace: /opt/veridian/ai-os/tasks/task-20260725-053025-zai-prompt-gateway-integration/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260725-053025-zai-prompt-gateway-integration
+service: veridian-worker@task-20260725-053025-zai-prompt-gateway-integration.service
+created_at: '2026-07-25T05:30:26.282706+00:00'
+last_checkpoint_at: '2026-07-25T05:43:48.194677+00:00'
+completed_steps: &id002
+- Reviewed all 9 staged files + confirmed collision risk with production task-gateway.py
+- 'Recorded baseline: /opt/veridian/scripts/task-gateway.py sha256=1e9421777219d7561511431219e04c09862d86b2761cf14c882af4599ca9a49b,
+  642 lines'
+- Deployed to /opt/veridian/scripts/prompt_gateway/ (entrypoint renamed gateway.py)
+- Fixed config.py paths (namespaced under scripts/prompt_gateway + data/prompt_gateway)
+- 'Fixed real bug found by running init: TaskGateway.__init__ was hardcoding data/snippets'
+- Verified sys.path resolution in engine/*.py (location-independent, no fix needed)
+  and
+- Ran --mode init, captured real output (exit 0)
+- 'Ran E2E stdin test, captured real output: 66.7% token reduction, 13.2% noise reduction'
+- Confirmed task-gateway.py byte-for-byte unchanged (sha256 identical before/after)
+- Decided NOT to install systemd service; documented reasoning + staged template's
+  defects
+- Wrote ai-os/PROMPT_GATEWAY_2026-07-25.yaml
+- Committed + pushed prompt_gateway module + docs (commit 5046780)
+- Registered in MASTER_INDEX.yaml registries.prompt_gateway
+- Registered via superboss-register.py register-knowledge (KE-20260725-054113-72af,
+- Committed MASTER_INDEX.yaml change + pushed (commit 9a010ee)
+- 'Opened PR: https://github.com/FChecklist/claude-control/pull/60'
+- Final checkpoint separating done vs OWNER_ENGINE gaps (delivered in chat)
+remaining_steps: &id003
+- None -- task complete
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-25T05:30:30.875347+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'cb7f154 Merge pull request #58 from FChecklist/worker/task-20260725-032718-wiring-engine-phase0-schema-registry'
+  - 7748357 Regenerate wiring registry after live registration (final snapshot)
+  - 530acc9 Register Wiring Engine schema/registry/phase plan in MASTER_INDEX.yaml
+  - 27a559e Wire generate_wiring_registry.py into cron (real crontab entry, 6h cadence)
+  - 'aac9a4a Wiring Engine Phase 0: phase plan + auto-continuation glob fix + mirror-aware
+    source resolution'
+  - '4bedae0 Wiring Engine Phase 0: entity-relationship schema + mechanical registry
+    generator'
+  - 'afe3b97 pgaudit: extension enabled live on both prod Supabase projects; pgaudit.log
+    config needs Owner via Dashboard (real permission limit)'
+  - 3334b45 Auto-sync 1 server task(s) to master controller
+  - 'a12e058 Merge pull request #57 from FChecklist/worker/task-20260724-230014-phase2-distributed-trace-verification-wi'
+  - 'ce15d46 Close Phase 2 (distributed trace verification wiring): mark phase_2 status:
+    done'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-25T05:35:32.046811+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Reviewed all 9 staged files + confirmed collision risk with production task-gateway.py
+  - 'Recorded baseline: /opt/veridian/scripts/task-gateway.py sha256=1e9421777219d7561511431219e04c09862d86b2761cf14c882af4599ca9a49b,
+    642 lines'
+  remaining_steps:
+  - Deploy files to /opt/veridian/scripts/prompt_gateway/ (rename entrypoint -> gateway.py)
+  - Fix config.py paths (namespace under scripts/prompt_gateway + data/prompt_gateway,
+    no collisions)
+  - Verify/fix sys.path resolution in engine/*.py and gateway.py at new location
+  - Run --mode init, capture real output
+  - Run E2E stdin test, capture real output + reduction stats
+  - Confirm task-gateway.py byte-for-byte unchanged
+  - 'Decide systemd service: install fixed unit or justify not installing'
+  - Write ai-os/PROMPT_GATEWAY_2026-07-25.yaml
+  - Register in MASTER_INDEX.yaml registries.prompt_gateway
+  - Register via superboss-register.py register-knowledge
+  - Commit + push, open PR
+  - Final checkpoint separating done vs OWNER_ENGINE gaps
+  recent_commits:
+  - 'cb7f154 Merge pull request #58 from FChecklist/worker/task-20260725-032718-wiring-engine-phase0-schema-registry'
+  - 7748357 Regenerate wiring registry after live registration (final snapshot)
+  - 530acc9 Register Wiring Engine schema/registry/phase plan in MASTER_INDEX.yaml
+  - 27a559e Wire generate_wiring_registry.py into cron (real crontab entry, 6h cadence)
+  - 'aac9a4a Wiring Engine Phase 0: phase plan + auto-continuation glob fix + mirror-aware
+    source resolution'
+  - '4bedae0 Wiring Engine Phase 0: entity-relationship schema + mechanical registry
+    generator'
+  - 'afe3b97 pgaudit: extension enabled live on both prod Supabase projects; pgaudit.log
+    config needs Owner via Dashboard (real permission limit)'
+  - 3334b45 Auto-sync 1 server task(s) to master controller
+  - 'a12e058 Merge pull request #57 from FChecklist/worker/task-20260724-230014-phase2-distributed-trace-verification-wi'
+  - 'ce15d46 Close Phase 2 (distributed trace verification wiring): mark phase_2 status:
+    done'
+  note: periodic checkpoint
+- at: '2026-07-25T05:40:33.333615+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Reviewed all 9 staged files + confirmed collision risk with production task-gateway.py
+  - 'Recorded baseline: /opt/veridian/scripts/task-gateway.py sha256=1e9421777219d7561511431219e04c09862d86b2761cf14c882af4599ca9a49b,
+    642 lines'
+  remaining_steps:
+  - Deploy files to /opt/veridian/scripts/prompt_gateway/ (rename entrypoint -> gateway.py)
+  - Fix config.py paths (namespace under scripts/prompt_gateway + data/prompt_gateway,
+    no collisions)
+  - Verify/fix sys.path resolution in engine/*.py and gateway.py at new location
+  - Run --mode init, capture real output
+  - Run E2E stdin test, capture real output + reduction stats
+  - Confirm task-gateway.py byte-for-byte unchanged
+  - 'Decide systemd service: install fixed unit or justify not installing'
+  - Write ai-os/PROMPT_GATEWAY_2026-07-25.yaml
+  - Register in MASTER_INDEX.yaml registries.prompt_gateway
+  - Register via superboss-register.py register-knowledge
+  - Commit + push, open PR
+  - Final checkpoint separating done vs OWNER_ENGINE gaps
+  recent_commits:
+  - 5046780 Integrate Z.AI prompt-gateway pre-processing pipeline under scripts/prompt_gateway/
+  - 'cb7f154 Merge pull request #58 from FChecklist/worker/task-20260725-032718-wiring-engine-phase0-schema-registry'
+  - 7748357 Regenerate wiring registry after live registration (final snapshot)
+  - 530acc9 Register Wiring Engine schema/registry/phase plan in MASTER_INDEX.yaml
+  - 27a559e Wire generate_wiring_registry.py into cron (real crontab entry, 6h cadence)
+  - 'aac9a4a Wiring Engine Phase 0: phase plan + auto-continuation glob fix + mirror-aware
+    source resolution'
+  - '4bedae0 Wiring Engine Phase 0: entity-relationship schema + mechanical registry
+    generator'
+  - 'afe3b97 pgaudit: extension enabled live on both prod Supabase projects; pgaudit.log
+    config needs Owner via Dashboard (real permission limit)'
+  - 3334b45 Auto-sync 1 server task(s) to master controller
+  - 'a12e058 Merge pull request #57 from FChecklist/worker/task-20260724-230014-phase2-distributed-trace-verification-wi'
+  note: periodic checkpoint
+- at: '2026-07-25T05:42:25.751745+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Reviewed all 9 staged files + confirmed collision risk with production task-gateway.py
+  - 'Recorded baseline: /opt/veridian/scripts/task-gateway.py sha256=1e9421777219d7561511431219e04c09862d86b2761cf14c882af4599ca9a49b,
+    642 lines'
+  - Deployed to /opt/veridian/scripts/prompt_gateway/ (entrypoint renamed gateway.py)
+  - Fixed config.py paths (namespaced under scripts/prompt_gateway + data/prompt_gateway)
+  - 'Fixed real bug found by running init: TaskGateway.__init__ was hardcoding data/snippets'
+  - Verified sys.path resolution in engine/*.py (location-independent, no fix needed)
+    and
+  - Ran --mode init, captured real output (exit 0)
+  - 'Ran E2E stdin test, captured real output: 66.7% token reduction, 13.2% noise
+    reduction'
+  - Confirmed task-gateway.py byte-for-byte unchanged (sha256 identical before/after)
+  - Decided NOT to install systemd service; documented reasoning + staged template's
+    defects
+  - Wrote ai-os/PROMPT_GATEWAY_2026-07-25.yaml
+  - Committed + pushed prompt_gateway module + docs (commit 5046780)
+  - Registered in MASTER_INDEX.yaml registries.prompt_gateway
+  - Registered via superboss-register.py register-knowledge (KE-20260725-054113-72af,
+  - Committed MASTER_INDEX.yaml change + pushed (commit 9a010ee)
+  - 'Opened PR: https://github.com/FChecklist/claude-control/pull/60'
+  - Final checkpoint separating done vs OWNER_ENGINE gaps (delivered in chat)
+  remaining_steps:
+  - None -- task complete
+  recent_commits:
+  - 9a010ee Register prompt_gateway in MASTER_INDEX.yaml + progress checkpoint
+  - 5046780 Integrate Z.AI prompt-gateway pre-processing pipeline under scripts/prompt_gateway/
+  - 'cb7f154 Merge pull request #58 from FChecklist/worker/task-20260725-032718-wiring-engine-phase0-schema-registry'
+  - 7748357 Regenerate wiring registry after live registration (final snapshot)
+  - 530acc9 Register Wiring Engine schema/registry/phase plan in MASTER_INDEX.yaml
+  - 27a559e Wire generate_wiring_registry.py into cron (real crontab entry, 6h cadence)
+  - 'aac9a4a Wiring Engine Phase 0: phase plan + auto-continuation glob fix + mirror-aware
+    source resolution'
+  - '4bedae0 Wiring Engine Phase 0: entity-relationship schema + mechanical registry
+    generator'
+  - 'afe3b97 pgaudit: extension enabled live on both prod Supabase projects; pgaudit.log
+    config needs Owner via Dashboard (real permission limit)'
+  - 3334b45 Auto-sync 1 server task(s) to master controller
+  note: quality gates passed, pushed branch worker/task-20260725-053025-zai-prompt-gateway-integration,
+    awaiting review
+- at: '2026-07-25T05:43:48.194677+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 9a010ee Register prompt_gateway in MASTER_INDEX.yaml + progress checkpoint
+  - 5046780 Integrate Z.AI prompt-gateway pre-processing pipeline under scripts/prompt_gateway/
+  - 'cb7f154 Merge pull request #58 from FChecklist/worker/task-20260725-032718-wiring-engine-phase0-schema-registry'
+  - 7748357 Regenerate wiring registry after live registration (final snapshot)
+  - 530acc9 Register Wiring Engine schema/registry/phase plan in MASTER_INDEX.yaml
+  - 27a559e Wire generate_wiring_registry.py into cron (real crontab entry, 6h cadence)
+  - 'aac9a4a Wiring Engine Phase 0: phase plan + auto-continuation glob fix + mirror-aware
+    source resolution'
+  - '4bedae0 Wiring Engine Phase 0: entity-relationship schema + mechanical registry
+    generator'
+  - 'afe3b97 pgaudit: extension enabled live on both prod Supabase projects; pgaudit.log
+    config needs Owner via Dashboard (real permission limit)'
+  - 3334b45 Auto-sync 1 server task(s) to master controller
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/60'
+execution_seconds: 714
+restart_count: 0
+token_usage:
+  input_tokens: 142
+  cache_creation_input_tokens: 141570
+  cache_read_input_tokens: 8682031
+  output_tokens: 53586
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 141570
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 932
+    cache_read_input_tokens: 164526
+    cache_creation_input_tokens: 728
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 728
+    type: message
+  speed: standard
+master_synced_at: '2026-07-25T09:00:08.659483+00:00'

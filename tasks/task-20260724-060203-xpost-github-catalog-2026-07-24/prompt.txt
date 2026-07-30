@@ -1,0 +1,25 @@
+## OBJECTIVE
+Store 34 GitHub repos (from instruction INS-20260724-060111-0975's repos_by_source_url list) into knowledge_engine as reference-only catalog entries for future work. No cloning, no installing, no build.
+
+## SCOPE
+1. Search knowledge_engine / superboss-register for a prior "yesterday" X-post-to-GitHub archival batch (Owner referenced it explicitly as already done in a different session). If found, merge into the same catalog file/table structure; if not found, create ai-os/XPOST_GITHUB_CATALOG_2026-07-24.yaml as the first instance of this catalog.
+2. Add one row per repo from the instruction's list: repo_path, one_line_purpose, source_tweet_url, high_relevance flag (true for: razzant/claudexor, stablyai/orca, tirth8205/code-review-graph, Nutlope/hallmark -- all 4 explicitly flagged in the instruction as relevant to VERIDIAN's own architecture). Skip the 2 NONE entries (no real repo) but keep a record of what was checked and found to have no GitHub link, so a future re-check doesn't repeat the same X post.
+3. Register the catalog file in knowledge_engine with entity_relationships to the 4 high_relevance repos' relevant VERIDIAN subsystems where obvious (claudexor/orca -> multi-CLI cost control work already in this session's history; code-review-graph -> Knowledge Engine entity-relationship work; hallmark -> a future UX Audit Engine).
+
+## KNOWN_CONTEXT
+- This is explicitly archival. The Owner's own words: "we will work on these after all existing works is done." Do not evaluate, install, or integrate any of these repos now.
+- Registry writes must come from a script, not hand-authored prose, per this session's standing rule.
+
+## SUCCESS_CRITERIA
+- All 32 real repos (34 minus 2 NONE) appear as rows in the catalog, each with source_tweet_url traceable back to the original X post.
+- The catalog is queryable via the existing query-knowledge CLI (a query for "claudexor" or "code-review-graph" returns a hit).
+- If a prior-session catalog was found, this task's rows were merged into it, not duplicated alongside it.
+
+## EXPECTED_OUTPUT
+Real committed and pushed change (PR on claude-control) if the catalog lives in a repo-tracked file, or a direct live-file write matching this session's established pattern otherwise. Final checkpoint states row count added and whether a prior catalog was found/merged.
+
+## CONSTRAINTS
+No cloning, no dependency installs, no code changes to any of the 32 repos or to VERIDIAN itself beyond the catalog file and its knowledge_engine registration.
+
+## COMPLEXITY_TIER
+mechanical

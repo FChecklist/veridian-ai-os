@@ -1,0 +1,26 @@
+## OBJECTIVE
+Redispatch of task-20260726-210059, which crashed within its first minute because its worker unit was killed by the Owner's emergency "stop all cron jobs, stop all worker auto-start units" OOM/fail2ban incident response starting at the same minute it was dispatched (21:00:59 UTC, 2026-07-26) -- confirmed via journalctl (three restart attempts between 21:01:03-21:02:39 then gave up), not a defect in its own scope. Make knowledge_engine and wiring_registry (tables in superboss-register.sqlite) into one auto-updating, sub-second-searchable index that also covers the 20-engine implementation-layer registry and the 343 governance/constitution docs, so queries reflect real current state instead of a stale snapshot.
+
+## SCOPE
+1. Audit current wiring_registry + knowledge_engine row coverage against the real 20-engine registry under src/lib/engines/ and the real governance/constitution doc set; report the delta with real counts.
+2. Extend generate_wiring_registry.py to index the 20-engine registry entries and governance/constitution docs as first-class wiring_registry rows (same pattern already used for scripts), with a content hash per doc/engine for staleness detection.
+3. Add a scheduled refresh inside the existing status-remediation-tick.py tick (do not add a new standalone cron entry).
+4. Add a query helper (CLI or small module) answering "what rows exist for X" in well under a second, backed by an index on the actual lookup column.
+5. Add real tests for coverage-delta detection, staleness detection, and query-helper correctness, run against a fixture DB seeded with a realistic pre-existing (not freshly migrated) schema snapshot.
+
+## KNOWN_CONTEXT
+PR #101 (merged, live-deployed) already built dispatch_core.py, which records a wiring_registry row for every dispatch tick and dispatch event, plus 3 consolidated tick scripts (dispatch-tick.py, phase-continuation-tick.py, status-remediation-tick.py) replacing 6 originals. generate_wiring_registry.py was confirmed via a full 19-script grep to be the only writer of the static entity rows in wiring_registry -- this task extends that existing writer, it does not add a second one. Round 1 of the PR #101 work was rejected for a real bug: its migration for a new wiring_registry entity type never ran against the real pre-existing (non-fresh) schema, so writes silently failed; all 18 tests missed it because they used fresh fixture DBs. Apply that same lesson here.
+
+## SUCCESS_CRITERIA
+wiring_registry contains a row for every one of the 20 engines and every governance/constitution doc, each with a content hash. Re-running generate_wiring_registry.py after editing one indexed doc updates only that doc's hash/row. The query helper returns correct results in under 1 second against the real live database size. No new standalone systemd auto-start unit is created.
+
+Runnable verification: `pytest tests/test_wiring_registry_full_coverage.py -v` must pass, covering (a) coverage-delta detection against the real 20-engine + governance-doc set, (b) content-hash staleness detection on a modified doc, (c) query-helper correctness and sub-second timing, each run against a fixture DB seeded with a realistic pre-existing (not freshly migrated) schema snapshot.
+
+## EXPECTED_OUTPUT
+A pull request against compliance-tracker (or claude-control, whichever repo generate_wiring_registry.py and status-remediation-tick.py actually live in -- verify before branching) containing: the extended generate_wiring_registry.py, the query helper, the status-remediation-tick.py refresh hook, the new tests, and a short PROGRESS.md entry with the real before/after row counts.
+
+## CONSTRAINTS
+Read-and-extend the existing superboss-register.sqlite schema only -- this is local code/schema work against this codebase's own SQLite file, not a request for any live production database action, new database credentials, or new connections. Reuse the existing consolidated tick scripts from PR #101 for scheduling rather than adding a new one.
+
+## COMPLEXITY_TIER
+judgment

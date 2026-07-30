@@ -1,0 +1,111 @@
+## OBJECTIVE
+TASK REQUIRING AI JUDGMENT: analyze a list of URLs (mostly X/Twitter posts about AI, plus a few GitHub repos and docs), determine which have an associated GitHub repo, fetch each repo, and summarize what it actually does in one real sentence per repo. Low priority -- do not compete with the gap-closing chain (task-20260723-093333 and its self-dispatched phases) for superboss-register.sqlite writes; if both are active, this task's DB writes must wait/retry rather than write concurrently.
+
+## SCOPE
+INPUT_URLS (76 total, deduplicate exact repeats before processing):
+https://github.com/microsoft/markitdown
+https://github.com/iOfficeAI/OfficeCLI
+https://code.claude.com/docs/en/prompt-library
+https://www.hetzner.com/cloud/general-purpose?utm_source=chatgpt.com
+https://github.com/anthropics/skills
+https://x.com/i/status/2077784077604692440
+https://x.com/i/status/2078774556249186345
+https://x.com/i/status/2078577553770750355
+https://x.com/i/status/2078836991878123815
+https://x.com/i/status/2078863973110448566
+https://x.com/i/status/2078510344046326231
+https://x.com/i/status/2078840407212085248
+https://x.com/i/status/2078798362820915220
+https://x.com/i/status/2078758789751468185
+https://x.com/i/status/2078143909125923137
+https://x.com/i/status/2078441598824985046
+https://x.com/i/status/2078637381431783669
+https://x.com/i/status/2078621980820222326
+https://x.com/i/status/2078314296610632141
+https://x.com/i/status/2078845417052156163
+https://x.com/i/status/2078777127609208917
+https://x.com/i/status/2078794082004963530
+https://x.com/i/status/2078750539165438340
+https://x.com/i/status/2078859230476714161
+https://x.com/i/status/2078395477209628744
+https://x.com/i/status/2078677687921439083
+https://x.com/i/status/2078616974305734787
+https://x.com/i/status/2078497590396784926
+https://x.com/i/status/2078691073216381429
+https://x.com/i/status/2078737738493301060
+https://x.com/i/status/2078875110597869915
+https://x.com/i/status/2078808356144464031
+https://x.com/i/status/2078649483697537446
+https://x.com/i/status/2078589102354563487
+https://x.com/i/status/2078751823909839012
+https://x.com/i/status/2078508694807945464
+https://x.com/i/status/2078582217463181638
+https://x.com/i/status/2078768137059619000
+https://x.com/i/status/2078533171059024320
+https://x.com/i/status/2078606736290611472
+https://x.com/i/status/2078864896461062423
+https://x.com/i/status/2078855010025111656
+https://x.com/i/status/2078512525419704534
+https://x.com/i/status/2078818106344980918
+https://x.com/i/status/2078982183054709207
+https://x.com/i/status/2079010955216748562
+https://x.com/i/status/2078868422658859466
+https://x.com/i/status/2079155411471503656
+https://x.com/i/status/2079136521345749056
+https://x.com/i/status/2078894965028163815
+https://x.com/i/status/2079007889080131924
+https://x.com/i/status/2078948006590906458
+https://x.com/i/status/2078996010190377278
+https://x.com/i/status/2079214312800055303
+https://x.com/i/status/2079120199392051347
+https://x.com/i/status/2079320392313819361
+https://x.com/i/trending/2079129785972764996
+https://x.com/i/status/2079387267081121870
+https://x.com/i/status/2079490298393006370
+https://x.com/i/status/2079492405712364011
+https://x.com/i/status/2079569892303344044
+https://x.com/i/status/2079625193451049417
+https://x.com/i/status/2079491061228228909
+https://x.com/i/status/2079620877151502483
+https://x.com/i/status/2079497566660821060
+https://x.com/i/status/2079504386678493185
+https://x.com/i/status/2079651598943305921
+https://x.com/i/status/2079672827037327545
+https://x.com/i/status/2079473243849707678
+https://x.com/i/status/2079636477462327606
+https://x.com/i/status/2079617630453817836
+https://x.com/i/status/2079640282124230782
+https://x.com/i/status/2079978448622370888
+https://x.com/i/status/2079957367861481935
+https://x.com/i/status/2077668719166435699
+https://x.com/i/status/2072050403307323501
+https://x.com/i/status/2079493655216214505
+https://x.com/i/status/1927339121120272553
+https://x.com/i/status/2079760572279873817
+
+FOR_EACH_URL:
+1. Attempt real fetch (WebFetch tool or curl -- whichever this environment has). X/Twitter status URLs often require login to render post content -- if the fetch returns a login wall, empty shell, or non-content page, RECORD accessible=false, do not fabricate what the post might say.
+2. If accessible and content mentions/links a GitHub repo: extract the exact repo URL.
+3. For each distinct GitHub repo found (from post content OR from the 5 direct GitHub/doc URLs already in the input list): fetch the repo's README, write one real sentence describing what it does, sourced from the actual README text, not guessed from the repo name.
+
+## KNOWN_CONTEXT
+zero_duplication_check_performed: true (this is a new analysis task, no prior artifact covers these specific URLs)
+db_concurrency_constraint: gap-closing chain (task-20260723-093333 lineage) may be actively writing to superboss-register.sqlite concurrently -- this task's own writes must be sequential and use retry-on-busy (sqlite3.connect(..., timeout=30) already the codebase default, rely on it)
+storage_mechanism: use scripts/superboss-register.py index-add for each distinct GitHub repo found (category="external_reference", layer="documentation", status="live", purpose=<the one-sentence real description>, tags="source:x-analysis-2026-07-23,type:ai-tool")
+
+## SUCCESS_CRITERIA
+Every one of the 76 (post-dedup) URLs has a row in the output table with an explicit accessible=true/false -- no silent omissions. Every GitHub repo found has a real, README-sourced description, not a guess. Table is complete -- Owner explicitly said "make sure all are analyzed."
+
+## EXPECTED_OUTPUT
+NEW_FILE: ai-os/X_POST_AI_ANALYSIS_2026-07-23.md -- a real markdown table, columns: post_url | accessible | linked_github_repo (or "none found") | what_it_does (or "N/A")
+ALSO: each distinct GitHub repo indexed via superboss-register.py index-add (see KNOWN_CONTEXT storage_mechanism) so it is tagged and searchable, per Owner instruction "to be tagged and stored"
+COMMIT + PUSH the markdown file
+CHECKPOINT: status=pending_review, note=<real counts: N accessible / M inaccessible / K distinct repos found and indexed>
+NO_EMAIL: this is low priority, do not send a notify-owner.py email for this task -- the Owner will read the file directly when needed ("we will use the analysis afterwards")
+NO_SELF_DISPATCH: this is a standalone task, do not self-dispatch a follow-up phase
+
+## CONSTRAINTS
+For inaccessible X posts, accessible=false with no invented summary is the correct, honest output. If superboss-register.sqlite is locked/busy, wait and retry rather than forcing a write, so this stays out of the gap-closing chain's way.
+
+## COMPLEXITY_TIER
+judgment

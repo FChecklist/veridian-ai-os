@@ -1,0 +1,320 @@
+id: task-20260725-092256-fix-live-repo-scripts-drift-and-system-i
+title: fix-live-repo-scripts-drift-and-system-integration-audit
+status: completed
+repo: claude-control
+branch: worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i
+workspace: /opt/veridian/ai-os/tasks/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i
+service: veridian-worker@task-20260725-092256-fix-live-repo-scripts-drift-and-system-i.service
+created_at: '2026-07-25T09:22:57.342898+00:00'
+last_checkpoint_at: '2026-07-25T09:42:51.224685+00:00'
+completed_steps: &id002
+- Confirmed no automatic deploy mechanism connects repo scripts/ to live scripts/
+  (crontab, systemd timers, /etc/cron.d, grep for rsync/deploy patterns -- all reviewed,
+  root crontab access denied and flagged as an honest caveat)
+- Full diff -rq inventory, classified every entry (operational_only / undeployed_real_feature
+  / stale_live_copy / needs_owner_decision) -- ai-os/SCRIPTS_LIVE_VS_REPO_DRIFT_AUDIT_2026-07-25.yaml
+- Verified all 9 "differ" files via git blob history match or full diff read -- none
+  were genuine two-sided conflicts
+- Built scripts/deploy-live-scripts.sh (git-ls-files-based, structurally preserves
+  operational-only files) + brought scripts/sync-repos.sh under git for the first
+  time, wired the call in
+- 'Bootstrapped + ran the deploy live: 35 deployed, 17 unchanged, 0 failed; re-run
+  confirmed idempotent (0/52/0) and confirmed credit-accountant.py (operational-only)
+  untouched byte-for-byte'
+- Smoke-tested all 34 deployed/updated files (ast.parse syntax + real --help/positional
+  invocation)
+- diff -q task-gateway.py clean; grep -c owner_engine_gate = 16; grep -c PLAN_GLOBS
+  on auto_phase_continuation.py = 4
+- 'Regenerated wiring registry fresh live: 7658 entities, 75.95% wired (was 75.96%/7650
+  on stale copy) -- script/file entity types measurably under-wired'
+- Gathered real evidence for Owner points 1 (GitHub/Vercel/Supabase/Server) and 4
+  (speed) via real command output + Supabase MCP + sqlite execution log
+- Wrote ai-os/SYSTEM_INTEGRATION_CONFIRMATION_2026-07-25.yaml answering all 6 Owner
+  points with cited evidence
+- Registered in MASTER_INDEX.yaml (registries.scripts_drift_audit_and_system_integration_confirmation)
+  + superboss-register.py register-knowledge (both docs)
+- 'Committed + pushed, opened PR #67 (https://github.com/FChecklist/claude-control/pull/67)'
+- 'Final post-deploy diff -rq verification appended to drift audit doc: differ=0,
+  only_in_repo=0 (excl pycache)'
+remaining_steps: &id003
+- 'None -- task complete. Open item for the Owner (not this task''s to resolve): ~24
+  core orchestration scripts remain outside git entirely (see drift audit needs_owner_decision_summary).'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-25T09:22:59.084156+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  - '35aa7f6 Merge pull request #59 from FChecklist/worker/task-20260725-041130-security-audit-evaluation-and-implementa'
+  - dce9e4b Merge master into PR 59 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries); auto_phase_continuation.py merged clean, verified
+    it still compiles and runs
+  - 'e75e9e2 Merge pull request #61 from FChecklist/worker/task-20260725-053540-chrome-browser-persistent-profile'
+  - b23ddc6 Merge master into PR 61 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries)
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-25T09:28:00.253893+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Confirmed no automatic deploy mechanism connects repo scripts/ to live scripts/
+    (checked user crontab, root crontab access denied but no /etc/cron.d veridian
+    entries, no veridian systemd timers, sync-repos.sh only does `git pull --ff-only`
+    in repos/<repo>/, grepped for rsync/cp/deploy patterns -- none)
+  - Full `diff -rq` inventory taken (34 live-only, 22 repo-only, 9 differ)
+  - Classified live-only files by git history (0 commits = never tracked; a few have
+    history = removed from repo tree at some point)
+  - 'Verified all 9 "differ" files: 6 have live content matching an exact prior git
+    blob (clean stale-live-copy); 3 (preflight-guard.py, risk-tier.py, veridian-task-watchdog.py)
+    have no exact historical match but are confirmed-safe supersets (repo refactors
+    explicitly preserve live''s stdout/stderr contract per in-code comments; watchdog
+    repo version is purely additive, verified by full diff read)'
+  - Checked repo-only file dependency graph (policy_decision.py required by preflight-guard.py/risk-tier.py;
+    bulk git-ls-files-based deploy handles this atomically, no partial-deploy risk)
+  - 'prompt_gateway/: query.py is repo-only undeployed feature; `lib/` live-only dir
+    is empty (harmless, leave alone)'
+  - 'Noted secondary finding: /opt/veridian/repos/claude-control checkout itself was
+    2 commits behind origin/master (sync-repos.sh skip-on-uncommitted-changes fired
+    at 08:00 run) -- transient, self-resolves, not a blocker'
+  remaining_steps:
+  - Write ai-os/SCRIPTS_LIVE_VS_REPO_DRIFT_AUDIT_2026-07-25.yaml
+  - Build deploy mechanism (scripts/sync-repos.sh + scripts/deploy-live-scripts.sh,
+    git-tracked-files-only copy, preserves operational-only live files)
+  - Deploy to live, smoke-test each updated/new script
+  - Verify diff -q task-gateway.py clean, grep owner_engine_gate live copy
+  - Regenerate wiring registry from live, report coverage
+  - Gather real evidence for Owner points 1 (integration) and 4 (speed/efficiency)
+  - Write ai-os/SYSTEM_INTEGRATION_CONFIRMATION_2026-07-25.yaml
+  - Register in MASTER_INDEX.yaml + superboss-register.py register-knowledge
+  - Commit + push, open PR
+  - Final checkpoint summarizing which of Owner's 6 points are true/partial
+  recent_commits:
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  - '35aa7f6 Merge pull request #59 from FChecklist/worker/task-20260725-041130-security-audit-evaluation-and-implementa'
+  - dce9e4b Merge master into PR 59 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries); auto_phase_continuation.py merged clean, verified
+    it still compiles and runs
+  - 'e75e9e2 Merge pull request #61 from FChecklist/worker/task-20260725-053540-chrome-browser-persistent-profile'
+  - b23ddc6 Merge master into PR 61 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries)
+  note: periodic checkpoint
+- at: '2026-07-25T09:33:01.496385+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/deploy-live-scripts.sh
+  - scripts/sync-repos.sh
+  completed_steps:
+  - Confirmed no automatic deploy mechanism connects repo scripts/ to live scripts/
+    (checked user crontab, root crontab access denied but no /etc/cron.d veridian
+    entries, no veridian systemd timers, sync-repos.sh only does `git pull --ff-only`
+    in repos/<repo>/, grepped for rsync/cp/deploy patterns -- none)
+  - Full `diff -rq` inventory taken (34 live-only, 22 repo-only, 9 differ)
+  - Classified live-only files by git history (0 commits = never tracked; a few have
+    history = removed from repo tree at some point)
+  - 'Verified all 9 "differ" files: 6 have live content matching an exact prior git
+    blob (clean stale-live-copy); 3 (preflight-guard.py, risk-tier.py, veridian-task-watchdog.py)
+    have no exact historical match but are confirmed-safe supersets (repo refactors
+    explicitly preserve live''s stdout/stderr contract per in-code comments; watchdog
+    repo version is purely additive, verified by full diff read)'
+  - Checked repo-only file dependency graph (policy_decision.py required by preflight-guard.py/risk-tier.py;
+    bulk git-ls-files-based deploy handles this atomically, no partial-deploy risk)
+  - 'prompt_gateway/: query.py is repo-only undeployed feature; `lib/` live-only dir
+    is empty (harmless, leave alone)'
+  - 'Noted secondary finding: /opt/veridian/repos/claude-control checkout itself was
+    2 commits behind origin/master (sync-repos.sh skip-on-uncommitted-changes fired
+    at 08:00 run) -- transient, self-resolves, not a blocker'
+  remaining_steps:
+  - Write ai-os/SCRIPTS_LIVE_VS_REPO_DRIFT_AUDIT_2026-07-25.yaml
+  - Build deploy mechanism (scripts/sync-repos.sh + scripts/deploy-live-scripts.sh,
+    git-tracked-files-only copy, preserves operational-only live files)
+  - Deploy to live, smoke-test each updated/new script
+  - Verify diff -q task-gateway.py clean, grep owner_engine_gate live copy
+  - Regenerate wiring registry from live, report coverage
+  - Gather real evidence for Owner points 1 (integration) and 4 (speed/efficiency)
+  - Write ai-os/SYSTEM_INTEGRATION_CONFIRMATION_2026-07-25.yaml
+  - Register in MASTER_INDEX.yaml + superboss-register.py register-knowledge
+  - Commit + push, open PR
+  - Final checkpoint summarizing which of Owner's 6 points are true/partial
+  recent_commits:
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  - '35aa7f6 Merge pull request #59 from FChecklist/worker/task-20260725-041130-security-audit-evaluation-and-implementa'
+  - dce9e4b Merge master into PR 59 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries); auto_phase_continuation.py merged clean, verified
+    it still compiles and runs
+  - 'e75e9e2 Merge pull request #61 from FChecklist/worker/task-20260725-053540-chrome-browser-persistent-profile'
+  - b23ddc6 Merge master into PR 61 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries)
+  note: periodic checkpoint
+- at: '2026-07-25T09:38:02.735642+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Confirmed no automatic deploy mechanism connects repo scripts/ to live scripts/
+    (checked user crontab, root crontab access denied but no /etc/cron.d veridian
+    entries, no veridian systemd timers, sync-repos.sh only does `git pull --ff-only`
+    in repos/<repo>/, grepped for rsync/cp/deploy patterns -- none)
+  - Full `diff -rq` inventory taken (34 live-only, 22 repo-only, 9 differ)
+  - Classified live-only files by git history (0 commits = never tracked; a few have
+    history = removed from repo tree at some point)
+  - 'Verified all 9 "differ" files: 6 have live content matching an exact prior git
+    blob (clean stale-live-copy); 3 (preflight-guard.py, risk-tier.py, veridian-task-watchdog.py)
+    have no exact historical match but are confirmed-safe supersets (repo refactors
+    explicitly preserve live''s stdout/stderr contract per in-code comments; watchdog
+    repo version is purely additive, verified by full diff read)'
+  - Checked repo-only file dependency graph (policy_decision.py required by preflight-guard.py/risk-tier.py;
+    bulk git-ls-files-based deploy handles this atomically, no partial-deploy risk)
+  - 'prompt_gateway/: query.py is repo-only undeployed feature; `lib/` live-only dir
+    is empty (harmless, leave alone)'
+  - 'Noted secondary finding: /opt/veridian/repos/claude-control checkout itself was
+    2 commits behind origin/master (sync-repos.sh skip-on-uncommitted-changes fired
+    at 08:00 run) -- transient, self-resolves, not a blocker'
+  remaining_steps:
+  - Write ai-os/SCRIPTS_LIVE_VS_REPO_DRIFT_AUDIT_2026-07-25.yaml
+  - Build deploy mechanism (scripts/sync-repos.sh + scripts/deploy-live-scripts.sh,
+    git-tracked-files-only copy, preserves operational-only live files)
+  - Deploy to live, smoke-test each updated/new script
+  - Verify diff -q task-gateway.py clean, grep owner_engine_gate live copy
+  - Regenerate wiring registry from live, report coverage
+  - Gather real evidence for Owner points 1 (integration) and 4 (speed/efficiency)
+  - Write ai-os/SYSTEM_INTEGRATION_CONFIRMATION_2026-07-25.yaml
+  - Register in MASTER_INDEX.yaml + superboss-register.py register-knowledge
+  - Commit + push, open PR
+  - Final checkpoint summarizing which of Owner's 6 points are true/partial
+  recent_commits:
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  - '35aa7f6 Merge pull request #59 from FChecklist/worker/task-20260725-041130-security-audit-evaluation-and-implementa'
+  - dce9e4b Merge master into PR 59 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries); auto_phase_continuation.py merged clean, verified
+    it still compiles and runs
+  - 'e75e9e2 Merge pull request #61 from FChecklist/worker/task-20260725-053540-chrome-browser-persistent-profile'
+  note: periodic checkpoint
+- at: '2026-07-25T09:41:31.210804+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Confirmed no automatic deploy mechanism connects repo scripts/ to live scripts/
+    (crontab, systemd timers, /etc/cron.d, grep for rsync/deploy patterns -- all reviewed,
+    root crontab access denied and flagged as an honest caveat)
+  - Full diff -rq inventory, classified every entry (operational_only / undeployed_real_feature
+    / stale_live_copy / needs_owner_decision) -- ai-os/SCRIPTS_LIVE_VS_REPO_DRIFT_AUDIT_2026-07-25.yaml
+  - Verified all 9 "differ" files via git blob history match or full diff read --
+    none were genuine two-sided conflicts
+  - Built scripts/deploy-live-scripts.sh (git-ls-files-based, structurally preserves
+    operational-only files) + brought scripts/sync-repos.sh under git for the first
+    time, wired the call in
+  - 'Bootstrapped + ran the deploy live: 35 deployed, 17 unchanged, 0 failed; re-run
+    confirmed idempotent (0/52/0) and confirmed credit-accountant.py (operational-only)
+    untouched byte-for-byte'
+  - Smoke-tested all 34 deployed/updated files (ast.parse syntax + real --help/positional
+    invocation)
+  - diff -q task-gateway.py clean; grep -c owner_engine_gate = 16; grep -c PLAN_GLOBS
+    on auto_phase_continuation.py = 4
+  - 'Regenerated wiring registry fresh live: 7658 entities, 75.95% wired (was 75.96%/7650
+    on stale copy) -- script/file entity types measurably under-wired'
+  - Gathered real evidence for Owner points 1 (GitHub/Vercel/Supabase/Server) and
+    4 (speed) via real command output + Supabase MCP + sqlite execution log
+  - Wrote ai-os/SYSTEM_INTEGRATION_CONFIRMATION_2026-07-25.yaml answering all 6 Owner
+    points with cited evidence
+  - Registered in MASTER_INDEX.yaml (registries.scripts_drift_audit_and_system_integration_confirmation)
+    + superboss-register.py register-knowledge (both docs)
+  - 'Committed + pushed, opened PR #67 (https://github.com/FChecklist/claude-control/pull/67)'
+  - 'Final post-deploy diff -rq verification appended to drift audit doc: differ=0,
+    only_in_repo=0 (excl pycache)'
+  remaining_steps:
+  - 'None -- task complete. Open item for the Owner (not this task''s to resolve):
+    ~24 core orchestration scripts remain outside git entirely (see drift audit needs_owner_decision_summary).'
+  recent_commits:
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  - '35aa7f6 Merge pull request #59 from FChecklist/worker/task-20260725-041130-security-audit-evaluation-and-implementa'
+  - dce9e4b Merge master into PR 59 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries); auto_phase_continuation.py merged clean, verified
+    it still compiles and runs
+  note: quality gates passed, pushed branch worker/task-20260725-092256-fix-live-repo-scripts-drift-and-system-i,
+    awaiting review
+- at: '2026-07-25T09:42:51.224685+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - c22f669 Add final post-deploy diff -rq verification to drift audit doc
+  - '41a7828 Close live/repo scripts/ drift: deploy mechanism + full audit + Owner
+    confirmation'
+  - 'e31e8f3 Merge pull request #42 from FChecklist/worker/task-20260724-140008-phase5-reconcile-master-index-yaml-s-reg'
+  - b7bd72a Merge remote-tracking branch 'origin/master' into pr42-conflict-resolution
+  - b794d47 Auto-sync 9 server task(s) to master controller
+  - 9f72810 Refresh CHATGPT_AUDIT_MASTER_CATALOGUE (machine-generated, re-run generate_chatgpt_audit_index.py)
+    -- now reflects real current state, 3 audit records not stale 1
+  - '9991e4c Merge pull request #66 from FChecklist/worker/task-20260725-080900-owner-engine-mandatory-gate-implementati'
+  - 9e90424 Implement OWNER_ENGINE mandatory-gate protocol (KE-20260725-061008-8423)
+  - '35aa7f6 Merge pull request #59 from FChecklist/worker/task-20260725-041130-security-audit-evaluation-and-implementa'
+  - dce9e4b Merge master into PR 59 branch, resolve MASTER_INDEX.yaml registries conflict
+    (union of both sides real entries); auto_phase_continuation.py merged clean, verified
+    it still compiles and runs
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/67'
+execution_seconds: 1111
+restart_count: 0
+token_usage:
+  input_tokens: 216
+  cache_creation_input_tokens: 177077
+  cache_read_input_tokens: 13793527
+  output_tokens: 89018
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 177077
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 645
+    cache_read_input_tokens: 199487
+    cache_creation_input_tokens: 1274
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1274
+    type: message
+  speed: standard
+master_synced_at: '2026-07-25T13:30:09.521567+00:00'

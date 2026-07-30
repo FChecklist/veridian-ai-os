@@ -1,0 +1,170 @@
+id: VERIDIAN-SYSTEM-MEMORY-ARCHITECTURE
+version: '1.0'
+audience: machine_only
+author: designed by assistant per Owner directive 2026-07-22; operated by SERVER automation, not AI
+principle: every layer's memory is updated by server software/cron where a real update mechanism exists; AI designs
+  the schema, server executes the updates. Where no server automation exists yet, that is stated as a gap, not hidden.
+standard_tag_schema:
+  note: every memory record, across every layer, should carry these fields so cross-layer queries work uniformly
+  fields:
+  - layer_id
+  - actor_type
+  - record_id
+  - ts
+  - status
+  - cross_ref_ids
+  - tags
+layers:
+  layer_1_this_machine:
+    status: ACTIVE_LOCAL_ONLY
+    store:
+    - local *.md memory files
+    - .claude/hooks-queue/conversation-log.ndjson
+    wrapper:
+    - .claude/hooks/log-tool-use.ps1 (PostToolUse, fixed 2026-07-22)
+    - log-prompt.ps1
+    - log-turn-end.ps1
+    update_mechanism: 'Claude Code hook system, local to this machine, NOT server cron -- honest limitation: this
+      layer is inherently machine-scoped, cannot be server-automated the same way'
+    cross_ref_key:
+    - session_id
+    - prompt_id
+    not_yet_proven: PostToolUse wiring fix not yet verified to actually populate output_excerpt in a fresh session
+  layer_2_superboss_server:
+    status: ACTIVE
+    store: ai-os/memory/superboss-register.sqlite
+    wrapper: /opt/veridian/scripts/superboss-register.py
+    tables:
+    - instructions
+    - work_items
+    - actions
+    - system_index
+    - file_inventory
+    - task_audits
+    - rca_open
+    - directive_compliance_runs
+    update_mechanism: called directly (log-work etc) AND increasingly via server cron -- run-logged.sh auto-logs
+      every cron job's execution to the actions table regardless of AI involvement
+    cross_ref_key:
+    - instruction_id
+    - work_item_id
+    - software_task_id
+    - ai_task_id
+    - audit_id
+  layer_3_mother_router:
+    status: CONFIRMED_GAP_DESIGNED_NOT_BUILT
+    current_reality: src/lib/ai-router/mother-router.ts -- only router file in the entire codebase, zero persistence
+      (confirmed via grep, no pgTable/sqlite/memory keyword)
+    designed_schema:
+      table: mother_router_memory
+      fields:
+      - dispatch_id
+      - ts
+      - input_capability_tag
+      - resolved_role
+      - resolved_model
+      - outcome
+      - cost
+      - cross_ref_work_item_id
+    designed_wrapper: mother-router.ts would need a persistence call at its dispatch decision point -- e.g. insertMotherRouterMemory()
+    update_mechanism_if_built: would be a live DB write inside the request path (application code), not cron --
+      this is per-request state, not periodic
+    blocker: this is VERIDIAN product code (compliance-tracker repo) -- deferred per Owner's own sequencing rule
+      (fix the assistant's own system first, this is pipeline_b)
+  layer_4_ai_routers_plural:
+    status: SAME_AS_LAYER_3
+    correction: no separate plural set of 'AI routers' exists as distinct code -- only mother-router.ts. Corrected
+      earlier this session after initially describing this loosely.
+  layer_5_ai_agents_roster:
+    status: CONFIRMED_GAP_DESIGNED_NOT_BUILT
+    current_reality: src/lib/ai-team/roster.ts, 195 roles, static in-code array, zero persistent memory
+    designed_schema:
+      table: ai_agent_memory
+      fields:
+      - role_id
+      - ts
+      - task_id
+      - outcome
+      - escalation_flag
+      - cross_ref_work_item_id
+    blocker: same as layer_3 -- deferred to pipeline_b, real product code work
+  layer_6_software_run:
+    status: ACTIVE
+    store: ai-os/logs/*.jsonl (health-15min, cost-usage-60min, veridian-self-check-cron, file-inventory-cron, etc)
+    wrapper: '/opt/veridian/scripts/run-logged.sh -- universal wrapper, ALL crontab entries route through it (confirmed
+      2026-07-22: 12/12 active cron lines use it)'
+    update_mechanism: crontab, fully server-automated, zero AI involvement in invocation -- proven this session
+      with a real triggered ATTENTION.md escalation
+    cross_ref_key:
+    - ts
+    - exec_id
+  layer_7_external_platforms:
+    status: ACTIVE_NATIVE_NOT_CROSS_LINKED
+    github:
+      store: git history
+      native_id: commit hash / PR number
+    vercel:
+      store: deployment history
+      native_id: deployment id
+    supabase:
+      store: live Postgres DB (444 tables)
+      native_id: table name / migration file
+      schema_index: ai-os/DATABASE_CATALOG.json
+    server_filesystem:
+      store: ai-os/+scripts/ tree
+      native_id: file path
+      index: ai-os/scripts/file_inventory.py + MASTER_INDEX.yaml (86 registry entries as of 2026-07-22)
+    cross_ref_convention: log-work --content should include the real external ID produced (commit hash, PR number,
+      deployment ID) where applicable -- a practice to adopt, not a new schema field
+    gap: no automated reconciliation job exists yet linking a work_item to what it actually changed on each platform
+      -- a real multi-session integration project, not built tonight
+interconnection_graph:
+  edges:
+  - from: layer_1_this_machine
+    to: layer_2_superboss_server
+    via: session_id appears in both (not yet automatically synced, occasional AI-read source only)
+  - from: layer_2_superboss_server
+    to: layer_6_software_run
+    via: run-logged.sh writes actions rows referencing exec_id -- proven, live
+  - from: layer_2_superboss_server
+    to: layer_7_external_platforms
+    via: work_item_id SHOULD reference commit/PR/deployment id in --content -- practice, not yet enforced by any
+      script
+  - from: layer_3_mother_router
+    to: layer_2_superboss_server
+    via: cross_ref_work_item_id -- DESIGNED ONLY, mother_router_memory table does not exist
+  - from: layer_5_ai_agents_roster
+    to: layer_2_superboss_server
+    via: cross_ref_work_item_id -- DESIGNED ONLY, ai_agent_memory table does not exist
+zero_duplication_zero_gap_status:
+  script_mechanism_layer: 86/86 real scripts registered as of 2026-07-22 (was 54/86 before this session's audit)
+    -- verified via mechanical cross-reference against the real filesystem, not asserted
+  other_layers_not_yet_audited_the_same_way: task.yaml files (291 confirmed to exist, not yet checked for schema
+    consistency across all 291), the 195-role roster (not checked for internal duplication), external platform linkage
+    (not checked at all)
+server_automation_status:
+  proven_server_automated_no_ai_needed:
+  - layer_2 (partially, via run-logged.sh)
+  - layer_6 (fully, 12 real cron jobs)
+  ai_invoked_not_yet_server_automated:
+  - layer_1 (inherently local, cannot be server-cron'd)
+  - layer_7 reconciliation (no job exists)
+  no_memory_to_automate_yet:
+  - layer_3 (Mother Router)
+  - layer_4 (same as 3)
+  - layer_5 (AI roster)
+honest_summary: '4 of 7 layers have real, working, at least partially server-automated memory (layers 2, 6, and
+  the static parts of 7). Layer 1 is real but inherently local and cannot be server-automated the same way. Layers
+  3, 4, 5 have zero memory today -- this document designs what they would need, but building them is real VERIDIAN
+  product code work, correctly deferred, not done tonight. Interconnection between layers exists in 2 real, proven
+  edges and 2 designed-but-unbuilt edges -- stated precisely, not rounded up. 2026-07-22 UPDATE: layer_2<->layer_7
+  auto-propagation is now implemented and proven (not just designed) -- a work_item''s completion automatically
+  re-scans the file inventory and flags any unregistered file mention, with zero AI action required after the gate
+  call. Layers 3/4/5 (Mother Router, AI routers, AI roster) still have no memory at all, so there is nothing yet
+  for a wrapper to propagate -- building that requires touching live VERIDIAN product code (mother-router.ts / roster.ts),
+  a materially higher-risk change than anything else in this document, and was not done without explicit Owner confirmation.'
+layer_2_superboss_server_wrapper_detail:
+  auto_propagation_implemented_2026_07_22: true
+  mechanism: postflight_audit_gate.py auto-triggers file_inventory.py rescan + unregistered_mentions flagging on
+    every call, proven via real test
+  new_table: unregistered_mentions (id, ts, software_task_id, mentioned_path, status)

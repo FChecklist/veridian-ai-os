@@ -1,0 +1,26 @@
+## OBJECTIVE
+Execute Phase 2 of the existing, already-planned VERIDIAN 20-Engine architecture (ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml, phase id phase_2_policy_rule_decision_unification, unblocked since Phase 1 is done). This is the real, planned fix for a fragmentation problem this session made WORSE by accident: today's session added a 3rd (scripts/ddl_authorization_check.py) and 4th (interactive-session write-gate) disconnected policy/gate mechanism on top of the two the plan already identified (scripts/preflight-guard.py, src/lib/policy-enforcement-engine.ts). This task closes Engines 5/6/7 (Policy/Rule/Decision) by giving all of these one shared decision schema instead of four+ disconnected gates. Do not build a new engine -- integrate and unify what already exists.
+
+## KNOWN_CONTEXT
+Read ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml's phase_2_policy_rule_decision_unification entry in full, plus its engine_inventory rows 5 (Policy Engine), 6 (Rule Engine), 7 (Decision Engine) for the real, verified prior-art paths. The four real gates that exist today, each independently: scripts/preflight-guard.py (server task-dispatch resource/crontab/scope gate), src/lib/policy-enforcement-engine.ts (compliance-tracker's deterministic pre-LLM-call gate), scripts/ddl_authorization_check.py (this session's new DDL dispatch-time prompt scan), and the interactive-session write-gate (ai-os/OWNER_DIRECTIVES/interactive-session-guard.bashrc-snippet, this session's new gh/git write-action gate). Also read scripts/risk-tier.py and src/lib/explainability/ai-decision-explanation.ts (Decision Engine's two real, disconnected pieces per the inventory) and src/lib/guardrail-engine.ts + src/lib/guardrail-registrations.ts + src/lib/business-rule-validator.ts (Rule Engine's real pieces, ~6 of ~100 real capability-tree leaves registered today).
+
+## SCOPE
+1. Design one shared decision/policy schema (a real data structure -- e.g. a common "gate verdict" shape: {allowed: bool, reason, severity, gate_name, evidence}) that all four existing gates can emit, without rewriting their internal logic -- this is a unification of OUTPUT CONTRACT and a shared registry of "which gates exist and what they cover," not a rewrite of preflight-guard.py's resource checks or policy-enforcement-engine.ts's prompt-injection detection.
+2. Build a real, single "policy gate registry" (extending ai-os/MASTER_INDEX.yaml's existing registries[] pattern, or scripts/superboss-register.py's existing knowledge_engine table -- reuse one of these two existing mechanisms, do not invent a third) that lists all real gates, their scope (server-dispatch / in-app-LLM-call / live-DDL-authorization / interactive-write-action), and their current coverage, so a future session or engine can query "what gates exist and what do they cover" in one command instead of discovering them ad hoc (as this session had to).
+3. Expand src/lib/guardrail-registrations.ts's coverage from ~6 leaves toward more of the ~100 real capability-tree leaves, prioritized using the Capability Registry's ai_required=false + no business_rules registered signal from Phase 1's live table (`python3 scripts/superboss-register.py list-capabilities`).
+4. Generalize scripts/risk-tier.py + src/lib/explainability/ai-decision-explanation.ts toward one callable decision service per the phase's own objective, OR document clearly why full unification isn't warranted yet if the real investigation finds the two serve genuinely disjoint purposes -- an honest "acceptable as separate for now, here's why" is a valid real outcome, not a failure to complete the phase.
+5. Do not touch the internal logic of the four existing gates beyond adding the shared output-contract wrapper -- their real, already-approved detection logic (DDL keywords, write-gate cgroup check, prompt-injection patterns, resource checks) stays as-is.
+
+## SUCCESS_CRITERIA
+- A real, queryable gate registry exists and returns all 4+ real gates when queried (e.g. `python3 scripts/superboss-register.py query-knowledge "policy_gate_registry"` or the MASTER_INDEX.yaml equivalent).
+- `python3 scripts/superboss-register.py list-capabilities` (or equivalent) shows guardrail-registrations.ts coverage has genuinely grown beyond the prior ~6 leaves, with a real before/after count reported.
+- All existing tests for the four gates still pass unchanged after adding the shared output-contract wrapper (`python3 -m pytest tests/ -k "ddl_authorization or write_gate" -v` and compliance-tracker's own policy-enforcement-engine tests).
+
+## EXPECTED_OUTPUT
+Real PR(s) against claude-control and/or compliance-tracker (whichever repo each real change belongs in per existing convention) delivering the shared gate registry, the expanded rule coverage, and the decision-service generalization (or the honest documented decision not to merge risk-tier.py/ai-decision-explanation.ts if investigation shows they shouldn't be).
+
+## CONSTRAINTS
+Do not build a new engine, gateway, or parallel registry system -- reuse MASTER_INDEX.yaml or superboss-register.py's existing mechanisms. Do not rewrite the four gates' own internal detection logic. Do not merge yourself.
+
+## COMPLEXITY_TIER
+judgment

@@ -1,0 +1,23 @@
+VERIDIAN Review Framework gap-closure: AI Documentation / Documentation Lifecycle.
+This covers 5 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] Automatic Documentation Generation
+  Gap: Only API docs are truly auto-generated; architecture/DB/UI docs are manual snapshots
+  Recommended approach: Investigate a lighter-weight automated diff-check (e.g. table/route counts) to at least flag when system-tree needs a re-run.
+- [Medium] Documentation Versioning
+  Gap: Versioning is binary (current vs. archived), not full version history
+  Recommended approach: Current mechanism is adequate; no urgent enhancement needed.
+- [Medium] Documentation Accuracy
+  Gap: Accuracy incidents do occur and are only caught by periodic manual audit passes
+  Recommended approach: Add the schema/route-count CI check proposed in row 55 to catch this specific class of drift automatically going forward.
+- [Medium] Documentation Completeness
+  Gap: Roughly half of documented domains are missing key fields
+  Recommended approach: Continue the Round 1/Round 2 pattern with a Round 3 targeting the highest-risk domains' empty guardrails fields first.
+- [Medium] Documentation Synchronization with Code
+  Gap: CI checks catch structural drift, not semantic drift
+  Recommended approach: Consider periodic spot-check audits (like SYSTEM-AUDIT-ROUND-1/2) as the practical complement to the structural CI checks, at a defined cadence.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

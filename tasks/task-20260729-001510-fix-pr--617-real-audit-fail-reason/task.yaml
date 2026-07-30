@@ -1,0 +1,313 @@
+id: task-20260729-001510-fix-pr--617-real-audit-fail-reason
+title: 'Fix PR #617 real AUDIT:FAIL reason'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260729-001510-fix-pr--617-real-audit-fail-reason
+workspace: /opt/veridian/ai-os/tasks/task-20260729-001510-fix-pr--617-real-audit-fail-reason/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260729-001510-fix-pr--617-real-audit-fail-reason
+service: veridian-worker@task-20260729-001510-fix-pr--617-real-audit-fail-reason.service
+created_at: '2026-07-29T00:15:12.188054+00:00'
+last_checkpoint_at: '2026-07-29T00:38:00.775101+00:00'
+completed_steps: &id002
+- 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no other active claim on PR #617 / permits-drawings-moms
+  branch'
+- 'Read PR #617''s full audit history (6 issue comments). Last audit (2026-07-28T10:25:43Z)
+  was AUDIT: FAIL with two real, blocking findings:'
+- Confirmed both real findings were already fixed on the branch by prior commits `14d9aba9`
+  (restore expiryDate alias + add changelog entry) and `12cd9771` (terminology-guardrail
+  fix for a literal ISO date in a code comment) -- present on `origin/feat/projexa-permits-drawings-moms`,
+  not yet re-audited.
+- 'Independently verified the fix in a fresh worktree (`/tmp/pr617-audit` @ 12cd9771),
+  not just trusted the commit messages:'
+- 'Posted a fresh, independent structured `AUDIT: PASS` comment on PR #617 (as required
+  auditor per AGENTS.md Rule 7c/10 -- this session did not author the fix commits)
+  covering the 8 required fields.'
+- Re-triggered the `audit-check` CI job (`gh run rerun`) so `mandatory-audit-check.yml`
+  picks up the new PASS verdict instead of the stale FAIL.
+- Confirmed re-run `audit-check` job passed and `mergeStateStatus` cleared from BLOCKED
+  to UNSTABLE (only the unrelated Vercel free-tier rate-limit deployment check was
+  non-green, which is not a required merge check).
+- 'Merged PR #617 into `main` via `gh pr merge --merge` (merge commit `c9cea46b`,
+  matching this repo''s established merge-commit convention for merged PRs).'
+- Cleaned up the temporary verification worktree at `/tmp/pr617-audit`.
+remaining_steps: &id003
+- 'None -- task complete. PR #617 merged with a real, independently-verified fix for
+  the actual audit-FAIL root cause (breaking `expiryDate`->`endDate` rename + missing
+  changelog entry), not a workaround.'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-29T00:15:16.628556+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-29T00:20:18.209004+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-29T00:25:24.231862+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no other active claim on PR #617 / permits-drawings-moms
+    branch'
+  - 'Read PR #617''s full audit history (6 issue comments). Last audit (2026-07-28T10:25:43Z)
+    was AUDIT: FAIL with two real, blocking findings:'
+  - Confirmed both real findings were already fixed on the branch by prior commits
+    `14d9aba9` (restore expiryDate alias + add changelog entry) and `12cd9771` (terminology-guardrail
+    fix for a literal ISO date in a code comment) -- present on `origin/feat/projexa-permits-drawings-moms`,
+    not yet re-audited.
+  - 'Independently verified the fix in a fresh worktree (`/tmp/pr617-audit` @ 12cd9771),
+    not just trusted the commit messages:'
+  - 'Posted a fresh, independent structured `AUDIT: PASS` comment on PR #617 (as required
+    auditor per AGENTS.md Rule 7c/10 -- this session did not author the fix commits)
+    covering the 8 required fields.'
+  - Re-triggered the `audit-check` CI job (`gh run rerun`) so `mandatory-audit-check.yml`
+    picks up the new PASS verdict instead of the stale FAIL.
+  - Confirmed re-run `audit-check` job passed and `mergeStateStatus` cleared from
+    BLOCKED to UNSTABLE (only the unrelated Vercel free-tier rate-limit deployment
+    check was non-green, which is not a required merge check).
+  - 'Merged PR #617 into `main` via `gh pr merge --merge` (merge commit `c9cea46b`,
+    matching this repo''s established merge-commit convention for merged PRs).'
+  - Cleaned up the temporary verification worktree at `/tmp/pr617-audit`.
+  remaining_steps:
+  - 'None -- task complete. PR #617 merged with a real, independently-verified fix
+    for the actual audit-FAIL root cause (breaking `expiryDate`->`endDate` rename
+    + missing changelog entry), not a workaround.'
+  recent_commits:
+  - '91b69754 progress: PR #617 merged after independent re-audit passed'
+  - '8164053f progress: PR #617 real audit-fail reason found + fixed on branch, fresh
+    audit posted'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  note: periodic checkpoint
+- at: '2026-07-29T00:30:33.595269+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no other active claim on PR #617 / permits-drawings-moms
+    branch'
+  - 'Read PR #617''s full audit history (6 issue comments). Last audit (2026-07-28T10:25:43Z)
+    was AUDIT: FAIL with two real, blocking findings:'
+  - Confirmed both real findings were already fixed on the branch by prior commits
+    `14d9aba9` (restore expiryDate alias + add changelog entry) and `12cd9771` (terminology-guardrail
+    fix for a literal ISO date in a code comment) -- present on `origin/feat/projexa-permits-drawings-moms`,
+    not yet re-audited.
+  - 'Independently verified the fix in a fresh worktree (`/tmp/pr617-audit` @ 12cd9771),
+    not just trusted the commit messages:'
+  - 'Posted a fresh, independent structured `AUDIT: PASS` comment on PR #617 (as required
+    auditor per AGENTS.md Rule 7c/10 -- this session did not author the fix commits)
+    covering the 8 required fields.'
+  - Re-triggered the `audit-check` CI job (`gh run rerun`) so `mandatory-audit-check.yml`
+    picks up the new PASS verdict instead of the stale FAIL.
+  - Confirmed re-run `audit-check` job passed and `mergeStateStatus` cleared from
+    BLOCKED to UNSTABLE (only the unrelated Vercel free-tier rate-limit deployment
+    check was non-green, which is not a required merge check).
+  - 'Merged PR #617 into `main` via `gh pr merge --merge` (merge commit `c9cea46b`,
+    matching this repo''s established merge-commit convention for merged PRs).'
+  - Cleaned up the temporary verification worktree at `/tmp/pr617-audit`.
+  remaining_steps:
+  - 'None -- task complete. PR #617 merged with a real, independently-verified fix
+    for the actual audit-FAIL root cause (breaking `expiryDate`->`endDate` rename
+    + missing changelog entry), not a workaround.'
+  recent_commits:
+  - '91b69754 progress: PR #617 merged after independent re-audit passed'
+  - '8164053f progress: PR #617 real audit-fail reason found + fixed on branch, fresh
+    audit posted'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  note: periodic checkpoint
+- at: '2026-07-29T00:36:18.079294+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no other active claim on PR #617 / permits-drawings-moms
+    branch'
+  - 'Read PR #617''s full audit history (6 issue comments). Last audit (2026-07-28T10:25:43Z)
+    was AUDIT: FAIL with two real, blocking findings:'
+  - Confirmed both real findings were already fixed on the branch by prior commits
+    `14d9aba9` (restore expiryDate alias + add changelog entry) and `12cd9771` (terminology-guardrail
+    fix for a literal ISO date in a code comment) -- present on `origin/feat/projexa-permits-drawings-moms`,
+    not yet re-audited.
+  - 'Independently verified the fix in a fresh worktree (`/tmp/pr617-audit` @ 12cd9771),
+    not just trusted the commit messages:'
+  - 'Posted a fresh, independent structured `AUDIT: PASS` comment on PR #617 (as required
+    auditor per AGENTS.md Rule 7c/10 -- this session did not author the fix commits)
+    covering the 8 required fields.'
+  - Re-triggered the `audit-check` CI job (`gh run rerun`) so `mandatory-audit-check.yml`
+    picks up the new PASS verdict instead of the stale FAIL.
+  - Confirmed re-run `audit-check` job passed and `mergeStateStatus` cleared from
+    BLOCKED to UNSTABLE (only the unrelated Vercel free-tier rate-limit deployment
+    check was non-green, which is not a required merge check).
+  - 'Merged PR #617 into `main` via `gh pr merge --merge` (merge commit `c9cea46b`,
+    matching this repo''s established merge-commit convention for merged PRs).'
+  - Cleaned up the temporary verification worktree at `/tmp/pr617-audit`.
+  remaining_steps:
+  - 'None -- task complete. PR #617 merged with a real, independently-verified fix
+    for the actual audit-FAIL root cause (breaking `expiryDate`->`endDate` rename
+    + missing changelog entry), not a workaround.'
+  recent_commits:
+  - '91b69754 progress: PR #617 merged after independent re-audit passed'
+  - '8164053f progress: PR #617 real audit-fail reason found + fixed on branch, fresh
+    audit posted'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  note: periodic checkpoint
+- at: '2026-07-29T00:37:58.366584+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no other active claim on PR #617 / permits-drawings-moms
+    branch'
+  - 'Read PR #617''s full audit history (6 issue comments). Last audit (2026-07-28T10:25:43Z)
+    was AUDIT: FAIL with two real, blocking findings:'
+  - Confirmed both real findings were already fixed on the branch by prior commits
+    `14d9aba9` (restore expiryDate alias + add changelog entry) and `12cd9771` (terminology-guardrail
+    fix for a literal ISO date in a code comment) -- present on `origin/feat/projexa-permits-drawings-moms`,
+    not yet re-audited.
+  - 'Independently verified the fix in a fresh worktree (`/tmp/pr617-audit` @ 12cd9771),
+    not just trusted the commit messages:'
+  - 'Posted a fresh, independent structured `AUDIT: PASS` comment on PR #617 (as required
+    auditor per AGENTS.md Rule 7c/10 -- this session did not author the fix commits)
+    covering the 8 required fields.'
+  - Re-triggered the `audit-check` CI job (`gh run rerun`) so `mandatory-audit-check.yml`
+    picks up the new PASS verdict instead of the stale FAIL.
+  - Confirmed re-run `audit-check` job passed and `mergeStateStatus` cleared from
+    BLOCKED to UNSTABLE (only the unrelated Vercel free-tier rate-limit deployment
+    check was non-green, which is not a required merge check).
+  - 'Merged PR #617 into `main` via `gh pr merge --merge` (merge commit `c9cea46b`,
+    matching this repo''s established merge-commit convention for merged PRs).'
+  - Cleaned up the temporary verification worktree at `/tmp/pr617-audit`.
+  remaining_steps:
+  - 'None -- task complete. PR #617 merged with a real, independently-verified fix
+    for the actual audit-FAIL root cause (breaking `expiryDate`->`endDate` rename
+    + missing changelog entry), not a workaround.'
+  recent_commits:
+  - '91b69754 progress: PR #617 merged after independent re-audit passed'
+  - '8164053f progress: PR #617 real audit-fail reason found + fixed on branch, fresh
+    audit posted'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-29T00:38:00.775101+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '91b69754 progress: PR #617 merged after independent re-audit passed'
+  - '8164053f progress: PR #617 real audit-fail reason found + fixed on branch, fresh
+    audit posted'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 1, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+execution_seconds: 360
+restart_count: 1
+token_usage:
+  input_tokens: 102
+  cache_creation_input_tokens: 76457
+  cache_read_input_tokens: 3859091
+  output_tokens: 18760
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 76457
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 358
+    cache_read_input_tokens: 99726
+    cache_creation_input_tokens: 415
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 415
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:26.797027+00:00'

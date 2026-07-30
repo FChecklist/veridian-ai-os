@@ -1,0 +1,20 @@
+VERIDIAN Review Framework gap-closure: Checks & Balances / Duplicate & Data Quality Detection.
+This covers 4 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Medium] Duplicate Work Detection
+  Gap: No duplicate-task/duplicate-work detection for ordinary business tasks (e.g. two people independently starting the same compliance filing) -- capability dedup is a narrower, different concept
+  Recommended approach: Extend the same >=0.92 similarity-scoring pattern to the tasks table, scoped per org/module.
+- [Medium] Duplicate Data Detection
+  Gap: No general-purpose duplicate-data detection (e.g. duplicate vendors, duplicate customers, duplicate invoices) exists outside the GST reconciliation module
+  Recommended approach: Generalize reconciliation-engine.ts's matching approach into a shared dedup service for vendors/customers/invoices.
+- [Medium] Duplicate Work Detection
+  Gap: No duplicate-task/duplicate-work detection for ordinary business tasks (e.g. two people independently starting the same compliance filing) -- capability dedup is a narrower, different concept
+  Recommended approach: Extend the same >=0.92 similarity-scoring pattern to the tasks table, scoped per org/module.
+- [Medium] Duplicate Data Detection
+  Gap: No general-purpose duplicate-data detection (e.g. duplicate vendors, duplicate customers, duplicate invoices) exists outside the GST reconciliation module
+  Recommended approach: Generalize reconciliation-engine.ts's matching approach into a shared dedup service for vendors/customers/invoices.
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

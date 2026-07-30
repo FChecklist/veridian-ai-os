@@ -1,0 +1,45 @@
+## OBJECTIVE
+TASK REQUIRING AI JUDGMENT: close 3 items from ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml, route 1 item to Owner decision. Targets:
+- item_number: 13, requirement: deployment_logging, current_status: MISSING
+- item_number: 46, requirement: owner_facing_simple_english_convention, current_status: MISSING
+- item_number: 47, requirement: owner_facing_simple_english_convention, current_status: MISSING
+- item_number: 48, requirement: owner_facing_simple_english_convention, current_status: MISSING
+- item_number: 51, requirement: documented_owner_authorized_log_retention_policy, current_status: PARTIAL, ROUTE_TO=ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml (do not build, this is an Owner policy call: what retention period is authorized for scripts/*.py's existing find-and-delete pruning behavior)
+
+## SCOPE
+ITEM_13 OUTPUT:
+- FUNCTION: log_deployment(repo: str, commit_sha: str, target: str) in scripts/superboss-register.py
+  INPUT: repo name, commit sha, target (e.g. "vercel-production", "github-merge")
+  OUTPUT: INSERT into actions table, utm_source="deployment", utm_content=repo, result=commit_sha
+- CALL_SITE: scripts/supervisor-entrypoint.sh, immediately after the existing `gh pr merge` success branch (line ~180 area), call: python3 scripts/superboss-register.py log-action --work-item-id <existing var> --source deployment --medium github-merge --content <repo> --term <commit-sha-after-merge> --result merged
+
+ITEMS_46_47_48 OUTPUT:
+- FUNCTION: format_owner_message(finding: str, severity: str) -> str in scripts/notify-owner.py
+  INPUT: raw technical finding string, severity ("info"|"warning"|"critical")
+  OUTPUT: simple-English string, max 3 sentences, no jargon, matching the style already used in this session's own laptop-chat replies (see ai-os/logs/laptop-chat-transcripts/*.jsonl for real examples of the target style, already proven and Owner-approved)
+  VERIFY: this function already exists in substance if notify-owner.py's --body caller already writes simple English (check scripts/health-check-15min.py's notify_owner() call sites for real examples before assuming this needs building from scratch -- items 46/47/48 may already be closer to DONE than the stale audit entry states)
+
+## KNOWN_CONTEXT
+zero_duplication_check_performed: true
+actions_table_schema: EXISTS (action_id, ts, work_item_id, instruction_id, utm_source, utm_medium, utm_campaign, utm_content, utm_term, result, metadata_json) -- see scripts/superboss-register.py CREATE TABLE actions
+notify_owner_py: EXISTS, VERIFIED_WORKING, message_id=d08a0b6e-35a4-4c70-a0fa-bef7e26be6a9
+db_concurrency_constraint: sequential writes only to superboss-register.sqlite
+coaching_text_correction: ai-os/CONTINUOUS_GAP_CLOSING_PROMPT_2026-07-23.txt KNOWN_CONTEXT point 3 was corrected 2026-07-23 by the Owner+assistant after 3 phases flagged it -- read the corrected version before any prompt-rewording decision this phase makes
+
+## SUCCESS_CRITERIA
+TEST_13: one real deployment log-action row exists after the next real merge (or, if no merge occurs during this phase's runtime, a manual test invocation of log_deployment() with real data from today's actual merge history, e.g. PR #4)
+TEST_46_47_48: cite 3 real example strings already sent via notify-owner.py this session that satisfy simple-English/short-sentence/no-jargon criteria, OR build format_owner_message() and cite 1 real test call's output if no satisfying real examples exist yet
+
+## EXPECTED_OUTPUT
+COMMIT: scripts/superboss-register.py diff (log_deployment), scripts/supervisor-entrypoint.sh diff (call site), scripts/notify-owner.py diff if built (items 46-48)
+UPDATE_FILE: ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml items [13, 46, 47, 48] status -> DONE with evidence; item 51 stays PARTIAL, cross-reference to its new OWNER_DECISIONS_NEEDED entry
+UPDATE_FILE: ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml, append (do not overwrite existing 2 entries) one new decision entry for item 51's retention-period question, same structure as the existing 2 entries
+CHECKPOINT: status=pending_review, real evidence in note
+NEXT_PHASE: create AND start Phase 7 exactly as Phase 5's spec required (both commands, not just create) -- resume the chain now that the coaching-text concern is resolved; pick the next 3-5 concrete items from ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml (10 MISSING remaining before this phase) or ai-os/EXECUTION_RULES_AUDIT_2026-07-23.yaml (40 still-open) with the same exact-input/exact-output precision as this document -- no narrative "continue the chain" framing, a real named next target
+
+## CONSTRAINTS
+EVIDENCE_REQUIRED: every DONE status change cites file:line, commit hash, or real command output
+NO_FABRICATED_TEST_DATA: if no real deployment/merge event is available to log, say so explicitly rather than inventing one
+
+## COMPLEXITY_TIER
+judgment

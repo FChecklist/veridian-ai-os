@@ -1,0 +1,47 @@
+VERIDIAN Review Framework gap-closure: CRM & Sales Modules / Opportunities.
+This covers 13 related finding(s) from the framework evaluation. Close all of them in one coherent PR if they share the same module/area -- do not create a separate PR per finding if they're naturally one piece of work.
+
+Findings to address:
+- [Low] Opportunities: Data Model Completeness & Referential Integrity
+  Gap: leadId/clientId 'at least one required' rule is service-layer only, not a DB CHECK constraint
+  Recommended approach: Add a DB CHECK constraint to make the invariant unbreakable
+- [Medium] Opportunities: Business Rule & Validation Accuracy
+  Gap: No server-side stage transition validation
+  Recommended approach: Add a stage transition map and validate server-side before writing crm_opportunities.stage
+- [Low] Opportunities: Multi-Tenant / Multi-Project Isolation
+  Gap: None identified at table/RLS level
+  Recommended approach: Re-verify after any future migration touching this table
+- [Medium] Opportunities: Reporting & Export Accuracy
+  Gap: Pipeline/win-rate metrics computed but not visible in-app
+  Recommended approach: Surface getSalesPipelineOverview() on the CRM page or a new Sales Dashboard page
+- [Low] Opportunities: AI Copilot / Worker Agent Integration Depth
+  Gap: AI analysis is manually triggered, not automatic/scheduled
+  Recommended approach: Add a scheduled worker-agent job to refresh aiWinProbability for opportunities nearing expectedCloseDate
+- [Medium] Opportunities: Audit Trail & Change History
+  Gap: Stage-history audit trail unverified in live usage
+  Recommended approach: Same fix as Leads: verify write path + force RLS on crm_stage_history
+- [High] Opportunities: Search, Filter & Bulk Operations
+  Gap: No search, filter, or bulk operations
+  Recommended approach: Same fix as Leads, ideally shared component
+- [Medium] Opportunities: Error Handling & Data Validation Messaging
+  Gap: Generic error messages, no field-level feedback
+  Recommended approach: Adopt field-level validation error rendering
+- [Low] Opportunities: Cross-Module Integration Consistency
+  Gap: clientId (compliance client) and erpCustomerId (ERP customer) remain two parallel identity spaces with only an additive bridge, not a merge
+  Recommended approach: Backfill erpCustomerId for existing clientId-only opportunities where a matching erp_customers row exists
+- [High] Opportunities: Notification & Alert Trigger Correctness
+  Gap: No notifications triggered for opportunity events
+  Recommended approach: Add notification triggers for stage changes and approaching expectedCloseDate
+- [Critical] Opportunities: Documentation & In-App Help Coverage
+  Gap: No in-app help/documentation for Opportunities
+  Recommended approach: Add contextual help linking into Knowledge Base
+- [Critical] Opportunities: Data Import/Export Template Fidelity
+  Gap: No bulk import/export template for opportunities
+  Recommended approach: Build CSV import + template, ideally shared with Leads' importer
+- [Medium] Opportunities: Localization Readiness (multi-currency / multi-language fields)
+  Gap: No multi-currency support on opportunity value
+  Recommended approach: Add currency + fx-rate columns, reusing the existing erp_currencies/erp_exchange_rates tables
+
+Before writing any code: read the actual current implementation of the relevant module(s) first -- do not assume the gap description is still accurate, the codebase has moved since this evaluation was written. If a finding turns out to already be resolved, or the described gap doesn't match what you find in the code, say so in PROGRESS.md rather than making an unnecessary change.
+Do not touch src/lib/services/permission-service.ts's shared ERP_ACTION_ROLES table structure or any other in-flight worker's declared scope -- if your area genuinely needs a new permission-service entry, add it additively (new keys only).
+Maintain PROGRESS.md with '## Completed' / '## Remaining' checklists as usual.

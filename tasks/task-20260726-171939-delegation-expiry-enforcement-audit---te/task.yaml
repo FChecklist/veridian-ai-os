@@ -1,0 +1,262 @@
+id: task-20260726-171939-delegation-expiry-enforcement-audit---te
+title: Delegation expiry enforcement audit + test
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260726-171939-delegation-expiry-enforcement-audit---te
+workspace: /opt/veridian/ai-os/tasks/task-20260726-171939-delegation-expiry-enforcement-audit---te/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-171939-delegation-expiry-enforcement-audit---te
+service: veridian-worker@task-20260726-171939-delegation-expiry-enforcement-audit---te.service
+created_at: '2026-07-26T17:19:40.410512+00:00'
+last_checkpoint_at: '2026-07-26T18:23:54.845652+00:00'
+completed_steps: &id002
+- 'Re-verified triage evidence against the live tree: `isDelegated()`/`isDelegationActive()`
+  (delegation-service.ts) had zero consumers outside that file -- confirmed still
+  true, not fixed elsewhere since 2026-07-26 triage.'
+- Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before real work (no collision
+  found).
+- Audited every `requireRole()`/`hasRole()`/`ROLE_RANK[...]`/`requirePermission()`/`requireRoleOrScope()`
+  checkpoint (~100 call sites) against the 6 `DELEGATION_SCOPE_TYPES` -- see `ai-os/DELEGATION_EXPIRY_ENFORCEMENT_AUDIT_2026-07-26.md`
+  for the full checkpoint-by-checkpoint findings.
+- Wired `isDelegated()` into `approval-workflow-service.ts`'s `decideApprovalStep()`
+  (the generalized Approval Workflow Engine's real, non-listing per-step decision)
+  -- rank-insufficient deciders now get a delegation fallback, expiry/revocation-aware,
+  purely additive.
+- Wired the same pattern into `erp-payment-entries-service.ts`'s `canDecidePaymentEntry()`/`decidePaymentEntry()`
+  (a second, independent, hard-coded mandatory-approval checkpoint that explicitly
+  mirrors `decideApprovalStep()`) -- additive `hasDelegatedAuthority` param, default
+  `false`, self-approval still always blocked.
+- Split `isDelegated()`'s decision logic into the separately-exported, DB-free `resolveDelegatedAuthority()`
+  (pure refactor, no behavior change) so it's directly unit-testable.
+- 'Added regression tests proving an EXPIRED (and separately, a revoked) delegation
+  is rejected at both non-listing checkpoints: `delegation-service.test.ts` (`resolveDelegatedAuthority`
+  suite), `approval-workflow-service.test.ts` (`decideApprovalStep''s delegation fallback`
+  suite), `erp-payment-entries-service.test.ts` (`hasDelegatedAuthority` cases).'
+- 'Verified success-criteria command is non-empty: `grep -rln "isDelegated(\|isDelegationActive("
+  src --include=*.ts | grep -v delegation-service` now hits `approval-workflow-service.ts`,
+  `erp-payment-entries-service.ts`, and both their `.test.ts` files.'
+- 'Full suite green: `bun test` -- 2042 pass / 0 fail / 4000 expect() calls across
+  166 files. `bunx tsc --noEmit -p .` clean.'
+- 'Wrote audit doc: `ai-os/DELEGATION_EXPIRY_ENFORCEMENT_AUDIT_2026-07-26.md` (methodology,
+  findings, what was wired vs. deliberately left alone and why, verification commands).'
+remaining_steps: &id003
+- 'Open PR against `compliance-tracker`: [#579](https://github.com/FChecklist/compliance-tracker/pull/579)
+  (this is auth-logic -- Tier2, holds for Owner sign-off per task constraints, no
+  autonomous merge regardless of CI outcome).'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T17:19:42.176093+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  - 'aedcbb06 PROGRESS.md: start task-20260726-102520 (resolve PR #563 conflict, refresh
+    DB catalog)'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T17:24:43.554542+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/services/approval-workflow-service.test.ts
+  - src/lib/services/approval-workflow-service.ts
+  - src/lib/services/delegation-service.test.ts
+  - src/lib/services/delegation-service.ts
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '97c62fcd ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-11 delegation-expiry-enforcement
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T17:29:45.269844+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/services/approval-workflow-service.test.ts
+  - src/lib/services/approval-workflow-service.ts
+  - src/lib/services/delegation-service.test.ts
+  - src/lib/services/delegation-service.ts
+  - src/lib/services/erp-payment-entries-service.test.ts
+  - src/lib/services/erp-payment-entries-service.ts
+  - ai-os/DELEGATION_EXPIRY_ENFORCEMENT_AUDIT_2026-07-26.md
+  completed_steps:
+  - 'Re-verified triage evidence against the live tree: `isDelegated()`/`isDelegationActive()`
+    (delegation-service.ts) had zero consumers outside that file -- confirmed still
+    true, not fixed elsewhere since 2026-07-26 triage.'
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before real work (no collision
+    found).
+  - Audited every `requireRole()`/`hasRole()`/`ROLE_RANK[...]`/`requirePermission()`/`requireRoleOrScope()`
+    checkpoint (~100 call sites) against the 6 `DELEGATION_SCOPE_TYPES` -- see `ai-os/DELEGATION_EXPIRY_ENFORCEMENT_AUDIT_2026-07-26.md`
+    for the full checkpoint-by-checkpoint findings.
+  - Wired `isDelegated()` into `approval-workflow-service.ts`'s `decideApprovalStep()`
+    (the generalized Approval Workflow Engine's real, non-listing per-step decision)
+    -- rank-insufficient deciders now get a delegation fallback, expiry/revocation-aware,
+    purely additive.
+  - Wired the same pattern into `erp-payment-entries-service.ts`'s `canDecidePaymentEntry()`/`decidePaymentEntry()`
+    (a second, independent, hard-coded mandatory-approval checkpoint that explicitly
+    mirrors `decideApprovalStep()`) -- additive `hasDelegatedAuthority` param, default
+    `false`, self-approval still always blocked.
+  - Split `isDelegated()`'s decision logic into the separately-exported, DB-free `resolveDelegatedAuthority()`
+    (pure refactor, no behavior change) so it's directly unit-testable.
+  - 'Added regression tests proving an EXPIRED (and separately, a revoked) delegation
+    is rejected at both non-listing checkpoints: `delegation-service.test.ts` (`resolveDelegatedAuthority`
+    suite), `approval-workflow-service.test.ts` (`decideApprovalStep''s delegation
+    fallback` suite), `erp-payment-entries-service.test.ts` (`hasDelegatedAuthority`
+    cases).'
+  - 'Verified success-criteria command is non-empty: `grep -rln "isDelegated(\|isDelegationActive("
+    src --include=*.ts | grep -v delegation-service` now hits `approval-workflow-service.ts`,
+    `erp-payment-entries-service.ts`, and both their `.test.ts` files.'
+  - 'Full suite green: `bun test` -- 2042 pass / 0 fail / 4000 expect() calls across
+    166 files. `bunx tsc --noEmit -p .` clean.'
+  - 'Wrote audit doc: `ai-os/DELEGATION_EXPIRY_ENFORCEMENT_AUDIT_2026-07-26.md` (methodology,
+    findings, what was wired vs. deliberately left alone and why, verification commands).'
+  remaining_steps:
+  - Open PR against `compliance-tracker` (this is auth-logic -- Tier2, holds for Owner
+    sign-off per task constraints, no autonomous merge regardless of CI outcome).
+  recent_commits:
+  - '97c62fcd ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-11 delegation-expiry-enforcement
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  - '5c98ab63 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed schema/migration analysis
+    task (PR #563 fix + PR #567)'
+  - 'a19c8174 ai-os: regenerate DATABASE_CATALOG.json from live schema.ts, resolve
+    PR #563 conflict'
+  note: periodic checkpoint
+- at: '2026-07-26T18:06:15.272121+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Re-verified triage evidence against the live tree: `isDelegated()`/`isDelegationActive()`
+    (delegation-service.ts) had zero consumers outside that file -- confirmed still
+    true, not fixed elsewhere since 2026-07-26 triage.'
+  - Registered claim in `ai-os/boss/ACTIVE-CLAIMS.yaml` before real work (no collision
+    found).
+  - Audited every `requireRole()`/`hasRole()`/`ROLE_RANK[...]`/`requirePermission()`/`requireRoleOrScope()`
+    checkpoint (~100 call sites) against the 6 `DELEGATION_SCOPE_TYPES` -- see `ai-os/DELEGATION_EXPIRY_ENFORCEMENT_AUDIT_2026-07-26.md`
+    for the full checkpoint-by-checkpoint findings.
+  - Wired `isDelegated()` into `approval-workflow-service.ts`'s `decideApprovalStep()`
+    (the generalized Approval Workflow Engine's real, non-listing per-step decision)
+    -- rank-insufficient deciders now get a delegation fallback, expiry/revocation-aware,
+    purely additive.
+  - Wired the same pattern into `erp-payment-entries-service.ts`'s `canDecidePaymentEntry()`/`decidePaymentEntry()`
+    (a second, independent, hard-coded mandatory-approval checkpoint that explicitly
+    mirrors `decideApprovalStep()`) -- additive `hasDelegatedAuthority` param, default
+    `false`, self-approval still always blocked.
+  - Split `isDelegated()`'s decision logic into the separately-exported, DB-free `resolveDelegatedAuthority()`
+    (pure refactor, no behavior change) so it's directly unit-testable.
+  - 'Added regression tests proving an EXPIRED (and separately, a revoked) delegation
+    is rejected at both non-listing checkpoints: `delegation-service.test.ts` (`resolveDelegatedAuthority`
+    suite), `approval-workflow-service.test.ts` (`decideApprovalStep''s delegation
+    fallback` suite), `erp-payment-entries-service.test.ts` (`hasDelegatedAuthority`
+    cases).'
+  - 'Verified success-criteria command is non-empty: `grep -rln "isDelegated(\|isDelegationActive("
+    src --include=*.ts | grep -v delegation-service` now hits `approval-workflow-service.ts`,
+    `erp-payment-entries-service.ts`, and both their `.test.ts` files.'
+  - 'Full suite green: `bun test` -- 2042 pass / 0 fail / 4000 expect() calls across
+    166 files. `bunx tsc --noEmit -p .` clean.'
+  - 'Wrote audit doc: `ai-os/DELEGATION_EXPIRY_ENFORCEMENT_AUDIT_2026-07-26.md` (methodology,
+    findings, what was wired vs. deliberately left alone and why, verification commands).'
+  remaining_steps:
+  - 'Open PR against `compliance-tracker`: [#579](https://github.com/FChecklist/compliance-tracker/pull/579)
+    (this is auth-logic -- Tier2, holds for Owner sign-off per task constraints, no
+    autonomous merge regardless of CI outcome).'
+  recent_commits:
+  - '58d9289f PROGRESS.md: record PR #579 opened'
+  - '0d5bc5b4 V2-11: wire delegation-expiry enforcement into real authorization checkpoints'
+  - '97c62fcd ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-11 delegation-expiry-enforcement
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: quality gates passed, pushed branch worker/task-20260726-171939-delegation-expiry-enforcement-audit---te,
+    awaiting review
+- at: '2026-07-26T18:23:54.845652+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '58d9289f PROGRESS.md: record PR #579 opened'
+  - '0d5bc5b4 V2-11: wire delegation-expiry enforcement into real authorization checkpoints'
+  - '97c62fcd ai-os/boss/ACTIVE-CLAIMS.yaml: register V2-11 delegation-expiry-enforcement
+    claim'
+  - '7d8c6f28 Merge pull request #569 from FChecklist/worker/task-20260726-115425-resolve-pr563-merge-conflict--supabase-m'
+  - 'fd2a4744 PROGRESS.md: record PR #563 merge-conflict re-resolution (reintroduced
+    by PR #568)'
+  - '245f2228 Merge pull request #568 from FChecklist/worker/task-20260726-105214-correct-stale-pr-state-claims-in-engine'
+  - '76d32aa5 ai-os/boss/ACTIVE-CLAIMS.yaml: register completed stale-PR-claim correction'
+  - '4fab3247 PROGRESS.md: record stale PR #81 correction (PR #566 + PR #83)'
+  - '69e3287b Merge pull request #567 from FChecklist/worker/task-20260726-102520-analyze-update--supabase-schema-migratio'
+  - '04c3785d PROGRESS.md: mark task complete (PR #563 conflict resolved, PR #567
+    opened)'
+  note: "Superboss rejected: https://github.com/FChecklist/compliance-tracker/pull/579\
+    \ \u2014 see review.json for issues"
+execution_seconds: 652
+restart_count: 0
+token_usage:
+  input_tokens: 140
+  cache_creation_input_tokens: 118189
+  cache_read_input_tokens: 7050750
+  output_tokens: 45428
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 118189
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 527
+    cache_read_input_tokens: 141364
+    cache_creation_input_tokens: 509
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 509
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-26T18:32:02.056034+00:00'

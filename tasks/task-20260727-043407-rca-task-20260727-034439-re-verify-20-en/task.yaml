@@ -1,0 +1,336 @@
+id: task-20260727-043407-rca-task-20260727-034439-re-verify-20-en
+title: rca-task-20260727-034439-re-verify-20-engine-inventory---confirm
+status: completed
+repo: claude-control
+branch: worker/task-20260727-043407-rca-task-20260727-034439-re-verify-20-en
+workspace: /opt/veridian/ai-os/tasks/task-20260727-043407-rca-task-20260727-034439-re-verify-20-en/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-043407-rca-task-20260727-034439-re-verify-20-en
+service: veridian-worker@task-20260727-043407-rca-task-20260727-034439-re-verify-20-en.service
+created_at: '2026-07-27T04:34:08.943246+00:00'
+last_checkpoint_at: '2026-07-27T04:58:46.902559+00:00'
+completed_steps: &id002
+- 'Read task-20260727-034439''s task.yaml/worker.log/systemd.log. worker.log ended
+  immediately after `--- lint: exit 0 ---`, with nothing after -- no build/test output
+  at all, despite the workspace''s package.json having a `build` script.'
+- Confirmed the task's systemd unit was still `active (running)` 1h+ after start;
+  process tree showed `bun run build` -> `next build` (PID 1205932) alive the whole
+  time.
+- 'Confirmed LIVE (not a guess) that `next build` was genuinely hung, not just slow:
+  `/proc/1205932/status` showed `State: S (sleeping)`, `wchan: ep_poll`, and `utime`
+  was identical across a 5-second sample (`13476` -> `13476`) -- zero CPU progress,
+  sitting idle in its own event loop forever.'
+- 'Root cause: `/opt/veridian/scripts/quality-gate.sh`''s `run_gate()` runs every
+  gate command (`eval "$cmd"`) with **no timeout at all**. A hang in `lint`/`build`/`test`
+  (or the un-gated `install` step) blocks the whole worker forever. This is a *different*
+  failure mode from the 2026-07-26 OOM fix already present in this same file (that
+  one crashed loudly and got restarted by systemd; this one never crashes or exits).
+  Made worse by the 2026-07-26 checkpoint-heartbeat fix: the background `periodic
+  checkpoint` loop only does cheap `git status`/`git log` against the workspace, which
+  kept succeeding every ~5min regardless of the hung build -- so the task looked "healthy
+  but slow" to `veridian-task-watchdog.py`''s `LOOP_EXCLUDED_NOTES` exemption for
+  the literal string `"periodic checkpoint"`, instead of the permanent hang it actually
+  was.'
+- 'Confirmed `/opt/veridian/scripts/quality-gate.sh` is a live, untracked deployed
+  script (not present in this repo''s `scripts/` dir) -- same situation as the precedent
+  fix in `ai-os/patches/quality-gate-node-oom-memory-cap-2026-07-26.diff`. Followed
+  the same convention: applied the real fix directly to the live file, and committed
+  a matching patch file here as the audit trail.'
+- 'Applied the fix: wrapped `run_gate()`''s command execution in `timeout -k 30 "$GATE_STEP_TIMEOUT_SECONDS"
+  bash -c "$cmd"` (default 900s, overridable via env var) so a hang now fails that
+  gate cleanly (feeds the existing auto-fix-then-blocked pipeline) instead of blocking
+  forever. Also wrapped the un-gated `install` step the same way, closing the same
+  class of risk there. See `ai-os/patches/quality-gate-run-gate-timeout-2026-07-27.diff`.'
+- Verified the timeout wrapper works in isolation (a `sleep 30` gate under a 2s timeout
+  was killed at exit 124 in ~2s).
+- 'Unstuck the live stalled task: killed the hung `next build` process tree (SIGTERM
+  then SIGKILL, since it did not respond to SIGTERM) for task-20260727-034439. Its
+  own already-running worker instance then recovered through its **existing, unmodified**
+  failure path: gate reported `build: exit 137`, its auto-fix attempt was rejected
+  by `credit-accountant.py` ("existing software/mechanism already covers this"), and
+  the task reached a clean terminal `status: blocked` (awaiting human review) instead
+  of hanging indefinitely. No manual edits were made to that task''s own files.'
+- Registered the fix in `known_fixes` via `python3 scripts/superboss-register.py log-fix
+  --signature "periodic checkpoint" --fix-action quality_gate_run_gate_timeout` so
+  this exact signature auto-resolves via the watchdog's step_2 lookup next time (though
+  this particular root cause is not one `veridian-task-watchdog.py`'s `FIX_ACTIONS`
+  whitelist can safely auto-remediate by restarting the unit -- the real fix already
+  prevents recurrence at the source).
+remaining_steps: &id003
+- Owner/human merge of this PR (not done by this task).
+- Human review of blocked task task-20260727-034439 itself (out of this task's scope
+  -- its own quality-gate failure, now surfaced cleanly instead of hanging, needs
+  a real fix to the `next build` in that workspace, or a rerun).
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T04:42:31.415789+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T04:47:32.839604+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  note: periodic checkpoint
+- at: '2026-07-27T04:52:34.072965+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  - 7756736 Add status-remediation-tick.py (merge of status_monitor + remediation_dispatcher)
+  note: periodic checkpoint
+- at: '2026-07-27T04:55:22.713472+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Read task-20260727-034439''s task.yaml/worker.log/systemd.log. worker.log ended
+    immediately after `--- lint: exit 0 ---`, with nothing after -- no build/test
+    output at all, despite the workspace''s package.json having a `build` script.'
+  - Confirmed the task's systemd unit was still `active (running)` 1h+ after start;
+    process tree showed `bun run build` -> `next build` (PID 1205932) alive the whole
+    time.
+  - 'Confirmed LIVE (not a guess) that `next build` was genuinely hung, not just slow:
+    `/proc/1205932/status` showed `State: S (sleeping)`, `wchan: ep_poll`, and `utime`
+    was identical across a 5-second sample (`13476` -> `13476`) -- zero CPU progress,
+    sitting idle in its own event loop forever.'
+  - 'Root cause: `/opt/veridian/scripts/quality-gate.sh`''s `run_gate()` runs every
+    gate command (`eval "$cmd"`) with **no timeout at all**. A hang in `lint`/`build`/`test`
+    (or the un-gated `install` step) blocks the whole worker forever. This is a *different*
+    failure mode from the 2026-07-26 OOM fix already present in this same file (that
+    one crashed loudly and got restarted by systemd; this one never crashes or exits).
+    Made worse by the 2026-07-26 checkpoint-heartbeat fix: the background `periodic
+    checkpoint` loop only does cheap `git status`/`git log` against the workspace,
+    which kept succeeding every ~5min regardless of the hung build -- so the task
+    looked "healthy but slow" to `veridian-task-watchdog.py`''s `LOOP_EXCLUDED_NOTES`
+    exemption for the literal string `"periodic checkpoint"`, instead of the permanent
+    hang it actually was.'
+  - 'Confirmed `/opt/veridian/scripts/quality-gate.sh` is a live, untracked deployed
+    script (not present in this repo''s `scripts/` dir) -- same situation as the precedent
+    fix in `ai-os/patches/quality-gate-node-oom-memory-cap-2026-07-26.diff`. Followed
+    the same convention: applied the real fix directly to the live file, and committed
+    a matching patch file here as the audit trail.'
+  - 'Applied the fix: wrapped `run_gate()`''s command execution in `timeout -k 30
+    "$GATE_STEP_TIMEOUT_SECONDS" bash -c "$cmd"` (default 900s, overridable via env
+    var) so a hang now fails that gate cleanly (feeds the existing auto-fix-then-blocked
+    pipeline) instead of blocking forever. Also wrapped the un-gated `install` step
+    the same way, closing the same class of risk there. See `ai-os/patches/quality-gate-run-gate-timeout-2026-07-27.diff`.'
+  - Verified the timeout wrapper works in isolation (a `sleep 30` gate under a 2s
+    timeout was killed at exit 124 in ~2s).
+  - 'Unstuck the live stalled task: killed the hung `next build` process tree (SIGTERM
+    then SIGKILL, since it did not respond to SIGTERM) for task-20260727-034439. Its
+    own already-running worker instance then recovered through its **existing, unmodified**
+    failure path: gate reported `build: exit 137`, its auto-fix attempt was rejected
+    by `credit-accountant.py` ("existing software/mechanism already covers this"),
+    and the task reached a clean terminal `status: blocked` (awaiting human review)
+    instead of hanging indefinitely. No manual edits were made to that task''s own
+    files.'
+  - Registered the fix in `known_fixes` via `python3 scripts/superboss-register.py
+    log-fix --signature "periodic checkpoint" --fix-action quality_gate_run_gate_timeout`
+    so this exact signature auto-resolves via the watchdog's step_2 lookup next time
+    (though this particular root cause is not one `veridian-task-watchdog.py`'s `FIX_ACTIONS`
+    whitelist can safely auto-remediate by restarting the unit -- the real fix already
+    prevents recurrence at the source).
+  remaining_steps:
+  - Owner/human merge of this PR (not done by this task).
+  - Human review of blocked task task-20260727-034439 itself (out of this task's scope
+    -- its own quality-gate failure, now surfaced cleanly instead of hanging, needs
+    a real fix to the `next build` in that workspace, or a rerun).
+  recent_commits:
+  - '105cccd RCA fix: quality-gate.sh run_gate() had no timeout, letting a hung build
+    stall a worker forever under the "periodic checkpoint" watchdog signature'
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  note: 'Root cause: /opt/veridian/scripts/quality-gate.sh''s run_gate() ran every
+    gate command via eval with NO timeout -- a hung next build (confirmed live: state
+    S, wchan=ep_poll, zero CPU progress) blocked the worker forever while the periodic-checkpoint
+    heartbeat masked it as healthy under the watchdog''s LOOP_EXCLUDED_NOTES exemption
+    for ''periodic checkpoint''. Fix: wrapped run_gate() + the install step in timeout
+    -k 30 (900s default), applied directly to the live untracked quality-gate.sh,
+    documented as ai-os/patches/quality-gate-run-gate-timeout-2026-07-27.diff (commit
+    105cccd, pushed). Unstuck task-20260727-034439 by killing its hung build; it recovered
+    via its own existing failure path to status=blocked. known_fixes row: signature=''periodic
+    checkpoint'', fix_action=quality_gate_run_gate_timeout, success_count=16 (verified
+    via superboss-register.sqlite query).'
+- at: '2026-07-27T04:55:38.065803+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Read task-20260727-034439''s task.yaml/worker.log/systemd.log. worker.log ended
+    immediately after `--- lint: exit 0 ---`, with nothing after -- no build/test
+    output at all, despite the workspace''s package.json having a `build` script.'
+  - Confirmed the task's systemd unit was still `active (running)` 1h+ after start;
+    process tree showed `bun run build` -> `next build` (PID 1205932) alive the whole
+    time.
+  - 'Confirmed LIVE (not a guess) that `next build` was genuinely hung, not just slow:
+    `/proc/1205932/status` showed `State: S (sleeping)`, `wchan: ep_poll`, and `utime`
+    was identical across a 5-second sample (`13476` -> `13476`) -- zero CPU progress,
+    sitting idle in its own event loop forever.'
+  - 'Root cause: `/opt/veridian/scripts/quality-gate.sh`''s `run_gate()` runs every
+    gate command (`eval "$cmd"`) with **no timeout at all**. A hang in `lint`/`build`/`test`
+    (or the un-gated `install` step) blocks the whole worker forever. This is a *different*
+    failure mode from the 2026-07-26 OOM fix already present in this same file (that
+    one crashed loudly and got restarted by systemd; this one never crashes or exits).
+    Made worse by the 2026-07-26 checkpoint-heartbeat fix: the background `periodic
+    checkpoint` loop only does cheap `git status`/`git log` against the workspace,
+    which kept succeeding every ~5min regardless of the hung build -- so the task
+    looked "healthy but slow" to `veridian-task-watchdog.py`''s `LOOP_EXCLUDED_NOTES`
+    exemption for the literal string `"periodic checkpoint"`, instead of the permanent
+    hang it actually was.'
+  - 'Confirmed `/opt/veridian/scripts/quality-gate.sh` is a live, untracked deployed
+    script (not present in this repo''s `scripts/` dir) -- same situation as the precedent
+    fix in `ai-os/patches/quality-gate-node-oom-memory-cap-2026-07-26.diff`. Followed
+    the same convention: applied the real fix directly to the live file, and committed
+    a matching patch file here as the audit trail.'
+  - 'Applied the fix: wrapped `run_gate()`''s command execution in `timeout -k 30
+    "$GATE_STEP_TIMEOUT_SECONDS" bash -c "$cmd"` (default 900s, overridable via env
+    var) so a hang now fails that gate cleanly (feeds the existing auto-fix-then-blocked
+    pipeline) instead of blocking forever. Also wrapped the un-gated `install` step
+    the same way, closing the same class of risk there. See `ai-os/patches/quality-gate-run-gate-timeout-2026-07-27.diff`.'
+  - Verified the timeout wrapper works in isolation (a `sleep 30` gate under a 2s
+    timeout was killed at exit 124 in ~2s).
+  - 'Unstuck the live stalled task: killed the hung `next build` process tree (SIGTERM
+    then SIGKILL, since it did not respond to SIGTERM) for task-20260727-034439. Its
+    own already-running worker instance then recovered through its **existing, unmodified**
+    failure path: gate reported `build: exit 137`, its auto-fix attempt was rejected
+    by `credit-accountant.py` ("existing software/mechanism already covers this"),
+    and the task reached a clean terminal `status: blocked` (awaiting human review)
+    instead of hanging indefinitely. No manual edits were made to that task''s own
+    files.'
+  - Registered the fix in `known_fixes` via `python3 scripts/superboss-register.py
+    log-fix --signature "periodic checkpoint" --fix-action quality_gate_run_gate_timeout`
+    so this exact signature auto-resolves via the watchdog's step_2 lookup next time
+    (though this particular root cause is not one `veridian-task-watchdog.py`'s `FIX_ACTIONS`
+    whitelist can safely auto-remediate by restarting the unit -- the real fix already
+    prevents recurrence at the source).
+  remaining_steps:
+  - Owner/human merge of this PR (not done by this task).
+  - Human review of blocked task task-20260727-034439 itself (out of this task's scope
+    -- its own quality-gate failure, now surfaced cleanly instead of hanging, needs
+    a real fix to the `next build` in that workspace, or a rerun).
+  recent_commits:
+  - '105cccd RCA fix: quality-gate.sh run_gate() had no timeout, letting a hung build
+    stall a worker forever under the "periodic checkpoint" watchdog signature'
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  note: quality gates passed, pushed branch worker/task-20260727-043407-rca-task-20260727-034439-re-verify-20-en,
+    awaiting review
+- at: '2026-07-27T04:58:46.902559+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '105cccd RCA fix: quality-gate.sh run_gate() had no timeout, letting a hung build
+    stall a worker forever under the "periodic checkpoint" watchdog signature'
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/107'
+execution_seconds: 785
+restart_count: 0
+token_usage:
+  input_tokens: 132
+  cache_creation_input_tokens: 110165
+  cache_read_input_tokens: 6530802
+  output_tokens: 37112
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 110165
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 915
+    cache_read_input_tokens: 133230
+    cache_creation_input_tokens: 619
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 619
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:25.527321+00:00'

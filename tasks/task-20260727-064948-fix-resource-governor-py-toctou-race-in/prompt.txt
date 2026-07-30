@@ -1,0 +1,22 @@
+## OBJECTIVE
+Round 2 fix for PR #110 (claude-control, branch worker/task-20260727-061625-build-server-resource-governor--queued-d), the SERVER RESOURCE GOVERNOR built in response to the real veridian-task-watchdog.timer duplicate-spawn incident. The real audit (review.json on that task) rejected the PR for a genuine, empirically-reproduced race condition: `dispatch_one()` in scripts/resource_governor.py selects the next queued row via `next_queued_task()` BEFORE acquiring `dispatch_core.acquire_dispatch_lock()`, and never re-verifies the row's status once inside that lock before calling `_perform_spawn(row)`. The auditor reproduced this live with a two-thread race against the test fixture: both concurrent `dispatch_one()` calls selected and dispatched the SAME queued row, firing the real spawn action twice for the same task -- the exact duplicate-dispatch failure this whole feature exists to prevent. Everything else in the PR (schema, metric sampling, stuck-task SIGTERM/SIGKILL, emergency cascade, the other 15 tests) passed real review and does not need to change.
+
+## KNOWN_CONTEXT
+Continue on the existing branch worker/task-20260727-061625-build-server-resource-governor--queued-d in this task's own workspace -- the branch already has real, review-approved work on it (design doc, UMR table + migration, resource_governor.py, watchdog wiring, 15 passing tests); this round only needs to close the one real gap, not redo any of it. Read scripts/dispatch_core.py's `acquire_dispatch_lock()` and `has_free_slot()` docstrings in full first -- they already document the exact TOCTOU pattern ("callers must check this WHILE holding acquire_dispatch_lock(), never before/after") that this bug reintroduced in a new function; the fix should follow that same established pattern, not invent a different locking approach.
+
+## SCOPE
+1. Fix `dispatch_one()` in scripts/resource_governor.py so row selection and dispatch happen atomically under the same `dispatch_core.acquire_dispatch_lock()` critical section -- either re-select the next queued row from inside the lock (not before it), or re-verify the previously-selected row's real current status under the lock immediately before `_perform_spawn(row)` and skip/re-queue if it's no longer the real next eligible row.
+2. Add the specific test the real audit noted was missing: a concurrent-invocation test (two threads or two subprocesses both calling `dispatch_one()`/`run_tick()` against the same fixture DB at the same time) that asserts exactly one of them dispatches a given umr_id and the other observes it already claimed -- this is the test that would have caught the original bug.
+3. Re-run the full existing test suite (all 15 prior tests) to confirm the fix does not regress anything already passing.
+
+## SUCCESS_CRITERIA
+`python3 -m pytest tests/test_resource_governor.py -v` exits 0 with 16+ tests passing, including the new concurrent-dispatch test. Runnable check specifically for the fixed race: `python3 -m pytest tests/test_resource_governor.py -k concurrent -v` exits 0.
+
+## EXPECTED_OUTPUT
+An updated commit on the existing PR #110 branch (same PR, not a new one) with the race fixed and the new test added.
+
+## CONSTRAINTS
+This is a narrow fix to code already reviewed and approved apart from the one named locking issue -- keep every other already-approved module untouched, limit the real diff to dispatch_one()'s locking behavior plus the one new concurrency test. Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task.
+
+## COMPLEXITY_TIER
+judgment

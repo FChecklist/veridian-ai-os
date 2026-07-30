@@ -1,0 +1,30 @@
+## OBJECTIVE
+Phase 0 of the Wiring Engine Software (instruction INS-20260725-032606-0c52): real entity-relationship schema design, a real registry built mechanically from existing extraction tools (not hand-authored), and a phased plan whose later phases finish wiring the 20 Engines end-to-end. This task designs and builds the registry infrastructure; it does not itself complete the end-to-end gateway wiring -- that is a later phase this task's own plan defines.
+
+## SCOPE
+1. Design ai-os/WIRING_ENGINE_SCHEMA_2026-07-25.yaml: the real entity-relationship record schema (entity_id, entity_type [engine|gateway|table|function|route|file|script|cron_job|ai_role], source_system [server|vercel|supabase|github], path/identifier, real relationships to other entities with a relationship_type, last_verified_ts, verification_status) -- reuse the exact conventions already established by knowledge_engine's own schema, do not invent a parallel incompatible one.
+2. Build scripts/generate_wiring_registry.py: a real, mechanical script that populates the registry FROM existing real data sources, not by writing new content by hand: ai-os/DATABASE_CATALOG.json (tables), ai-os/FUNCTION_CATALOG.json (functions), ai-os/AI_ROSTER_CATALOG.json (AI roles), the Capability Registry (live-wired this session), knowledge_engine's own rows (docs/artifacts), ai-os/ROUTE_REGISTRY_SCHEMA_2026-07-24.yaml's real routes, the 20_ENGINES_10_GATEWAYS_PHASE_PLAN's real engine-to-code mappings, and ai-os/SOFTWARE_CATALOG.yaml (scripts/cron/systemd). Run it for real now and report the real row count per entity_type.
+3. Write ai-os/WIRING_ENGINE_PHASE_PLAN_2026-07-25.yaml: a real phase-by-phase plan whose Phase 1 is specifically "verify and complete real end-to-end request flow through all 10 gateways" -- for at least the Capability Registry's real, already-wired capabilities, trace and prove (or build, where genuinely missing) the actual Intent->Context->CapabilityRegistry->Planning->Policy->Rule->Decision->Workflow->Automation->Integration->Data->Notification->Audit->Observability pipeline hitting real code, not just per-engine wiring documented in isolation. Include later phases for the remaining real gaps this task's own inventory finds.
+4. Wire scripts/generate_wiring_registry.py into cron (existing run-logged.sh pattern, Owner's blanket approval covers this) so the registry auto-updates on a real schedule, not just this one run.
+5. Register the schema, registry, and phase plan in knowledge_engine and MASTER_INDEX.yaml (registries.wiring_engine, live file).
+
+## KNOWN_CONTEXT
+- This is the 6th major initiative this session (after self-sustaining-system-engine, Auditor Engine, 20-Engines/10-Gateways, Testing Engine, Terminology Standardization) -- all their real artifacts already exist and are merged; read them as real inputs, do not re-derive from scratch.
+- Owner's own honest assessment, confirmed this session: the 20-Engines phases wired each engine's own slice, but nobody has proven a real end-to-end request actually flows through all 10 gateways in production -- that is the real, confirmed gap this Wiring Engine's Phase 1 must close.
+- Standing rules: registry/catalog writes come from scripts not hand-authored prose (this whole initiative's point); any crontab need follows the Owner-approval-citation pattern in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml (Owner's blanket approval this session covers it).
+- The auto_phase_continuation.py script (already built and working this session, cron-scheduled every 30 min) will automatically pick up and dispatch this plan's later phases once this task's PR merges and the phase plan file exists with the right structure (phases: list, each with id/name/depends_on) -- match that exact structure so auto-continuation works without further manual intervention.
+
+## SUCCESS_CRITERIA
+- `test -f ai-os/WIRING_ENGINE_SCHEMA_2026-07-25.yaml` exits 0.
+- `python3 scripts/generate_wiring_registry.py` runs and exits 0, producing a real non-zero row count for at least 4 of the 4 entity_types (engine, gateway, table, function at minimum).
+- `test -f ai-os/WIRING_ENGINE_PHASE_PLAN_2026-07-25.yaml` exits 0 and its phase 1 explicitly targets real end-to-end gateway verification.
+- `crontab -l | grep -c generate_wiring_registry` returns 1 or more (real cron entry exists).
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on claude-control), the real registry generation output as evidence, the phase plan, the real cron entry, and a final checkpoint listing exactly which entity types are populated and their real counts.
+
+## CONSTRAINTS
+Limit this task to schema design, mechanical registry population from existing sources, cron wiring, and phase planning -- leave the actual end-to-end gateway wiring/verification work to Phase 1 of this task's own plan, dispatched separately (auto-continuation will pick it up).
+
+## COMPLEXITY_TIER
+judgment

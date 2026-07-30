@@ -1,0 +1,320 @@
+id: task-20260726-040056-fix-auto-continuation-self-report-and-ci
+title: fix-auto-continuation-self-report-and-ci-race-root-causes
+status: completed
+repo: claude-control
+branch: worker/task-20260726-040056-fix-auto-continuation-self-report-and-ci
+workspace: /opt/veridian/ai-os/tasks/task-20260726-040056-fix-auto-continuation-self-report-and-ci/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-040056-fix-auto-continuation-self-report-and-ci
+service: veridian-worker@task-20260726-040056-fix-auto-continuation-self-report-and-ci.service
+created_at: '2026-07-26T04:00:57.429556+00:00'
+last_checkpoint_at: '2026-07-26T04:30:27.004575+00:00'
+completed_steps: &id002
+- Root-caused both recurring manual interventions (self-report backfill, CI-timing
+  race) by reading
+- 'Discovered an extra real bug while cross-checking: gh_pr_merged_for_task() in'
+- 'Fix 1 (software-driven self-report backfill): new scripts/backfill_phase_self_report.py.'
+- Wired into supervisor-entrypoint.sh's own tier1 real-merge-confirmed branch (best-effort,
+  non-fatal).
+- Wired into auto_phase_continuation.py's own cron run (`--sweep` over every awaiting_human_approval
+- 'Real test: tests/backfill_phase_self_report_test.py, 14 scenarios (subprocess against
+  a throwaway'
+- Retroactive sweep (SCOPE item 5) run against real production data (`--sweep --dry-run`,
+  then
+- 'Fix 2 (CI-timing race on compliance-tracker''s mandatory-audit-check.yml): read
+  the real workflow file --'
+- Added an AUDIT-CHECK-RERUN-BLOCK to supervisor-entrypoint.sh (live, right after
+  the AUDIT comment is
+- 'Real test: tests/supervisor_audit_rerun_test.sh, 4 scenarios, extracts the real
+  block out of the live'
+- ai-os/patches/supervisor-entrypoint-self-report-backfill-and-audit-rerun-2026-07-26.diff
+  records both
+- All 4 test suites pass together against the real live supervisor-entrypoint.sh (both
+  new blocks, plus
+remaining_steps: &id003
+- 'Open the PR on claude-control: https://github.com/FChecklist/claude-control/pull/76'
+- No compliance-tracker PR needed (see fix 2 above -- option (b) touches only supervisor-entrypoint.sh).
+- 'Final checkpoint: phase_3 (task-20260726-035742, untouched per CONSTRAINTS) self-reported
+  on its own'
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T04:01:01.879514+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '1f9fd52 Backfill phase_2 self-report -- PR #560 merged, worker did not update
+    its own phase-plan entry'
+  - da402a6 Auto-sync 1 server task(s) to master controller
+  - 'fab4ff4 Backfill phase_1 self-report (status/completed_by_task/evidence) -- PR
+    #559 merged but the phase-plan entry was never updated, blocking auto_phase_continuation.py
+    from detecting it as done'
+  - a3d029f Auto-sync 1 server task(s) to master controller
+  - '5d40d2d Merge pull request #74 from FChecklist/worker/task-20260725-184840-veridian-architecture-v2-ux-amendment-co'
+  - '1bd5b91 Re-derive VERIDIAN v2 phase_2/phase_5 UX amendment, fixing both PR #72
+    AUDIT:FAIL defects'
+  - d79c54d Auto-sync 3 server task(s) to master controller
+  - 'ef60e5f Merge pull request #73 from FChecklist/worker/task-20260725-180624-end-user-prompt-library-generation'
+  - 5d25299 Record end-user prompt library extension + first real batch in blocker
+    doc and MASTER_INDEX
+  - 80ec5c5 Add enduser_domain generation mode targeting (End User Role x Business
+    Domain), extend ingest validation
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T04:06:03.087723+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '1f9fd52 Backfill phase_2 self-report -- PR #560 merged, worker did not update
+    its own phase-plan entry'
+  - da402a6 Auto-sync 1 server task(s) to master controller
+  - 'fab4ff4 Backfill phase_1 self-report (status/completed_by_task/evidence) -- PR
+    #559 merged but the phase-plan entry was never updated, blocking auto_phase_continuation.py
+    from detecting it as done'
+  - a3d029f Auto-sync 1 server task(s) to master controller
+  - '5d40d2d Merge pull request #74 from FChecklist/worker/task-20260725-184840-veridian-architecture-v2-ux-amendment-co'
+  - '1bd5b91 Re-derive VERIDIAN v2 phase_2/phase_5 UX amendment, fixing both PR #72
+    AUDIT:FAIL defects'
+  - d79c54d Auto-sync 3 server task(s) to master controller
+  - 'ef60e5f Merge pull request #73 from FChecklist/worker/task-20260725-180624-end-user-prompt-library-generation'
+  - 5d25299 Record end-user prompt library extension + first real batch in blocker
+    doc and MASTER_INDEX
+  - 80ec5c5 Add enduser_domain generation mode targeting (End User Role x Business
+    Domain), extend ingest validation
+  note: periodic checkpoint
+- at: '2026-07-26T04:11:05.734232+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/auto_phase_continuation.py
+  - scripts/backfill_phase_self_report.py
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '1f9fd52 Backfill phase_2 self-report -- PR #560 merged, worker did not update
+    its own phase-plan entry'
+  - da402a6 Auto-sync 1 server task(s) to master controller
+  - 'fab4ff4 Backfill phase_1 self-report (status/completed_by_task/evidence) -- PR
+    #559 merged but the phase-plan entry was never updated, blocking auto_phase_continuation.py
+    from detecting it as done'
+  - a3d029f Auto-sync 1 server task(s) to master controller
+  - '5d40d2d Merge pull request #74 from FChecklist/worker/task-20260725-184840-veridian-architecture-v2-ux-amendment-co'
+  - '1bd5b91 Re-derive VERIDIAN v2 phase_2/phase_5 UX amendment, fixing both PR #72
+    AUDIT:FAIL defects'
+  - d79c54d Auto-sync 3 server task(s) to master controller
+  - 'ef60e5f Merge pull request #73 from FChecklist/worker/task-20260725-180624-end-user-prompt-library-generation'
+  - 5d25299 Record end-user prompt library extension + first real batch in blocker
+    doc and MASTER_INDEX
+  - 80ec5c5 Add enduser_domain generation mode targeting (End User Role x Business
+    Domain), extend ingest validation
+  note: periodic checkpoint
+- at: '2026-07-26T04:16:07.231990+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/auto_phase_continuation.py
+  - ai-os/patches/supervisor-entrypoint-self-report-backfill-and-audit-rerun-2026-07-26.diff
+  - scripts/backfill_phase_self_report.py
+  - tests/backfill_phase_self_report_test.py
+  - tests/supervisor_audit_rerun_test.sh
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '1f9fd52 Backfill phase_2 self-report -- PR #560 merged, worker did not update
+    its own phase-plan entry'
+  - da402a6 Auto-sync 1 server task(s) to master controller
+  - 'fab4ff4 Backfill phase_1 self-report (status/completed_by_task/evidence) -- PR
+    #559 merged but the phase-plan entry was never updated, blocking auto_phase_continuation.py
+    from detecting it as done'
+  - a3d029f Auto-sync 1 server task(s) to master controller
+  - '5d40d2d Merge pull request #74 from FChecklist/worker/task-20260725-184840-veridian-architecture-v2-ux-amendment-co'
+  - '1bd5b91 Re-derive VERIDIAN v2 phase_2/phase_5 UX amendment, fixing both PR #72
+    AUDIT:FAIL defects'
+  - d79c54d Auto-sync 3 server task(s) to master controller
+  - 'ef60e5f Merge pull request #73 from FChecklist/worker/task-20260725-180624-end-user-prompt-library-generation'
+  - 5d25299 Record end-user prompt library extension + first real batch in blocker
+    doc and MASTER_INDEX
+  - 80ec5c5 Add enduser_domain generation mode targeting (End User Role x Business
+    Domain), extend ingest validation
+  note: periodic checkpoint
+- at: '2026-07-26T04:21:08.532910+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/auto_phase_continuation.py
+  - ai-os/patches/supervisor-entrypoint-self-report-backfill-and-audit-rerun-2026-07-26.diff
+  - scripts/backfill_phase_self_report.py
+  - tests/backfill_phase_self_report_test.py
+  - tests/supervisor_audit_rerun_test.sh
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '1f9fd52 Backfill phase_2 self-report -- PR #560 merged, worker did not update
+    its own phase-plan entry'
+  - da402a6 Auto-sync 1 server task(s) to master controller
+  - 'fab4ff4 Backfill phase_1 self-report (status/completed_by_task/evidence) -- PR
+    #559 merged but the phase-plan entry was never updated, blocking auto_phase_continuation.py
+    from detecting it as done'
+  - a3d029f Auto-sync 1 server task(s) to master controller
+  - '5d40d2d Merge pull request #74 from FChecklist/worker/task-20260725-184840-veridian-architecture-v2-ux-amendment-co'
+  - '1bd5b91 Re-derive VERIDIAN v2 phase_2/phase_5 UX amendment, fixing both PR #72
+    AUDIT:FAIL defects'
+  - d79c54d Auto-sync 3 server task(s) to master controller
+  - 'ef60e5f Merge pull request #73 from FChecklist/worker/task-20260725-180624-end-user-prompt-library-generation'
+  - 5d25299 Record end-user prompt library extension + first real batch in blocker
+    doc and MASTER_INDEX
+  - 80ec5c5 Add enduser_domain generation mode targeting (End User Role x Business
+    Domain), extend ingest validation
+  note: periodic checkpoint
+- at: '2026-07-26T04:23:55.929074+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Root-caused both recurring manual interventions (self-report backfill, CI-timing
+    race) by reading
+  - 'Discovered an extra real bug while cross-checking: gh_pr_merged_for_task() in'
+  - 'Fix 1 (software-driven self-report backfill): new scripts/backfill_phase_self_report.py.'
+  - Wired into supervisor-entrypoint.sh's own tier1 real-merge-confirmed branch (best-effort,
+    non-fatal).
+  - Wired into auto_phase_continuation.py's own cron run (`--sweep` over every awaiting_human_approval
+  - 'Real test: tests/backfill_phase_self_report_test.py, 14 scenarios (subprocess
+    against a throwaway'
+  - Retroactive sweep (SCOPE item 5) run against real production data (`--sweep --dry-run`,
+    then
+  - 'Fix 2 (CI-timing race on compliance-tracker''s mandatory-audit-check.yml): read
+    the real workflow file --'
+  - Added an AUDIT-CHECK-RERUN-BLOCK to supervisor-entrypoint.sh (live, right after
+    the AUDIT comment is
+  - 'Real test: tests/supervisor_audit_rerun_test.sh, 4 scenarios, extracts the real
+    block out of the live'
+  - ai-os/patches/supervisor-entrypoint-self-report-backfill-and-audit-rerun-2026-07-26.diff
+    records both
+  - All 4 test suites pass together against the real live supervisor-entrypoint.sh
+    (both new blocks, plus
+  remaining_steps:
+  - 'Open the PR on claude-control: https://github.com/FChecklist/claude-control/pull/76'
+  - No compliance-tracker PR needed (see fix 2 above -- option (b) touches only supervisor-entrypoint.sh).
+  - 'Final checkpoint: phase_3 (task-20260726-035742, untouched per CONSTRAINTS) self-reported
+    on its own'
+  recent_commits:
+  - 88410cb Fix auto-continuation self-report gap + audit-check CI-timing race (root
+    causes, not symptoms)
+  - '1f9fd52 Backfill phase_2 self-report -- PR #560 merged, worker did not update
+    its own phase-plan entry'
+  - da402a6 Auto-sync 1 server task(s) to master controller
+  - 'fab4ff4 Backfill phase_1 self-report (status/completed_by_task/evidence) -- PR
+    #559 merged but the phase-plan entry was never updated, blocking auto_phase_continuation.py
+    from detecting it as done'
+  - a3d029f Auto-sync 1 server task(s) to master controller
+  - '5d40d2d Merge pull request #74 from FChecklist/worker/task-20260725-184840-veridian-architecture-v2-ux-amendment-co'
+  - '1bd5b91 Re-derive VERIDIAN v2 phase_2/phase_5 UX amendment, fixing both PR #72
+    AUDIT:FAIL defects'
+  - d79c54d Auto-sync 3 server task(s) to master controller
+  - 'ef60e5f Merge pull request #73 from FChecklist/worker/task-20260725-180624-end-user-prompt-library-generation'
+  - 5d25299 Record end-user prompt library extension + first real batch in blocker
+    doc and MASTER_INDEX
+  note: quality gates passed, pushed branch worker/task-20260726-040056-fix-auto-continuation-self-report-and-ci,
+    awaiting review
+- at: '2026-07-26T04:26:39.183728+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Root-caused both recurring manual interventions (self-report backfill, CI-timing
+    race) by reading
+  - 'Discovered an extra real bug while cross-checking: gh_pr_merged_for_task() in'
+  - 'Fix 1 (software-driven self-report backfill): new scripts/backfill_phase_self_report.py.'
+  - Wired into supervisor-entrypoint.sh's own tier1 real-merge-confirmed branch (best-effort,
+    non-fatal).
+  - Wired into auto_phase_continuation.py's own cron run (`--sweep` over every awaiting_human_approval
+  - 'Real test: tests/backfill_phase_self_report_test.py, 14 scenarios (subprocess
+    against a throwaway'
+  - Retroactive sweep (SCOPE item 5) run against real production data (`--sweep --dry-run`,
+    then
+  - 'Fix 2 (CI-timing race on compliance-tracker''s mandatory-audit-check.yml): read
+    the real workflow file --'
+  - Added an AUDIT-CHECK-RERUN-BLOCK to supervisor-entrypoint.sh (live, right after
+    the AUDIT comment is
+  - 'Real test: tests/supervisor_audit_rerun_test.sh, 4 scenarios, extracts the real
+    block out of the live'
+  - ai-os/patches/supervisor-entrypoint-self-report-backfill-and-audit-rerun-2026-07-26.diff
+    records both
+  - All 4 test suites pass together against the real live supervisor-entrypoint.sh
+    (both new blocks, plus
+  remaining_steps:
+  - 'Open the PR on claude-control: https://github.com/FChecklist/claude-control/pull/76'
+  - No compliance-tracker PR needed (see fix 2 above -- option (b) touches only supervisor-entrypoint.sh).
+  - 'Final checkpoint: phase_3 (task-20260726-035742, untouched per CONSTRAINTS) self-reported
+    on its own'
+  recent_commits:
+  - 88410cb Fix auto-continuation self-report gap + audit-check CI-timing race (root
+    causes, not symptoms)
+  - '1f9fd52 Backfill phase_2 self-report -- PR #560 merged, worker did not update
+    its own phase-plan entry'
+  - da402a6 Auto-sync 1 server task(s) to master controller
+  - 'fab4ff4 Backfill phase_1 self-report (status/completed_by_task/evidence) -- PR
+    #559 merged but the phase-plan entry was never updated, blocking auto_phase_continuation.py
+    from detecting it as done'
+  - a3d029f Auto-sync 1 server task(s) to master controller
+  - '5d40d2d Merge pull request #74 from FChecklist/worker/task-20260725-184840-veridian-architecture-v2-ux-amendment-co'
+  - '1bd5b91 Re-derive VERIDIAN v2 phase_2/phase_5 UX amendment, fixing both PR #72
+    AUDIT:FAIL defects'
+  - d79c54d Auto-sync 3 server task(s) to master controller
+  - 'ef60e5f Merge pull request #73 from FChecklist/worker/task-20260725-180624-end-user-prompt-library-generation'
+  - 5d25299 Record end-user prompt library extension + first real batch in blocker
+    doc and MASTER_INDEX
+  note: "tier1, Superboss-approved, but the merge itself FAILED (gh pr view confirms\
+    \ state=OPEN, mergedAt=; see supervisor.log) \u2014 needs manual attention, NOT\
+    \ actually merged: https://github.com/FChecklist/claude-control/pull/76"
+- at: '2026-07-26T04:30:27.004575+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 88410cb Fix auto-continuation self-report gap + audit-check CI-timing race (root
+    causes, not symptoms)
+  - '1f9fd52 Backfill phase_2 self-report -- PR #560 merged, worker did not update
+    its own phase-plan entry'
+  - da402a6 Auto-sync 1 server task(s) to master controller
+  - 'fab4ff4 Backfill phase_1 self-report (status/completed_by_task/evidence) -- PR
+    #559 merged but the phase-plan entry was never updated, blocking auto_phase_continuation.py
+    from detecting it as done'
+  - a3d029f Auto-sync 1 server task(s) to master controller
+  - '5d40d2d Merge pull request #74 from FChecklist/worker/task-20260725-184840-veridian-architecture-v2-ux-amendment-co'
+  - '1bd5b91 Re-derive VERIDIAN v2 phase_2/phase_5 UX amendment, fixing both PR #72
+    AUDIT:FAIL defects'
+  - d79c54d Auto-sync 3 server task(s) to master controller
+  - 'ef60e5f Merge pull request #73 from FChecklist/worker/task-20260725-180624-end-user-prompt-library-generation'
+  - 5d25299 Record end-user prompt library extension + first real batch in blocker
+    doc and MASTER_INDEX
+  note: 'PR #76 merge blocked by a transient GitHub 502, not a real conflict -- retried,
+    merged clean. gh pr view confirms state=MERGED.'
+execution_seconds: 1373
+restart_count: 0
+token_usage:
+  input_tokens: 220
+  cache_creation_input_tokens: 215373
+  cache_read_input_tokens: 17435980
+  output_tokens: 109954
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 215373
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 624
+    cache_read_input_tokens: 237429
+    cache_creation_input_tokens: 1628
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1628
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T05:00:09.128905+00:00'

@@ -1,0 +1,29 @@
+## OBJECTIVE
+Correct the two real defects Superboss found in the rejected PR #72 (claude-control) amendment to ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml, then re-land the amendment for real. Do not touch phase_1 (already merged) or start any phase_2/phase_5 implementation work -- this task only fixes the phase-plan document.
+
+## KNOWN_CONTEXT
+- PR #72 was correctly AUDIT: FAILed for two real reasons: (1) it claimed the Owner's specific quoted phrases were "quoted in full" in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml id=veridian-architecture-v2-target-repo-anchor, but that entry only ever contained a paraphrase -- the verbatim quotes did not exist in any traceable record at the time; (2) it upgraded Gateway G05 from an escalation-only Tier-5 fallback to a mandatory second AI pass on every completed end-user request, without reconciling this against the system's existing, real credit-spend governance principle (MASTER_INDEX.yaml registries.credit_spend_governance: software first, AI second, minimal credits only when genuinely needed).
+- Both are now fixed at the source: the Owner's real verbatim words are saved at /opt/veridian/ai-os/OWNER_DIRECTIVES/BROWSER_NATIVE_END_USER_ARCHITECTURE_2026-07-25.txt (registered in knowledge_engine as KE-20260725-184749-e0e0) -- cite THIS file specifically for any verbatim quote, never the OWNER_DECISIONS_NEEDED paraphrase. Read that file in full; it also contains an explicit interpretive note (clearly separated from the Owner's own verbatim words) resolving the mandatory-AI-call ambiguity: "SECOND execution in the SERVER by the SOFTWARE" means deterministic server-side SOFTWARE execution of the Stage-1 machine-language output (the same execution model OWNER_ENGINE/task-gateway.py already uses), with Gateway G05 invoked only as-needed/escalation WITHIN that software execution -- not a second mandatory AI pass on every request.
+- Read ai-os/MASTER_INDEX.yaml's registries.credit_spend_governance entry for the real, existing propose/report two-gate ledger mechanism this amendment must explicitly reconcile with (either route any genuinely-new AI-call pattern through that gate, or explain concretely why the pattern doesn't add new metered AI volume beyond what G05 already handles as Tier-5 escalation).
+
+## SCOPE
+1. Re-derive the phase_2 and phase_5 scope amendments from scratch against the real verbatim source file and the corrected two-stage-is-software-not-mandatory-AI understanding above -- do not just patch the rejected PR #72 diff's wording, since its core framing (G05 as mandatory second pass) was wrong, not just poorly cited.
+2. Every quote attributed to the Owner in the amended scope text must cite /opt/veridian/ai-os/OWNER_DIRECTIVES/BROWSER_NATIVE_END_USER_ARCHITECTURE_2026-07-25.txt by exact path, and the quoted text must be verified byte-for-byte present in that file before the citation is written -- check this yourself before finalizing, the same verification standard the rejecting review applied.
+3. Explicitly reconcile the two-stage execution model with registries.credit_spend_governance in the amended text: state plainly that Stage 2 (server-side SOFTWARE execution) does not introduce a new mandatory AI-call pattern beyond G05's existing Tier-5 escalation role, and that any phase_2/phase_5 implementation work must preserve that (software-first, AI only when the specific request genuinely requires it).
+4. Apply the same amendment approach as before to phase_2 (Compiler Pipeline) and phase_5 (Browser Execution Tiers) scope -- add the real two-input-mode (mode-pill/option-chain, or free-text chat) and two-stage-software-first deliverables, this time correctly cited and correctly reconciled.
+5. Check phases 3/4/6-10 again briefly for any effect from the corrected (non-mandatory-AI) understanding -- likely none, but verify rather than assume.
+
+## SUCCESS_CRITERIA
+- `python3 -c "import yaml; d=yaml.safe_load(open('ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml')); assert len(d['phases'])==10; print('OK')"` exits 0.
+- `grep -c 'OWNER_DIRECTIVES/BROWSER_NATIVE_END_USER_ARCHITECTURE_2026-07-25.txt' ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml` returns 1 or more (real citation to the correct, verbatim source file).
+- `grep -c 'credit_spend_governance' ai-os/VERIDIAN_ARCHITECTURE_V2_PHASE_PLAN_2026-07-25.yaml` returns 1 or more (real reconciliation present).
+- Every quoted phrase in the amended text is independently verified present in the cited source file before commit (show this verification -- e.g. grep each quoted phrase against the source file -- in your final checkpoint).
+
+## EXPECTED_OUTPUT
+Real committed and pushed code (PR on claude-control) with the corrected amendment, real verification that every quote is genuinely present in its cited source, the credit-governance reconciliation, and a final checkpoint confirming both of PR #72's original findings are actually resolved (not just reworded).
+
+## CONSTRAINTS
+Do not touch phase_1's own scope, status, or dispatch state -- it is already merged. Do not begin any phase_2/phase_5 implementation code in this task -- amendment only.
+
+## COMPLEXITY_TIER
+judgment

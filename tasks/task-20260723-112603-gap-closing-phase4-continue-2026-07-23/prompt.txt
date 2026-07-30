@@ -1,0 +1,20 @@
+## OBJECTIVE
+TASK REQUIRING AI JUDGMENT (not mechanical): continue the gap-closing chain from ai-os/MASTER_GAP_AUDIT_2026-07-23.yaml. Phase 3 (task-20260723-103551) confirmed PR #4 (claude-control) genuinely merged (verified directly via `gh pr view` state=MERGED, not just the checkpoint claim) but did not self-dispatch a next phase afterward. Pick the next coherent batch of 3-8 real gaps from the audit document, close them for real, and resume the self-dispatching pattern -- this chain should not go idle between phases.
+
+## SCOPE
+Same scope rules as the original continuous-gap-closing-worker task: small well-defined items first, the 4-repo merge and veda-advisors data-severance stay in ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml (do not execute those automatically), sequential (not parallel) writes to superboss-register.sqlite to avoid the concurrency corruption seen 3 times today.
+
+## KNOWN_CONTEXT
+Full lessons-learned context already lives in ai-os/CONTINUOUS_GAP_CLOSING_PROMPT_2026-07-23.txt on this server -- read it, it is the same context, not repeated here to save tokens. One new lesson from Phase 3 specifically: `gh pr merge --delete-branch` can transiently fail with "fatal: 'master' is already used by worktree at '/opt/veridian/repos/claude-control'" if run while something else briefly holds that checkout state (e.g. sync-repos.sh's periodic pull) -- Phase 3's own retry-on-next-invocation pattern already handled this correctly (succeeded on invocation 4 after failing on an earlier one); this is expected transient contention, not a bug to fix, just retry.
+
+## SUCCESS_CRITERIA
+At least one more real, verified batch of gaps closed with evidence. The self-dispatch pattern resumes -- a next phase task gets created AND started (both steps, not just created) before this phase's own checkpoint.
+
+## EXPECTED_OUTPUT
+Same as before: commit, push, update the audit doc, checkpoint pending_review with real evidence, self-dispatch (create AND start) the next phase.
+
+## CONSTRAINTS
+Explicitly run `systemctl --user start veridian-worker@<new-task-id>.service` after `veridian-task.py create` for the next phase -- creating alone does not start it, this was the actual cause of the chain going idle after Phase 1 and again after Phase 3.
+
+## COMPLEXITY_TIER
+judgment

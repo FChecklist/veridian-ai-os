@@ -1,0 +1,47 @@
+## OBJECTIVE
+Close items 5, 36, 49, 54 from ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml (all currently PARTIAL, all with a concrete, small, real fix identified below -- re-verify each's real current state before building, do not trust this document's evidence text without re-checking it against the live host first, since scripts change).
+
+## SCOPE
+ITEM_5 (health_check_covers_all_services) OUTPUT:
+- FILE: scripts/health-check-15min.py, function check_systemd_units() (line 67, currently `systemctl --user list-units 'veridian-worker@*' 'veridian-supervisor@*' --all --no-legend --plain`)
+- FIX: extend the unit-pattern list to also include veridian-glm-proxy.service and 'veridian-docworker@*', so the health check's failed/running counts cover every real systemd --user unit family on this server, not just worker/supervisor.
+- TEST: real `systemctl --user list-units --all --no-legend --plain 'veridian-worker@*' 'veridian-supervisor@*' 'veridian-glm-proxy.service' 'veridian-docworker@*'` shows the expected additional unit(s); re-run health-check-15min.py and confirm units.total increases to match.
+
+ITEM_36 (documentation_auto_generation) OUTPUT:
+- FILES: scripts/generate_task_checklist.py (main(), line 235, currently only `print(yaml.safe_dump(checklist, ...))` at line 271), scripts/generate_quick_reference.py, scripts/generate-system-diagram.py (verify each script's current stdout-only behavior first -- do not assume the line numbers above are unchanged)
+- FIX: each script's main() additionally writes its generated content to a real file under ai-os/generated/<script-name>-latest.<ext> (create the directory if absent), in addition to the existing stdout print (do not remove the stdout path -- other callers may depend on it for manual paste-in). Add a single new cron entry (crontab -l pattern, e.g. `0 */6 * * * ... generate_task_checklist.py >> .../log 2>&1`, mirroring the existing system-sync.py 6-hourly cadence) so these run automatically instead of requiring a human/AI to remember to invoke them -- confirm with the user (Owner) before adding a new crontab entry, since crontab edits are a standing_exceptions genuinely_irreversible_actions category per AI_ENGINEERING_POLICY.yaml (do not add the cron entry unilaterally if that policy still says so -- re-verify the policy text first).
+- TEST: real manual run of each script, confirm the new file exists under ai-os/generated/ with real (non-empty, valid) content matching the stdout output byte-for-byte.
+
+ITEM_49 (active_approval_notification) OUTPUT:
+- FILE: scripts/supervisor-entrypoint.sh, line 202 (`elif [ "$VERDICT" = "approve" ] && [ "$TIER" = "tier2" ]; then` branch -- re-verify this line number against the live file first): currently only sets `veridian-task.py checkpoint ... --status awaiting_human_approval`, a passive DB status with no active Owner notification (same real gap class as items 28/56, already closed this phase by scripts/health-check-15min.py's send_anomaly_notifications() -- reuse notify-owner.py directly here, do not build a second escalation mechanism).
+- FIX: add a real `python3 /opt/veridian/scripts/notify-owner.py --subject "Veridian: a task needs your approval" --body "..." --dedupe-key "awaiting-approval-$TASK_ID"` call (best-effort, `|| true`) in that branch, body in the simple-English convention (scripts/notify-owner.py docstring line 16-17; see ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml item 47 for 3 real example strings in this style).
+- TEST: real test using a real tier2-classified task if one currently exists in awaiting_human_approval status (`grep -l "status: awaiting_human_approval" ai-os/tasks/*/task.yaml`); if none exists, say so explicitly and instead call notify-owner.py directly with the exact real subject/body/dedupe-key the new code constructs, confirm a real Resend send via ai-os/logs/notify-owner-state.json (same verification method items 22/28/56 used) -- do not fabricate a fake tier2 task.
+
+ITEM_54 (automated_safe_fix_scheduling) OUTPUT:
+- FILE: crontab -l (add a new entry for scripts/recover-failed-workers.py)
+- FIX: re-verify recover-failed-workers.py's safety logic first (its own real gate: "only resets units matching a specific 402-balance failure signature, skips everything else" per this audit's item 54 evidence -- confirm that gate is still real and unchanged by reading the script directly). If confirmed safe, add a crontab entry (e.g. `*/30 * * * * /opt/veridian/scripts/run-logged.sh "recover-failed-workers" /usr/bin/python3 /opt/veridian/scripts/recover-failed-workers.py >> /opt/veridian/ai-os/logs/recover-failed-workers-cron.log 2>&1`, mirroring the existing run-logged.sh wrapper convention every other cron entry uses).
+- TEST: real crontab -l showing the new entry; one real manual invocation of recover-failed-workers.py confirming it still exits 0 and only acts on the documented 402-signature.
+
+## KNOWN_CONTEXT
+zero_duplication_check_performed: true (item 49 explicitly reuses notify-owner.py rather than building a second notification path -- re-verify no such call already exists in supervisor-entrypoint.sh before adding it)
+db_concurrency_constraint: sequential writes only to superboss-register.sqlite
+crontab_is_a_standing_exception: AI_ENGINEERING_POLICY.yaml automation_scope_boundary.standing_exceptions lists crontab changes as requiring Owner confirmation as of the last time this was checked (item 50's own PARTIAL evidence) -- re-verify this is still current policy before adding items 36/54's new cron entries; if it still requires confirmation, route the specific new entries to ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml instead of adding them unilaterally, and still close whatever part of each item does not require a cron change (e.g. item 36's file-writing behavior, item 54's safety re-verification) as PARTIAL -> DONE-for-the-buildable-part with the cron-gated part left PARTIAL and routed.
+
+## SUCCESS_CRITERIA
+Every status change cites file:line or real command output. If an item's fix is blocked by the crontab Owner-confirmation policy, say so explicitly (routed to OWNER_DECISIONS_NEEDED, not silently skipped or unilaterally decided either way).
+
+## EXPECTED_OUTPUT
+COMMIT: live-host script diffs for items 5/36/49/54 (whichever are actually built), each with an ai-os/patches/<name>-2026-07-23.diff, verified with patch --dry-run (write diff files with the Write tool, not bash `>` redirection -- confirmed corruption risk in this sandbox, see Phase 6/7 PROGRESS.md).
+UPDATE_FILE: ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml items [5, 36, 49, 54] status updated with real evidence, summary counts recomputed and cross-checked against an independent recount of all 60 items[].status entries (do not hand-compute, verify programmatically).
+CHECKPOINT: status=pending_review, real evidence in note.
+NEXT_PHASE: create AND start Phase 9 (both commands -- veridian-task.py create already enables+starts the systemd --user service, confirm via systemctl --user status) targeting the next 3-5 concrete items from ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml's remaining PARTIAL items or ai-os/EXECUTION_RULES_AUDIT_2026-07-23.yaml -- exact file paths, exact function signatures or exact policy text, exact test criteria, same structure as this document, no narrative continuation language.
+
+## CONSTRAINTS
+NO_NEW_TAGGING_SYSTEM: reuse system_index.tags column
+NO_PARALLEL_DB_WRITES: sequential only for superboss-register.sqlite
+EVIDENCE_REQUIRED: every DONE status change cites file:line or real command output, zero exceptions
+NO_FABRICATED_TEST_DATA: if no real awaiting_human_approval task exists to test item 49, say so explicitly rather than inventing one
+NO_UNILATERAL_CRONTAB_EDITS_IF_POLICY_STILL_REQUIRES_CONFIRMATION: re-verify AI_ENGINEERING_POLICY.yaml's standing_exceptions before adding any new cron entry (items 36/54)
+
+## COMPLEXITY_TIER
+judgment

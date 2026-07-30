@@ -1,0 +1,26 @@
+## OBJECTIVE
+Resolve real, confirmed git merge conflicts on PR #23 and PR #24 so both can merge into master cleanly. Instruction INS-20260724-090425-d9bc.
+
+## SCOPE
+1. Confirm both conflicts are real: `gh pr view 23 --repo FChecklist/claude-control --json mergeable,mergeStateStatus` and same for 24 (expect CONFLICTING/DIRTY at task start).
+2. For PR23 (branch worker/task-20260724-084040-phase1-terminology-dictionary-expansion): fetch origin, merge origin/master into the branch, resolve every conflicting file reading both sides fully, push. Likely conflict area: MASTER_INDEX.yaml and/or ai-os/OWNER_DECISIONS_NEEDED_2026-07-23.yaml, since several other Phase1 branches merged around the same time.
+3. For PR24 (branch worker/task-20260724-083724-phase1-auditor-engine-security-scanners): same process. This PR also touches ai-os/CRONTAB_APPROVED_SNAPSHOT.txt -- when resolving conflicts there, preserve ALL real cron entries from every side, do not drop any.
+4. After each push, verify `gh pr view <num> --json mergeable` shows MERGEABLE.
+
+## KNOWN_CONTEXT
+- Both PRs' real content (terminology dictionary expansion + guardrail run; auditor engine security-scanner pipeline) is genuine, already-completed work from earlier this session -- the goal is only to land it cleanly, not redo it.
+- PR24 is tier2 (touches crontab/OWNER_DECISIONS files) -- the Owner already reviewed and intends to merge it personally once conflict-free; this task does not merge PR24.
+- PR23 is tier1 -- once mergeable=MERGEABLE, the normal supervisor review pipeline may proceed to merge it automatically; this task does not need to force that, just make it mergeable.
+
+## SUCCESS_CRITERIA
+- Both PR23 and PR24 show mergeable=MERGEABLE after this task's pushes.
+- No real content from any side (either branch's own deliverables, or other already-merged branches' registrations/cron entries) was silently dropped during conflict resolution.
+
+## EXPECTED_OUTPUT
+Real pushed commits resolving both conflicts, and a final checkpoint confirming mergeable=MERGEABLE for both via real `gh pr view` calls.
+
+## CONSTRAINTS
+Do not merge PR24 yourself in this task -- that decision belongs to the Owner. PR23 may proceed through the normal automated pipeline once mergeable. Do not touch any other open PR.
+
+## COMPLEXITY_TIER
+mechanical

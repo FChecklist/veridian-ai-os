@@ -1,0 +1,27 @@
+## OBJECTIVE
+Fix 2 real, audit-confirmed issues on PROJEXA PR #53 ("PM/Site-Engineer role model + enforcement + Design Studio cost analysis") before it can merge. The audit verdict is real and correct -- read it in full via `gh api repos/FChecklist/projexa/issues/53/comments --jq '.[-1].body'` before starting (the comment is ~4KB, a single very long "Evidence Recorded" line -- pipe through `fold -w 150` to read it, do not trust a truncated terminal view).
+
+## KNOWN_CONTEXT
+Real, audit-confirmed findings on branch `worker/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model` (PR #53), do not re-derive:
+1. `src/app/api/punch-list/[id]/route.ts`'s PATCH handler has NO `requireRole()`/`ROLE_GROUPS` gate at all, while the sibling POST on `src/app/api/punch-list/route.ts` (same PR) IS correctly gated to `ROLE_GROUPS.FIELD`. This means any authenticated org member -- including the new read-only `client_viewer` role this same PR introduces -- can update/resolve punch-list items today. Fix: add the same `ROLE_GROUPS.FIELD` gate to the PATCH handler, consistent with its sibling route.
+2. No real mechanism exists ANYWHERE in the codebase to assign the new `pm`/`site_engineer`/`client_viewer` roles to a membership row. `GET /api/org-members` is read-only. Since the default role is `'member'`, and `'member'` is excluded from BOTH `ROLE_GROUPS.PM_OR_ABOVE` and `ROLE_GROUPS.FIELD` (the two new role groups this PR added), merging as-is would immediately 403 every existing non-owner/admin user on all 6 newly-gated routes (project-budgets, schedule/baselines, change-orders, purchase-orders, site-diary, punch-list) with zero self-service remediation path -- only a manual Supabase SQL/MCP edit could fix a locked-out org today. This is a real, severe functional regression, not a nice-to-have.
+
+## SCOPE
+1. Add the missing `requireRole()`/`ROLE_GROUPS.FIELD` gate to `punch-list/[id]/route.ts`'s PATCH handler, matching the sibling POST route's real pattern exactly.
+2. Build a real role-assignment mechanism: at minimum a real `PATCH /api/org-members/[id]` (or equivalent) route letting an `owner`/`admin` change another member's role to `pm`/`site_engineer`/`client_viewer`/`member`/`admin`, with real `requireRole()` gating on WHO can call it (owner/admin only). If a settings UI is fast to add given existing patterns in the codebase, add one; if not, the API route alone is the minimum bar -- note explicitly in your PR description whether UI was in scope for this pass.
+3. Confirm the real regression scenario the audit described is now fixed: an existing `member`-role user's access does not silently break with no recovery path -- either the role-assignment mechanism (item 2) provides the recovery path, or (your call, justify it) reconsider whether `member` should remain in one of the two new `ROLE_GROUPS` as a transitional default until orgs actively reassign roles.
+
+## SUCCESS_CRITERIA
+- A real test proving `punch-list/[id]/route.ts` PATCH now rejects a `client_viewer`-role caller and accepts a `site_engineer`-role caller, consistent with its sibling POST route.
+- A real test proving an `owner`/`admin` can reassign a member's role via the new mechanism, and a non-owner/admin cannot.
+- A real, explicit statement in the PR description addressing the audit's core regression concern (existing member-role users are not silently locked out with no recovery path).
+- `npx tsc --noEmit` clean, `bun test` passing.
+
+## EXPECTED_OUTPUT
+Push the fix to the SAME branch (`worker/task-20260727-122935-projexa-e2e--pm-site-engineer-role-model`, PR #53 already open) -- do not open a new PR. This requires a fresh supervisor audit before merge per AGENTS.md Rule 7c; do not merge it yourself.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not weaken the new role-gating on the other 5 already-correctly-gated routes to work around the regression -- fix it via a real assignment mechanism, not by loosening enforcement.
+
+## COMPLEXITY_TIER
+judgment

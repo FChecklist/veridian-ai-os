@@ -1,0 +1,63 @@
+generated: 2026-07-28T06:26:00Z
+purpose: >-
+  Owner asked for self-planning on how to complete, audit, and implement all
+  existing + future tasks. This is the resource-aware execution policy this
+  session now follows, plus the real priority-ordered queue.
+
+resource_policy_learned_this_session:
+  hard_cap: "99% CPU/RAM/disk-IO/network (Owner's explicit directive)"
+  empirical_finding: >-
+    Worker COUNT alone is not a reliable proxy -- individual claude-driven
+    workers spike hard during build/test phases (bun install, tsc, next
+    build) independent of how many others are running. 3 concurrent workers
+    alone pushed swap to ~98% during a build-heavy window; 5 concurrent
+    during simultaneous build phases caused the session's 2nd severe
+    incident (swap 100%, load 43.97).
+  working_rule: >-
+    Treat 3 concurrent claude-driven processes (workers+supervisors
+    combined) as the steady-state safe ceiling, 4 as a watch-closely
+    ceiling, 5+ only when free memory is >8Gi and swap <50% used. Check
+    real free/swap/load before every new adopt+sweep dispatch, not just
+    worker count. Shed lowest-Owner-priority first (see priority order
+    below), always via checkpointed `systemctl --user stop` (never kill -9),
+    resume once available memory >8Gi and swap trending down for 2+ polls.
+  audit_pipeline_defect_found: >-
+    PR #62 (projexa)'s audit output has now truncated identically at 4610
+    bytes across 2 real attempts (05:46 and 05:50 UTC), mid-sentence, with
+    invalid JSON in review.json. Root cause not yet isolated (ruled out:
+    simple OOM -- second occurrence happened with exit code 0 and clean
+    resources). A 3rd attempt is running now via the 06:25 sweep. If it
+    truncates identically again, this is a deterministic bug tied to this
+    specific diff (19 files/956 lines) and needs supervisor-entrypoint.sh's
+    audit-generation step examined directly, not just re-run.
+
+priority_order_owner_has_stated_this_session:
+  1: "PROJEXA prospect-gap backlog (construction/interior, small-mid firms) -- Owner's explicit Phase 1"
+  2: "OWNER_ENGINE Phase 5 + Phase 8 real gaps -- explicitly re-added after being deprioritized"
+  3: "SAP reports extraction for PROJEXA prospect (new, 2026-07-28) -- explicitly bypasses OWNER_ENGINE routing"
+  4: "Broader SAP-informed VERIDIAN completion (Phase 0 baseline only, non-manufacturing scope)"
+  5: "Re-audits of already-shipped work (functionality_completion, reporting_module) -- lowest priority, first to pause under resource pressure"
+
+current_queue_snapshot_at_0626utc:
+  running:
+    - "PR #616 audit (OWNER_ENGINE Phase 5) -- supervisor running"
+    - "PR #618 audit (OWNER_ENGINE Phase 8) -- supervisor running"
+    - "SAP Phase 0 baseline worker -- resumed, running"
+  queued_or_pending_owner_review:
+    - "PR #62 (projexa) 3rd audit attempt -- pending, watching for the truncation bug"
+    - "PR #610 (CRM Sales Pipeline) -- AUDIT PASS, tier2, awaiting Owner merge sign-off"
+    - "PR #60 (dashboard hierarchy) -- AUDIT PASS, tier2, awaiting Owner merge sign-off"
+    - "PR #58 (Work Progress Report) -- AUDIT PASS, tier2, awaiting Owner merge sign-off"
+  not_yet_dispatched:
+    - "Manpower/Material/Budget/Schedule modules (backlog #24)"
+    - "Design Studio timesheets designer-wise cost analysis (backlog #25) -- verify not already covered by merged PR #61 (Resource management) before dispatching, task tracker may be stale here"
+    - "SAP reports Phase 1 (deep SAP-doc research for the 4-5 confirmed real gaps: AR Aging, SAP-style Sales Pipeline probability report, Lead Source Effectiveness, Stock Aging/Inventory Turnover, plus real logic for the 2 existing catalog stubs Earned Value/CPI and Cash Flow Forecast)"
+  low_priority_side_track:
+    - "pallavi-tracker pocket app -- DEPLOYED, verified working at http://167.233.220.35:8081, wired into resource_governor.py's critical-kill guard"
+
+standing_operating_rules_going_forward:
+  - "Never let 2+ dispatches happen without a resource check between them."
+  - "Every adopt MUST be followed by a sweep in the SAME action -- the 06:15 batch sat idle for 10 minutes this session because sweep was forgotten after adopt. Treat adopt+sweep as one atomic step from now on."
+  - "Re-verify audit verdicts that look truncated/short/generic against the raw review.json and .claude-out-main.json before trusting them -- do not merge or reject on a corrupted verdict."
+  - "tier1+PASS -> auto-merge. tier2 (even PASS) -> surface to Owner, never auto-merge."
+  - "Log every new task's start/phase-transitions/end into umr_tasks per the Owner's own governance directive, for any task whose spec requires it."

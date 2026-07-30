@@ -1,0 +1,25 @@
+## OBJECTIVE
+Triage the real, largest bucket of incomplete tasks from ai-os/TASK_COMPLETION_AUDIT_2026-07-26.json -- the 45 real tasks (this session own live bucketing pass: 29 credit_accountant_rejected + 16 openrouter_balance_exhausted, all pre-flight hard stops from around 2026-07-20, mostly SUPERBOSS_V2_PLAN items) that never even started because of a resource-exhaustion gate, not a content problem. Six-plus days have passed and substantial other work has shipped since -- determine for each real task whether its objective is still genuinely unmet, already done under a different task, or no longer relevant, before any redispatch decision.
+
+## KNOWN_CONTEXT
+Read ai-os/TASK_COMPLETION_AUDIT_2026-07-26.json and re-derive the real task list whose last checkpoint note contains credit_accountant_rejected or openrouter_balance_exhausted (do not hardcode a list, re-derive it live -- this session own live bucketing pass found 29+16=45). Most of these task titles reference ai-os/SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19_v2.md items (delegation expiry, serverless resource limits, chat context, preview deployments, storage RLS, CRM performance, mobile field UX, etc.) -- read that plan file (or whatever superseded it) to understand each item real current status per whatever tracking already exists (ai-os/MASTER-TRACKER.yaml, ai-os/boss/ACTIVE-CLAIMS.yaml, or the relevant PHASE_PLAN files) before assuming any of these 45 are still open gaps.
+
+## SCOPE
+1. For each of the real 45 tasks, read its original prompt.txt to understand the real, specific objective.
+2. Check real current state: search the relevant repo (compliance-tracker, projexa, veda-advisors, or claude-control per the task own scope) for whether that objective already has a real, working implementation today -- grep for the specific feature/file/function the task was meant to build, check MASTER-TRACKER.yaml/ACTIVE-CLAIMS.yaml for whether it was closed by other means, and check git log for any later commit that plausibly satisfies it.
+3. Classify each of the 45 into exactly one of: ALREADY_DONE_ELSEWHERE (cite the real PR/commit that did it), GENUINELY_STILL_OPEN (the real gap remains, unaddressed by anything since), or UNCLEAR_NEEDS_OWNER_DECISION (found conflicting or ambiguous evidence, do not guess).
+4. For tasks classified GENUINELY_STILL_OPEN only, dispatch them fresh via scripts/task-gateway.py submit and start using their real original prompt content (the credit-accountant/openrouter gates are real spend-governance checks that may legitimately reject them again if the same resource constraint still applies today -- that is a correct, expected outcome to report honestly, not something to route around).
+5. Write a real, dated triage report to ai-os/TIER3_RELEVANCE_TRIAGE_REPORT_2026-07-26.md with all 45 real classifications and evidence.
+
+## SUCCESS_CRITERIA
+- python3 -c "t=open('ai-os/TIER3_RELEVANCE_TRIAGE_REPORT_2026-07-26.md').read(); assert t.count('ALREADY_DONE_ELSEWHERE')+t.count('GENUINELY_STILL_OPEN')+t.count('UNCLEAR_NEEDS_OWNER_DECISION')>=45; print('OK')" exits 0, confirming all 45 real tasks have an explicit classification with cited real evidence, no silent omissions.
+- python3 scripts/task-gateway.py status --task-id NEWID (for each real redispatched GENUINELY_STILL_OPEN task_id) returns a real, verifiable status.
+
+## EXPECTED_OUTPUT
+A real PR against claude-control with the triage report, plus any genuinely-still-open tasks redispatched as separate, independent worker tasks.
+
+## CONSTRAINTS
+Only dispatch a task after first completing its real relevance check -- mass-redispatching all 45 without checking would be pure duplication, which this whole effort explicitly exists to avoid. Do not guess a classification without real, citable evidence -- use UNCLEAR_NEEDS_OWNER_DECISION honestly when evidence is ambiguous. Do not merge yourself.
+
+## COMPLEXITY_TIER
+judgment

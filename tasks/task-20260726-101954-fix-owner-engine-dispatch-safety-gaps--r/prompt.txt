@@ -1,0 +1,26 @@
+## OBJECTIVE
+Fix real AUDIT: REJECT findings on the current claude-control PR #82 branch (OWNER_ENGINE-to-task-gateway wiring). The core wiring (gateway.py's --mode owner-dispatch, route_and_dispatch, dispatch_to_task_lifecycle, the shared REQUIRED_TASK_SECTIONS dedup, the classifier TASK_ID entity) is correct, additive, injection-safe, and test-covered -- keep all of it. This round closes real safety gaps the reviewer found in the dispatch logic itself before this becomes the standard entrypoint for real Owner-triggered task creation.
+
+## KNOWN_CONTEXT
+Read scripts/prompt_gateway/gateway.py's dispatch_to_task_lifecycle/route_and_dispatch functions in full first, plus ai-os/OWNER_ENGINE_MANDATORY_GATE_IMPLEMENTATION_2026-07-25.yaml and query.py's needs_owner_clarification function. Real findings from the review: (1) the dispatch path completely skips the mandatory clarification gate (query.py's needs_owner_clarification) before auto-issuing a real task-gateway.py start -- this is a real regression against the existing, already-mandatory OWNER_ENGINE gate behavior. (2) It fires task-gateway.py's `start` immediately after `submit` even when submit's own response includes a duplicate_found signal indicating the task already exists -- contradicting the standing NO DUPLICATION/NO COLLISION rule this session has enforced elsewhere (e.g. tight_task_validation.py's own contradiction/collision checks). (3) The repo auto-selection for `start` silently defaults to claude-control with no real override checkpoint, despite a code comment claiming an override path exists -- the comment and the code disagree. (4) The credit-accountant.py propose call this PR also carries passes an untested --repo flag that credit-accountant.py's only other real call site (preflight-guard.py) never uses -- verify the real CLI contract (read credit-accountant.py's actual argparse definition) before assuming this flag is even valid; it may silently no-op or error, meaning the claimed gap fix from an earlier round may not actually be functional.
+
+## SCOPE
+1. Wire needs_owner_clarification (query.py) into dispatch_to_task_lifecycle's real flow: if it returns true for a given raw Owner message, the dispatch must stop and surface the clarification question instead of proceeding to submit/start.
+2. Gate the `start` call on submit's real duplicate_found response: if duplicate_found is true, do not auto-issue `start` -- surface the duplicate finding (and its evidence) instead, matching how this session's other dispatch paths already treat duplicate_found as a real blocking signal, not an informational one.
+3. Fix or remove the repo auto-selection's false claim: either implement a real override checkpoint (read how repo selection/override is handled elsewhere in this codebase, e.g. task-gateway.py's own --repo argument, and reuse that pattern) or correct the comment to honestly state there is no override yet, whichever is the real, achievable fix -- do not leave the code and its own comment contradicting each other.
+4. Verify credit-accountant.py's real, current argparse definition for the `propose` subcommand (read scripts/credit-accountant.py directly, do not assume from a prior round's claim) and fix the --repo flag usage to match its real accepted arguments -- if --repo is not a real accepted flag, remove it and use whatever the script actually expects; add a real test that calls credit-accountant.py propose exactly as this code does and asserts it does not error or silently no-op.
+5. Extend the existing test suite to cover all 4 fixes with real, executable assertions (not prose).
+
+## SUCCESS_CRITERIA
+- `python3 -m pytest tests/ -k "owner_dispatch or gateway_task" -v` exits 0 with all fixes covered by passing tests, including a real invocation of credit-accountant.py propose with the exact flags this code now uses.
+- `grep -n "needs_owner_clarification" scripts/prompt_gateway/gateway.py` shows it is now called in the real dispatch path, not just imported.
+- `grep -n "duplicate_found" scripts/prompt_gateway/gateway.py` shows the start call is now conditioned on it.
+
+## EXPECTED_OUTPUT
+Push directly to the existing PR #82 branch in FChecklist/claude-control (find it via `gh pr view 82 --repo FChecklist/claude-control --json headRefName`). Do not open a new PR.
+
+## CONSTRAINTS
+Keep the core wiring functions already confirmed correct by the prior review fully intact -- only close the 4 specific gaps listed above. Do not merge yourself; this needs a fresh audit pass.
+
+## COMPLEXITY_TIER
+judgment

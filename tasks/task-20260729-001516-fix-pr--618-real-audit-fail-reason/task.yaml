@@ -1,0 +1,685 @@
+id: task-20260729-001516-fix-pr--618-real-audit-fail-reason
+title: 'Fix PR #618 real AUDIT:FAIL reason'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260729-001516-fix-pr--618-real-audit-fail-reason
+workspace: /opt/veridian/ai-os/tasks/task-20260729-001516-fix-pr--618-real-audit-fail-reason/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260729-001516-fix-pr--618-real-audit-fail-reason
+service: veridian-worker@task-20260729-001516-fix-pr--618-real-audit-fail-reason.service
+created_at: '2026-07-29T00:15:18.024645+00:00'
+last_checkpoint_at: '2026-07-29T00:56:37.295489+00:00'
+completed_steps: &id002
+- 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no other active session claims PR #618 /
+  phase_8 prompt-translation-localization-marketplace work.'
+- 'Read PR #618''s full audit-comment history (8 comments, 6 real AUDIT verdicts):
+  RLS/GRANT gaps found and fixed across 3 audit rounds, reaching AUDIT: PASS at 2026-07-28T07:07:43Z,
+  then a later "migration renumber + merge conflict resolution" push reset state and
+  drew a fresh AUDIT: FAIL at 2026-07-28T10:03:54Z citing a materially incomplete
+  diff (3 of 4 new service files + tests never shown to the reviewer).'
+- 'Found the actual mechanics: `mandatory-audit-check.yml` calls `scripts/validate-audit-verdict.ts`,
+  which takes the LAST `AUDIT: PASS/FAIL` comment in the whole PR thread with no commit-SHA/timestamp
+  check -- so CI is correctly still blocked on the stale 10:03:54Z FAIL until a fresh
+  audit comment lands, regardless of any commits pushed since.'
+- 'Found a prior commit already on PR #618''s branch (`faa52ec0`, 2026-07-28T16:22:05Z,
+  pushed but never re-audited) that root-caused the FAIL''s "incomplete diff" as `ai-os/scripts/supervisor-entrypoint.sh`''s
+  60000-char diff-read cap (out of this repo''s scope -- lives in claude-control)
+  and fixed the audit''s other, in-scope finding: collapsed drizzle/0269''s self-correcting
+  create-then-drop-then-recreate RLS/GRANT narrative into one clean `FOR ALL` block,
+  plus a cross-test mock-leak fix in prompt-export-import-service.test.ts. Verified
+  this fix is sound by direct read.'
+- 'Ran `gh pr checks 618` and found 2 MORE real, currently-failing CI gates the audit
+  comment never covered (mechanical coverage-gate checks, not the AI audit): Asset
+  Registry Coverage Check (3 new tables -- prompt_translations, prompt_localizations,
+  prompt_marketplace_listings -- had no registry decision) and Terminology Guardrail
+  Check (16 new hardcoded_iso_date findings across 12 files, all legitimate dated
+  gap-closure comments with no exemption-manifest entry yet).'
+- 'Fixed Asset Registry Coverage Check: exempted prompt_translations/prompt_localizations
+  (content blobs, no display-name column, same class as the already-exempted prompt_versions)
+  in ai-os/registry/asset-registry-coverage.yaml; registered prompt_marketplace_listings
+  (has a real admin-authored `title` column) via new drizzle/0270_register_prompt_marketplace_listings.sql
+  + _journal.json entry. Verified locally: `node scripts/check-asset-registry-coverage.mjs`
+  passes (145 registered, 321 exempted).'
+- 'Fixed Terminology Guardrail Check: raised existing exemption counts for src/lib/db/schema.ts
+  (80->81) and src/lib/services/permission-service.ts (1->3), added new exemption
+  entries for src/components/AppSidebar.tsx and the 9 new phase_8 files (prompt-marketplace/page.tsx
+  + 4 services + their .test.ts files) in ai-os/registry/terminology-guardrail-exemptions.yaml
+  -- every finding confirmed on direct read to be a legitimate dated header/gap-closure
+  comment, not human example data. Verified locally: `node scripts/check-terminology-guardrail.mjs
+  --diff-only` passes (18 files scanned, no new findings).'
+- 'Ran full phase_8 test suite locally (`~/.bun/bin/bun test` on the 5 prompt-*-service.test.ts
+  files together, confirming faa52ec0''s cross-test mock-leak fix still holds): 40/41
+  pass; 1 flaky timeout in prompt-translation-service.test.ts ("rejects an unknown
+  locale before touching the DB or an LLM", 5000ms timeout) under investigation --
+  re-running in isolation to confirm whether it''s a real regression or a pre-existing
+  flake unrelated to this task''s changes (this task touched no service/test code,
+  only registry YAML + a new migration file).'
+- 'Confirmed the 1 flaky test failure is NOT a real regression: re-ran the file in
+  isolation and got a DIFFERENT, non-deterministic set of failures (2 fail + 1 unhandled
+  error, 211s for 6 trivial tests) alongside independent evidence of severe sandbox
+  resource contention (tsc --noEmit OOM''d at default Node heap size on the first
+  attempt). This task''s diff touches zero TypeScript/service/test code (only registry
+  YAML + one new, not-yet-applied-live SQL migration), so it cannot be the cause.'
+- '`tsc --noEmit` (raised heap, `NODE_OPTIONS=--max-old-space-size=6144`): clean,
+  exit 0, empty output.'
+- 'Committed (9a80acf7) + pushed the fix directly to PR #618''s own branch (worker/task-20260728-051737-owner-engine-phase-8-real-gaps),
+  working in that task''s own existing workspace/worktree rather than opening a second
+  PR.'
+- 'Re-adopt/re-sweep executed for real: `veridian-task.py checkpoint task-20260728-051737-owner-engine-phase-8-real-gaps
+  --status pending_review` (no self-certification -- routes to the real supervisor,
+  not a worker self-report), then `systemctl --user start veridian-supervisor@task-20260728-051737-owner-engine-phase-8-real-gaps.service`,
+  then `ai-os/scripts/supervisor-sweep.sh` (confirmed it discovers the same task)
+  as the safety-net "re-sweep" the SPEC named. Supervisor is running a real independent
+  `claude -p` review now; awaiting review.json.'
+remaining_steps: &id003
+- 'Await the supervisor''s real review.json / fresh AUDIT comment on PR #618 (monitoring
+  in background).'
+- tier2/FAIL PR stays open for human review regardless of the fresh audit's verdict
+  -- do not merge, per SPEC.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-29T00:15:20.093623+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-29T00:20:21.522369+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-29T00:25:23.009566+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-29T00:30:24.547347+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-29T00:35:26.536445+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  - 'bed82f4e chore: update PROGRESS.md + ACTIVE-CLAIMS.yaml with PR #615 status'
+  - 'e5d0e6a9 Merge pull request #611 from FChecklist/feat/category-boq-amounts-report'
+  note: periodic checkpoint
+- at: '2026-07-29T00:40:30.469789+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no other active session claims PR #618
+    / phase_8 prompt-translation-localization-marketplace work.'
+  - 'Read PR #618''s full audit-comment history (8 comments, 6 real AUDIT verdicts):
+    RLS/GRANT gaps found and fixed across 3 audit rounds, reaching AUDIT: PASS at
+    2026-07-28T07:07:43Z, then a later "migration renumber + merge conflict resolution"
+    push reset state and drew a fresh AUDIT: FAIL at 2026-07-28T10:03:54Z citing a
+    materially incomplete diff (3 of 4 new service files + tests never shown to the
+    reviewer).'
+  - 'Found the actual mechanics: `mandatory-audit-check.yml` calls `scripts/validate-audit-verdict.ts`,
+    which takes the LAST `AUDIT: PASS/FAIL` comment in the whole PR thread with no
+    commit-SHA/timestamp check -- so CI is correctly still blocked on the stale 10:03:54Z
+    FAIL until a fresh audit comment lands, regardless of any commits pushed since.'
+  - 'Found a prior commit already on PR #618''s branch (`faa52ec0`, 2026-07-28T16:22:05Z,
+    pushed but never re-audited) that root-caused the FAIL''s "incomplete diff" as
+    `ai-os/scripts/supervisor-entrypoint.sh`''s 60000-char diff-read cap (out of this
+    repo''s scope -- lives in claude-control) and fixed the audit''s other, in-scope
+    finding: collapsed drizzle/0269''s self-correcting create-then-drop-then-recreate
+    RLS/GRANT narrative into one clean `FOR ALL` block, plus a cross-test mock-leak
+    fix in prompt-export-import-service.test.ts. Verified this fix is sound by direct
+    read.'
+  - 'Ran `gh pr checks 618` and found 2 MORE real, currently-failing CI gates the
+    audit comment never covered (mechanical coverage-gate checks, not the AI audit):
+    Asset Registry Coverage Check (3 new tables -- prompt_translations, prompt_localizations,
+    prompt_marketplace_listings -- had no registry decision) and Terminology Guardrail
+    Check (16 new hardcoded_iso_date findings across 12 files, all legitimate dated
+    gap-closure comments with no exemption-manifest entry yet).'
+  - 'Fixed Asset Registry Coverage Check: exempted prompt_translations/prompt_localizations
+    (content blobs, no display-name column, same class as the already-exempted prompt_versions)
+    in ai-os/registry/asset-registry-coverage.yaml; registered prompt_marketplace_listings
+    (has a real admin-authored `title` column) via new drizzle/0270_register_prompt_marketplace_listings.sql
+    + _journal.json entry. Verified locally: `node scripts/check-asset-registry-coverage.mjs`
+    passes (145 registered, 321 exempted).'
+  - 'Fixed Terminology Guardrail Check: raised existing exemption counts for src/lib/db/schema.ts
+    (80->81) and src/lib/services/permission-service.ts (1->3), added new exemption
+    entries for src/components/AppSidebar.tsx and the 9 new phase_8 files (prompt-marketplace/page.tsx
+    + 4 services + their .test.ts files) in ai-os/registry/terminology-guardrail-exemptions.yaml
+    -- every finding confirmed on direct read to be a legitimate dated header/gap-closure
+    comment, not human example data. Verified locally: `node scripts/check-terminology-guardrail.mjs
+    --diff-only` passes (18 files scanned, no new findings).'
+  - 'Ran full phase_8 test suite locally (`~/.bun/bin/bun test` on the 5 prompt-*-service.test.ts
+    files together, confirming faa52ec0''s cross-test mock-leak fix still holds):
+    40/41 pass; 1 flaky timeout in prompt-translation-service.test.ts ("rejects an
+    unknown locale before touching the DB or an LLM", 5000ms timeout) under investigation
+    -- re-running in isolation to confirm whether it''s a real regression or a pre-existing
+    flake unrelated to this task''s changes (this task touched no service/test code,
+    only registry YAML + a new migration file).'
+  - 'Confirmed the 1 flaky test failure is NOT a real regression: re-ran the file
+    in isolation and got a DIFFERENT, non-deterministic set of failures (2 fail +
+    1 unhandled error, 211s for 6 trivial tests) alongside independent evidence of
+    severe sandbox resource contention (tsc --noEmit OOM''d at default Node heap size
+    on the first attempt). This task''s diff touches zero TypeScript/service/test
+    code (only registry YAML + one new, not-yet-applied-live SQL migration), so it
+    cannot be the cause.'
+  - '`tsc --noEmit` (raised heap, `NODE_OPTIONS=--max-old-space-size=6144`): clean,
+    exit 0, empty output.'
+  - 'Committed (9a80acf7) + pushed the fix directly to PR #618''s own branch (worker/task-20260728-051737-owner-engine-phase-8-real-gaps),
+    working in that task''s own existing workspace/worktree rather than opening a
+    second PR.'
+  - 'Re-adopt/re-sweep executed for real: `veridian-task.py checkpoint task-20260728-051737-owner-engine-phase-8-real-gaps
+    --status pending_review` (no self-certification -- routes to the real supervisor,
+    not a worker self-report), then `systemctl --user start veridian-supervisor@task-20260728-051737-owner-engine-phase-8-real-gaps.service`,
+    then `ai-os/scripts/supervisor-sweep.sh` (confirmed it discovers the same task)
+    as the safety-net "re-sweep" the SPEC named. Supervisor is running a real independent
+    `claude -p` review now; awaiting review.json.'
+  remaining_steps:
+  - 'Await the supervisor''s real review.json / fresh AUDIT comment on PR #618 (monitoring
+    in background).'
+  - tier2/FAIL PR stays open for human review regardless of the fresh audit's verdict
+    -- do not merge, per SPEC.
+  recent_commits:
+  - '0e0261e8 docs: progress checkpoint -- fix pushed to PR #618, real re-audit triggered'
+  - '7ae187bc docs: progress checkpoint -- root-caused PR #618''s CI-block, fixes
+    applied'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  note: periodic checkpoint
+- at: '2026-07-29T00:45:32.620295+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no other active session claims PR #618
+    / phase_8 prompt-translation-localization-marketplace work.'
+  - 'Read PR #618''s full audit-comment history (8 comments, 6 real AUDIT verdicts):
+    RLS/GRANT gaps found and fixed across 3 audit rounds, reaching AUDIT: PASS at
+    2026-07-28T07:07:43Z, then a later "migration renumber + merge conflict resolution"
+    push reset state and drew a fresh AUDIT: FAIL at 2026-07-28T10:03:54Z citing a
+    materially incomplete diff (3 of 4 new service files + tests never shown to the
+    reviewer).'
+  - 'Found the actual mechanics: `mandatory-audit-check.yml` calls `scripts/validate-audit-verdict.ts`,
+    which takes the LAST `AUDIT: PASS/FAIL` comment in the whole PR thread with no
+    commit-SHA/timestamp check -- so CI is correctly still blocked on the stale 10:03:54Z
+    FAIL until a fresh audit comment lands, regardless of any commits pushed since.'
+  - 'Found a prior commit already on PR #618''s branch (`faa52ec0`, 2026-07-28T16:22:05Z,
+    pushed but never re-audited) that root-caused the FAIL''s "incomplete diff" as
+    `ai-os/scripts/supervisor-entrypoint.sh`''s 60000-char diff-read cap (out of this
+    repo''s scope -- lives in claude-control) and fixed the audit''s other, in-scope
+    finding: collapsed drizzle/0269''s self-correcting create-then-drop-then-recreate
+    RLS/GRANT narrative into one clean `FOR ALL` block, plus a cross-test mock-leak
+    fix in prompt-export-import-service.test.ts. Verified this fix is sound by direct
+    read.'
+  - 'Ran `gh pr checks 618` and found 2 MORE real, currently-failing CI gates the
+    audit comment never covered (mechanical coverage-gate checks, not the AI audit):
+    Asset Registry Coverage Check (3 new tables -- prompt_translations, prompt_localizations,
+    prompt_marketplace_listings -- had no registry decision) and Terminology Guardrail
+    Check (16 new hardcoded_iso_date findings across 12 files, all legitimate dated
+    gap-closure comments with no exemption-manifest entry yet).'
+  - 'Fixed Asset Registry Coverage Check: exempted prompt_translations/prompt_localizations
+    (content blobs, no display-name column, same class as the already-exempted prompt_versions)
+    in ai-os/registry/asset-registry-coverage.yaml; registered prompt_marketplace_listings
+    (has a real admin-authored `title` column) via new drizzle/0270_register_prompt_marketplace_listings.sql
+    + _journal.json entry. Verified locally: `node scripts/check-asset-registry-coverage.mjs`
+    passes (145 registered, 321 exempted).'
+  - 'Fixed Terminology Guardrail Check: raised existing exemption counts for src/lib/db/schema.ts
+    (80->81) and src/lib/services/permission-service.ts (1->3), added new exemption
+    entries for src/components/AppSidebar.tsx and the 9 new phase_8 files (prompt-marketplace/page.tsx
+    + 4 services + their .test.ts files) in ai-os/registry/terminology-guardrail-exemptions.yaml
+    -- every finding confirmed on direct read to be a legitimate dated header/gap-closure
+    comment, not human example data. Verified locally: `node scripts/check-terminology-guardrail.mjs
+    --diff-only` passes (18 files scanned, no new findings).'
+  - 'Ran full phase_8 test suite locally (`~/.bun/bin/bun test` on the 5 prompt-*-service.test.ts
+    files together, confirming faa52ec0''s cross-test mock-leak fix still holds):
+    40/41 pass; 1 flaky timeout in prompt-translation-service.test.ts ("rejects an
+    unknown locale before touching the DB or an LLM", 5000ms timeout) under investigation
+    -- re-running in isolation to confirm whether it''s a real regression or a pre-existing
+    flake unrelated to this task''s changes (this task touched no service/test code,
+    only registry YAML + a new migration file).'
+  - 'Confirmed the 1 flaky test failure is NOT a real regression: re-ran the file
+    in isolation and got a DIFFERENT, non-deterministic set of failures (2 fail +
+    1 unhandled error, 211s for 6 trivial tests) alongside independent evidence of
+    severe sandbox resource contention (tsc --noEmit OOM''d at default Node heap size
+    on the first attempt). This task''s diff touches zero TypeScript/service/test
+    code (only registry YAML + one new, not-yet-applied-live SQL migration), so it
+    cannot be the cause.'
+  - '`tsc --noEmit` (raised heap, `NODE_OPTIONS=--max-old-space-size=6144`): clean,
+    exit 0, empty output.'
+  - 'Committed (9a80acf7) + pushed the fix directly to PR #618''s own branch (worker/task-20260728-051737-owner-engine-phase-8-real-gaps),
+    working in that task''s own existing workspace/worktree rather than opening a
+    second PR.'
+  - 'Re-adopt/re-sweep executed for real: `veridian-task.py checkpoint task-20260728-051737-owner-engine-phase-8-real-gaps
+    --status pending_review` (no self-certification -- routes to the real supervisor,
+    not a worker self-report), then `systemctl --user start veridian-supervisor@task-20260728-051737-owner-engine-phase-8-real-gaps.service`,
+    then `ai-os/scripts/supervisor-sweep.sh` (confirmed it discovers the same task)
+    as the safety-net "re-sweep" the SPEC named. Supervisor is running a real independent
+    `claude -p` review now; awaiting review.json.'
+  remaining_steps:
+  - 'Await the supervisor''s real review.json / fresh AUDIT comment on PR #618 (monitoring
+    in background).'
+  - tier2/FAIL PR stays open for human review regardless of the fresh audit's verdict
+    -- do not merge, per SPEC.
+  recent_commits:
+  - '0e0261e8 docs: progress checkpoint -- fix pushed to PR #618, real re-audit triggered'
+  - '7ae187bc docs: progress checkpoint -- root-caused PR #618''s CI-block, fixes
+    applied'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  note: periodic checkpoint
+- at: '2026-07-29T00:50:34.521603+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no other active session claims PR #618
+    / phase_8 prompt-translation-localization-marketplace work.'
+  - 'Read PR #618''s full audit-comment history (8 comments, 6 real AUDIT verdicts):
+    RLS/GRANT gaps found and fixed across 3 audit rounds, reaching AUDIT: PASS at
+    2026-07-28T07:07:43Z, then a later "migration renumber + merge conflict resolution"
+    push reset state and drew a fresh AUDIT: FAIL at 2026-07-28T10:03:54Z citing a
+    materially incomplete diff (3 of 4 new service files + tests never shown to the
+    reviewer).'
+  - 'Found the actual mechanics: `mandatory-audit-check.yml` calls `scripts/validate-audit-verdict.ts`,
+    which takes the LAST `AUDIT: PASS/FAIL` comment in the whole PR thread with no
+    commit-SHA/timestamp check -- so CI is correctly still blocked on the stale 10:03:54Z
+    FAIL until a fresh audit comment lands, regardless of any commits pushed since.'
+  - 'Found a prior commit already on PR #618''s branch (`faa52ec0`, 2026-07-28T16:22:05Z,
+    pushed but never re-audited) that root-caused the FAIL''s "incomplete diff" as
+    `ai-os/scripts/supervisor-entrypoint.sh`''s 60000-char diff-read cap (out of this
+    repo''s scope -- lives in claude-control) and fixed the audit''s other, in-scope
+    finding: collapsed drizzle/0269''s self-correcting create-then-drop-then-recreate
+    RLS/GRANT narrative into one clean `FOR ALL` block, plus a cross-test mock-leak
+    fix in prompt-export-import-service.test.ts. Verified this fix is sound by direct
+    read.'
+  - 'Ran `gh pr checks 618` and found 2 MORE real, currently-failing CI gates the
+    audit comment never covered (mechanical coverage-gate checks, not the AI audit):
+    Asset Registry Coverage Check (3 new tables -- prompt_translations, prompt_localizations,
+    prompt_marketplace_listings -- had no registry decision) and Terminology Guardrail
+    Check (16 new hardcoded_iso_date findings across 12 files, all legitimate dated
+    gap-closure comments with no exemption-manifest entry yet).'
+  - 'Fixed Asset Registry Coverage Check: exempted prompt_translations/prompt_localizations
+    (content blobs, no display-name column, same class as the already-exempted prompt_versions)
+    in ai-os/registry/asset-registry-coverage.yaml; registered prompt_marketplace_listings
+    (has a real admin-authored `title` column) via new drizzle/0270_register_prompt_marketplace_listings.sql
+    + _journal.json entry. Verified locally: `node scripts/check-asset-registry-coverage.mjs`
+    passes (145 registered, 321 exempted).'
+  - 'Fixed Terminology Guardrail Check: raised existing exemption counts for src/lib/db/schema.ts
+    (80->81) and src/lib/services/permission-service.ts (1->3), added new exemption
+    entries for src/components/AppSidebar.tsx and the 9 new phase_8 files (prompt-marketplace/page.tsx
+    + 4 services + their .test.ts files) in ai-os/registry/terminology-guardrail-exemptions.yaml
+    -- every finding confirmed on direct read to be a legitimate dated header/gap-closure
+    comment, not human example data. Verified locally: `node scripts/check-terminology-guardrail.mjs
+    --diff-only` passes (18 files scanned, no new findings).'
+  - 'Ran full phase_8 test suite locally (`~/.bun/bin/bun test` on the 5 prompt-*-service.test.ts
+    files together, confirming faa52ec0''s cross-test mock-leak fix still holds):
+    40/41 pass; 1 flaky timeout in prompt-translation-service.test.ts ("rejects an
+    unknown locale before touching the DB or an LLM", 5000ms timeout) under investigation
+    -- re-running in isolation to confirm whether it''s a real regression or a pre-existing
+    flake unrelated to this task''s changes (this task touched no service/test code,
+    only registry YAML + a new migration file).'
+  - 'Confirmed the 1 flaky test failure is NOT a real regression: re-ran the file
+    in isolation and got a DIFFERENT, non-deterministic set of failures (2 fail +
+    1 unhandled error, 211s for 6 trivial tests) alongside independent evidence of
+    severe sandbox resource contention (tsc --noEmit OOM''d at default Node heap size
+    on the first attempt). This task''s diff touches zero TypeScript/service/test
+    code (only registry YAML + one new, not-yet-applied-live SQL migration), so it
+    cannot be the cause.'
+  - '`tsc --noEmit` (raised heap, `NODE_OPTIONS=--max-old-space-size=6144`): clean,
+    exit 0, empty output.'
+  - 'Committed (9a80acf7) + pushed the fix directly to PR #618''s own branch (worker/task-20260728-051737-owner-engine-phase-8-real-gaps),
+    working in that task''s own existing workspace/worktree rather than opening a
+    second PR.'
+  - 'Re-adopt/re-sweep executed for real: `veridian-task.py checkpoint task-20260728-051737-owner-engine-phase-8-real-gaps
+    --status pending_review` (no self-certification -- routes to the real supervisor,
+    not a worker self-report), then `systemctl --user start veridian-supervisor@task-20260728-051737-owner-engine-phase-8-real-gaps.service`,
+    then `ai-os/scripts/supervisor-sweep.sh` (confirmed it discovers the same task)
+    as the safety-net "re-sweep" the SPEC named. Supervisor is running a real independent
+    `claude -p` review now; awaiting review.json.'
+  remaining_steps:
+  - 'Await the supervisor''s real review.json / fresh AUDIT comment on PR #618 (monitoring
+    in background).'
+  - tier2/FAIL PR stays open for human review regardless of the fresh audit's verdict
+    -- do not merge, per SPEC.
+  recent_commits:
+  - '0e0261e8 docs: progress checkpoint -- fix pushed to PR #618, real re-audit triggered'
+  - '7ae187bc docs: progress checkpoint -- root-caused PR #618''s CI-block, fixes
+    applied'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  note: periodic checkpoint
+- at: '2026-07-29T00:55:38.822360+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no other active session claims PR #618
+    / phase_8 prompt-translation-localization-marketplace work.'
+  - 'Read PR #618''s full audit-comment history (8 comments, 6 real AUDIT verdicts):
+    RLS/GRANT gaps found and fixed across 3 audit rounds, reaching AUDIT: PASS at
+    2026-07-28T07:07:43Z, then a later "migration renumber + merge conflict resolution"
+    push reset state and drew a fresh AUDIT: FAIL at 2026-07-28T10:03:54Z citing a
+    materially incomplete diff (3 of 4 new service files + tests never shown to the
+    reviewer).'
+  - 'Found the actual mechanics: `mandatory-audit-check.yml` calls `scripts/validate-audit-verdict.ts`,
+    which takes the LAST `AUDIT: PASS/FAIL` comment in the whole PR thread with no
+    commit-SHA/timestamp check -- so CI is correctly still blocked on the stale 10:03:54Z
+    FAIL until a fresh audit comment lands, regardless of any commits pushed since.'
+  - 'Found a prior commit already on PR #618''s branch (`faa52ec0`, 2026-07-28T16:22:05Z,
+    pushed but never re-audited) that root-caused the FAIL''s "incomplete diff" as
+    `ai-os/scripts/supervisor-entrypoint.sh`''s 60000-char diff-read cap (out of this
+    repo''s scope -- lives in claude-control) and fixed the audit''s other, in-scope
+    finding: collapsed drizzle/0269''s self-correcting create-then-drop-then-recreate
+    RLS/GRANT narrative into one clean `FOR ALL` block, plus a cross-test mock-leak
+    fix in prompt-export-import-service.test.ts. Verified this fix is sound by direct
+    read.'
+  - 'Ran `gh pr checks 618` and found 2 MORE real, currently-failing CI gates the
+    audit comment never covered (mechanical coverage-gate checks, not the AI audit):
+    Asset Registry Coverage Check (3 new tables -- prompt_translations, prompt_localizations,
+    prompt_marketplace_listings -- had no registry decision) and Terminology Guardrail
+    Check (16 new hardcoded_iso_date findings across 12 files, all legitimate dated
+    gap-closure comments with no exemption-manifest entry yet).'
+  - 'Fixed Asset Registry Coverage Check: exempted prompt_translations/prompt_localizations
+    (content blobs, no display-name column, same class as the already-exempted prompt_versions)
+    in ai-os/registry/asset-registry-coverage.yaml; registered prompt_marketplace_listings
+    (has a real admin-authored `title` column) via new drizzle/0270_register_prompt_marketplace_listings.sql
+    + _journal.json entry. Verified locally: `node scripts/check-asset-registry-coverage.mjs`
+    passes (145 registered, 321 exempted).'
+  - 'Fixed Terminology Guardrail Check: raised existing exemption counts for src/lib/db/schema.ts
+    (80->81) and src/lib/services/permission-service.ts (1->3), added new exemption
+    entries for src/components/AppSidebar.tsx and the 9 new phase_8 files (prompt-marketplace/page.tsx
+    + 4 services + their .test.ts files) in ai-os/registry/terminology-guardrail-exemptions.yaml
+    -- every finding confirmed on direct read to be a legitimate dated header/gap-closure
+    comment, not human example data. Verified locally: `node scripts/check-terminology-guardrail.mjs
+    --diff-only` passes (18 files scanned, no new findings).'
+  - 'Ran full phase_8 test suite locally (`~/.bun/bin/bun test` on the 5 prompt-*-service.test.ts
+    files together, confirming faa52ec0''s cross-test mock-leak fix still holds):
+    40/41 pass; 1 flaky timeout in prompt-translation-service.test.ts ("rejects an
+    unknown locale before touching the DB or an LLM", 5000ms timeout) under investigation
+    -- re-running in isolation to confirm whether it''s a real regression or a pre-existing
+    flake unrelated to this task''s changes (this task touched no service/test code,
+    only registry YAML + a new migration file).'
+  - 'Confirmed the 1 flaky test failure is NOT a real regression: re-ran the file
+    in isolation and got a DIFFERENT, non-deterministic set of failures (2 fail +
+    1 unhandled error, 211s for 6 trivial tests) alongside independent evidence of
+    severe sandbox resource contention (tsc --noEmit OOM''d at default Node heap size
+    on the first attempt). This task''s diff touches zero TypeScript/service/test
+    code (only registry YAML + one new, not-yet-applied-live SQL migration), so it
+    cannot be the cause.'
+  - '`tsc --noEmit` (raised heap, `NODE_OPTIONS=--max-old-space-size=6144`): clean,
+    exit 0, empty output.'
+  - 'Committed (9a80acf7) + pushed the fix directly to PR #618''s own branch (worker/task-20260728-051737-owner-engine-phase-8-real-gaps),
+    working in that task''s own existing workspace/worktree rather than opening a
+    second PR.'
+  - 'Re-adopt/re-sweep executed for real: `veridian-task.py checkpoint task-20260728-051737-owner-engine-phase-8-real-gaps
+    --status pending_review` (no self-certification -- routes to the real supervisor,
+    not a worker self-report), then `systemctl --user start veridian-supervisor@task-20260728-051737-owner-engine-phase-8-real-gaps.service`,
+    then `ai-os/scripts/supervisor-sweep.sh` (confirmed it discovers the same task)
+    as the safety-net "re-sweep" the SPEC named. Supervisor is running a real independent
+    `claude -p` review now; awaiting review.json.'
+  remaining_steps:
+  - 'Await the supervisor''s real review.json / fresh AUDIT comment on PR #618 (monitoring
+    in background).'
+  - tier2/FAIL PR stays open for human review regardless of the fresh audit's verdict
+    -- do not merge, per SPEC.
+  recent_commits:
+  - '0e0261e8 docs: progress checkpoint -- fix pushed to PR #618, real re-audit triggered'
+  - '7ae187bc docs: progress checkpoint -- root-caused PR #618''s CI-block, fixes
+    applied'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  note: periodic checkpoint
+- at: '2026-07-29T00:56:35.291177+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - 'Read ai-os/boss/ACTIVE-CLAIMS.yaml -- no other active session claims PR #618
+    / phase_8 prompt-translation-localization-marketplace work.'
+  - 'Read PR #618''s full audit-comment history (8 comments, 6 real AUDIT verdicts):
+    RLS/GRANT gaps found and fixed across 3 audit rounds, reaching AUDIT: PASS at
+    2026-07-28T07:07:43Z, then a later "migration renumber + merge conflict resolution"
+    push reset state and drew a fresh AUDIT: FAIL at 2026-07-28T10:03:54Z citing a
+    materially incomplete diff (3 of 4 new service files + tests never shown to the
+    reviewer).'
+  - 'Found the actual mechanics: `mandatory-audit-check.yml` calls `scripts/validate-audit-verdict.ts`,
+    which takes the LAST `AUDIT: PASS/FAIL` comment in the whole PR thread with no
+    commit-SHA/timestamp check -- so CI is correctly still blocked on the stale 10:03:54Z
+    FAIL until a fresh audit comment lands, regardless of any commits pushed since.'
+  - 'Found a prior commit already on PR #618''s branch (`faa52ec0`, 2026-07-28T16:22:05Z,
+    pushed but never re-audited) that root-caused the FAIL''s "incomplete diff" as
+    `ai-os/scripts/supervisor-entrypoint.sh`''s 60000-char diff-read cap (out of this
+    repo''s scope -- lives in claude-control) and fixed the audit''s other, in-scope
+    finding: collapsed drizzle/0269''s self-correcting create-then-drop-then-recreate
+    RLS/GRANT narrative into one clean `FOR ALL` block, plus a cross-test mock-leak
+    fix in prompt-export-import-service.test.ts. Verified this fix is sound by direct
+    read.'
+  - 'Ran `gh pr checks 618` and found 2 MORE real, currently-failing CI gates the
+    audit comment never covered (mechanical coverage-gate checks, not the AI audit):
+    Asset Registry Coverage Check (3 new tables -- prompt_translations, prompt_localizations,
+    prompt_marketplace_listings -- had no registry decision) and Terminology Guardrail
+    Check (16 new hardcoded_iso_date findings across 12 files, all legitimate dated
+    gap-closure comments with no exemption-manifest entry yet).'
+  - 'Fixed Asset Registry Coverage Check: exempted prompt_translations/prompt_localizations
+    (content blobs, no display-name column, same class as the already-exempted prompt_versions)
+    in ai-os/registry/asset-registry-coverage.yaml; registered prompt_marketplace_listings
+    (has a real admin-authored `title` column) via new drizzle/0270_register_prompt_marketplace_listings.sql
+    + _journal.json entry. Verified locally: `node scripts/check-asset-registry-coverage.mjs`
+    passes (145 registered, 321 exempted).'
+  - 'Fixed Terminology Guardrail Check: raised existing exemption counts for src/lib/db/schema.ts
+    (80->81) and src/lib/services/permission-service.ts (1->3), added new exemption
+    entries for src/components/AppSidebar.tsx and the 9 new phase_8 files (prompt-marketplace/page.tsx
+    + 4 services + their .test.ts files) in ai-os/registry/terminology-guardrail-exemptions.yaml
+    -- every finding confirmed on direct read to be a legitimate dated header/gap-closure
+    comment, not human example data. Verified locally: `node scripts/check-terminology-guardrail.mjs
+    --diff-only` passes (18 files scanned, no new findings).'
+  - 'Ran full phase_8 test suite locally (`~/.bun/bin/bun test` on the 5 prompt-*-service.test.ts
+    files together, confirming faa52ec0''s cross-test mock-leak fix still holds):
+    40/41 pass; 1 flaky timeout in prompt-translation-service.test.ts ("rejects an
+    unknown locale before touching the DB or an LLM", 5000ms timeout) under investigation
+    -- re-running in isolation to confirm whether it''s a real regression or a pre-existing
+    flake unrelated to this task''s changes (this task touched no service/test code,
+    only registry YAML + a new migration file).'
+  - 'Confirmed the 1 flaky test failure is NOT a real regression: re-ran the file
+    in isolation and got a DIFFERENT, non-deterministic set of failures (2 fail +
+    1 unhandled error, 211s for 6 trivial tests) alongside independent evidence of
+    severe sandbox resource contention (tsc --noEmit OOM''d at default Node heap size
+    on the first attempt). This task''s diff touches zero TypeScript/service/test
+    code (only registry YAML + one new, not-yet-applied-live SQL migration), so it
+    cannot be the cause.'
+  - '`tsc --noEmit` (raised heap, `NODE_OPTIONS=--max-old-space-size=6144`): clean,
+    exit 0, empty output.'
+  - 'Committed (9a80acf7) + pushed the fix directly to PR #618''s own branch (worker/task-20260728-051737-owner-engine-phase-8-real-gaps),
+    working in that task''s own existing workspace/worktree rather than opening a
+    second PR.'
+  - 'Re-adopt/re-sweep executed for real: `veridian-task.py checkpoint task-20260728-051737-owner-engine-phase-8-real-gaps
+    --status pending_review` (no self-certification -- routes to the real supervisor,
+    not a worker self-report), then `systemctl --user start veridian-supervisor@task-20260728-051737-owner-engine-phase-8-real-gaps.service`,
+    then `ai-os/scripts/supervisor-sweep.sh` (confirmed it discovers the same task)
+    as the safety-net "re-sweep" the SPEC named. Supervisor is running a real independent
+    `claude -p` review now; awaiting review.json.'
+  remaining_steps:
+  - 'Await the supervisor''s real review.json / fresh AUDIT comment on PR #618 (monitoring
+    in background).'
+  - tier2/FAIL PR stays open for human review regardless of the fresh audit's verdict
+    -- do not merge, per SPEC.
+  recent_commits:
+  - '0e0261e8 docs: progress checkpoint -- fix pushed to PR #618, real re-audit triggered'
+  - '7ae187bc docs: progress checkpoint -- root-caused PR #618''s CI-block, fixes
+    applied'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-29T00:56:37.295489+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '0e0261e8 docs: progress checkpoint -- fix pushed to PR #618, real re-audit triggered'
+  - '7ae187bc docs: progress checkpoint -- root-caused PR #618''s CI-block, fixes
+    applied'
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - '695d77ce phase_5 browser-execution: real NPU/Built-in-AI inference, cross-tier
+    storage, sync engine (#616)'
+  - '2f4e78ee Merge pull request #615 from FChecklist/worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline'
+  - dd8f5a75 Merge remote-tracking branch 'origin/main' into worker/task-20260728-050704-sap-informed-veridian-phase-0--baseline
+  - 'd79875b9 fix: index ai-os/tasks/sap_mapping in OS.yaml (Metadata Index Coverage
+    Check)'
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 1, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+execution_seconds: 1533
+restart_count: 1
+token_usage:
+  input_tokens: 254
+  cache_creation_input_tokens: 196014
+  cache_read_input_tokens: 19067588
+  output_tokens: 58100
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 196014
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 93
+    cache_read_input_tokens: 219344
+    cache_creation_input_tokens: 354
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 354
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:26.807426+00:00'

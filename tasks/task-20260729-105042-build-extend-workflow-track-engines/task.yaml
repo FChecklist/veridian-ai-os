@@ -1,0 +1,111 @@
+id: task-20260729-105042-build-extend-workflow-track-engines
+title: Build/extend workflow-track engines
+status: in_progress
+repo: compliance-tracker
+branch: worker/task-20260729-105042-build-extend-workflow-track-engines
+workspace: /opt/veridian/ai-os/tasks/task-20260729-105042-build-extend-workflow-track-engines/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260729-105042-build-extend-workflow-track-engines
+service: veridian-worker@task-20260729-105042-build-extend-workflow-track-engines.service
+created_at: '2026-07-29T10:50:43.972418+00:00'
+last_checkpoint_at: '2026-07-29T11:00:49.493949+00:00'
+completed_steps: &id002
+- Read governance chain (AGENTS.md/CONSTITUTION.yaml/ACTIVE-CLAIMS.yaml),
+- Located `sap_reports` (not in this repo -- `/opt/veridian/ai-os/memory/sap_mapping.sqlite`),
+- Confirmed no prior session landed a PR for this work (`gh pr list`
+- 'Read existing patterns to model from: construction-valuation-service.ts'
+remaining_steps: &id003
+- 'Schema: `constructionProgressClaims` table + status enum + relations'
+- Hand-written migration `drizzle/0269_*.sql`
+- '`construction-progress-claim-service.ts` (SD-002 state machine:'
+- '`construction-document-flow-service.ts` (SD-007 read-only timeline'
+- API routes under `src/app/api/construction/progress-claims/**`
+- '`bunx tsc --noEmit` clean, `bun test` clean'
+- Commit + push, open PR
+files_modified: &id001
+- PROGRESS.md
+- drizzle/meta/_journal.json
+- src/lib/db/schema.ts
+- src/lib/services/construction-valuation-service.ts
+- drizzle/0269_construction_progress_claims_workflow.sql
+- src/app/api/construction/progress-claims/
+- src/lib/services/construction-document-flow-service.ts
+- src/lib/services/construction-progress-claim-service.ts
+checkpoints:
+- at: '2026-07-29T10:50:46.139595+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  - 088199d0 Merge remote-tracking branch 'origin/main' into fix-617
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-29T10:55:47.743634+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - src/lib/db/schema.ts
+  completed_steps:
+  - Read governance chain (AGENTS.md/CONSTITUTION.yaml/ACTIVE-CLAIMS.yaml),
+  - Located `sap_reports` (not in this repo -- `/opt/veridian/ai-os/memory/sap_mapping.sqlite`),
+  - Confirmed no prior session landed a PR for this work (`gh pr list`
+  - 'Read existing patterns to model from: construction-valuation-service.ts'
+  remaining_steps:
+  - 'Schema: `constructionProgressClaims` table + status enum + relations'
+  - Hand-written migration `drizzle/0269_*.sql`
+  - '`construction-progress-claim-service.ts` (SD-002 state machine:'
+  - '`construction-document-flow-service.ts` (SD-007 read-only timeline'
+  - API routes under `src/app/api/construction/progress-claims/**`
+  - '`bunx tsc --noEmit` clean, `bun test` clean'
+  - Commit + push, open PR
+  recent_commits:
+  - 'f01b486e ai-os/boss/ACTIVE-CLAIMS.yaml: register claim for workflow-track engine
+    build/extend task (PHASE-4-BUILD-WORKFLOW)'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  note: periodic checkpoint
+- at: '2026-07-29T11:00:49.493949+00:00'
+  status: in_progress
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'f01b486e ai-os/boss/ACTIVE-CLAIMS.yaml: register claim for workflow-track engine
+    build/extend task (PHASE-4-BUILD-WORKFLOW)'
+  - 'c9cea46b Merge pull request #617 from FChecklist/feat/projexa-permits-drawings-moms'
+  - '12cd9771 fix: PR #617 terminology guardrail CI failure -- drop literal ISO date
+    from comment'
+  - '14d9aba9 fix: PR #617 audit FAIL -- restore expiryDate alias, add changelog entry'
+  - ed34f28c Merge remote-tracking branch 'origin/main' into m617v3
+  - '5adeb4cb Merge pull request #614 from FChecklist/worker/task-20260728-050606-verify-excel-boq-importer-against-real-p'
+  - 5407c70d Merge remote-tracking branch 'origin/main' into m614v2
+  - 2e7a3e75 Merge remote-tracking branch 'origin/main' into m617v2
+  - '901f11af Design Studio timesheets: approval workflow + designer-wise status/work-analysis
+    reports (#613)'
+  - 688170ea Merge remote-tracking branch 'origin/main' into fix-614
+  note: periodic checkpoint
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false

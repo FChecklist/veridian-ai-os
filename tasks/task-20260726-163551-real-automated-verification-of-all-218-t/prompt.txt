@@ -1,0 +1,26 @@
+## OBJECTIVE
+Build a real, automated verification script (not a manual check) that cross-references every one of the 218 real task IDs created in ai-os/tasks/ in the last 7 days against real, independently-verifiable outcomes (git commit ancestry on the real default branch of whichever repo the task targeted, and/or a real merged-PR state via gh), and produce one complete, honest status table -- Owner's own words: "YOUR OWN TASK ID - COMPLETED 100% WITH ALL PHASES - YES / NO / REASON". Do not trust task.yaml's own self-reported status field as the final answer -- this session found multiple real cases where a task recorded status=completed/merged while the actual delivered content was a trivial or wrong commit, or a completely different PR than the one the task was meant to resolve.
+
+## KNOWN_CONTEXT
+Every task under ai-os/tasks/task-*/ has a task.yaml with real fields: id, title, status, repo, branch, created_at, checkpoints[] (each with its own status/recent_commits). A real, independent verification for a given task means: (a) if the task recorded a real PR URL (check pr_url.txt in the task's own directory, or grep its worker.log/supervisor.log for a github.com PR link), fetch that PR's REAL current state via gh pr view <n> --repo <owner>/<repo> --json state,mergedAt,headRefName -- state=MERGED is real completion, state=OPEN is not done regardless of what task.yaml claims; (b) if the task's real merged commit should be reachable from the target repo's default branch, confirm via git log origin/<default-branch> rather than trusting a claim; (c) if no PR/commit evidence exists at all (a pure investigation/analysis task with no code deliverable), the real completion signal is whether its own task.yaml shows a genuine, substantive checkpoint history reaching a terminal state, not a stalled/circuit-broken one. Real, already-known exceptions to record honestly rather than re-derive: several tasks this session self-reported "completed, merged autonomously" while actually creating and merging an unrelated, trivial PR instead of resolving the one they were dispatched to fix (e.g. task-20260726-081117 recorded success but merged PR 565 while leaving the real target PR 563 unresolved; task-20260726-115425 similarly merged a trivial PR 569 while leaving PR 563 still conflicting) -- a task's own pr_url.txt is a claim to verify, not a fact to relay.
+
+## SCOPE
+1. Write a real Python script (e.g. ai-os-scripts/verify_7day_task_completion.py) that enumerates every ai-os/tasks/task-*/task.yaml with created_at within the last 7 days (218 as of this dispatch, re-count live), and for each one determines a real, independently-verified completion verdict per the method in KNOWN_CONTEXT.
+2. For tasks with a recorded PR URL, batch the gh pr view calls efficiently (a handful of API calls, not one-by-one with long sleeps) and respect GitHub's rate limits.
+3. Produce a real, structured output (both machine-readable JSON and human-readable markdown table) with columns: task_id, title, recorded_status, real_verified_status (MERGED / OPEN_NOT_DONE / NO_PR_FOUND / INVESTIGATION_ONLY), reason (one real sentence citing the actual evidence).
+4. Cross-reference the *_PHASE_PLAN_*.yaml files (20-Engine, WIRING_ENGINE, AUDITOR_ENGINE, TESTING_ENGINE, TERMINOLOGY_STANDARDIZATION, VERIDIAN_ARCHITECTURE_V2) for any task corresponding to a named phase, and note that phase's own real status field alongside the task-level verdict.
+5. Write the final output to ai-os/TASK_COMPLETION_AUDIT_2026-07-26.md plus a .json, and register it in ai-os/MASTER_INDEX.yaml's registries section (reuse the existing entry pattern).
+
+## SUCCESS_CRITERIA
+- `python3 ai-os-scripts/verify_7day_task_completion.py --count-only` prints a real row count matching the live number of task-*/task.yaml directories created in the last 7 days, with no silent omissions.
+- `grep -c "task-20260726-081117" ai-os/TASK_COMPLETION_AUDIT_2026-07-26.md` returns 1 and that row's real_verified_status is NOT MERGED-for-PR-563 (correctly flagged as resolving a different, trivial PR instead).
+- `python3 -m json.tool ai-os/TASK_COMPLETION_AUDIT_2026-07-26.json` exits 0 (valid JSON output).
+
+## EXPECTED_OUTPUT
+A real PR against claude-control adding the new script, its real run output (the markdown and JSON audit files), and the MASTER_INDEX.yaml registration.
+
+## CONSTRAINTS
+Do not trust any task's own self-reported status without the real, independent cross-check described above. Do not build a new task-tracking system -- this is a one-time (or re-runnable) audit script over the existing ai-os/tasks/ directory structure. Do not merge yourself.
+
+## COMPLEXITY_TIER
+judgment

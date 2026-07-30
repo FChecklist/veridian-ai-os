@@ -1,0 +1,11 @@
+[Unit]
+Description=Run veridian-cron-phase-continuation-tick on its scheduled cadence (jittered -- see the paired .service for why)
+
+[Timer]
+OnCalendar=*-*-* *:19/30:00
+RandomizedDelaySec=180
+AccuracySec=5s
+Persistent=false
+
+[Install]
+WantedBy=timers.target

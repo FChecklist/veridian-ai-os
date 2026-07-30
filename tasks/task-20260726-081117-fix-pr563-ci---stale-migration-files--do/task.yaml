@@ -1,0 +1,178 @@
+id: task-20260726-081117-fix-pr563-ci---stale-migration-files--do
+title: Fix PR563 CI + stale migration files (docs/code only, no live DB actions)
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260726-081117-fix-pr563-ci---stale-migration-files--do
+workspace: /opt/veridian/ai-os/tasks/task-20260726-081117-fix-pr563-ci---stale-migration-files--do/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-081117-fix-pr563-ci---stale-migration-files--do
+service: veridian-worker@task-20260726-081117-fix-pr563-ci---stale-migration-files--do.service
+created_at: '2026-07-26T08:11:19.000172+00:00'
+last_checkpoint_at: '2026-07-26T08:27:23.335611+00:00'
+completed_steps: &id002
+- Read ai-os/boss/ACTIVE-CLAIMS.yaml + AGENTS.md/CLAUDE.md governance docs.
+- 'Located PR #563 (`gh pr view 563`), branch'
+- Registered `ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml` in
+- Read migration `0245_create_platform_schema_compartment.sql` to confirm
+- 'Fixed PR #563''s own `PROGRESS.md` stale `[ ] Open PR` line (PR is'
+- Registered this follow-up task + closed it in
+- 'Committed + pushed both fixes directly to PR #563''s branch (2 commits):'
+- Found and flagged (NOT fixed -- out of scope, needs real per-file
+remaining_steps: &id003
+- 'Owner sign-off on PR #563 (constitutionally required per this task''s'
+- '`gh pr checks 563` will still show "Metadata Index Coverage Check" red'
+- No live database action was taken in this task (by design, per SPEC) --
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T08:11:22.128394+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '9bcdb108 Merge pull request #564 from FChecklist/worker/task-20260726-074124-status-monitor-and-remediation-dispatche'
+  - '19861d46 ai-os: land stranded status-monitor+remediation-dispatcher work on claude-control
+    master'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  - 'b94e238c VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines +
+    lifecycle approval gates'
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  - 'b08e4096 Merge pull request #560 from FChecklist/worker/task-20260725-231836-phase2-prompt-compiler-pipeline-core-non'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T08:16:23.596694+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - ai-os/OS.yaml
+  - drizzle/0140_wave166_monitoring_tool_health.sql
+  - drizzle/0199_gap_dcmd_rich_schema_slice.sql
+  - drizzle/0253_tenant_ai_config.sql
+  completed_steps:
+  - Registered ACTIVE-CLAIMS.yaml entry for this task
+  - 'Root-cause confirmed via drizzle-kit@0.31.0 / drizzle-orm@0.45.2 source inspection:'
+  - Enumerated 261 real migration files (0000-0263, gaps at 166/167/168 explained
+  - Full DDL cross-reference of all 261 migrations against live compliance+platform
+  - '12 genuinely-missing migrations found and applied live: 0005, 0037, 0140, 0165,'
+  - Rebuilt drizzle/meta/_journal.json with all 261 real migrations (dense idx,
+  - Populated drizzle.__drizzle_migrations with 261 correct hash+created_at rows
+  - 'Checked projexa''s own Supabase project (evpckeuxgvahguwsaeul): `drizzle` schema'
+  - Wrote ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml with full findings.
+  - 'Opened PR #563 (this branch)'
+  - Registered ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml in ai-os/OS.yaml's
+  - Corrected drizzle/0140*.sql and drizzle/0199*.sql to target
+  remaining_steps:
+  - 'Note in PR: bun/npm unavailable in this sandbox, so `bun run db:migrate` was'
+  recent_commits:
+  - 'b3f0298a ai-os: move migration-drift-audit claim to recently_completed (PR #563
+    open)'
+  - 'd3c89aeb Migration drift audit: full findings doc, 12 migrations fixed, tracking
+    table repaired'
+  - 'a13a357a Repair drizzle/meta/_journal.json: register all 261 real migrations
+    (was frozen at migration 0000 since first commit)'
+  - '6b9b2a03 Migration drift audit: 12 genuinely-missing migrations found and applied
+    live'
+  - '350078b0 ai-os: register ACTIVE-CLAIMS entry + progress log for migration drift
+    audit'
+  - '6b133286 ai-os: register ACTIVE-CLAIMS entry for migration drift audit task'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  note: periodic checkpoint
+- at: '2026-07-26T08:22:08.308851+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml + AGENTS.md/CLAUDE.md governance docs.
+  - 'Located PR #563 (`gh pr view 563`), branch'
+  - Registered `ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml` in
+  - Read migration `0245_create_platform_schema_compartment.sql` to confirm
+  - 'Fixed PR #563''s own `PROGRESS.md` stale `[ ] Open PR` line (PR is'
+  - Registered this follow-up task + closed it in
+  - 'Committed + pushed both fixes directly to PR #563''s branch (2 commits):'
+  - Found and flagged (NOT fixed -- out of scope, needs real per-file
+  remaining_steps:
+  - 'Owner sign-off on PR #563 (constitutionally required per this task''s'
+  - '`gh pr checks 563` will still show "Metadata Index Coverage Check" red'
+  - No live database action was taken in this task (by design, per SPEC) --
+  recent_commits:
+  - '6346ab1c PROGRESS.md: record PR #563 CI-fix work (pushed to worker/task-20260726-071400
+    branch)'
+  - '9bcdb108 Merge pull request #564 from FChecklist/worker/task-20260726-074124-status-monitor-and-remediation-dispatche'
+  - '19861d46 ai-os: land stranded status-monitor+remediation-dispatcher work on claude-control
+    master'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  - 'b94e238c VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines +
+    lifecycle approval gates'
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  note: quality gates passed, pushed branch worker/task-20260726-081117-fix-pr563-ci---stale-migration-files--do,
+    awaiting review
+- at: '2026-07-26T08:27:23.335611+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '6346ab1c PROGRESS.md: record PR #563 CI-fix work (pushed to worker/task-20260726-071400
+    branch)'
+  - '9bcdb108 Merge pull request #564 from FChecklist/worker/task-20260726-074124-status-monitor-and-remediation-dispatche'
+  - '19861d46 ai-os: land stranded status-monitor+remediation-dispatcher work on claude-control
+    master'
+  - '51b7cccc Merge pull request #561 from FChecklist/worker/task-20260726-035742-phase3-business-rule-permission-policy-c'
+  - '3bb91a03 ai-os: addendum to phase_3 ACTIVE-CLAIMS entry for PR #561 corrective
+    fix'
+  - '8001e478 Update PROGRESS.md: PR #561 corrective fix pushed, all checkboxes done'
+  - 'b97bdac5 Fix cross-tenant governance bypass in prompt-lifecycle gates (PR #561
+    audit)'
+  - '1020cc99 Update PROGRESS.md: phase_3 core work + claude-control side done, PR
+    #561 open'
+  - 'b94e238c VERIDIAN_Architecture_v2.0 phase_3: governance/policy/cost engines +
+    lifecycle approval gates'
+  - '4603820f ai-os: register ACTIVE-CLAIMS entry for phase_3 governance/policy/cost
+    engines work'
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/compliance-tracker/pull/565'
+execution_seconds: 529
+restart_count: 0
+token_usage:
+  input_tokens: 180
+  cache_creation_input_tokens: 102407
+  cache_read_input_tokens: 7236849
+  output_tokens: 31546
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 102407
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 794
+    cache_read_input_tokens: 125007
+    cache_creation_input_tokens: 1084
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1084
+    type: message
+  speed: standard
+master_synced_at: '2026-07-26T10:00:09.663846+00:00'

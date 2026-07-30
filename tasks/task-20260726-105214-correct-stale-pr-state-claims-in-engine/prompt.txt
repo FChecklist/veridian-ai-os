@@ -1,0 +1,24 @@
+## OBJECTIVE
+Fix a real, verified stale-fact finding on compliance-tracker PR #566 (engine-inventory re-verification): it commits a false claim into PROGRESS.md/ACTIVE-CLAIMS.yaml that claude-control PR #81 is a "currently open" / "not yet merged" PR -- live verification (`gh pr view 81 --repo FChecklist/claude-control`) shows PR #81 was actually CLOSED (not merged) at 2026-07-26T09:52:13Z, rejected via an AUDIT: FAIL comment for being a fully duplicate redispatch of already-attempted work -- 9 minutes before this task's own closing commit was made, meaning the claim was already stale when written. The same wrong framing was also carried into claude-control PR #83, the actual engine-inventory-update work product.
+
+## KNOWN_CONTEXT
+The task's own mandate was explicitly to re-verify real current state and confirm zero duplication -- PR #81 being closed-as-duplicate is itself a real instance of exactly the duplication class this task was supposed to catch and report correctly, making the stale claim a direct failure of the task's own core purpose, not a cosmetic error. The underlying practical conclusion (that the real HOLD_FOR_OWNER_SIGNOFF fix was "not live yet" at the time PR #566 was written) happens to still be directionally correct -- the reviewer independently confirmed HOLD_FOR_OWNER_SIGNOFF does not exist in the then-live-deployed veridian-task.py/supervisor-entrypoint.sh -- so this is a narrow, factual PR-state correction, not a rework of the task's conclusions.
+
+## SCOPE
+1. Re-check the REAL, CURRENT state of claude-control PRs #79, #80, #81, #82 (and #83, #84, #87 if referenced) via fresh `gh pr view` calls -- do not reuse any previously-cached state, since real time has passed and several of these have changed state since PR #566/#83 were written (PR #81 is closed/not merged; PR #84 has since merged; PR #87 has since merged -- verify all of this fresh rather than trusting this prompt's own claims, which may themselves be stale by the time this task runs).
+2. Correct the "currently open PRs" framing and the Engine 8 (Workflow Engine) gap_description language in compliance-tracker's PROGRESS.md/ACTIVE-CLAIMS.yaml (PR #566) and in claude-control's engine-inventory file (PR #83) to reflect the real, freshly-verified state of each cited PR.
+3. Do not change any other conclusion in either PR unless the corrected PR-state facts genuinely require it.
+
+## SUCCESS_CRITERIA
+- `gh pr view 81 --repo FChecklist/claude-control --json state,mergedAt,closedAt` output is quoted accurately (CLOSED, mergedAt null) in both corrected files, not restated as open.
+- `grep -n "PR #81" ai-os/MIGRATION_DRIFT_AUDIT_2026-07-26.yaml` or wherever it's referenced no longer claims it is open/not-yet-merged.
+- Both PR #566 and PR #83 are updated with real, freshly-verified PR-state facts.
+
+## EXPECTED_OUTPUT
+Push corrections directly to the existing PR #566 branch (compliance-tracker) and PR #83 branch (claude-control) -- find each via `gh pr view <n> --json headRefName`. Do not open new PRs.
+
+## CONSTRAINTS
+This is a narrow factual correction, not a rework -- do not change the underlying analysis or recommendations unless the corrected facts genuinely invalidate them. Do not merge yourself.
+
+## COMPLEXITY_TIER
+mechanical

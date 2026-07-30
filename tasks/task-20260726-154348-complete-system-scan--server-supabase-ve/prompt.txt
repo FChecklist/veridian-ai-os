@@ -1,0 +1,26 @@
+## OBJECTIVE
+Perform a real, comprehensive scan of the complete system (Server 167.233.220.35 + Supabase + Vercel + GitHub) building on three real analysis tasks already merged this session (claude-control PR #86 server-engines re-verification, compliance-tracker PR #567/#569 Supabase catalog refresh, claude-control PR #85 Vercel+GitHub census), and identify any real, remaining duplication or gaps across the four systems now that PR #84 (branch-resolution fix), #86, #567, #79 (DDL gate), and #80 (write-gate) have all landed. Do not build anything new -- this is a verification and gap-report task only, updating existing tracking files with real findings.
+
+## KNOWN_CONTEXT
+Read ai-os/MASTER_INDEX.yaml (updated by PR #86, now includes entries for this session's new real work) and ai-os/20_ENGINES_10_GATEWAYS_PHASE_PLAN_2026-07-24.yaml fresh -- do not assume their content from any prior description, read the live files since multiple PRs have merged into them today. Also read the Vercel+GitHub census from PR #85 (once its real content is confirmed merged) and the regenerated ai-os/DATABASE_CATALOG.json from PR #567. A parallel task (Phase 2 policy unification) is being dispatched at the same time to unify the 4 real policy/gate mechanisms (preflight-guard.py, policy-enforcement-engine.ts, ddl_authorization_check.py, interactive-session write-gate) -- do not duplicate that work; if this scan finds the same fragmentation issue, cross-reference that phase rather than re-solving it here.
+
+## SCOPE
+1. Re-verify, with live commands (not memory), that every one of MASTER_INDEX.yaml's ~100 registries still has a real, resolvable file path (`python3 scripts/metadata_reconciliation.py report` -- already confirmed live and working this session, re-run it fresh).
+2. Confirm no two registries describe the same real underlying system under different names (a genuine duplication check) -- cross-reference registries.engine_registry (compliance-tracker/ai-os/engines/ENGINES.yaml, 247 VCEL computation engines) against registries.engines_gateways_architecture (the 20-Engine architecture) to confirm they remain correctly understood as unrelated namespaces (already documented as a confirmed non-collision earlier this session) rather than silently drifting into overlap.
+3. Confirm real current state of every GitHub repo's branch protection required-checks list still matches what any tracking file claims (a fresh `gh api repos/FChecklist/<repo>/branches/<default>/protection/required_status_checks` call per repo with branch protection).
+4. Confirm the real Supabase migration count (`SELECT COUNT(*) FROM drizzle.__drizzle_migrations` via a read-only Supabase MCP call) still matches what PR #567/#569's real findings claimed, now that PR #563 (if resolved by a parallel task) has landed.
+5. Produce one real, dated summary section (added to an existing tracking file, not a new one) listing: total real engines with genuine full coverage vs partial vs none, total real registries verified, any newly-found duplication with a specific remediation recommendation, and confirmation that Server+Supabase+Vercel+GitHub are now cross-referenced from one place (MASTER_INDEX.yaml) rather than four separately-tracked systems.
+
+## SUCCESS_CRITERIA
+- `python3 scripts/metadata_reconciliation.py report` run fresh shows 0 new unexpected path failures beyond the already-documented 6 by-design no-path entries.
+- A real, dated summary section is added to MASTER_INDEX.yaml (or master_architecture_2026_07_22, whichever is the more appropriate existing home) confirming cross-system status as of this task's run date.
+- Zero new engines, gateways, or tracking files are created by this task -- `git diff --stat` on the resulting PR shows only edits to existing files.
+
+## EXPECTED_OUTPUT
+A real PR against claude-control updating MASTER_INDEX.yaml (and/or master_architecture_2026_07_22) with the real, current cross-system findings and any genuine duplication found, with a specific remediation recommendation for each.
+
+## CONSTRAINTS
+Do not build any new engine, script, or tracking file. Do not duplicate the Phase 2 policy-unification task's own work if this scan surfaces the same fragmentation finding -- cross-reference it instead. Do not merge yourself.
+
+## COMPLEXITY_TIER
+judgment

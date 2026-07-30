@@ -1,0 +1,17 @@
+TASK REQUIRING AI JUDGMENT (not a trivial script-doable operation): design and build a real Owner-notification mechanism, then wire it into the two places that currently detect problems but cannot tell the Owner. This requires deciding delivery semantics (what counts as "needed" vs noise), choosing message content/format for a non-technical reader, and safely integrating with two existing scripts without breaking their current behavior -- not something a single grep/cat/sed could do.
+
+Context (read for evidence, this file is reference not the deliverable):
+ai-os/GOVERNANCE_AUDIT_RESULT_2026-07-23.yaml (see items 27, 28, 46, 47, 48, 56 -- all MISSING or MISSING for the same underlying reason: RESEND_API_KEY exists in shared/.env, unused for this purpose; anomalies only ever get written to ai-os/logs/ATTENTION.md, a file nobody actively reads).
+
+Concrete evidence of real consequence (already confirmed, do not re-derive): ai-os/logs/ATTENTION.md logged the identical unresolved entry "1 systemd unit(s) in failed state: veridian-worker@task-20260719-070240-projexa-e2e-phase-2-batch-b--resources-d.service" 14 times from 2026-07-19T13:44 through at least 2026-07-19T16:00 with zero resolution or escalation ever following.
+
+Deliverable, this increment only:
+1. New script scripts/notify-owner.py: sends a real email via the Resend API (key already in shared/.env as RESEND_API_KEY) to raajat.agarwal@gmail.com. Takes a --subject and --body (or reads structured input), rate-limits to avoid spamming (e.g. max 1 email per distinct issue signature per hour -- dedupe key on message content hash, tracked in a small local sqlite or json state file). Message body must be simple English, short sentences, no paragraphs, no jargon -- Owner is explicitly non-technical (this satisfies items 46/47/48 for THIS notification path specifically, not a system-wide rewrite of every script's output).
+2. Wire it into scripts/health-check-15min.py: when it detects a new anomaly (failed systemd unit, stale checkpoint, disk/mem threshold breach, failure-rate spike) that was NOT already reported in the last hour, call notify-owner.py instead of only writing to ATTENTION.md. Keep the ATTENTION.md write too (do not remove existing behavior, only add to it).
+3. Wire it into the credit-accountant.py hard-stop path (get_claude_oauth_env / claude_judgment_call failure, or any task ending in status=blocked with a note) -- when a task blocks and stays blocked (do not notify on the first transient block, only if it is still blocked at the next health-check cycle 15 min later), send one notification.
+
+Explicitly out of scope this increment (do not attempt): rewriting every other script's output format, building a general-purpose notification framework, security/network monitoring (separate items 20-22/24), log retention policy (item 51).
+
+Verification required before checkpointing complete: actually send one real test email and confirm receipt is plausible (Resend API returns a success response with a message id) -- report the message id in the checkpoint note as evidence, do not just claim it works.
+
+Commit and push scripts/notify-owner.py plus the two integration edits. Checkpoint status=pending_review with a one-line summary including the Resend message id from the test send.

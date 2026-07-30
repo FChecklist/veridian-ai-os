@@ -1,0 +1,27 @@
+## OBJECTIVE
+Fix real AUDIT: REJECT findings on the current claude-control PR #82 branch (OWNER_ENGINE-to-TASK_GATEWAY integration, round 2). The core wiring approach (gateway.py's --mode owner-dispatch, route_and_dispatch, dispatch_to_task_lifecycle, shared REQUIRED_TASK_SECTIONS) is correct and stays; this round closes real safety gaps found in the actual dispatch code before this becomes the recommended real entrypoint for Owner-triggered tasks.
+
+## KNOWN_CONTEXT
+Read the current gateway.py integration code in full first. Real findings from the review: (1) the new dispatch path completely skips OWNER_ENGINE's own mandatory clarification gate (query.py's needs_owner_clarification, per the existing OWNER_ENGINE_MANDATORY_GATE_IMPLEMENTATION_2026-07-25.yaml contract) before auto-issuing a real task-gateway.py start -- meaning an ambiguous Owner message that should trigger a clarifying question instead gets dispatched as a real task. (2) The code fires task-gateway.py's `start` immediately after `submit` even when `submit`'s own response already contains a `duplicate_found: true` signal -- creating a real duplicate-task-dispatch risk, which is directly the opposite of this whole initiative's own "zero duplication" principle. (3) Repo auto-selection for `start` silently defaults to claude-control with no real override checkpoint, despite an existing code comment claiming an override path exists. (4) The credit-accountant.py `propose` call added in this same PR passes an untested `--repo` flag that credit-accountant.py's only other real call site (preflight-guard.py) never uses -- verify the real CLI contract (read credit-accountant.py's own argument parser) before trusting this flag does anything; if it's not a real accepted argument, the call may silently no-op.
+
+## SCOPE
+1. Wire the real clarification gate into the new dispatch path: before calling task-gateway.py's `start`, check `needs_owner_clarification` (or whatever the real, current function/contract is called in query.py) and if it returns true, surface the clarifying question back to the Owner instead of proceeding to dispatch.
+2. Gate `start` on `submit`'s own `duplicate_found` signal: if `submit` reports a duplicate, do not automatically call `start` -- surface the duplicate finding (with its real evidence) so a human/AI can decide whether to proceed anyway or treat it as already covered, matching how a manual dispatch would currently behave when a human notices `duplicate_found: true`.
+3. Fix the silent repo-default: read credit-accountant.py's, task-gateway.py's, and any other real existing convention for determining the target repo from a classified Owner message (check if OWNER_ENGINE's classifier already extracts a repo/target signal), and either wire a real override path or honestly remove the misleading code comment claiming one exists if none is added in this round.
+4. Verify credit-accountant.py's real argument parser (`python3 scripts/credit-accountant.py propose --help`) for what `propose` actually accepts, and fix the `--repo` flag usage to match the real, confirmed CLI contract -- test that the call actually succeeds (real exit code 0, real effect), not just that it doesn't error out silently.
+5. Extend the integration test to cover: an ambiguous Owner message triggers a clarification response instead of a dispatch; a message matching an existing task triggers a duplicate-found surfacing instead of an automatic `start`; the credit-accountant.py propose call is verified to actually register a real plan (check its own state/output, not just its exit code).
+
+## SUCCESS_CRITERIA
+- `grep -n "needs_owner_clarification" scripts/prompt_gateway/gateway.py` shows the real clarification check wired into the new dispatch path.
+- `grep -n "duplicate_found" scripts/prompt_gateway/gateway.py` shows `start` is gated on this signal, not called unconditionally after `submit`.
+- `python3 scripts/credit-accountant.py propose --help` output is used to confirm (in a test or inline comment) the `--repo` flag (or whatever the corrected real flag is) is genuinely accepted by credit-accountant.py's own parser.
+- `python3 -m pytest tests/ -k "gateway_task_integration or owner_engine_task" -v` exits 0 with the expanded test coverage passing.
+
+## EXPECTED_OUTPUT
+Push directly to the existing PR #82 branch in FChecklist/claude-control (find it via `gh pr view 82 --repo FChecklist/claude-control --json headRefName`). Do not open a new PR.
+
+## CONSTRAINTS
+Keep the already-approved --mode owner-dispatch entrypoint and the shared REQUIRED_TASK_SECTIONS dedup exactly as they are -- only close the four real gaps listed. Do not merge yourself; this needs a fresh, thorough audit pass given this PR's central role as the intended real entrypoint for all future Owner-triggered task dispatch.
+
+## COMPLEXITY_TIER
+judgment

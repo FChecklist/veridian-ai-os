@@ -1,0 +1,170 @@
+id: task-20260727-061003-add-test-coverage-for-execute-backlog-pl
+title: Add test coverage for execute_backlog_plan.py orchestration
+status: blocked
+repo: claude-control
+branch: worker/task-20260727-061003-add-test-coverage-for-execute-backlog-pl
+workspace: /opt/veridian/ai-os/tasks/task-20260727-061003-add-test-coverage-for-execute-backlog-pl/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-061003-add-test-coverage-for-execute-backlog-pl
+service: veridian-worker@task-20260727-061003-add-test-coverage-for-execute-backlog-pl.service
+created_at: '2026-07-27T06:10:04.869932+00:00'
+last_checkpoint_at: '2026-07-27T06:19:39.607470+00:00'
+completed_steps: &id002
+- Fetched branch chore/backlog-completion-plan-script fresh (detached HEAD at 1a3b030,
+  since the branch name was already checked out in another task's worktree)
+- Read scripts/execute_backlog_plan.py in full and cross-referenced plan_backlog_completion.py's
+  GH_OWNER + existing test conventions in tests/plan_backlog_completion_dedup_test.py
+- Replaced both hardcoded 'FChecklist' literals in scripts/execute_backlog_plan.py
+  with `from plan_backlog_completion import GH_OWNER`
+- 'Added tests/execute_backlog_plan_test.py: test_phase1and2_only_touches_verified_already_done_issues
+  (safety invariant on this script''s own bookkeeping loop) and test_main_dispatches_phases_and_sequences_waves
+  (main()''s phase dispatch + wave-sequencing wiring against a synthetic plan/tmp_path
+  fixture, no real ai-os/tasks or systemd/git/gh calls)'
+- 'Full suite verified green: 105 passed (103 existing + 2 new)'
+- Committed and pushed to origin/chore/backlog-completion-plan-script
+- 'Posted PR comment on #102 summarizing the added coverage'
+remaining_steps: &id003 []
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T06:10:07.155105+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'c44003f Merge pull request #97 from FChecklist/worker/task-20260726-170157-tier3--relevance-triage-45-stale-credit'
+  - '6a43819 Merge pull request #107 from FChecklist/worker/task-20260727-043407-rca-task-20260727-034439-re-verify-20-en'
+  - '105cccd RCA fix: quality-gate.sh run_gate() had no timeout, letting a hung build
+    stall a worker forever under the "periodic checkpoint" watchdog signature'
+  - 'd073696 Merge pull request #105 from FChecklist/worker/task-20260727-041903-fix-escalate-hardcoded-repo-and-stale-br'
+  - 665fe04 Fix escalate() hardcoded repo and root-cause the stale rca- branch bug
+  - '2361fae Merge pull request #104 from FChecklist/worker/task-20260727-034446-rca-task-20260726-083946-fix-task-lifecy'
+  - '39d2996 Fix RCA: route crontab_unauthorized_change preflight rejections to hard-stop,
+    not transient retry'
+  - '3a67d6d Merge pull request #103 from FChecklist/worker/task-20260727-025248-integrate-knowledge-engine-wiring-regist'
+  - 'd2b001c wiring_registry: content-hash staleness detection, governance_doc entity
+    type, scheduled refresh, combined query helper'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T06:15:08.620690+00:00'
+  status: in_progress
+  files_modified:
+  - scripts/execute_backlog_plan.py
+  - tests/execute_backlog_plan_test.py
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '1a3b030 Fix review finding (a) on PR #102: bring the real live incident pipeline
+    under version control, delegate to the fixed classifier'
+  - 'e570bec Fix review findings (b) and (c) on PR #102: patch representative task
+    to completed on --apply, replace shell=True SUCCESS_CRITERIA execution with a
+    real allowlist'
+  - 'deaa553 Add real audit-report run: ai-os/DEDUP_MISMATCH_MANUAL_REVIEW_2026-07-27.yaml'
+  - '615c42b Fix plan_backlog_completion.py dedup routine: verify SUCCESS_CRITERIA
+    before ALREADY_DONE_STALE_STATUS, add real apply mechanism'
+  - 'b8c65ed Add plan_backlog_completion.py: real dedup+PR-state+wiring_registry backlog
+    planner'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  - b8829ea Rename 6 superseded dispatch/status scripts, add mapping README
+  note: periodic checkpoint
+- at: '2026-07-27T06:16:43.604952+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Fetched branch chore/backlog-completion-plan-script fresh (detached HEAD at 1a3b030,
+    since the branch name was already checked out in another task's worktree)
+  - Read scripts/execute_backlog_plan.py in full and cross-referenced plan_backlog_completion.py's
+    GH_OWNER + existing test conventions in tests/plan_backlog_completion_dedup_test.py
+  - Replaced both hardcoded 'FChecklist' literals in scripts/execute_backlog_plan.py
+    with `from plan_backlog_completion import GH_OWNER`
+  - 'Added tests/execute_backlog_plan_test.py: test_phase1and2_only_touches_verified_already_done_issues
+    (safety invariant on this script''s own bookkeeping loop) and test_main_dispatches_phases_and_sequences_waves
+    (main()''s phase dispatch + wave-sequencing wiring against a synthetic plan/tmp_path
+    fixture, no real ai-os/tasks or systemd/git/gh calls)'
+  - 'Full suite verified green: 105 passed (103 existing + 2 new)'
+  - Committed and pushed to origin/chore/backlog-completion-plan-script
+  - 'Posted PR comment on #102 summarizing the added coverage'
+  remaining_steps: []
+  recent_commits:
+  - 3708c81 Add orchestration test coverage for execute_backlog_plan.py, fix hardcoded
+    org name
+  - '1a3b030 Fix review finding (a) on PR #102: bring the real live incident pipeline
+    under version control, delegate to the fixed classifier'
+  - 'e570bec Fix review findings (b) and (c) on PR #102: patch representative task
+    to completed on --apply, replace shell=True SUCCESS_CRITERIA execution with a
+    real allowlist'
+  - 'deaa553 Add real audit-report run: ai-os/DEDUP_MISMATCH_MANUAL_REVIEW_2026-07-27.yaml'
+  - '615c42b Fix plan_backlog_completion.py dedup routine: verify SUCCESS_CRITERIA
+    before ALREADY_DONE_STALE_STATUS, add real apply mechanism'
+  - 'b8c65ed Add plan_backlog_completion.py: real dedup+PR-state+wiring_registry backlog
+    planner'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  note: quality gates passed, pushed branch worker/task-20260727-061003-add-test-coverage-for-execute-backlog-pl,
+    awaiting review
+- at: '2026-07-27T06:19:39.607470+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 3708c81 Add orchestration test coverage for execute_backlog_plan.py, fix hardcoded
+    org name
+  - '1a3b030 Fix review finding (a) on PR #102: bring the real live incident pipeline
+    under version control, delegate to the fixed classifier'
+  - 'e570bec Fix review findings (b) and (c) on PR #102: patch representative task
+    to completed on --apply, replace shell=True SUCCESS_CRITERIA execution with a
+    real allowlist'
+  - 'deaa553 Add real audit-report run: ai-os/DEDUP_MISMATCH_MANUAL_REVIEW_2026-07-27.yaml'
+  - '615c42b Fix plan_backlog_completion.py dedup routine: verify SUCCESS_CRITERIA
+    before ALREADY_DONE_STALE_STATUS, add real apply mechanism'
+  - 'b8c65ed Add plan_backlog_completion.py: real dedup+PR-state+wiring_registry backlog
+    planner'
+  - '7957148 Merge pull request #101 from FChecklist/worker/task-20260726-210339-consolidate-6-dispatch-status-scripts-in'
+  - 3fff940 Fix dispatch-tick.py module_queue_tick to genuinely round-robin across
+    module queues
+  - '5936458 Fix wiring_registry migration bug: dispatch_core._upsert_wiring_row never
+    ran the CHECK-widening migration'
+  - 212e6df Add regression/integration tests for the dispatch consolidation (18 tests)
+  note: "supervisor could not resolve a real PR for branch 'worker/task-20260727-061003-add-test-coverage-for-execute-backlog-pl'\
+    \ (gh pr create failed, no existing open PR found for it) \u2014 refusing to proceed\
+    \ rather than risk operating on an unrelated PR via gh's empty-argument fallback.\
+    \ See supervisor.log."
+execution_seconds: 395
+restart_count: 0
+token_usage:
+  input_tokens: 78
+  cache_creation_input_tokens: 74150
+  cache_read_input_tokens: 2933155
+  output_tokens: 28328
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 74150
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 408
+    cache_read_input_tokens: 97460
+    cache_creation_input_tokens: 374
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 374
+    type: message
+  speed: standard
+hold_for_owner_signoff: true
+rca_target_id: null
+master_synced_at: '2026-07-29T21:04:25.687165+00:00'

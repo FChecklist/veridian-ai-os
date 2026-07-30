@@ -1,0 +1,28 @@
+## OBJECTIVE
+Extend PROJEXA/compliance-tracker's timesheet feature with real Design Studio requirements: daily designer work recording, a manager-approval workflow, and designer-wise cost analysis -- item 12 of the Owner's real requirement spec, marked IMPORTANT.
+
+## KNOWN_CONTEXT
+Real, already-merged infrastructure exists and must be extended, not duplicated: PR #597 (`construction-reports-service.ts`) already builds a timesheet budget-vs-actual report with category-wise/project-wise cuts, roster-inclusion, and N+1-fixed rate resolution. This task extends it, it does not rebuild it. Real, Owner-supplied additional spec: daily work recording by designer at end of day; status flow is designer-entry -> manager-validation-on-review; timesheet fields are Date | Project | Category | Task | Hours; cost analysis needs a designer-wise cut (Budget vs Actual by designer, not just by category/project) PLUS a designer-wise status view; a work-analysis view; and a KPI flow where the designer fills in KPI data and a manager reviews/approves it.
+
+## SCOPE
+1. Check `construction-reports-service.ts`'s real current `aggregateDesignerTimesheetCosts()` (or equivalent) function -- confirm whether a designer-wise cut already exists; if only category/project cuts exist, add the designer-wise breakdown.
+2. Add a real approval-status field/flow to timesheet entries: `draft` (designer editing) -> `submitted` -> `approved`/`rejected` (manager action), with a real API route for the manager approval action, gated to manager-role users (check this codebase's existing role-gating pattern, e.g. `requireRole()`/`ROLE_GROUPS`, reuse it).
+3. Add a real KPI table/fields: designer fills in KPI values, manager reviews/approves via the same or a parallel approval flow -- check if a KPI concept already exists anywhere in this codebase (HR performance reviews were mentioned in earlier VERIDIAN demo-data work) before inventing a new one.
+4. Real "work analysis" view -- clarify from context this means a real breakdown of hours by task/category per designer over a period; build against existing timesheet data.
+
+## SUCCESS_CRITERIA
+- A real test proving the designer-wise Budget-vs-Actual cut computes correctly.
+- A real test proving the approval state machine is enforced correctly (a `member`/designer role cannot self-approve; only a manager-role user can transition submitted->approved).
+- Verify by actually running:
+`npx tsc --noEmit`
+`bun test src/lib/services/construction-reports-service.test.ts` (confirm existing PR #597 tests still pass)
+`bun test` (scoped to new files)
+
+## EXPECTED_OUTPUT
+Real PR on a new branch in whichever repo owns `construction-reports-service.ts` (compliance-tracker, per PR #597). Requires a fresh supervisor audit before merge; do not merge yourself.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd `.timer` unit on the live server must stay in its present disabled state throughout this task. Do not modify PR #597's existing category-wise/project-wise aggregation logic -- add the designer-wise cut alongside it.
+
+## COMPLEXITY_TIER
+judgment

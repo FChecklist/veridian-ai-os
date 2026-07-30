@@ -1,0 +1,283 @@
+id: task-20260719-021225-gap-closure--dmp-06
+title: 'Gap closure: DMP-06'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260719-021225-gap-closure--dmp-06
+workspace: /opt/veridian/ai-os/tasks/task-20260719-021225-gap-closure--dmp-06/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260719-021225-gap-closure--dmp-06
+service: veridian-worker@task-20260719-021225-gap-closure--dmp-06.service
+created_at: '2026-07-19T02:12:26.995921+00:00'
+last_checkpoint_at: '2026-07-19T02:39:41.913000+00:00'
+completed_steps: &id002
+- Read CONSTITUTION.yaml DMP-06 section, dynamic-chain-directory-service.ts,
+- Checked ACTIVE-CLAIMS.yaml + `gh pr list` -- no duplicate claim
+- Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+- Added findSimilarDynamicChains() in capability-registry-service.ts
+- Wired proposeDynamicChain() to check for duplicates before creating
+- Wired proposeDynamicChain() to write dynamic_chain->module entity_relationships
+- Updated fde-service.ts call site for new discriminated-union return shape
+- Added/extended unit tests (11 new tests, all pure/DB-free)
+- bunx tsc --noEmit clean, bun run lint 0 errors, bun test 1731 pass/0 fail
+- All 6 local CI guardrail scripts pass
+- 'Pushed branch, opened PR #462'
+- 'Posted structured AUDIT: PASS comment (all 8 fields)'
+- 'CI green on PR #462 (all required checks: Lint, Type Check, Build, Unit'
+- 'Classified TIER1 (no schema/migration changes) -- self-merged PR #462'
+- 'Moved ACTIVE-CLAIMS.yaml entry from active: to recently_completed:'
+remaining_steps: &id003 []
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-19T02:12:27.892565+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  - '6789a717 Audit trail: close immutability + complete-coverage gaps (#425)'
+  note: worker started (resume=0)
+- at: '2026-07-19T02:17:28.387809+00:00'
+  status: in_progress
+  files_modified:
+  - src/lib/services/capability-registry-service.ts
+  - src/lib/services/dynamic-chain-directory-service.ts
+  completed_steps:
+  - Read CONSTITUTION.yaml DMP-06 section, dynamic-chain-directory-service.ts,
+  - Checked ACTIVE-CLAIMS.yaml + `gh pr list` -- no duplicate claim
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  remaining_steps:
+  - Add findSimilarDynamicChains() in capability-registry-service.ts
+  - Wire proposeDynamicChain() to check for duplicates before creating
+  - Wire proposeDynamicChain() to write dynamic_chain->module entity_relationships
+    edges
+  - Update fde-service.ts call site for new return shape
+  - Add/extend unit tests
+  - bunx tsc --noEmit / bun run lint / bun test all clean
+  - Push branch, open PR
+  - 'Post AUDIT: PASS comment'
+  - Wait for CI (gh run watch)
+  - Classify tier (TIER1, no schema/migration changes expected) and self-merge if
+    green
+  - Final report
+  recent_commits:
+  - 'e2e4d4bf DMP-06: register active claim for Dynamic Chain Master Directory gap'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  - '70a7c91e FinOps: reflect prompt-cache savings in the token usage ledger (#423)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:22:28.729954+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read CONSTITUTION.yaml DMP-06 section, dynamic-chain-directory-service.ts,
+  - Checked ACTIVE-CLAIMS.yaml + `gh pr list` -- no duplicate claim
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - Added findSimilarDynamicChains() in capability-registry-service.ts
+  - Wired proposeDynamicChain() to check for duplicates before creating
+  - Wired proposeDynamicChain() to write dynamic_chain->module entity_relationships
+  - Updated fde-service.ts call site for new discriminated-union return shape
+  - Added/extended unit tests (11 new tests, all pure/DB-free)
+  - bunx tsc --noEmit clean, bun run lint 0 errors, bun test 1731 pass/0 fail
+  - All 6 local CI guardrail scripts pass
+  remaining_steps:
+  - Push branch, open PR
+  - 'Post AUDIT: PASS comment'
+  - Wait for CI (gh run watch)
+  - Classify tier (TIER1, no schema/migration changes) and self-merge if green
+  - Final report
+  recent_commits:
+  - '3eeebd7a DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges'
+  - 'e2e4d4bf DMP-06: register active claim for Dynamic Chain Master Directory gap'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:27:29.072887+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read CONSTITUTION.yaml DMP-06 section, dynamic-chain-directory-service.ts,
+  - Checked ACTIVE-CLAIMS.yaml + `gh pr list` -- no duplicate claim
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - Added findSimilarDynamicChains() in capability-registry-service.ts
+  - Wired proposeDynamicChain() to check for duplicates before creating
+  - Wired proposeDynamicChain() to write dynamic_chain->module entity_relationships
+  - Updated fde-service.ts call site for new discriminated-union return shape
+  - Added/extended unit tests (11 new tests, all pure/DB-free)
+  - bunx tsc --noEmit clean, bun run lint 0 errors, bun test 1731 pass/0 fail
+  - All 6 local CI guardrail scripts pass
+  remaining_steps:
+  - Push branch, open PR
+  - 'Post AUDIT: PASS comment'
+  - Wait for CI (gh run watch)
+  - Classify tier (TIER1, no schema/migration changes) and self-merge if green
+  - Final report
+  recent_commits:
+  - '3eeebd7a DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges'
+  - 'e2e4d4bf DMP-06: register active claim for Dynamic Chain Master Directory gap'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:32:29.440215+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read CONSTITUTION.yaml DMP-06 section, dynamic-chain-directory-service.ts,
+  - Checked ACTIVE-CLAIMS.yaml + `gh pr list` -- no duplicate claim
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - Added findSimilarDynamicChains() in capability-registry-service.ts
+  - Wired proposeDynamicChain() to check for duplicates before creating
+  - Wired proposeDynamicChain() to write dynamic_chain->module entity_relationships
+  - Updated fde-service.ts call site for new discriminated-union return shape
+  - Added/extended unit tests (11 new tests, all pure/DB-free)
+  - bunx tsc --noEmit clean, bun run lint 0 errors, bun test 1731 pass/0 fail
+  - All 6 local CI guardrail scripts pass
+  remaining_steps:
+  - Push branch, open PR
+  - 'Post AUDIT: PASS comment'
+  - Wait for CI (gh run watch)
+  - Classify tier (TIER1, no schema/migration changes) and self-merge if green
+  - Final report
+  recent_commits:
+  - '6ec3b531 ACTIVE-CLAIMS.yaml: move DMP-06 claim to recently_completed (PR #462
+    merged)'
+  - '932cd755 DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges (#462)'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  - 'f9a9a863 AI Architecture: Explainability & Transparency gap-closure (26 findings)
+    (#421)'
+  note: periodic checkpoint
+- at: '2026-07-19T02:36:31.684436+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - Read CONSTITUTION.yaml DMP-06 section, dynamic-chain-directory-service.ts,
+  - Checked ACTIVE-CLAIMS.yaml + `gh pr list` -- no duplicate claim
+  - Registered claim in ai-os/boss/ACTIVE-CLAIMS.yaml
+  - Added findSimilarDynamicChains() in capability-registry-service.ts
+  - Wired proposeDynamicChain() to check for duplicates before creating
+  - Wired proposeDynamicChain() to write dynamic_chain->module entity_relationships
+  - Updated fde-service.ts call site for new discriminated-union return shape
+  - Added/extended unit tests (11 new tests, all pure/DB-free)
+  - bunx tsc --noEmit clean, bun run lint 0 errors, bun test 1731 pass/0 fail
+  - All 6 local CI guardrail scripts pass
+  - 'Pushed branch, opened PR #462'
+  - 'Posted structured AUDIT: PASS comment (all 8 fields)'
+  - 'CI green on PR #462 (all required checks: Lint, Type Check, Build, Unit'
+  - 'Classified TIER1 (no schema/migration changes) -- self-merged PR #462'
+  - 'Moved ACTIVE-CLAIMS.yaml entry from active: to recently_completed:'
+  remaining_steps: []
+  recent_commits:
+  - '59758b78 Worker task-20260719-021225-gap-closure--dmp-06: automated checkpoint
+    commit'
+  - '3eeebd7a DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges'
+  - 'e2e4d4bf DMP-06: register active claim for Dynamic Chain Master Directory gap'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  note: quality gates passed, pushed branch worker/task-20260719-021225-gap-closure--dmp-06,
+    awaiting review
+- at: '2026-07-19T02:39:41.913000+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '59758b78 Worker task-20260719-021225-gap-closure--dmp-06: automated checkpoint
+    commit'
+  - '3eeebd7a DMP-06: Dynamic Chain Master Directory duplicate detection + module
+    graph edges'
+  - 'e2e4d4bf DMP-06: register active claim for Dynamic Chain Master Directory gap'
+  - 'b4a36050 RES-02/GAP-NARROW-MONITOR-ESCALATION Phase 1: wire 5 more Tier-1 monitors
+    (#461)'
+  - '1da9ccb6 DMP-04: FDE no-match proposals now draft a full Dynamic Chain bundle
+    (#459)'
+  - 'e1ea16f0 Close UMR-03: instruction-execution-cache for chat/DMP dispatch (#460)'
+  - 'a66b6567 Rescue PR #427 (CI-trigger workaround, supersedes #427) (#458)'
+  - '88743fa8 Register+close PR #429 rescue claim in ACTIVE-CLAIMS.yaml (#456)'
+  - 0208c702 Close duplicate-work and duplicate-data detection gaps (#429)
+  - 0301c256 Close Checks & Balances / Risk, Fraud & Anomaly Detection gaps (#432)
+  note: "Superboss rejected: https://github.com/FChecklist/compliance-tracker/pull/466\
+    \ \u2014 see review.json for issues"
+execution_seconds: 1343
+restart_count: 0
+token_usage:
+  input_tokens: 202
+  cache_creation_input_tokens: 160163
+  cache_read_input_tokens: 13000270
+  output_tokens: 55212
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 160163
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 1298
+    cache_read_input_tokens: 183068
+    cache_creation_input_tokens: 633
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 633
+    type: message
+  speed: standard
+master_synced_at: '2026-07-19T03:00:04.461931+00:00'

@@ -1,0 +1,431 @@
+id: task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown
+title: 'PROJEXA E2E: hierarchical BoQ breakdown-pct + interim billing/retention +
+  Excel BoQ importer'
+status: blocked
+repo: compliance-tracker
+branch: worker/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown
+workspace: /opt/veridian/ai-os/tasks/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown
+service: veridian-worker@task-20260727-122632-projexa-e2e--hierarchical-boq-breakdown.service
+created_at: '2026-07-27T12:26:34.173946+00:00'
+last_checkpoint_at: '2026-07-27T13:19:18.260988+00:00'
+completed_steps: &id002
+- Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim
+- 'Explored existing code: constructionBoqLineItems schema, construction-boq-service.ts,'
+- bun was missing from this sandbox (only bunx existed) -- installed via bun.sh/install,
+- 'Schema: added parentLineItemId + breakdownPercentage to constructionBoqLineItems;'
+- Migration drizzle/0265_construction_boq_hierarchy_interim_billing.sql -- HAND-WRITTEN,
+- 'construction-boq-service.ts: computeHierarchicalAmount() (root-Main-based formula,'
+- 'construction-boq-service.test.ts: 11 tests, all passing -- exact Owner formula'
+- 'construction-valuation-service.ts: interim/RA billing + retention % + invoice emission'
+- Verified existing /api/construction/boq and /api/v1/construction/boq routes need
+  no
+- 'New API routes: GET/POST /api/construction/interim-bills, GET'
+- 'Excel BoQ importer: construction-boq-import-service.ts + API route. 5 tests including'
+- npx tsc --noEmit clean (had to raise Node heap via NODE_OPTIONS=--max-old-space-size,
+remaining_steps: &id003
+- This task's migration (drizzle/0265_*.sql) has NOT been applied to any live Supabase
+- Because the migration is unapplied, `get_advisors(security)` has NOT been run
+- Open PR
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-27T12:26:37.929325+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '7ce01a38 Merge pull request #594 from FChecklist/fix/dependabot-alert-34-sharp-cve'
+  - '8dcac366 merge: resolve PROGRESS.md + ACTIVE-CLAIMS.yaml conflicts with main
+    (keep both -- append-only logs)'
+  - 'da2b38b0 Worker task-20260727-093117-fix-dependabot-alert34-sharp-cve: automated
+    checkpoint commit (credit accountant rejected auto-fix)'
+  - 'ca177aff Merge pull request #591 from FChecklist/worker/task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou'
+  - '6fd75004 ci: add real terminology-guardrail baseline for schema.ts (first-ever,
+    68 pre-existing findings) + exempt 11 Helpdesk-added dated comments across route/service
+    files'
+  - '9c40d136 merge: resolve conflicts with main + exempt 6 new Helpdesk tables in
+    asset-registry-coverage.yaml'
+  - '180fc386 Merge pull request #589 from FChecklist/worker/task-20260727-094843-architecture-phase-8-increment-1--dspy-e'
+  - 'abd590d2 merge: resolve conflicts with main (keep both -- PR 590 just merged)'
+  - '33bd9cbd Merge pull request #590 from FChecklist/worker/task-20260727-094516-architecture-phase-5-increment-2--webllm'
+  - '24c3ac72 ci: register phase_5 increment 2 status doc in OS.yaml'
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-27T12:31:39.670088+00:00'
+  status: in_progress
+  files_modified:
+  - src/lib/db/schema.ts
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim
+  remaining_steps:
+  - 'Explore existing code: constructionBoqLineItems schema, construction-boq-service.ts,
+    firm-billing-service.ts, spreadsheet-adapter.ts'
+  - 'Schema migration: parentLineItemId + breakdownPercentage on constructionBoqLineItems'
+  - 'construction-boq-service.ts: hierarchical amount computation + hierarchy-aware
+    revision diff'
+  - 'construction-valuation-service.ts: interim/RA billing + retention % + invoice
+    emission'
+  - 'Excel BoQ importer: service + API route'
+  - 'Tests: hierarchy formula, interim-bill + retention, Excel import'
+  - npx tsc --noEmit clean, bun test passing, get_advisors(security) clean
+  - Open PR
+  recent_commits:
+  - '40137e6a chore: register active-claim + init PROGRESS.md for hierarchical BoQ
+    breakdown task'
+  - '7ce01a38 Merge pull request #594 from FChecklist/fix/dependabot-alert-34-sharp-cve'
+  - '8dcac366 merge: resolve PROGRESS.md + ACTIVE-CLAIMS.yaml conflicts with main
+    (keep both -- append-only logs)'
+  - 'da2b38b0 Worker task-20260727-093117-fix-dependabot-alert34-sharp-cve: automated
+    checkpoint commit (credit accountant rejected auto-fix)'
+  - 'ca177aff Merge pull request #591 from FChecklist/worker/task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou'
+  - '6fd75004 ci: add real terminology-guardrail baseline for schema.ts (first-ever,
+    68 pre-existing findings) + exempt 11 Helpdesk-added dated comments across route/service
+    files'
+  - '9c40d136 merge: resolve conflicts with main + exempt 6 new Helpdesk tables in
+    asset-registry-coverage.yaml'
+  - '180fc386 Merge pull request #589 from FChecklist/worker/task-20260727-094843-architecture-phase-8-increment-1--dspy-e'
+  - 'abd590d2 merge: resolve conflicts with main (keep both -- PR 590 just merged)'
+  - '33bd9cbd Merge pull request #590 from FChecklist/worker/task-20260727-094516-architecture-phase-5-increment-2--webllm'
+  note: periodic checkpoint
+- at: '2026-07-27T12:36:41.052176+00:00'
+  status: in_progress
+  files_modified:
+  - drizzle/meta/_journal.json
+  - src/lib/db/schema.ts
+  - drizzle/0265_construction_boq_hierarchy_interim_billing.sql
+  - drizzle/meta/0265_snapshot.json
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim
+  remaining_steps:
+  - 'Explore existing code: constructionBoqLineItems schema, construction-boq-service.ts,
+    firm-billing-service.ts, spreadsheet-adapter.ts'
+  - 'Schema migration: parentLineItemId + breakdownPercentage on constructionBoqLineItems'
+  - 'construction-boq-service.ts: hierarchical amount computation + hierarchy-aware
+    revision diff'
+  - 'construction-valuation-service.ts: interim/RA billing + retention % + invoice
+    emission'
+  - 'Excel BoQ importer: service + API route'
+  - 'Tests: hierarchy formula, interim-bill + retention, Excel import'
+  - npx tsc --noEmit clean, bun test passing, get_advisors(security) clean
+  - Open PR
+  recent_commits:
+  - '40137e6a chore: register active-claim + init PROGRESS.md for hierarchical BoQ
+    breakdown task'
+  - '7ce01a38 Merge pull request #594 from FChecklist/fix/dependabot-alert-34-sharp-cve'
+  - '8dcac366 merge: resolve PROGRESS.md + ACTIVE-CLAIMS.yaml conflicts with main
+    (keep both -- append-only logs)'
+  - 'da2b38b0 Worker task-20260727-093117-fix-dependabot-alert34-sharp-cve: automated
+    checkpoint commit (credit accountant rejected auto-fix)'
+  - 'ca177aff Merge pull request #591 from FChecklist/worker/task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou'
+  - '6fd75004 ci: add real terminology-guardrail baseline for schema.ts (first-ever,
+    68 pre-existing findings) + exempt 11 Helpdesk-added dated comments across route/service
+    files'
+  - '9c40d136 merge: resolve conflicts with main + exempt 6 new Helpdesk tables in
+    asset-registry-coverage.yaml'
+  - '180fc386 Merge pull request #589 from FChecklist/worker/task-20260727-094843-architecture-phase-8-increment-1--dspy-e'
+  - 'abd590d2 merge: resolve conflicts with main (keep both -- PR 590 just merged)'
+  - '33bd9cbd Merge pull request #590 from FChecklist/worker/task-20260727-094516-architecture-phase-5-increment-2--webllm'
+  note: periodic checkpoint
+- at: '2026-07-27T12:41:42.660977+00:00'
+  status: in_progress
+  files_modified:
+  - src/lib/services/construction-valuation-service.test.ts
+  - src/lib/services/construction-valuation-service.ts
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim
+  - 'Explored existing code: constructionBoqLineItems schema, construction-boq-service.ts,'
+  - bun was missing from this sandbox (only bunx existed) -- installed via bun.sh/install,
+  - 'Schema: added parentLineItemId + breakdownPercentage to constructionBoqLineItems;'
+  - Migration drizzle/0265_construction_boq_hierarchy_interim_billing.sql -- HAND-WRITTEN,
+  - 'construction-boq-service.ts: computeHierarchicalAmount() (root-Main-based formula,'
+  - 'construction-boq-service.test.ts: 11 tests, all passing -- exact Owner formula'
+  remaining_steps:
+  - 'construction-valuation-service.ts: interim/RA billing + retention % + invoice
+    emission'
+  - API routes for hierarchical BoQ create/revision (verify existing routes still
+    pass
+  - 'Excel BoQ importer: service + API route (model on spreadsheet-adapter.ts, infer'
+  - 'Tests: interim-bill + retention math, Excel import (hierarchical rows)'
+  - npx tsc --noEmit clean, bun test passing, get_advisors(security) clean
+  - Open PR
+  recent_commits:
+  - '6d84cff2 feat: hierarchical BoQ breakdown-% (parentLineItemId + breakdownPercentage)'
+  - '40137e6a chore: register active-claim + init PROGRESS.md for hierarchical BoQ
+    breakdown task'
+  - '7ce01a38 Merge pull request #594 from FChecklist/fix/dependabot-alert-34-sharp-cve'
+  - '8dcac366 merge: resolve PROGRESS.md + ACTIVE-CLAIMS.yaml conflicts with main
+    (keep both -- append-only logs)'
+  - 'da2b38b0 Worker task-20260727-093117-fix-dependabot-alert34-sharp-cve: automated
+    checkpoint commit (credit accountant rejected auto-fix)'
+  - 'ca177aff Merge pull request #591 from FChecklist/worker/task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou'
+  - '6fd75004 ci: add real terminology-guardrail baseline for schema.ts (first-ever,
+    68 pre-existing findings) + exempt 11 Helpdesk-added dated comments across route/service
+    files'
+  - '9c40d136 merge: resolve conflicts with main + exempt 6 new Helpdesk tables in
+    asset-registry-coverage.yaml'
+  - '180fc386 Merge pull request #589 from FChecklist/worker/task-20260727-094843-architecture-phase-8-increment-1--dspy-e'
+  - 'abd590d2 merge: resolve conflicts with main (keep both -- PR 590 just merged)'
+  note: periodic checkpoint
+- at: '2026-07-27T12:46:44.155930+00:00'
+  status: in_progress
+  files_modified:
+  - src/app/api/construction/boq/import/route.ts
+  - src/app/api/construction/interim-bills/[id]/route.ts
+  - src/app/api/construction/interim-bills/route.ts
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim
+  - 'Explored existing code: constructionBoqLineItems schema, construction-boq-service.ts,'
+  - bun was missing from this sandbox (only bunx existed) -- installed via bun.sh/install,
+  - 'Schema: added parentLineItemId + breakdownPercentage to constructionBoqLineItems;'
+  - Migration drizzle/0265_construction_boq_hierarchy_interim_billing.sql -- HAND-WRITTEN,
+  - 'construction-boq-service.ts: computeHierarchicalAmount() (root-Main-based formula,'
+  - 'construction-boq-service.test.ts: 11 tests, all passing -- exact Owner formula'
+  remaining_steps:
+  - 'construction-valuation-service.ts: interim/RA billing + retention % + invoice
+    emission'
+  - API routes for hierarchical BoQ create/revision (verify existing routes still
+    pass
+  - 'Excel BoQ importer: service + API route (model on spreadsheet-adapter.ts, infer'
+  - 'Tests: interim-bill + retention math, Excel import (hierarchical rows)'
+  - npx tsc --noEmit clean, bun test passing, get_advisors(security) clean
+  - Open PR
+  recent_commits:
+  - '6b644152 feat: Excel BoQ importer (hierarchical rows, dot-delimited item-code
+    inference)'
+  - 'f3ab7142 feat: construction interim/RA billing + retention engine'
+  - '6d84cff2 feat: hierarchical BoQ breakdown-% (parentLineItemId + breakdownPercentage)'
+  - '40137e6a chore: register active-claim + init PROGRESS.md for hierarchical BoQ
+    breakdown task'
+  - '7ce01a38 Merge pull request #594 from FChecklist/fix/dependabot-alert-34-sharp-cve'
+  - '8dcac366 merge: resolve PROGRESS.md + ACTIVE-CLAIMS.yaml conflicts with main
+    (keep both -- append-only logs)'
+  - 'da2b38b0 Worker task-20260727-093117-fix-dependabot-alert34-sharp-cve: automated
+    checkpoint commit (credit accountant rejected auto-fix)'
+  - 'ca177aff Merge pull request #591 from FChecklist/worker/task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou'
+  - '6fd75004 ci: add real terminology-guardrail baseline for schema.ts (first-ever,
+    68 pre-existing findings) + exempt 11 Helpdesk-added dated comments across route/service
+    files'
+  - '9c40d136 merge: resolve conflicts with main + exempt 6 new Helpdesk tables in
+    asset-registry-coverage.yaml'
+  note: periodic checkpoint
+- at: '2026-07-27T12:51:49.033567+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim
+  - 'Explored existing code: constructionBoqLineItems schema, construction-boq-service.ts,'
+  - bun was missing from this sandbox (only bunx existed) -- installed via bun.sh/install,
+  - 'Schema: added parentLineItemId + breakdownPercentage to constructionBoqLineItems;'
+  - Migration drizzle/0265_construction_boq_hierarchy_interim_billing.sql -- HAND-WRITTEN,
+  - 'construction-boq-service.ts: computeHierarchicalAmount() (root-Main-based formula,'
+  - 'construction-boq-service.test.ts: 11 tests, all passing -- exact Owner formula'
+  - 'construction-valuation-service.ts: interim/RA billing + retention % + invoice
+    emission'
+  - Verified existing /api/construction/boq and /api/v1/construction/boq routes need
+    no
+  - 'New API routes: GET/POST /api/construction/interim-bills, GET'
+  - 'Excel BoQ importer: construction-boq-import-service.ts + API route. 5 tests including'
+  - npx tsc --noEmit clean (had to raise Node heap via NODE_OPTIONS=--max-old-space-size,
+  remaining_steps:
+  - This task's migration (drizzle/0265_*.sql) has NOT been applied to any live Supabase
+  - Because the migration is unapplied, `get_advisors(security)` has NOT been run
+  - Open PR
+  recent_commits:
+  - '705c1df5 feat: API routes for interim billing + Excel BoQ import; verify full
+    suite'
+  - '6b644152 feat: Excel BoQ importer (hierarchical rows, dot-delimited item-code
+    inference)'
+  - 'f3ab7142 feat: construction interim/RA billing + retention engine'
+  - '6d84cff2 feat: hierarchical BoQ breakdown-% (parentLineItemId + breakdownPercentage)'
+  - '40137e6a chore: register active-claim + init PROGRESS.md for hierarchical BoQ
+    breakdown task'
+  - '7ce01a38 Merge pull request #594 from FChecklist/fix/dependabot-alert-34-sharp-cve'
+  - '8dcac366 merge: resolve PROGRESS.md + ACTIVE-CLAIMS.yaml conflicts with main
+    (keep both -- append-only logs)'
+  - 'da2b38b0 Worker task-20260727-093117-fix-dependabot-alert34-sharp-cve: automated
+    checkpoint commit (credit accountant rejected auto-fix)'
+  - 'ca177aff Merge pull request #591 from FChecklist/worker/task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou'
+  - '6fd75004 ci: add real terminology-guardrail baseline for schema.ts (first-ever,
+    68 pre-existing findings) + exempt 11 Helpdesk-added dated comments across route/service
+    files'
+  note: periodic checkpoint
+- at: '2026-07-27T12:59:13.845145+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim
+  - 'Explored existing code: constructionBoqLineItems schema, construction-boq-service.ts,'
+  - bun was missing from this sandbox (only bunx existed) -- installed via bun.sh/install,
+  - 'Schema: added parentLineItemId + breakdownPercentage to constructionBoqLineItems;'
+  - Migration drizzle/0265_construction_boq_hierarchy_interim_billing.sql -- HAND-WRITTEN,
+  - 'construction-boq-service.ts: computeHierarchicalAmount() (root-Main-based formula,'
+  - 'construction-boq-service.test.ts: 11 tests, all passing -- exact Owner formula'
+  - 'construction-valuation-service.ts: interim/RA billing + retention % + invoice
+    emission'
+  - Verified existing /api/construction/boq and /api/v1/construction/boq routes need
+    no
+  - 'New API routes: GET/POST /api/construction/interim-bills, GET'
+  - 'Excel BoQ importer: construction-boq-import-service.ts + API route. 5 tests including'
+  - npx tsc --noEmit clean (had to raise Node heap via NODE_OPTIONS=--max-old-space-size,
+  remaining_steps:
+  - This task's migration (drizzle/0265_*.sql) has NOT been applied to any live Supabase
+  - Because the migration is unapplied, `get_advisors(security)` has NOT been run
+  - Open PR
+  recent_commits:
+  - '705c1df5 feat: API routes for interim billing + Excel BoQ import; verify full
+    suite'
+  - '6b644152 feat: Excel BoQ importer (hierarchical rows, dot-delimited item-code
+    inference)'
+  - 'f3ab7142 feat: construction interim/RA billing + retention engine'
+  - '6d84cff2 feat: hierarchical BoQ breakdown-% (parentLineItemId + breakdownPercentage)'
+  - '40137e6a chore: register active-claim + init PROGRESS.md for hierarchical BoQ
+    breakdown task'
+  - '7ce01a38 Merge pull request #594 from FChecklist/fix/dependabot-alert-34-sharp-cve'
+  - '8dcac366 merge: resolve PROGRESS.md + ACTIVE-CLAIMS.yaml conflicts with main
+    (keep both -- append-only logs)'
+  - 'da2b38b0 Worker task-20260727-093117-fix-dependabot-alert34-sharp-cve: automated
+    checkpoint commit (credit accountant rejected auto-fix)'
+  - 'ca177aff Merge pull request #591 from FChecklist/worker/task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou'
+  - '6fd75004 ci: add real terminology-guardrail baseline for schema.ts (first-ever,
+    68 pre-existing findings) + exempt 11 Helpdesk-added dated comments across route/service
+    files'
+  note: periodic checkpoint
+- at: '2026-07-27T13:03:19.610959+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim
+  - 'Explored existing code: constructionBoqLineItems schema, construction-boq-service.ts,'
+  - bun was missing from this sandbox (only bunx existed) -- installed via bun.sh/install,
+  - 'Schema: added parentLineItemId + breakdownPercentage to constructionBoqLineItems;'
+  - Migration drizzle/0265_construction_boq_hierarchy_interim_billing.sql -- HAND-WRITTEN,
+  - 'construction-boq-service.ts: computeHierarchicalAmount() (root-Main-based formula,'
+  - 'construction-boq-service.test.ts: 11 tests, all passing -- exact Owner formula'
+  - 'construction-valuation-service.ts: interim/RA billing + retention % + invoice
+    emission'
+  - Verified existing /api/construction/boq and /api/v1/construction/boq routes need
+    no
+  - 'New API routes: GET/POST /api/construction/interim-bills, GET'
+  - 'Excel BoQ importer: construction-boq-import-service.ts + API route. 5 tests including'
+  - npx tsc --noEmit clean (had to raise Node heap via NODE_OPTIONS=--max-old-space-size,
+  remaining_steps:
+  - This task's migration (drizzle/0265_*.sql) has NOT been applied to any live Supabase
+  - Because the migration is unapplied, `get_advisors(security)` has NOT been run
+  - Open PR
+  recent_commits:
+  - '705c1df5 feat: API routes for interim billing + Excel BoQ import; verify full
+    suite'
+  - '6b644152 feat: Excel BoQ importer (hierarchical rows, dot-delimited item-code
+    inference)'
+  - 'f3ab7142 feat: construction interim/RA billing + retention engine'
+  - '6d84cff2 feat: hierarchical BoQ breakdown-% (parentLineItemId + breakdownPercentage)'
+  - '40137e6a chore: register active-claim + init PROGRESS.md for hierarchical BoQ
+    breakdown task'
+  - '7ce01a38 Merge pull request #594 from FChecklist/fix/dependabot-alert-34-sharp-cve'
+  - '8dcac366 merge: resolve PROGRESS.md + ACTIVE-CLAIMS.yaml conflicts with main
+    (keep both -- append-only logs)'
+  - 'da2b38b0 Worker task-20260727-093117-fix-dependabot-alert34-sharp-cve: automated
+    checkpoint commit (credit accountant rejected auto-fix)'
+  - 'ca177aff Merge pull request #591 from FChecklist/worker/task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou'
+  - '6fd75004 ci: add real terminology-guardrail baseline for schema.ts (first-ever,
+    68 pre-existing findings) + exempt 11 Helpdesk-added dated comments across route/service
+    files'
+  note: quality gate failed, attempting auto-fix (1/2)
+- at: '2026-07-27T13:03:21.838706+00:00'
+  status: blocked
+  files_modified: []
+  completed_steps:
+  - Read ai-os/boss/ACTIVE-CLAIMS.yaml, confirmed no collision, registered claim
+  - 'Explored existing code: constructionBoqLineItems schema, construction-boq-service.ts,'
+  - bun was missing from this sandbox (only bunx existed) -- installed via bun.sh/install,
+  - 'Schema: added parentLineItemId + breakdownPercentage to constructionBoqLineItems;'
+  - Migration drizzle/0265_construction_boq_hierarchy_interim_billing.sql -- HAND-WRITTEN,
+  - 'construction-boq-service.ts: computeHierarchicalAmount() (root-Main-based formula,'
+  - 'construction-boq-service.test.ts: 11 tests, all passing -- exact Owner formula'
+  - 'construction-valuation-service.ts: interim/RA billing + retention % + invoice
+    emission'
+  - Verified existing /api/construction/boq and /api/v1/construction/boq routes need
+    no
+  - 'New API routes: GET/POST /api/construction/interim-bills, GET'
+  - 'Excel BoQ importer: construction-boq-import-service.ts + API route. 5 tests including'
+  - npx tsc --noEmit clean (had to raise Node heap via NODE_OPTIONS=--max-old-space-size,
+  remaining_steps:
+  - This task's migration (drizzle/0265_*.sql) has NOT been applied to any live Supabase
+  - Because the migration is unapplied, `get_advisors(security)` has NOT been run
+  - Open PR
+  recent_commits:
+  - '705c1df5 feat: API routes for interim billing + Excel BoQ import; verify full
+    suite'
+  - '6b644152 feat: Excel BoQ importer (hierarchical rows, dot-delimited item-code
+    inference)'
+  - 'f3ab7142 feat: construction interim/RA billing + retention engine'
+  - '6d84cff2 feat: hierarchical BoQ breakdown-% (parentLineItemId + breakdownPercentage)'
+  - '40137e6a chore: register active-claim + init PROGRESS.md for hierarchical BoQ
+    breakdown task'
+  - '7ce01a38 Merge pull request #594 from FChecklist/fix/dependabot-alert-34-sharp-cve'
+  - '8dcac366 merge: resolve PROGRESS.md + ACTIVE-CLAIMS.yaml conflicts with main
+    (keep both -- append-only logs)'
+  - 'da2b38b0 Worker task-20260727-093117-fix-dependabot-alert34-sharp-cve: automated
+    checkpoint commit (credit accountant rejected auto-fix)'
+  - 'ca177aff Merge pull request #591 from FChecklist/worker/task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou'
+  - '6fd75004 ci: add real terminology-guardrail baseline for schema.ts (first-ever,
+    68 pre-existing findings) + exempt 11 Helpdesk-added dated comments across route/service
+    files'
+  note: 'credit accountant rejected auto-fix attempt 1, no further metered spend without
+    human review: {"approved": false, "increment_number": 2, "reason": "existing software/mechanism
+    already covers this (system_index match) -- use it instead of spending AI credits",
+    "reviewer": "deterministic"}'
+- at: '2026-07-27T13:19:18.260988+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '705c1df5 feat: API routes for interim billing + Excel BoQ import; verify full
+    suite'
+  - '6b644152 feat: Excel BoQ importer (hierarchical rows, dot-delimited item-code
+    inference)'
+  - 'f3ab7142 feat: construction interim/RA billing + retention engine'
+  - '6d84cff2 feat: hierarchical BoQ breakdown-% (parentLineItemId + breakdownPercentage)'
+  - '40137e6a chore: register active-claim + init PROGRESS.md for hierarchical BoQ
+    breakdown task'
+  - '7ce01a38 Merge pull request #594 from FChecklist/fix/dependabot-alert-34-sharp-cve'
+  - '8dcac366 merge: resolve PROGRESS.md + ACTIVE-CLAIMS.yaml conflicts with main
+    (keep both -- append-only logs)'
+  - 'da2b38b0 Worker task-20260727-093117-fix-dependabot-alert34-sharp-cve: automated
+    checkpoint commit (credit accountant rejected auto-fix)'
+  - 'ca177aff Merge pull request #591 from FChecklist/worker/task-20260727-101134-erp-helpdesk-gaps--tiered-sla---team-rou'
+  - '6fd75004 ci: add real terminology-guardrail baseline for schema.ts (first-ever,
+    68 pre-existing findings) + exempt 11 Helpdesk-added dated comments across route/service
+    files'
+  note: "Superboss rejected: https://github.com/FChecklist/compliance-tracker/pull/596\
+    \ \u2014 see review.json for issues"
+execution_seconds: 1258
+restart_count: 1
+token_usage:
+  input_tokens: 224
+  cache_creation_input_tokens: 226971
+  cache_read_input_tokens: 17339050
+  output_tokens: 87720
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 226971
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 525
+    cache_read_input_tokens: 248735
+    cache_creation_input_tokens: 1920
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 1920
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-29T21:04:25.948091+00:00'

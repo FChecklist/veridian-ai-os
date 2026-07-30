@@ -1,0 +1,357 @@
+id: task-20260720-022703-superboss-v2-plan--unified-bottom-nav-st
+title: 'SUPERBOSS_V2_PLAN: Unified bottom-nav strip'
+status: completed
+repo: compliance-tracker
+branch: worker/task-20260720-022703-superboss-v2-plan--unified-bottom-nav-st
+workspace: /opt/veridian/ai-os/tasks/task-20260720-022703-superboss-v2-plan--unified-bottom-nav-st/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260720-022703-superboss-v2-plan--unified-bottom-nav-st
+service: veridian-worker@task-20260720-022703-superboss-v2-plan--unified-bottom-nav-st.service
+created_at: '2026-07-20T02:27:04.814026+00:00'
+last_checkpoint_at: '2026-07-20T02:49:18.296590+00:00'
+completed_steps: &id002
+- Read governance docs (CONSTITUTION/AGENTS/ACTIVE-CLAIMS), the v2 plan's V2-2 spec,
+  the design law (PLATFORM_STRATEGY.md:178/216), the kit's shell components (AppShellFrame/AppSidebar)
+  + token class `.veri-nav-item`, and the app's AppShell/AppSidebar wiring.
+- 'Registered ACTIVE-CLAIMS entry for V2-2-UNIFIED-NAV (app nav surface: AppShell.tsx
+  + new BottomNavStrip.tsx), committed + pushed on its own. No collision with any
+  other active entry.'
+- "Decision recorded (also in the ACTIVE-CLAIMS entry): build `BottomNavStrip` in\
+  \ compliance-tracker, reusing the kit's `NavItem` type + the `.veri-nav-item`/`.veri-nav-item.active`\
+  \ token class the kit's globals.css already defines (no new token system). The kit's\
+  \ own README scope boundary is \"product owns nav data; kit owns shared shell only\"\
+  \ \u2014 a strip bound to product routes is product nav-data + thin horizontal layout,\
+  \ not a multi-product shared primitive. Promote to kit only if a second FChecklist\
+  \ product needs it (additive-when-justified)."
+- "Built `src/components/BottomNavStrip.tsx` \u2014 horizontal nav strip reusing kit\
+  \ `NavItem` type + `.veri-nav-item`/`.veri-nav-item.active` token class, route-aware\
+  \ active state (mirrors the kit sidebar's `pathname === href || pathname.startsWith(href\
+  \ + \"/\")` rule via `isBottomNavActive`), `overflow-x-auto` horizontal scroll on\
+  \ narrow widths (scrolls, doesn't wrap \u2014 see file header for why wrapping is\
+  \ avoided), `print:hidden`."
+- "Extracted pure testable helpers into `src/components/bottom-nav-items.ts` (`BOTTOM_NAV_ITEMS`,\
+  \ `isBottomNavActive`, `bottomNavLabelKey`) \u2014 same pattern as `src/lib/risk-classification.ts`\
+  \ + its `.test.ts`, so the route\u2192item mapping and active-state matching are\
+  \ unit-testable under `bun test`."
+- "Wired `BottomNavStrip` into `AppShell.tsx` in BOTH branches \u2014 the `veriChatV2Enabled`\
+  \ (kit `AppShellFrame`) branch (after `{children}`, inside the cream content wrapper)\
+  \ AND the legacy branch (after `{children}`, inside `<main>`) \u2014 so it's live\
+  \ across all `(app)` pages."
+- Mapped the design-law's 6 items (Chat / To Do / Analytics / Approval / Email / New)
+  to real routes, honestly reconciling the two that don't exist as routes yet (`/email`,
+  `/new`).
+- Added `Nav.bottomNav.*` i18n namespace to `messages/en.json` + `messages/hi.json`
+  (both languages populated).
+- "Wrote real tests for the bottom-nav logic (`bottom-nav-items.test.ts`, 9 tests\
+  \ / 27 assertions, all passing) \u2014 see \"Test approach (honest)\" below."
+- "Added `.no-scrollbar` utility to `src/app/globals.css` `@layer utilities` (the\
+  \ strip's horizontal scrollbar is hidden so it doesn't clutter the shell's bottom\
+  \ edge; the kit's own globals.css doesn't define this \u2014 the kit's sidebar is\
+  \ vertical)."
+- "Fixed a JSX bug found during verification: `toSharedItem` originally rendered `<icon\
+  \ .../>` (lowercase) \u2014 JSX treats a lowercase tag as a DOM element, so the\
+  \ lucide icons would silently not render. Replaced with a capitalized-destructure\
+  \ `BottomNavIcon({ icon: Icon })` matching the app's own `SidebarIcon` pattern in\
+  \ AppSidebar.tsx."
+- '`tsc --noEmit` clean (exit 0). `eslint` clean on all changed/new files (exit 0).
+  `bun test` clean (9 pass / 0 fail).'
+remaining_steps: &id003
+- "Open PR (Tier2 \u2014 AppShell = app-shell surface touched \u2192 holds for Owner\
+  \ sign-off, not self-merged). PR #489 opened against `main`: https://github.com/FChecklist/compliance-tracker/pull/489"
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-20T02:27:05.811665+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  - 'a52436c0 ACTIVE-CLAIMS.yaml: move AIROUTER-01 Phase 2 claim to recently_completed
+    (PR #483)'
+  note: worker started (resume=0, lifetime invocation 1/20)
+- at: '2026-07-20T02:32:06.360777+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  - 'a52436c0 ACTIVE-CLAIMS.yaml: move AIROUTER-01 Phase 2 claim to recently_completed
+    (PR #483)'
+  note: periodic checkpoint
+- at: '2026-07-20T02:37:06.749955+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - messages/en.json
+  - messages/hi.json
+  completed_steps:
+  - Read governance docs (CONSTITUTION/AGENTS/ACTIVE-CLAIMS), the v2 plan's V2-2 spec,
+    the design law (PLATFORM_STRATEGY.md:178/216), the kit's shell components (AppShellFrame/AppSidebar)
+    + token class `.veri-nav-item`, and the app's AppShell/AppSidebar wiring.
+  - 'Registered ACTIVE-CLAIMS entry for V2-2-UNIFIED-NAV (app nav surface: AppShell.tsx
+    + new BottomNavStrip.tsx), committed + pushed on its own. No collision with any
+    other active entry.'
+  - "Decision recorded (also in the ACTIVE-CLAIMS entry): build `BottomNavStrip` in\
+    \ compliance-tracker, reusing the kit's `NavItem` type + the `.veri-nav-item`/`.veri-nav-item.active`\
+    \ token class the kit's globals.css already defines (no new token system). The\
+    \ kit's own README scope boundary is \"product owns nav data; kit owns shared\
+    \ shell only\" \u2014 a strip bound to product routes is product nav-data + thin\
+    \ horizontal layout, not a multi-product shared primitive. Promote to kit only\
+    \ if a second FChecklist product needs it (additive-when-justified)."
+  remaining_steps:
+  - "Build `src/components/BottomNavStrip.tsx` \u2014 a horizontal nav strip reusing\
+    \ kit `NavItem` type + `.veri-nav-item` token class, route-aware active state,\
+    \ responsive (wraps/scrolls on narrow widths), `print:hidden`."
+  - Wire `BottomNavStrip` into `AppShell.tsx` above the composer/main content, in
+    BOTH the `veriChatV2Enabled` (kit `AppShellFrame`) branch and the legacy branch,
+    so it's live across all `(app)` pages.
+  - Map the design-law's 6 items (Chat / To Do / Analytics / Approval / Email / New)
+    to real routes, honestly reconciling the two that don't exist as routes yet (`/email`,
+    `/new`).
+  - Write real component tests for `BottomNavStrip` (renders items, active state on
+    current route, click navigates).
+  - '`tsc` + `lint` + `test` clean.'
+  - "Open PR (Tier2 \u2014 AppShell = app-shell schema touched \u2192 holds for Owner\
+    \ sign-off, not self-merged)."
+  recent_commits:
+  - 314e77bf Register ACTIVE-CLAIMS entry for V2-2 unified bottom-nav strip (task
+    V2-2-UNIFIED-NAV)
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: periodic checkpoint
+- at: '2026-07-20T02:39:18.315898+00:00'
+  status: failed
+  files_modified:
+  - PROGRESS.md
+  - messages/en.json
+  - messages/hi.json
+  - src/components/AppShell.tsx
+  - src/components/BottomNavStrip.tsx
+  - src/components/bottom-nav-items.test.ts
+  - src/components/bottom-nav-items.ts
+  completed_steps:
+  - Read governance docs (CONSTITUTION/AGENTS/ACTIVE-CLAIMS), the v2 plan's V2-2 spec,
+    the design law (PLATFORM_STRATEGY.md:178/216), the kit's shell components (AppShellFrame/AppSidebar)
+    + token class `.veri-nav-item`, and the app's AppShell/AppSidebar wiring.
+  - 'Registered ACTIVE-CLAIMS entry for V2-2-UNIFIED-NAV (app nav surface: AppShell.tsx
+    + new BottomNavStrip.tsx), committed + pushed on its own. No collision with any
+    other active entry.'
+  - "Decision recorded (also in the ACTIVE-CLAIMS entry): build `BottomNavStrip` in\
+    \ compliance-tracker, reusing the kit's `NavItem` type + the `.veri-nav-item`/`.veri-nav-item.active`\
+    \ token class the kit's globals.css already defines (no new token system). The\
+    \ kit's own README scope boundary is \"product owns nav data; kit owns shared\
+    \ shell only\" \u2014 a strip bound to product routes is product nav-data + thin\
+    \ horizontal layout, not a multi-product shared primitive. Promote to kit only\
+    \ if a second FChecklist product needs it (additive-when-justified)."
+  remaining_steps:
+  - "Build `src/components/BottomNavStrip.tsx` \u2014 a horizontal nav strip reusing\
+    \ kit `NavItem` type + `.veri-nav-item` token class, route-aware active state,\
+    \ responsive (wraps/scrolls on narrow widths), `print:hidden`."
+  - Wire `BottomNavStrip` into `AppShell.tsx` above the composer/main content, in
+    BOTH the `veriChatV2Enabled` (kit `AppShellFrame`) branch and the legacy branch,
+    so it's live across all `(app)` pages.
+  - Map the design-law's 6 items (Chat / To Do / Analytics / Approval / Email / New)
+    to real routes, honestly reconciling the two that don't exist as routes yet (`/email`,
+    `/new`).
+  - Write real component tests for `BottomNavStrip` (renders items, active state on
+    current route, click navigates).
+  - '`tsc` + `lint` + `test` clean.'
+  - "Open PR (Tier2 \u2014 AppShell = app-shell schema touched \u2192 holds for Owner\
+    \ sign-off, not self-merged)."
+  recent_commits:
+  - 314e77bf Register ACTIVE-CLAIMS entry for V2-2 unified bottom-nav strip (task
+    V2-2-UNIFIED-NAV)
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: worker exited with code 1; systemd will retry from this checkpoint up to the
+    configured burst limit before giving up
+- at: '2026-07-20T02:39:48.950478+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - messages/en.json
+  - messages/hi.json
+  - src/components/AppShell.tsx
+  - src/components/BottomNavStrip.tsx
+  - src/components/bottom-nav-items.test.ts
+  - src/components/bottom-nav-items.ts
+  completed_steps:
+  - Read governance docs (CONSTITUTION/AGENTS/ACTIVE-CLAIMS), the v2 plan's V2-2 spec,
+    the design law (PLATFORM_STRATEGY.md:178/216), the kit's shell components (AppShellFrame/AppSidebar)
+    + token class `.veri-nav-item`, and the app's AppShell/AppSidebar wiring.
+  - 'Registered ACTIVE-CLAIMS entry for V2-2-UNIFIED-NAV (app nav surface: AppShell.tsx
+    + new BottomNavStrip.tsx), committed + pushed on its own. No collision with any
+    other active entry.'
+  - "Decision recorded (also in the ACTIVE-CLAIMS entry): build `BottomNavStrip` in\
+    \ compliance-tracker, reusing the kit's `NavItem` type + the `.veri-nav-item`/`.veri-nav-item.active`\
+    \ token class the kit's globals.css already defines (no new token system). The\
+    \ kit's own README scope boundary is \"product owns nav data; kit owns shared\
+    \ shell only\" \u2014 a strip bound to product routes is product nav-data + thin\
+    \ horizontal layout, not a multi-product shared primitive. Promote to kit only\
+    \ if a second FChecklist product needs it (additive-when-justified)."
+  remaining_steps:
+  - "Build `src/components/BottomNavStrip.tsx` \u2014 a horizontal nav strip reusing\
+    \ kit `NavItem` type + `.veri-nav-item` token class, route-aware active state,\
+    \ responsive (wraps/scrolls on narrow widths), `print:hidden`."
+  - Wire `BottomNavStrip` into `AppShell.tsx` above the composer/main content, in
+    BOTH the `veriChatV2Enabled` (kit `AppShellFrame`) branch and the legacy branch,
+    so it's live across all `(app)` pages.
+  - Map the design-law's 6 items (Chat / To Do / Analytics / Approval / Email / New)
+    to real routes, honestly reconciling the two that don't exist as routes yet (`/email`,
+    `/new`).
+  - Write real component tests for `BottomNavStrip` (renders items, active state on
+    current route, click navigates).
+  - '`tsc` + `lint` + `test` clean.'
+  - "Open PR (Tier2 \u2014 AppShell = app-shell schema touched \u2192 holds for Owner\
+    \ sign-off, not self-merged)."
+  recent_commits:
+  - 314e77bf Register ACTIVE-CLAIMS entry for V2-2 unified bottom-nav strip (task
+    V2-2-UNIFIED-NAV)
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: worker started (resume=1, lifetime invocation 2/20)
+- at: '2026-07-20T02:44:49.338714+00:00'
+  status: in_progress
+  files_modified:
+  - PROGRESS.md
+  - messages/en.json
+  - messages/hi.json
+  - src/app/globals.css
+  - src/components/AppShell.tsx
+  - src/components/BottomNavStrip.tsx
+  - src/components/bottom-nav-items.test.ts
+  - src/components/bottom-nav-items.ts
+  completed_steps:
+  - Read governance docs (CONSTITUTION/AGENTS/ACTIVE-CLAIMS), the v2 plan's V2-2 spec,
+    the design law (PLATFORM_STRATEGY.md:178/216), the kit's shell components (AppShellFrame/AppSidebar)
+    + token class `.veri-nav-item`, and the app's AppShell/AppSidebar wiring.
+  - 'Registered ACTIVE-CLAIMS entry for V2-2-UNIFIED-NAV (app nav surface: AppShell.tsx
+    + new BottomNavStrip.tsx), committed + pushed on its own. No collision with any
+    other active entry.'
+  - "Decision recorded (also in the ACTIVE-CLAIMS entry): build `BottomNavStrip` in\
+    \ compliance-tracker, reusing the kit's `NavItem` type + the `.veri-nav-item`/`.veri-nav-item.active`\
+    \ token class the kit's globals.css already defines (no new token system). The\
+    \ kit's own README scope boundary is \"product owns nav data; kit owns shared\
+    \ shell only\" \u2014 a strip bound to product routes is product nav-data + thin\
+    \ horizontal layout, not a multi-product shared primitive. Promote to kit only\
+    \ if a second FChecklist product needs it (additive-when-justified)."
+  remaining_steps:
+  - "Build `src/components/BottomNavStrip.tsx` \u2014 a horizontal nav strip reusing\
+    \ kit `NavItem` type + `.veri-nav-item` token class, route-aware active state,\
+    \ responsive (wraps/scrolls on narrow widths), `print:hidden`."
+  - Wire `BottomNavStrip` into `AppShell.tsx` above the composer/main content, in
+    BOTH the `veriChatV2Enabled` (kit `AppShellFrame`) branch and the legacy branch,
+    so it's live across all `(app)` pages.
+  - Map the design-law's 6 items (Chat / To Do / Analytics / Approval / Email / New)
+    to real routes, honestly reconciling the two that don't exist as routes yet (`/email`,
+    `/new`).
+  - Write real component tests for `BottomNavStrip` (renders items, active state on
+    current route, click navigates).
+  - '`tsc` + `lint` + `test` clean.'
+  - "Open PR (Tier2 \u2014 AppShell = app-shell schema touched \u2192 holds for Owner\
+    \ sign-off, not self-merged)."
+  recent_commits:
+  - 314e77bf Register ACTIVE-CLAIMS entry for V2-2 unified bottom-nav strip (task
+    V2-2-UNIFIED-NAV)
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  - 203bf615 Merge remote-tracking branch 'origin/main' into worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5
+  - '0aa67221 Merge pull request #482 from FChecklist/worker/task-20260719-132247-cost-incident-rca--api-called--11000-tim'
+  note: periodic checkpoint
+- at: '2026-07-20T02:49:18.296590+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - '9759dfe0 PROGRESS.md: mark V2-2 PR #489 open, DONE CRITERIA met (holds for Owner)'
+  - '1135a320 V2-2: build unified bottom-nav strip (task V2-2-UNIFIED-NAV)'
+  - 314e77bf Register ACTIVE-CLAIMS entry for V2-2 unified bottom-nav strip (task
+    V2-2-UNIFIED-NAV)
+  - '5448c1a4 Super Boss v2: reevaluate 2045 Review-Framework rows + extended plan
+    (#487)'
+  - '8bdd108b Merge pull request #485 from FChecklist/worker/task-20260719-143503-superboss--evaluate-all-pending-work---b'
+  - '26b8eaec PROGRESS.md: mark PR #485 all-required-checks-green (DONE CRITERIA met)'
+  - 95e537cf Register SUPERBOSS_IMPLEMENTATION_PLAN_2026-07-19.md in ai-os/OS.yaml
+    index
+  - e7e79db6 Merge origin/main into SUPERBOSS-EVALUATE-AND-PLAN branch
+  - 'fca67fef Super Boss: evaluate all pending work + implementation plan (2026-07-19)'
+  - '3b9b2cc6 Merge pull request #483 from FChecklist/worker/task-20260719-122711-airouter-01-phase-2--software-team-l0-l5'
+  note: worker finished, no changes to commit
+execution_seconds: 1301
+restart_count: 1
+token_usage:
+  input_tokens: 1874579
+  cache_creation_input_tokens: 0
+  cache_read_input_tokens: 0
+  output_tokens: 21381
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 0
+    ephemeral_5m_input_tokens: 0
+  inference_geo: ''
+  iterations: []
+  speed: standard
+master_synced_at: '2026-07-20T03:00:06.012386+00:00'

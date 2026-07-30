@@ -1,0 +1,134 @@
+id: task-20260726-112102-fix-branch-resolution-edge-case--local-a
+title: 'Fix branch-resolution edge case: local alias vs remote tracking branch name'
+status: completed
+repo: claude-control
+branch: worker/task-20260726-112102-fix-branch-resolution-edge-case--local-a
+workspace: /opt/veridian/ai-os/tasks/task-20260726-112102-fix-branch-resolution-edge-case--local-a/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-112102-fix-branch-resolution-edge-case--local-a
+service: veridian-worker@task-20260726-112102-fix-branch-resolution-edge-case--local-a.service
+created_at: '2026-07-26T11:21:04.012676+00:00'
+last_checkpoint_at: '2026-07-26T11:24:11.448895+00:00'
+completed_steps: &id002
+- 'Read PR #87''s branch-resolution logic in `scripts/veridian-task.py::cmd_checkpoint`
+  (~line 495)'
+- Fixed resolution to prefer `git rev-parse --abbrev-ref --symbolic-full-name @{upstream}`
+  (stripping the leading remote/ prefix), falling back to local HEAD branch name only
+  when no upstream is set
+- Added regression test `test_branch_resolution_prefers_upstream_over_local_alias`
+  in `tests/veridian_task_branch_resolution_test.py`, reproducing the `pr80-work`
+  incident (local alias checked out via `git checkout -b <local> origin/<real-branch>`,
+  real branch resolved via upstream tracking)
+- 'Verified original PR #87 tests still pass (`test_branch_resolution_reflects_real_worker_pushed_branch`,
+  `test_branch_resolution_noop_when_still_on_original_branch`)'
+- Verified `tests/test_veridian_task_adopt.py` (shares convention) still passes
+- Committed and pushed
+remaining_steps: &id003
+- Open PR against claude-control (do not merge)
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T11:21:08.620323+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - '9d69805 Merge pull request #82 from FChecklist/worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'
+  - 3b9173c Auto-sync 10 server task(s) to master controller
+  - 6496736 Auto-sync 14 server task(s) to master controller
+  - '8458277 Merge pull request #87 from FChecklist/worker/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis'
+  - '7e6cc4b Merge pull request #86 from FChecklist/worker/task-20260726-102517-analyze-update--server-engines-registrie'
+  - 'cdbf6d7 Fix tier1 merge-not-executed bug: empty PR_URL silently fell back to
+    gh''s current-branch resolution, which for-real merged claude-control PR #84 (2026-07-26)
+    via a completely unrelated task''s own approve+tier1 review.'
+  - ab21597 Re-verify 20-engine/10-gateway phase state, register 4 new registries
+    entries
+  - '581e734 Close 4 real AUDIT: REJECT gaps in OWNER_ENGINE-to-TASK_GATEWAY dispatch
+    (PR #82 round 2)'
+  - '581e042 Merge pull request #84 from FChecklist/recovered-lifecycle-fix-e6c7049'
+  - 615ee53 Wire OWNER_ENGINE into the TASK lifecycle pipeline as one integrated flow
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T11:22:57.725738+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Read PR #87''s branch-resolution logic in `scripts/veridian-task.py::cmd_checkpoint`
+    (~line 495)'
+  - Fixed resolution to prefer `git rev-parse --abbrev-ref --symbolic-full-name @{upstream}`
+    (stripping the leading remote/ prefix), falling back to local HEAD branch name
+    only when no upstream is set
+  - Added regression test `test_branch_resolution_prefers_upstream_over_local_alias`
+    in `tests/veridian_task_branch_resolution_test.py`, reproducing the `pr80-work`
+    incident (local alias checked out via `git checkout -b <local> origin/<real-branch>`,
+    real branch resolved via upstream tracking)
+  - 'Verified original PR #87 tests still pass (`test_branch_resolution_reflects_real_worker_pushed_branch`,
+    `test_branch_resolution_noop_when_still_on_original_branch`)'
+  - Verified `tests/test_veridian_task_adopt.py` (shares convention) still passes
+  - Committed and pushed
+  remaining_steps:
+  - Open PR against claude-control (do not merge)
+  recent_commits:
+  - 0bd63d1 Prefer upstream tracking branch over local alias in branch resolution
+  - '9d69805 Merge pull request #82 from FChecklist/worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'
+  - 3b9173c Auto-sync 10 server task(s) to master controller
+  - 6496736 Auto-sync 14 server task(s) to master controller
+  - '8458277 Merge pull request #87 from FChecklist/worker/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis'
+  - '7e6cc4b Merge pull request #86 from FChecklist/worker/task-20260726-102517-analyze-update--server-engines-registrie'
+  - 'cdbf6d7 Fix tier1 merge-not-executed bug: empty PR_URL silently fell back to
+    gh''s current-branch resolution, which for-real merged claude-control PR #84 (2026-07-26)
+    via a completely unrelated task''s own approve+tier1 review.'
+  - ab21597 Re-verify 20-engine/10-gateway phase state, register 4 new registries
+    entries
+  - '581e734 Close 4 real AUDIT: REJECT gaps in OWNER_ENGINE-to-TASK_GATEWAY dispatch
+    (PR #82 round 2)'
+  - '581e042 Merge pull request #84 from FChecklist/recovered-lifecycle-fix-e6c7049'
+  note: quality gates passed, pushed branch worker/task-20260726-112102-fix-branch-resolution-edge-case--local-a,
+    awaiting review
+- at: '2026-07-26T11:24:11.448895+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 0bd63d1 Prefer upstream tracking branch over local alias in branch resolution
+  - '9d69805 Merge pull request #82 from FChecklist/worker/task-20260726-092433-wire-owner-engine---task-lifecycle-into'
+  - 3b9173c Auto-sync 10 server task(s) to master controller
+  - 6496736 Auto-sync 14 server task(s) to master controller
+  - '8458277 Merge pull request #87 from FChecklist/worker/task-20260726-101817-fix-tier1-merge-not-executed-bug---regis'
+  - '7e6cc4b Merge pull request #86 from FChecklist/worker/task-20260726-102517-analyze-update--server-engines-registrie'
+  - 'cdbf6d7 Fix tier1 merge-not-executed bug: empty PR_URL silently fell back to
+    gh''s current-branch resolution, which for-real merged claude-control PR #84 (2026-07-26)
+    via a completely unrelated task''s own approve+tier1 review.'
+  - ab21597 Re-verify 20-engine/10-gateway phase state, register 4 new registries
+    entries
+  - '581e734 Close 4 real AUDIT: REJECT gaps in OWNER_ENGINE-to-TASK_GATEWAY dispatch
+    (PR #82 round 2)'
+  - '581e042 Merge pull request #84 from FChecklist/recovered-lifecycle-fix-e6c7049'
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/claude-control/pull/88'
+execution_seconds: 108
+restart_count: 0
+token_usage:
+  input_tokens: 36
+  cache_creation_input_tokens: 29913
+  cache_read_input_tokens: 814308
+  output_tokens: 8740
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 29913
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 286
+    cache_read_input_tokens: 52788
+    cache_creation_input_tokens: 809
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 809
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-26T12:00:09.833785+00:00'

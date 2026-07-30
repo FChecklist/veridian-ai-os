@@ -1,0 +1,22 @@
+## OBJECTIVE
+Independently re-verify, from real current main-branch code and real test output, whether the ERP Helpdesk/PM/HR feature work claimed by PRs #591/#592/#593 is genuinely complete. This is a retry: an earlier attempt at this same task (task-20260727-153100) hung for 14+ hours with only ~2 minutes of real CPU time consumed and never produced output; it was killed as stalled, and no findings file exists anywhere in the repo history. Treat this as a fresh, from-scratch verification, not a resume.
+
+## KNOWN_CONTEXT
+Real, previously-merged PRs claiming to close this scope: PR #591 (Helpdesk: tiered SLA + team routing + business-hours logic), PR #592, PR #593 (exact scope of each: read each PR's own description and PROGRESS.md entry directly from git history, do not assume from title alone).
+
+## SCOPE
+For each of the 3 PRs: (1) extract the exact list of gaps/features each one's PR description or PROGRESS.md entry claims to close; (2) verify each claim against the real current main-branch code (not the PR's own diff, which may have been altered by later commits) -- read the actual files, do not trust the PR description at face value; (3) run the real test suites covering this code and report actual pass/fail, not claimed results.
+
+## SUCCESS_CRITERIA
+A structured findings report, one section per PR (591/592/593), each listing: claimed items (from checklist), which are verified present in current main-branch code with evidence (file:line), which are missing or incomplete with evidence, and real test results. Verify by actually running:
+npx tsc --noEmit
+bun test src/lib/services src/app/api
+
+## EXPECTED_OUTPUT
+A findings report written to a new file ai-os/audits/functionality_completion_reaudit_2026-07-28.md on a new branch, with a PR opened. Requires a fresh supervisor audit before merge; do not merge yourself.
+
+## CONSTRAINTS
+Every currently-disabled cron entry and systemd .timer unit on the live server must stay in its present disabled state throughout this task. If this task itself appears to stall (no real progress for over 30 minutes based on your own tool-call cadence), checkpoint your findings so far into the output file before continuing, so a killed/restarted run never loses completed work.
+
+## COMPLEXITY_TIER
+judgment

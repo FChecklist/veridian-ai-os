@@ -1,0 +1,154 @@
+id: task-20260726-162246-resolve-pr89-merge-conflict--phase-2-pol
+title: Resolve PR89 merge conflict (Phase 2 policy unification)
+status: completed
+repo: claude-control
+branch: worker/task-20260726-162246-resolve-pr89-merge-conflict--phase-2-pol
+workspace: /opt/veridian/ai-os/tasks/task-20260726-162246-resolve-pr89-merge-conflict--phase-2-pol/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260726-162246-resolve-pr89-merge-conflict--phase-2-pol
+service: veridian-worker@task-20260726-162246-resolve-pr89-merge-conflict--phase-2-pol.service
+created_at: '2026-07-26T16:22:47.313910+00:00'
+last_checkpoint_at: '2026-07-26T16:27:48.865474+00:00'
+completed_steps: &id002
+- 'Confirmed PR #89 head branch: `worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni`
+  (base `master`), state CONFLICTING/DIRTY'
+- Cloned that real branch directly (`pr89-work/`), fetched `origin/master`
+- 'Merged `origin/master` -- single conflict, `ai-os/MASTER_INDEX.yaml` (`ddl_preflight_authorization_gate`
+  entry''s `status:` field, both sides re-verifying the same PR #79 merge via different
+  methods)'
+- Resolved by merging both sides' status text into one combined field (kept both the
+  `gh api` re-verification from origin/master and the `git log` re-check + Phase 2
+  gap-closure note from this branch) -- no already-approved Phase 2 logic touched,
+  only registry metadata text
+- Verified no remaining conflict markers; YAML parses clean
+- Committed merge (`ffa86b8`)
+- 'Ran Phase 2 / policy-related tests: `tests/test_ddl_authorization_check.py` (28
+  passed), `tests/test_gateway_task_integration.py` (12 passed), `scripts/test_tight_task_validation.py`
+  (6 passed)'
+- 'Pushed merge commit directly to PR #89''s own existing branch (no new branch/PR
+  created)'
+- Verified `gh pr view 89 --json mergeable` -> `MERGEABLE`, `mergeStateStatus` ->
+  `CLEAN`
+remaining_steps: &id003
+- None -- task complete
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-26T16:22:51.917813+00:00'
+  status: in_progress
+  files_modified: []
+  completed_steps: []
+  remaining_steps:
+  - Not started
+  recent_commits:
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  - 485281c Merge remote-tracking branch 'origin/master' into pr85-local
+  note: worker started (resume=0, lifetime invocation 1/20, pre-flight passed)
+- at: '2026-07-26T16:25:18.667385+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps:
+  - 'Confirmed PR #89 head branch: `worker/task-20260726-154345-phase-2--policy-rule-decision-engine-uni`
+    (base `master`), state CONFLICTING/DIRTY'
+  - Cloned that real branch directly (`pr89-work/`), fetched `origin/master`
+  - 'Merged `origin/master` -- single conflict, `ai-os/MASTER_INDEX.yaml` (`ddl_preflight_authorization_gate`
+    entry''s `status:` field, both sides re-verifying the same PR #79 merge via different
+    methods)'
+  - Resolved by merging both sides' status text into one combined field (kept both
+    the `gh api` re-verification from origin/master and the `git log` re-check + Phase
+    2 gap-closure note from this branch) -- no already-approved Phase 2 logic touched,
+    only registry metadata text
+  - Verified no remaining conflict markers; YAML parses clean
+  - Committed merge (`ffa86b8`)
+  - 'Ran Phase 2 / policy-related tests: `tests/test_ddl_authorization_check.py` (28
+    passed), `tests/test_gateway_task_integration.py` (12 passed), `scripts/test_tight_task_validation.py`
+    (6 passed)'
+  - 'Pushed merge commit directly to PR #89''s own existing branch (no new branch/PR
+    created)'
+  - Verified `gh pr view 89 --json mergeable` -> `MERGEABLE`, `mergeStateStatus` ->
+    `CLEAN`
+  remaining_steps:
+  - None -- task complete
+  recent_commits:
+  - 'fb77233 Worker task-20260726-162246-resolve-pr89-merge-conflict--phase-2-pol:
+    automated checkpoint commit'
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  note: quality gates passed, pushed branch worker/task-20260726-162246-resolve-pr89-merge-conflict--phase-2-pol,
+    awaiting review
+- at: '2026-07-26T16:27:48.865474+00:00'
+  status: blocked
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 'fb77233 Worker task-20260726-162246-resolve-pr89-merge-conflict--phase-2-pol:
+    automated checkpoint commit'
+  - 'ce3df3f X_POST_AI_ANALYSIS: append 4 new X post analyses gathered via live browser
+    session'
+  - '0e1d528 Merge pull request #90 from FChecklist/worker/task-20260726-154348-complete-system-scan--server-supabase-ve'
+  - '05990f1 MASTER_INDEX.yaml: add dated cross-system verification summary'
+  - '035b913 MASTER_INDEX.yaml: re-verify + correct 4 more stale PR/catalog statuses'
+  - 'bfd8fc0 MASTER_INDEX.yaml: fix 2 real registry path/citation drifts found by
+    fresh scan'
+  - '0c247a8 Merge pull request #85 from FChecklist/worker/task-20260726-102523-analyze-update--vercel-github-current-st'
+  - e6cd9d0 Auto-sync 7 server task(s) to master controller
+  - '970ac5e Merge pull request #79 from FChecklist/worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to'
+  - fc237c3 Merge remote-tracking branch 'origin/master' into worker/task-20260726-082342-add-ddl-pre-flight-authorization-gate-to
+  note: "Superboss rejected: https://github.com/FChecklist/claude-control/pull/91\
+    \ \u2014 see review.json for issues"
+execution_seconds: 145
+restart_count: 0
+token_usage:
+  input_tokens: 58
+  cache_creation_input_tokens: 29636
+  cache_read_input_tokens: 1262984
+  output_tokens: 9589
+  server_tool_use:
+    web_search_requests: 0
+    web_fetch_requests: 0
+  service_tier: standard
+  cache_creation:
+    ephemeral_1h_input_tokens: 29636
+    ephemeral_5m_input_tokens: 0
+  inference_geo: not_available
+  iterations:
+  - input_tokens: 2
+    output_tokens: 381
+    cache_read_input_tokens: 52329
+    cache_creation_input_tokens: 991
+    cache_creation:
+      ephemeral_5m_input_tokens: 0
+      ephemeral_1h_input_tokens: 991
+    type: message
+  speed: standard
+hold_for_owner_signoff: false
+master_synced_at: '2026-07-26T18:05:35.036539+00:00'
+status_corrected_at: '2026-07-27T03:38:38.108081+00:00'
+status_correction_reason: 'Real PR #89 already merged -- patch task.yaml status to
+  completed, no redispatch.'
+real_pr_evidence:
+  mergeable: UNKNOWN
+  mergedAt: '2026-07-26T16:30:57Z'
+  reviewDecision: ''
+  state: MERGED
+  title: 'Phase 2 extension: unify DDL gate onto policy schema, build real policy
+    gate registry'
+  url: https://github.com/FChecklist/claude-control/pull/89

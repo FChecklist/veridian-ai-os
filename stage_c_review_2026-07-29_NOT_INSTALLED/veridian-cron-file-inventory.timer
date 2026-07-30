@@ -1,0 +1,11 @@
+[Unit]
+Description=Run veridian-cron-file-inventory on its scheduled cadence (jittered -- see the paired .service for why)
+
+[Timer]
+OnCalendar=*-*-* *:5/20:00
+RandomizedDelaySec=150
+AccuracySec=1s
+Persistent=false
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,57 @@
+## OBJECTIVE
+TASK REQUIRING AI JUDGMENT: build scripts/task-gateway.py, a single unified CLI that implements ai-os/STANDING_DIRECTIVE.yaml's v2_task_lifecycle_pipeline (phases 0/1/4/5/7/8/9/11) as real, callable software commands, so no AI agent or router needs to remember/sequence 8 separate scripts (superboss-register.py, veridian-task.py, postflight_audit_gate.py) in the right order manually. Deciding which existing script each subcommand should call, how to merge their outputs into one response, and how to handle partial failures across a multi-step subcommand are judgment calls, not mechanical.
+
+## SCOPE
+NEW_FILE: scripts/task-gateway.py, subcommands (exact):
+
+1. `task-gateway.py submit --text <str> --source <owner|ai_agent> --session-id <str>`
+   DOES: (a) mechanical keyword extraction per STANDING_DIRECTIVE.yaml v2_task_lifecycle_pipeline.phase_1_software_first_search.keyword_extraction_baseline_mechanical_first, (b) calls superboss-register.py log-instruction, (c) calls superboss-register.py check-duplicate + search with extracted keywords, (d) calls collision_prevention_rule check (systemctl --user list-units veridian-worker@* --state=active, cross-reference against extracted keywords)
+   OUTPUT: single JSON: {instruction_id, duplicate_found: bool, duplicate_evidence, prior_search_results: [...], active_collision_task_ids: [...]}
+
+2. `task-gateway.py start --instruction-id <id> --title <str> --repo <str> --prompt-file <path>`
+   DOES: validates prompt-file follows the literal_template (## OBJECTIVE/SCOPE/KNOWN_CONTEXT/SUCCESS_CRITERIA/EXPECTED_OUTPUT/CONSTRAINTS/COMPLEXITY_TIER all present, reject with exact missing-section list if not), calls veridian-task.py create, calls systemctl --user start, calls superboss-register.py log-work linking instruction_id to the new software_task_id
+   OUTPUT: {task_id, systemd_active: bool, work_item_id}
+
+3. `task-gateway.py log --task-id <id> --event <str>`
+   DOES: calls superboss-register.py log-action with work_item_id resolved from task_id
+   OUTPUT: {action_id}
+   PURPOSE: mandatory call sites for any AI agent doing real work under this task, so every step is logged without the agent needing to know the raw log-action syntax
+
+4. `task-gateway.py close --task-id <id> --audit-cmd <str> --evidence <str>`
+   DOES: (a) calls postflight_audit_gate.py with the EXACT audit-cmd that MUST match what was pre-defined in the task's own SUCCESS_CRITERIA at submit/start time (read prompt-file, extract SUCCESS_CRITERIA section, compare -- reject with error if audit-cmd does not match, enforcing STANDING_DIRECTIVE.yaml's verification_command_predefinition_rule), (b) if audit verdict=DONE: calls superboss-register.py log-work --status closed, (c) calls veridian-task.py checkpoint --status completed
+   OUTPUT: {audit_verdict, checkpoint_status}
+   ON_VERDICT_FAIL: does NOT close, returns {audit_verdict: FAIL, reason}, task stays open
+
+5. `task-gateway.py register-automation --path <str> --category <str> --layer <str> --purpose <str> --tags <str>`
+   DOES: calls superboss-register.py index-add (thin wrapper, exists so this is discoverable under task-gateway.py --help alongside the others, not a separate mental model)
+   OUTPUT: passthrough from index-add
+
+6. `task-gateway.py status --task-id <id>`
+   DOES: reads task.yaml, latest checkpoint, active systemd state, latest watchdog.jsonl entry for this task-id if present
+   OUTPUT: {status, last_checkpoint_note, systemd_active, watchdog_last_action}
+   PURPOSE: this is how AI "checks the log and confirms everything is complete" -- one command, one JSON answer
+
+## KNOWN_CONTEXT
+zero_duplication_check_performed: true (this wraps existing scripts, does not reimplement their logic)
+existing_scripts_being_wrapped: scripts/superboss-register.py (log-instruction, log-work, log-action, search, check-duplicate, index-add), scripts/veridian-task.py (create, checkpoint), scripts/veridian-task-watchdog.py (read-only, for status), ai-os/scripts/postflight_audit_gate.py
+reusable_by_other_ai_routers: this script takes no assumptions about WHO calls it -- any AI router/agent on this server can invoke these 6 subcommands identically, this is the explicit design goal ("use same software in all ai routers")
+db_concurrency_constraint: sequential writes only to superboss-register.sqlite, already enforced by the wrapped scripts' own flock/WAL handling
+
+## SUCCESS_CRITERIA
+TEST_1: `python3 scripts/task-gateway.py submit --text "test gateway build" --source ai_agent --session-id test-gw` returns valid JSON with a real instruction_id
+TEST_2: `python3 scripts/task-gateway.py status --task-id <any real completed task-id from today, e.g. task-20260723-142643-build-veridian-task-watchdog-service>` returns real status matching that task's actual task.yaml
+TEST_3: `python3 scripts/task-gateway.py close` with a mismatched audit-cmd (deliberately different from the target task's real SUCCESS_CRITERIA) is REJECTED -- cite the real rejection message, proving verification_command_predefinition_rule is actually enforced, not just documented
+
+## EXPECTED_OUTPUT
+COMMIT + PUSH: scripts/task-gateway.py
+UPDATE_FILE: ai-os/STANDING_DIRECTIVE.yaml -- add v2_task_gateway_software key: {file: scripts/task-gateway.py, status: LIVE, subcommands: [submit, start, log, close, register-automation, status], real_test_evidence: <cite TEST_1/2/3 real output>}
+ALSO_SYNC: copy the OWNER_DECISIONS_NEEDED_2026-07-23.yaml content from task-20260723-120458's workspace branch into the live /opt/veridian/ai-os/ directory (it currently only exists on a worker branch, not the canonical live location -- this was flagged as a real sync gap, fix it here since this task is already touching the same area)
+CHECKPOINT: status=pending_review, real command outputs as evidence
+NO_SELF_DISPATCH: standalone infrastructure task
+
+## CONSTRAINTS
+This wraps existing scripts, it does not duplicate their internal logic -- every subcommand's real work is delegated to the already-built script, task-gateway.py only sequences and merges outputs
+EVIDENCE_REQUIRED: every SUCCESS_CRITERIA test must show real command output, not a description of expected output
+
+## COMPLEXITY_TIER
+judgment

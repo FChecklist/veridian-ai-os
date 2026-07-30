@@ -1,0 +1,81 @@
+id: task-20260728-102713-adopted-re-adopt-pr-60--merge-conflict-resolutio
+title: 'Re-adopt PR 60: merge conflict resolution'
+status: completed
+repo: projexa
+branch: feat/company-dept-project-dashboard
+workspace: /opt/veridian/ai-os/tasks/task-20260728-102713-adopted-re-adopt-pr-60--merge-conflict-resolutio/workspace
+task_dir: /opt/veridian/ai-os/tasks/task-20260728-102713-adopted-re-adopt-pr-60--merge-conflict-resolutio
+service: veridian-supervisor@task-20260728-102713-adopted-re-adopt-pr-60--merge-conflict-resolutio.service
+created_at: '2026-07-28T10:27:14.782961+00:00'
+last_checkpoint_at: '2026-07-28T10:29:37.802516+00:00'
+completed_steps: &id002
+- 'Investigated whether Company/Department already exist (SCOPE item 1). Findings:'
+- Built the real Company -> Department -> Project drill-down (`/dashboard/hierarchy`),
+  each level filtering the next via real VERIDIAN calls, with membership-verified
+  `companyId` scoping (`src/lib/company-scope.ts`) so a caller can never read another
+  company's data by guessing an org UUID.
+- Added the Details view's date-range filter for Revenue/Expense/Progress (Budget
+  is disclosed as a period-invariant annual total, not date-sliceable).
+- Built the category-distribution pie chart (share of BOQ total) + bar chart (completed
+  vs. total amount per category), sourced from real BOQ line-item amounts (grouped
+  via `activityId -> category`) and real WPR completion %.
+- Built the separate, lightweight multi-project status-bar overview (`/dashboard/overview`)
+  -- one horizontal % complete bar per project, intentionally not folded into the
+  drill-down.
+- Added sidebar nav entries ("Company Dashboard", "Projects Overview") + en/hi i18n
+  strings.
+- 'Tests: `src/lib/company-scope.test.ts` (membership-boundary scoping) + 2 route-level
+  test files under `src/app/api/dashboard-hierarchy/**` (cross-company scoping, department
+  filter passthrough, category-distribution percentages sum to 100% and match seeded
+  BOQ amounts). 12/12 pass.'
+- '`npx tsc --noEmit` -- clean, zero errors.'
+- '`npx eslint` on all new/changed files -- clean.'
+remaining_steps: &id003
+- Supervisor decision + push/PR for the compliance-tracker companion change above
+  (or an alternative if the supervisor prefers a different approach).
+- Fresh supervisor audit of the projexa PR before merge (per task protocol -- not
+  to be merged by this worker).
+- '`bun test` was run scoped to the new dashboard files (12/12 pass) and `npx tsc
+  --noEmit` for the whole project (clean) -- the full existing `bun test` suite was
+  not re-run end-to-end due to session budget; worth a full run in CI/audit.'
+- UI was not visually verified in a running browser (session budget) -- functional
+  correctness verified via tsc + unit/route tests only, per instructions this is disclosed
+  rather than claiming visual confirmation.
+files_modified: &id001 []
+checkpoints:
+- at: '2026-07-28T10:27:14.782961+00:00'
+  status: pending_review
+  files_modified: []
+  completed_steps: []
+  remaining_steps: []
+  recent_commits: []
+  note: adopted existing branch 'feat/company-dept-project-dashboard' (https://github.com/FChecklist/projexa/pull/60)
+    -- registered for real audit, not a fresh worker dispatch
+- at: '2026-07-28T10:29:37.802516+00:00'
+  status: completed
+  files_modified: *id001
+  completed_steps: *id002
+  remaining_steps: *id003
+  recent_commits:
+  - 6926f97 Merge remote-tracking branch 'origin/main' into m60v2
+  - 5236388 Add Permits create/PDF, Drawings & 3D, Documents upload, and Minutes of
+    Meeting modules (#62)
+  - 'fe2cdf6 Merge pull request #61 from FChecklist/worker/task-20260728-041200-resource-management--manpower--material'
+  - '3628d48 fix: add /site-materials to PROTECTED_PREFIXES -- new page was bypassing
+    login requirement'
+  - 'd771908 Resource management: Material proxy routes + UI, Budget/Schedule/Manpower
+    proxy routes'
+  - 4d776a0 Fix misleading error state and silent revenue truncation on hierarchy
+    dashboard
+  - 'e65774d Merge pull request #59 from FChecklist/worker/task-20260727-182111-wire-full-veridian-module-chain-into-pro'
+  - '9f4657d merge: resolve PROGRESS.md conflict with main'
+  - aa311e2 Add Company -> Department -> Project dashboard drill-down + category charts
+  - 032febe Record PR links; task implementation complete pending supervisor audit
+  note: 'tier1, Superboss-approved, merged autonomously: https://github.com/FChecklist/projexa/pull/60'
+execution_seconds: 0
+restart_count: 0
+token_usage: null
+hold_for_owner_signoff: false
+adopted: true
+adopted_pr_url: https://github.com/FChecklist/projexa/pull/60
+master_synced_at: '2026-07-29T21:04:26.653371+00:00'

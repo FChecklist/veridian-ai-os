@@ -1,0 +1,103 @@
+# File ownership map for compliance-tracker (VERIDIAN AI OS, incl. PROJEXA alias
+# layer). One module owner per path-glob rule, evaluated top-to-bottom -- first
+# match wins, so more specific rules are listed before their broader parents.
+# A file matching no rule is "unassigned": the scope-checker treats this as a
+# hard block, not a silent guess, per the no-assumptions operating rule.
+#
+# Modules mirror the 5 Supervisor roles: frontend, backend, database,
+# qa_testing, devops. "database" is deliberately narrower than "backend" --
+# schema/migrations/query-perf work is its own supervisor even though it lives
+# under src/lib and src/db, matching the proposal's explicit module split.
+#
+# Built from a real directory survey of the live repo (2026-07-18), not
+# assumed -- see HETZNER-04-MASTER-SUPERVISOR-PILOT controller entry for the
+# survey commands used.
+
+version: 1
+generated: "2026-07-18"
+repo: compliance-tracker
+
+rules:
+  # --- Testing & QA: test files anywhere, regardless of what they test ---
+  - glob: "**/*.test.ts"
+    module: qa_testing
+  - glob: "**/*.test.tsx"
+    module: qa_testing
+  - glob: "docs/testing/**"
+    module: qa_testing
+  - glob: ".github/workflows/*test*.yml"
+    module: qa_testing
+  - glob: "e2e/**"
+    module: qa_testing
+
+  # --- DevOps & Integration: CI/CD, deploy, containers, infra scripts ---
+  - glob: ".github/workflows/**"
+    module: devops
+  - glob: "vercel.json"
+    module: devops
+  - glob: "Dockerfile*"
+    module: devops
+  - glob: "docker-compose*"
+    module: devops
+  - glob: "scripts/**"
+    module: devops
+    note: "non-test scripts (build/deploy/audit tooling); *.test.ts under scripts/ is caught by the earlier qa_testing rule first"
+
+  # --- Database: schema, migrations, query/perf-critical DB code ---
+  - glob: "drizzle/**"
+    module: database
+  - glob: "src/lib/db/**"
+    module: database
+  - glob: "src/db/**"
+    module: database
+  - glob: "src/lib/db.ts"
+    module: database
+
+  # --- Frontend: pages, routes, client components ---
+  - glob: "src/app/(app)/**"
+    module: frontend
+  - glob: "src/app/client-portal/**"
+    module: frontend
+  - glob: "src/app/vendor-portal/**"
+    module: frontend
+  - glob: "src/app/office/**"
+    module: frontend
+  - glob: "src/app/the-firm/**"
+    module: frontend
+  - glob: "src/app/veri-fm-cs/**"
+    module: frontend
+  - glob: "src/app/guest-chat/**"
+    module: frontend
+  - glob: "src/app/*.tsx"
+    module: frontend
+  - glob: "src/app/**/page.tsx"
+    module: frontend
+  - glob: "src/app/**/layout.tsx"
+    module: frontend
+  - glob: "src/components/**"
+    module: frontend
+  - glob: "src/hooks/**"
+    module: frontend
+  - glob: "src/app/globals.css"
+    module: frontend
+
+  # --- Backend: API routes and service/business-logic layer (everything else
+  #     under src/app/api and src/lib not already claimed by database/qa above) ---
+  - glob: "src/app/api/**"
+    module: backend
+  - glob: "src/lib/ai-team/**"
+    module: backend
+  - glob: "src/lib/**"
+    module: backend
+    note: "catch-all for src/lib/*.ts service/business-logic files not matched by the database rules above"
+
+  # --- Cross-cutting docs/config: not owned by any single supervisor.
+  #     Master reviews changes here directly rather than delegating. ---
+  - glob: "docs/**"
+    module: master_reviewed
+  - glob: "AGENTS.md"
+    module: master_reviewed
+  - glob: "PROGRESS.md"
+    module: master_reviewed
+  - glob: "ai-os/**"
+    module: master_reviewed
