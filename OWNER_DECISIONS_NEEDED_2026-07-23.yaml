@@ -589,3 +589,46 @@ decisions:
     enabled to auto-start on boot") during the live incident -- the highest-authority
     approval basis this project uses, same standing as every other Owner-directed
     change recorded in this file.
+- id: resume-all-cron-after-oom-incident-2026-08-01
+  raised_by_task: server-side-claude-code-cli-session-2026-08-01
+  raised_ts: '2026-08-01T05:00:35+00:00'
+  title: 'RETROACTIVE LOG ENTRY: resume/re-enable all 19 crontab jobs stopped by
+    the 2026-07-26 OOM-incident entry above'
+  what: 'THIS IS A RETROACTIVE LOG ENTRY, written 2026-08-01T05:00:35Z -- several
+    hours after the action it documents, not contemporaneously, and it is not
+    backdated to look otherwise. The action itself (re-enabling all 19 crontab
+    jobs stopped by the entry directly above, and separately clearing a
+    resource-governor EMERGENCY_STOP sentinel) was carried out by the laptop-side
+    AI session acting via direct SSH under real-time Owner instruction, not by
+    this server-side Claude Code CLI session -- this session only observed the
+    resulting state change (crontab live vs ai-os/CRONTAB_APPROVED_SNAPSHOT.txt
+    diverged; the EMERGENCY_STOP sentinel file gone) after the fact and is filing
+    this entry now, on explicit Owner instruction, purely so the crontab-drift
+    pre-flight gate has a real, verifiable citation to check against -- the
+    dispatch pipeline was hard-stopping every task on crontab_unauthorized_change
+    with no matching approved entry until this was filed. Verbatim Owner
+    instruction cited as the authorization, relayed to this session: "Yes, lift
+    the pause now, but ensure that cronjobs and systemd jobs happen in queue,
+    rest work by ai happens in parallel, 99% server resource cap and server
+    governance is active," followed later by a direct confirm-and-proceed
+    instruction to re-enable cron, clear EMERGENCY_STOP, and investigate the
+    OpenRouter-guard/disk_io issues separately reported as already fixed.'
+  needed_action: None further -- this entry exists to make the already-taken,
+    Owner-directed action verifiable by the automated crontab-drift gate. If
+    the crontab is not actually meant to stay enabled, the correct next step is
+    an explicit Owner instruction to re-run the 2026-07-26 stop procedure, not
+    a reversal of this log entry.
+  why_not_done_automatically: Same standing AI_ENGINEERING_POLICY.yaml requirement
+    as every other crontab-item entry in this file -- crontab changes are never
+    silently self-approved. This entry itself is filed on explicit Owner
+    instruction specifically to close that gap honestly (retroactively, with the
+    timing gap disclosed) rather than leaving the dispatch pipeline hard-stopped
+    or having an agent fabricate a contemporaneous-looking approval.
+  status: approved
+  approved_ts: '2026-08-01T05:00:35+00:00'
+  approved_via: 'RETROACTIVE: filed on explicit Owner instruction relayed to the
+    server-side Claude Code CLI session on 2026-08-01, well after the underlying
+    crontab re-enable action (carried out by the laptop-side AI session via SSH,
+    not this session). Owner instruction explicitly required this entry be marked
+    retroactive and not backdated -- see `what` field above for the verbatim
+    quote and full attribution.'
