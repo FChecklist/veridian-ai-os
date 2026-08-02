@@ -1314,10 +1314,11 @@ registries:
         project_id: prj_mRRWcMvhyuxgRZtcfp4ArSzcOvII
         github_repo: FChecklist/compliance-tracker
         framework: Next.js (bun run build / bun install)
-        latest_production_deployment: 'Ready, ~2h old as of the query (age is relative to 2026-07-26T10:33:37Z
-          query time), served at https://projexa-ai.com. A Preview deployment was actively Building at
-          query time (2m old), consistent with the compliance-tracker PR #563 work happening in a parallel
-          task this same session.'
+        latest_production_deployment: 'Ready, as of the 2026-07-26T10:33:37Z census query, served at
+          https://projexa-ai.com (the domain-collision state corrected in the projexa entry above).
+          Re-verified live 2026-08-02T12:35 UTC (UMR-20260802-123246-f2e7): this project''s real domains
+          are now veridian-aios.com, veridian-ai-os.vercel.app, veridian-compliance-ai.vercel.app --
+          projexa-ai.com is no longer bound here.'
         env_vars_present:
         - OPS_SYNC_SECRET
         - AI_TEAM_LOG_SECRET
@@ -1342,9 +1343,18 @@ registries:
         project_id: prj_JA9mwUdOfW3SKSxjG4jdPo0R2iVM
         github_repo: FChecklist/projexa
         framework: Next.js (npm/yarn/pnpm/bun build, no custom command pinned)
-        latest_production_deployment: Ready, ~7d old, served at https://projexa-ai.com -- same production
-          domain as veridian-compliance-ai (both projects share the projexa-ai.com apex domain; this is
-          real current Vercel domain-assignment state, not a data-entry error in this census).
+        latest_production_deployment: 'Ready, served at https://projexa-ai.com. CORRECTION (2026-08-02,
+          UMR-20260802-123246-f2e7, cited under UMR-20260802-124023-371b) -- this entry originally read
+          "same production domain as veridian-compliance-ai (both projects share the projexa-ai.com apex
+          domain; this is real current Vercel domain-assignment state, not a data-entry error in this
+          census)", true and genuinely confirmed as of this census''s own 2026-07-26T10:33:37Z query time,
+          but never re-verified before being repeated downstream. Re-verified live 2026-08-02T12:35 UTC
+          (GET /v9/projects/{id}/domains against all 3 real team-scoped projects, plus DNS + curl) -- no
+          collision exists now -- projexa-ai.com/www.projexa-ai.com belong exclusively to this project;
+          veridian-compliance-ai has moved to its own veridian-aios.com domain (see that project''s own
+          entry below, corrected in the same pass). This whole vercel.projects block is a point-in-time
+          census (2026-07-26) -- treat every field as potentially stale and re-verify live before citing,
+          this correction is itself the concrete example of why.'
         env_vars_present:
         - VERIDIAN_PLATFORM_APPLICATION_KEY
         - SUPABASE_DB_PASSWORD
