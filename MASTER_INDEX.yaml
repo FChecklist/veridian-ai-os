@@ -38,11 +38,37 @@ exclusion_rules:
   prune_paths:
   - '*/node_modules/*'
   - '*/.git/*'
+  - '*/.venv/*'
+  - '*/__pycache__/*'
+  - '*/dist/*'
+  - '*/build/*'
   - /opt/veridian/ai-os/tasks/*/workspace/*
   - /opt/veridian/workspace/claude-cli-work/*
   - /opt/veridian/workspace/main-e2e-check/*
-  correct_find_pattern: find <roots> \( -path '*/node_modules' -o -path '*/.git' -o -path '*/ai-os/tasks'
-    -o -path '*/workspace/claude-cli-work' \) -prune -o -type f -iname '<pattern>' -print
+  prune_paths_added_2026_08_06: 'UMR-20260806-100604-4591: .venv/__pycache__/dist/build added after a
+    real incident -- PID 2769369, an unfiltered `grep -rl PHASE-4-BUILD-WORKFLOW /opt/veridian/scripts
+    /opt/veridian/ai-os` (no prune at all), ran 17+ minutes in real D-state disk saturation before being
+    killed. The prior prune_paths list above already covered node_modules/.git/ai-os-tasks-workspace, but
+    had no entry for Python venvs, bytecode caches, or JS/TS build output dirs, all of which are real,
+    large, and irrelevant to a code search.'
+  scope_guidance: 'Recursive search should normally target /opt/veridian/scripts alone, not all of
+    /opt/veridian/ai-os -- ai-os holds ~1416 task directories, 334+ node_modules trees, ~246GB total
+    (2026-08-06 measurement). Only widen scope to ai-os/ or the whole server when the thing being
+    searched for is genuinely not scripts-local (e.g. a task.yaml checkpoint, a specific worker''s own
+    workspace). Even then, apply this same prune_paths list -- it does not become unnecessary just
+    because the scope is scripts-only, since scripts/ itself has real node_modules/.venv/__pycache__/
+    dist/build subtrees.'
+  correct_find_pattern: find <roots> \( -path '*/node_modules' -o -path '*/.git' -o -path '*/.venv' -o
+    -path '*/__pycache__' -o -path '*/dist' -o -path '*/build' -o -path '*/ai-os/tasks' -o -path
+    '*/workspace/claude-cli-work' -o -path '*/workspace/main-e2e-check' \) -prune -o -type f -iname
+    '<pattern>' -print
+  reusable_helper: '/opt/veridian/scripts/find_code.sh -- registered capability_registry entry
+    "pruned_code_search" (CAP-20260806-101956-bce6), added UMR-20260806-100604-4591. Wraps exactly this
+    exclusion_rules prune list (plus the .venv/__pycache__/dist/build additions above) behind
+    `find_code.sh <pattern> [scope_dir]`, defaulting scope_dir to /opt/veridian/scripts per
+    scope_guidance above, with the full prune list always applied even when scope_dir is widened. Prefer
+    this over hand-writing the find/grep pipeline above -- same reuse-not-reinvent principle this file''s
+    own top-level protocol field states for scripts/tables/registers.'
 search_layers_relationship:
   purpose: 'Added 2026-07-30 (master-index-central-entrypoint-confirmation-phase6) directly answering
     the Owner''s question ''is MASTER_INDEX.yaml THE central place to read all documentation.'' Short
