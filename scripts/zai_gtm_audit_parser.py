@@ -28,6 +28,22 @@ to stdout (total count, breakdown by severity, breakdown by part).
 This script does ONLY inventory / enumeration. It does not create UMRs,
 does not touch gtm_certification_categories, and does not perform any
 closure work.
+
+Known-duplicate collapsing (added UMR-20260806-144454-d00c, tranche-1
+closure of parent UMR-20260806-101802-a350): PR #3 flagged that
+P1-BLOCKER-001 and P8-CB-01 both describe the exact same underlying
+defect (Supabase Auth rejecting the demo account
+`democeo@projexa-ai.com`, same root cause, overlapping impacted tests)
+discovered once during initial Part 1 testing and re-confirmed still
+broken during the Part 8 final regression pass. Verified genuinely the
+same issue by direct comparison of both verbatim finding blocks in
+ZAI_BLACKBOX_AUDIT_MERGED.md. DUPLICATE_MERGES below is the explicit,
+version-controlled record of that judgment call -- collapsing happens
+here, in the re-runnable script, never by hand-editing the output JSON.
+Each merge keeps one canonical point id and folds the other into it as
+an `absorbed_duplicate_ids` note; total point count drops by the number
+of merges applied. Pass --no-collapse-duplicates to get the raw,
+uncollapsed enumeration (e.g. for audit purposes).
 """
 
 import argparse
@@ -58,6 +74,28 @@ PARTS = [
 # CONFIRMS) are captured for transparency but are NOT counted as points,
 # since the dispatch's definition names only FAIL/WARN/PARTIAL explicitly.
 POINT_VERDICT_KEYWORDS = ("FAIL", "WARN", "PARTIAL")
+
+# Explicit, curated record of known-duplicate labeled findings that describe
+# the exact same underlying defect across two different parts of the audit.
+# See module docstring for the verification/rationale note. Add future
+# entries here (never in the output JSON) if the same pattern recurs.
+DUPLICATE_MERGES = [
+    {
+        "keep": "P8-CB-01",
+        "drop": "P1-BLOCKER-001",
+        "rationale": (
+            "Both describe the same underlying defect: demo account "
+            "democeo@projexa-ai.com rejected by Supabase Auth "
+            "('Invalid login credentials' / HTTP 400 on the "
+            "/auth/v1/token endpoint). P1-BLOCKER-001 is the original "
+            "Part 1 discovery; P8-CB-01 is the same defect re-confirmed "
+            "still present in the Part 8 final regression/certification "
+            "pass. Kept P8-CB-01 (the final-certification-stage citation, "
+            "canonical CB-numbered form) as the surviving id."
+        ),
+        "decided_by_umr": "UMR-20260806-144454-d00c",
+    },
+]
 
 TEST_HEADER_RE = re.compile(r"^TEST #(\d+)\s*[—-]\s*(.+?)\s*$")
 OVERALL_VERDICT_RE = re.compile(
@@ -113,6 +151,7 @@ class Point:
     source_line_start: int
     source_line_end: int
     notes: str = ""
+    absorbed_duplicate_ids: list = field(default_factory=list)
 
 
 def read_part(fname):
@@ -394,6 +433,31 @@ def parse_subchecks(lines, part_num, part_file):
     return points, excluded
 
 
+def apply_duplicate_merges(all_points, merges=DUPLICATE_MERGES):
+    """Collapse curated known-duplicate labeled findings (see DUPLICATE_MERGES)
+    into a single canonical point each. Fails loudly (raises) if either side
+    of a merge can't be found, rather than silently applying a partial/stale
+    merge against changed source files. Returns (points, applied_summary)."""
+    by_id = {p.id: p for p in all_points}
+    applied = []
+    for m in merges:
+        keep_id, drop_id = m["keep"], m["drop"]
+        if keep_id not in by_id:
+            raise SystemExit(f"DUPLICATE_MERGES error: keep id {keep_id!r} not found in enumerated points")
+        if drop_id not in by_id:
+            raise SystemExit(f"DUPLICATE_MERGES error: drop id {drop_id!r} not found in enumerated points")
+        keep_p = by_id[keep_id]
+        drop_p = by_id[drop_id]
+        keep_p.absorbed_duplicate_ids.append(drop_id)
+        keep_p.notes = (
+            (keep_p.notes + " " if keep_p.notes else "")
+            + f"Collapsed duplicate {drop_id} into this point per {m['decided_by_umr']}: {m['rationale']}"
+        ).strip()
+        all_points = [p for p in all_points if p.id != drop_id]
+        applied.append((drop_id, keep_id))
+    return all_points, applied
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--out", default=DEFAULT_OUT, help="output JSON manifest path")
@@ -404,6 +468,11 @@ def main():
         "--include-excluded",
         action="store_true",
         help="also write excluded (non-point, e.g. PASS/UNTESTABLE) sub-checks to a sibling file for transparency",
+    )
+    ap.add_argument(
+        "--no-collapse-duplicates",
+        action="store_true",
+        help="skip DUPLICATE_MERGES collapsing; emit the raw, uncollapsed point enumeration",
     )
     args = ap.parse_args()
 
@@ -423,6 +492,10 @@ def main():
         all_points.extend(labeled)
         all_points.extend(subchecks)
         all_excluded.extend(excluded)
+
+    merges_applied = []
+    if not args.no_collapse_duplicates:
+        all_points, merges_applied = apply_duplicate_merges(all_points)
 
     manifest = [asdict(p) for p in all_points]
     with open(args.out, "w") as f:
@@ -458,6 +531,13 @@ def main():
     print()
     print(f"Sub-checks excluded (non-point verdicts: PASS/UNTESTABLE/UNVERIFIABLE/"
           f"BLOCKED/N/A/NOT TESTED/CONFIRMS): {len(all_excluded)}")
+    print()
+    if merges_applied:
+        print(f"Duplicate merges applied ({len(merges_applied)}):")
+        for drop_id, keep_id in merges_applied:
+            print(f"  {drop_id} collapsed into {keep_id}")
+    else:
+        print("Duplicate merges applied: 0 (--no-collapse-duplicates or none configured)")
     print()
     print(f"Manifest written to: {args.out}")
     if args.include_excluded:
