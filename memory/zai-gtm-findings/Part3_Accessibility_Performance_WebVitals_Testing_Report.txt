@@ -1,0 +1,352 @@
+================================================================================
+GTMCert PART 3 of 8 — ACCESSIBILITY + PERFORMANCE + CORE WEB VITALS
+================================================================================
+Report Date        : 2026-08-06
+Target URL         : https://projexa-ai.com/
+Tester Role        : END USER (Black-box, no code/server access)
+Tools Used         : Lighthouse 13.4.1 (Chromium 1228)
+                    + axe-core 4.10.0 (injected via CDN)
+                    + Performance API (browser native)
+Pages Tested       : /login, /signup, /pricing
+Session ID         : web-33afc8e6-7791-4c96-b57e-31217123fa74
+
+TESTS COVERED IN PART 3
+  Test #6  : Accessibility Testing
+  Test #7  : Performance Testing
+  Test #8  : Core Web Vitals
+
+ARTIFACT DIRECTORY  : /home/z/my-project/screenshots/part3/
+ARTIFACTS CAPTURED  : 3 Lighthouse JSON + 3 Lighthouse HTML + axe-core JSON
+
+================================================================================
+TEST #6 — ACCESSIBILITY TESTING
+================================================================================
+Tools              : axe-core 4.10.0 (WCAG 2.0 + 2.1 A/AA ruleset)
+                    Lighthouse Accessibility audit
+Pass Criteria      : WCAG compliance
+
+--- axe-core RESULTS ---
+
+  /login    : 24 passes, 0 violations, 2 incomplete, 35 inapplicable
+  /signup   : 23 passes, 0 violations, 2 incomplete, 36 inapplicable
+  /pricing  : 23 passes, 2 violations, 1 incomplete, 38 inapplicable
+
+  Incomplete items (require manual verification):
+    [bypass]        : No skip-link on /login or /signup  (1 node each, SERIOUS)
+    [color-contrast]: 19 elements flagged on /login and /signup (SERIOUS)
+
+  Violations on /pricing (CRITICAL):
+    [button-name]   : #billing-toggle (Monthly/Annual switch)
+                      - role="switch" with aria-checked="true"
+                      - NO accessible name (no aria-label, no text content,
+                        no aria-labelledby, no title)
+                      - Screen readers will announce only "switch, on"
+                      - CRITICAL impact: blind users cannot tell what
+                        this toggle controls.
+    [color-contrast]: 14 elements with insufficient contrast:
+        - "Start Free Trial" / "Start 14-Day Trial" buttons (white on
+          #f5820a orange): 2.59:1 (need 4.5:1)
+        - "Most Popular" badge: 2.59:1
+        - "Start free. Scale as you grow." subtitle: 3.95:1
+        - Multiple "₹ /year" / card descriptions: 3.95-4.01:1
+        - Nav links "Home", "Pricing", "Log in": 3.95:1
+        - Footer "© 2026 VERIDIAN AI. All rights reserved.": 3.95:1
+
+--- Lighthouse Accessibility RESULTS ---
+
+  /login    : 96  (PASS — ≥90 threshold)
+  /signup   : 96  (PASS — ≥90 threshold)
+  /pricing  : 94  (PASS — but reduced due to button-name + color-contrast)
+
+  Top accessibility findings from Lighthouse:
+    - color-contrast (FAIL across all pages — matches axe finding)
+    - bypass / skip-link missing
+    - heading hierarchy: /login and /signup have NO <h1> (flagged in Part 2)
+    - meta tags: html lang attribute is set dynamically (PASS once
+      language is selected; default state unclear)
+    - All form inputs have associated <label> elements (PASS)
+    - All buttons have type attribute (PASS)
+    - All images have alt text (PASS — though few images on these pages)
+
+Sub-checks:
+
+  6a. WCAG 2.1 Level A compliance
+      - No <html lang> on initial load (set only after language toggle)   WARN
+      - Page has no <h1> on /login and /signup                            FAIL
+      - Form labels are associated with inputs                            PASS
+      - All interactive elements have focus indication (3px ring)         PASS
+      VERDICT : PARTIAL — basic A-level rules pass, but missing lang
+                on initial load + missing h1 fail Level A.
+
+  6b. WCAG 2.1 Level AA compliance
+      - Color contrast (4.5:1 for normal text)                            FAIL
+          /pricing: 14 elements fail
+          /login:   manual review needed (axe incomplete)
+          /signup:  manual review needed (axe incomplete)
+      - Resize text (200%): not explicitly tested                         N/A
+      - Visible focus: 3px orange ring on focused buttons                 PASS
+      - Multiple ways to find pages: nav + sitemap not present            WARN
+      VERDICT : FAIL — color contrast violations on /pricing.
+
+  6c. Screen reader compatibility
+      - axe button-name violation on #billing-toggle (Monthly/Annual)     FAIL
+      - Semantic landmarks missing on /login and /signup                  FAIL
+      - Heading hierarchy broken on /login and /signup                    FAIL
+      - Form labels properly associated                                  PASS
+      VERDICT : FAIL — significant gaps for screen reader users.
+
+  6d. Keyboard navigation
+      - Tab order: logical (top-to-bottom)                               PASS
+      - Focus visible (3px orange ring)                                  PASS
+      - No keyboard traps detected                                       PASS
+      - All interactive elements reachable by Tab                       PASS
+      VERDICT : PASS
+
+  6e. Color-only information
+      - "Most Popular" badge uses color + text "Most Popular"            PASS
+      - Required field indicators use text "required" or asterisk        PASS
+      VERDICT : PASS
+
+Overall VERDICT for Test #6 : FAIL
+Reason   : 
+  - /pricing has a CRITICAL button-name violation (toggle is unnamed)
+  - /pricing has 14 color-contrast violations (some as low as 2.59:1)
+  - /login and /signup have no <h1>, no skip link, no landmarks
+  - Initial HTML loads without lang attribute
+Recommend:
+  - Add aria-label="Toggle monthly or annual billing" to #billing-toggle.
+  - Darken primary CTA color #f5820a → at least #c66805 to achieve 4.5:1.
+  - Add <h1> to /login and /signup.
+  - Add skip-link and <main> landmark to all pages.
+  - Set <html lang="en"> as default in the document template.
+
+Artifacts:
+  /home/z/my-project/screenshots/part3/lighthouse-login.report.html
+  /home/z/my-project/screenshots/part3/lighthouse-login.report.json
+  /home/z/my-project/screenshots/part3/lighthouse-pricing.report.html
+  /home/z/my-project/screenshots/part3/lighthouse-pricing.report.json
+  /home/z/my-project/screenshots/part3/lighthouse-signup.report.html
+  /home/z/my-project/screenshots/part3/lighthouse-signup.report.json
+
+================================================================================
+TEST #7 — PERFORMANCE TESTING
+================================================================================
+Tool               : Lighthouse 13.4.1
+Pass Criteria      : Performance ≥ 90
+
+--- Lighthouse Performance Scores ---
+
+  /login    : 95    PASS (≥90)
+  /signup   : 96    PASS (≥90)
+  /pricing  : 85    FAIL (≥90 — falls short by 5 points)
+
+--- Performance Detail ---
+
+  /login (score 95):
+    FCP                 : 1.1 s   (score 0.99 — Good)
+    LCP                 : 2.6 s   (score 0.88 — Needs Improvement)
+    TBT                 : 130 ms  (score 0.96 — Good)
+    Speed Index         : 2.5 s   (score 0.98 — Good)
+    Max Potential FID   : 270 ms  (score 0.43 — Poor)
+    CLS                 : 0       (score 1.0  — Good)
+    TTFB                : 10 ms   (Excellent — Vercel edge)
+
+  /signup (score 96):
+    FCP                 : 1.1 s   (Good)
+    LCP                 : 2.6 s   (Needs Improvement)
+    TBT                 : 120 ms  (Good)
+    Speed Index         : 1.1 s   (Good)
+    Max Potential FID   : 260 ms  (Poor)
+    CLS                 : 0       (Good)
+
+  /pricing (score 85):
+    FCP                 : 1.1 s   (Good)
+    LCP                 : 3.8 s   (Poor — exceeds 4.0s "Poor" threshold is 4.0)
+    TBT                 : 210 ms  (Good)
+    Speed Index         : 1.4 s   (Good)
+    Max Potential FID   : 250 ms  (Poor)
+    CLS                 : 0       (Good)
+
+  Network transfer (from Performance API on /login):
+    HTML transfer       : 9.1 KB
+    Total resources     : 27 requests
+    Total transfer      : 2.9 KB (HTML+CSS+JS compressed)
+    Total decoded       : 1.9 MB (mostly JS bundles)
+    Resource types      :
+        link    : 7 reqs / 0.6 KB transfer / 382 KB decoded
+        script  : 15 reqs / 0 KB transfer (cached) / 1192 KB decoded
+        css     : 1 req / 0 KB / 83 KB decoded
+        fetch   : 4 reqs / 2.1 KB / 2.8 KB decoded
+        other   : 1 req / 0.3 KB / 122 KB decoded
+
+  Slowest network requests (on /login):
+    1. POST supabase.co/auth/v1/token  : 597 ms  (failed login attempt)
+    2. POST /api/auth/failure-event    : 389 ms
+    3. GET  /signup?_rsc=...           : 139 ms  (Next.js RSC prefetch)
+    4. GET  /signup?_rsc=...           : 131 ms  (Next.js RSC prefetch)
+    5. GET  /manifest.webmanifest      : 71 ms
+
+Sub-checks:
+
+  7a. Performance ≥ 90 on all pages
+      /login    : 95   PASS
+      /signup   : 96   PASS
+      /pricing  : 85   FAIL
+      VERDICT : FAIL — /pricing misses the 90 threshold.
+
+  7b. Render-blocking resources
+      - Lighthouse flagged: 280 ms potential savings on /login
+      - Render-blocking CSS/JS in <head> blocks first paint
+      VERDICT : WARN
+
+  7c. Unused JavaScript
+      - 142 KiB of unused JS detected on /login (Tailwind + Next.js bundles)
+      VERDICT : WARN — typical for Next.js apps, but worth code-splitting.
+
+  7d. Back/forward cache (bfcache)
+      - Lighthouse: page PREVENTED bfcache restoration (2 failure reasons)
+      VERDICT : WARN — likely caused by cached request handlers; should be
+                fixed for instant back/forward navigation.
+
+  7e. Legacy JavaScript
+      - 13 KiB savings possible by not serving legacy JS to modern browsers
+      VERDICT : WARN
+
+  7f. Network dependency tree
+      - Lighthouse flagged: render-blocking chain
+      VERDICT : WARN
+
+Overall VERDICT for Test #7 : PARTIAL PASS
+Reason   : 2 of 3 pages pass the ≥90 threshold. /pricing at 85 fails due to
+           slow LCP (3.8s) caused by hero image + heavy text content rendering.
+           Max Potential FID is poor (250-270ms) on all pages — long task
+           blocking the main thread.
+Recommend:
+  - Investigate LCP element on /pricing (likely the hero) — preload it,
+    compress, or convert to next/image with priority.
+  - Code-split Next.js bundles to remove 142 KiB of unused JS on /login.
+  - Investigate bfcache prevention cause (likely WebSQL or unclosed
+    connection — should be a quick fix).
+  - Reduce main-thread blocking time to bring FID below 200ms.
+
+Artifacts:
+  /home/z/my-project/screenshots/part3/lighthouse-login.report.html
+  /home/z/my-project/screenshots/part3/lighthouse-pricing.report.html
+  /home/z/my-project/screenshots/part3/lighthouse-signup.report.html
+
+================================================================================
+TEST #8 — CORE WEB VITALS
+================================================================================
+Tool               : Lighthouse + Performance API
+Pass Criteria      : LCP, CLS, INP within limits
+
+  Official thresholds (Google, March 2024):
+    LCP  : Good ≤ 2.5s | Needs Improvement ≤ 4.0s | Poor > 4.0s
+    CLS  : Good ≤ 0.1  | Needs Improvement ≤ 0.25 | Poor > 0.25
+    INP  : Good ≤ 200ms| Needs Improvement ≤ 500ms| Poor > 500ms
+
+--- Measured Web Vitals ---
+
+  /login:
+    LCP  : 2.6 s   (Needs Improvement — 0.1s over Good threshold)
+    CLS  : 0       (Good — perfect)
+    INP  : approximated via max-potential-FID = 270 ms  (Poor — > 200ms)
+    FCP  : 1.1 s   (Good)
+    TTFB : 10 ms   (Excellent — Vercel edge)
+
+  /signup:
+    LCP  : 2.6 s   (Needs Improvement)
+    CLS  : 0       (Good)
+    INP  : ~260 ms (Poor)
+    FCP  : 1.1 s   (Good)
+
+  /pricing:
+    LCP  : 3.8 s   (Poor — close to 4.0s threshold)
+    CLS  : 0       (Good)
+    INP  : ~250 ms (Poor)
+    FCP  : 1.1 s   (Good)
+
+Sub-checks:
+
+  8a. LCP within 2.5s
+      /login    : 2.6 s   FAIL (marginal — 100ms over)
+      /signup   : 2.6 s   FAIL (marginal)
+      /pricing  : 3.8 s   FAIL (significant — 1.3s over)
+      VERDICT : FAIL
+
+  8b. CLS within 0.1
+      /login    : 0       PASS
+      /signup   : 0       PASS
+      /pricing  : 0       PASS
+      VERDICT : PASS — excellent, no layout shift anywhere.
+
+  8c. INP within 200ms
+      Not directly measurable by Lighthouse (needs real user interaction).
+      Approximated via Max Potential FID:
+      /login    : 270 ms  FAIL
+      /signup   : 260 ms  FAIL
+      /pricing  : 250 ms  FAIL
+      VERDICT : FAIL (approximation) — main-thread blocking tasks exceed
+                200ms on all pages.
+      Note   : Real INP from actual user interaction is typically lower
+                than max-potential-FID. Field data (RUM) needed for
+                definitive measurement.
+
+  8d. FCP (First Contentful Paint) — supplementary
+      All pages: 1.1 s   PASS (Good ≤ 1.8s)
+
+  8e. TTFB (Time to First Byte)
+      All pages: 10 ms   PASS (Excellent — Vercel edge serving)
+
+  8f. TBT (Total Blocking Time)
+      /login    : 130 ms  PASS (Good ≤ 200ms)
+      /signup   : 120 ms  PASS
+      /pricing  : 210 ms  FAIL (just over 200ms threshold)
+
+Overall VERDICT for Test #8 : FAIL
+Reason   : LCP fails on all 3 pages (marginal on /login and /signup,
+           significant on /pricing). INP (approximated) fails on all pages.
+           CLS, FCP, TTFB all pass with excellent values.
+Recommend:
+  - LCP: preload the largest visible element (likely logo-mark.svg or the
+    hero text). On /pricing, lazy-load below-the-fold pricing cards.
+  - INP: break up long JavaScript tasks (likely Next.js hydration) using
+    requestIdleCallback or scheduler.yield(). Defer non-critical scripts.
+  - Field measurement: deploy web-vitals.js RUM to capture real-user INP
+    and LCP values — lab data overestimates these for cached sessions.
+
+Artifacts:
+  /home/z/my-project/screenshots/part3/lighthouse-login.report.json
+  /home/z/my-project/screenshots/part3/lighthouse-pricing.report.json
+  /home/z/my-project/screenshots/part3/lighthouse-signup.report.json
+
+================================================================================
+PART 3 SUMMARY TABLE
+================================================================================
++-------+-------------------------------------+---------+----------------------+
+| Test# | Test Name                           | Verdict | Key Finding          |
++-------+-------------------------------------+---------+----------------------+
+| 6     | Accessibility Testing               | FAIL    | button-name + 14    |
+|       |                                     |         | color-contrast      |
+|       |                                     |         | violations on       |
+|       |                                     |         | /pricing; no h1 /   |
+|       |                                     |         | skip-link on login  |
+| 7     | Performance Testing                 | PARTIAL | /login 95, /signup  |
+|       |                                     |         | 96, /pricing 85     |
+|       |                                     |         | (FAIL ≥90)          |
+| 8     | Core Web Vitals                     | FAIL    | LCP fails on all    |
+|       |                                     |         | pages; INP fails    |
+|       |                                     |         | on all pages; CLS   |
+|       |                                     |         | & TTFB excellent    |
++-------+-------------------------------------+---------+----------------------+
+
+CARRY-FORWARD ISSUES:
+  - Heavy unused JS (142 KiB on /login) — Part 5 (security/dependency audit).
+  - bfcache prevention — Part 5.
+  - Long main-thread tasks — Part 5 (potential cause: analytics scripts).
+
+================================================================================
+END OF PART 3 REPORT
+================================================================================
+Next: Part 4 — PWA + Offline/Sync + Browser Storage Testing
+================================================================================

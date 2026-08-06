@@ -1,0 +1,475 @@
+================================================================================
+GTMCert PART 6 of 8 — AUTHORIZATION/RBAC + AI WORKFLOW + GOVERNANCE TESTING
+================================================================================
+Report Date        : 2026-08-06
+Target URL         : https://projexa-ai.com/
+Tester Role        : END USER (Black-box, no code/server access)
+Tools Used         : agent-browser (Playwright Chromium)
+                    + fetch() for API probing
+                    + JS bundle string-search for endpoint discovery
+Pages Tested       : All discovered API endpoints
+Session ID         : web-33afc8e6-7791-4c96-b57e-31217123fa74
+
+TESTS COVERED IN PART 6
+  Test #14 : Authorization / RBAC Testing
+  Test #21 : AI Workflow Testing
+  Test #22 : Governance Testing
+
+ARTIFACT DIRECTORY  : /home/z/my-project/screenshots/part6/
+ARTIFACTS CAPTURED  : JSON responses (in this report)
+
+================================================================================
+TEST #14 — AUTHORIZATION / RBAC TESTING
+================================================================================
+Tool               : fetch() with various auth tokens
+Pass Criteria      : Roles enforced correctly
+
+--- Endpoint Matrix (with method + auth status) ---
+
++------------------------------+--------+--------+--------+--------+
+| Endpoint                     | GET    | POST   | PUT    | DELETE |
++------------------------------+--------+--------+--------+--------+
+| /api/health                  | 200    | 405    | 405    | 405    |
+| /api/auth/failure-event      | 405    | 200*   | 405    | 405    |
+| /api/auth/passcode-login     | 405    | 400/401| 405    | 405    |
+| /api/auth/sso/               | 404    | 200**  | -      | -      |
+| /api/veri-chat/share-target  | 405    | 401    | -      | -      |
+| /api/users                   | 401    | 401    | 405    | 405    |
+| /api/compliance              | 401    | 401    | 405    | 405    |
+| /api/compliance/items        | 401    | 405    | 405    | 401    |
+| /api/documents               | 401    | 401    | 405    | 405    |
+| /api/notifications           | 401    | 405    | 405    | 405    |
+| /api/audit                   | 401    | 405    | 405    | 405    |
+| /api/broadcast               | 404    | 200**  | -      | -      |
++------------------------------+--------+--------+--------+--------+
+
+Legend:
+  200  = OK (no auth needed, or endpoint accepts anything)
+  200* = accepts any input (no validation)
+  200**= returns HTML page (not a JSON API — likely Next.js page route)
+  400  = bad request (input validation working)
+  401  = Unauthorized (auth required)
+  404  = Not Found
+  405  = Method Not Allowed
+  -    = not tested
+
+--- Auth Verification Tests ---
+
+  14a. No credentials (no Authorization header, no cookie)
+       Result: All protected endpoints return 401 {"error":"Unauthorized"}
+       VERDICT : PASS — auth enforced.
+
+  14b. Fake Bearer token ( syntactically valid JWT with fake signature)
+       Header: Authorization: Bearer eyJhbGc...fake-signature
+       Result: All protected endpoints return 401 {"error":"Unauthorized"}
+       VERDICT : PASS — token signature is verified, not just presence.
+                Token forgery is NOT possible.
+
+  14c. Fake Supabase auth cookie
+       Cookie: sb-pcrjmlpuqsbocqfwoxod-auth-token=fake-token-value
+       Result: 401 {"error":"Unauthorized"}
+       VERDICT : PASS — cookie value is validated against Supabase,
+                not just checked for presence.
+
+  14d. Role-based access (cannot fully test without valid credentials)
+       Action: cannot login as different roles (admin, user, viewer)
+       Result: UNTESTABLE — login is blocked (see Part 1)
+       VERDICT : UNTESTABLE — cannot verify role enforcement.
+       Note   : The fact that all auth-protected endpoints return 401
+                (and never 403 Forbidden) suggests the app checks
+                authentication FIRST, then authorization. With valid
+                credentials, role checks would presumably return 403
+                for insufficient permissions. Cannot verify.
+
+  14e. Method-based access control
+       Action: probe each endpoint with GET/POST/PUT/DELETE
+       Result: Proper 405 responses for unsupported methods
+       VERDICT : PASS — HTTP method whitelisting is enforced.
+
+  14f. Cross-tenant isolation (cannot test without multiple tenants)
+       VERDICT : UNTESTABLE — requires valid credentials for two
+                different tenants. Carried forward to Part 7.
+
+  14g. Vertical privilege escalation
+       Action: cannot test (no authenticated session)
+       VERDICT : UNTESTABLE
+
+  14h. Horizontal privilege escalation (IDOR)
+       Action: cannot test (no authenticated session)
+       VERDICT : UNTESTABLE — cannot probe /api/users/<other_user_id>
+                without a valid session.
+
+  14i. Passcode-login endpoint authorization
+       Action: POST with email + passcode
+       Result:
+         - Missing both fields → 400 {"error":"Email and passcode are required"}
+         - Valid email + wrong passcode → 401 {"error":"Invalid email or passcode."}
+         - Passcode format not validated (3-char, 5-char, alphabetic all accepted)
+       VERDICT : PARTIAL PASS — input validation present for required
+                fields, but no format validation on passcode (should be
+                exactly 4 digits).
+
+  14j. Rate limiting on passcode-login (CRITICAL)
+       Action: 20 concurrent requests with different 4-digit passcodes
+       Result: 20 × 401 in 2.6 seconds (7.7 req/sec)
+       VERDICT : FAIL — CRITICAL
+       Reason : With only 10,000 possible 4-digit passcodes and no
+                rate limiting, an attacker can brute-force the
+                passcode in approximately 22 minutes (average 11 min).
+                This is a critical security flaw for a compliance
+                product.
+
+  14k. /api/auth/failure-event (no auth required)
+       Action: POST with any payload
+       Result: Always 200 {"ok":true} — no validation
+       VERDICT : WARN — endpoint is public and unvalidated. See Part 5
+                for full treatment.
+
+  14l. SSO endpoint (/api/auth/sso/)
+       Action: POST with company ID
+       Result: Returns 200 with full HTML login page (23 KB)
+       VERDICT : WARN — endpoint that looks like an API returns HTML.
+                This is a Next.js page route, not a JSON API. Confusing
+                URL structure. Should be moved to /sso or /auth/sso
+                (without /api/ prefix).
+
+Overall VERDICT for Test #14 : PARTIAL PASS
+Reason   : Auth is properly enforced — fake tokens and cookies are
+           correctly rejected. Method whitelisting works. However:
+             - Cannot verify role-based access (login blocked)
+             - Passcode-login has NO rate limiting (CRITICAL)
+             - Passcode format not validated (accepts 3-char, 5-char,
+               alphabetic)
+             - SSO endpoint returns HTML, not JSON (confusing URL design)
+Recommend:
+  - Add rate limiting to /api/auth/passcode-login: max 5 attempts per
+    email per 10 minutes, lockout after 10 failed attempts.
+  - Validate passcode format server-side (must be exactly 4 digits).
+  - Move /api/auth/sso/ to /sso or /auth/sso (page route, not API).
+  - After restoring demo credentials, re-test role enforcement with
+    different user roles (admin, viewer, auditor).
+
+Artifacts:
+  (All RBAC responses are JSON in this report.)
+
+================================================================================
+TEST #21 — AI WORKFLOW TESTING
+================================================================================
+Tool               : API probing + JS bundle inspection
+Pass Criteria      : AI responses conform to schema
+
+--- AI Endpoint Discovery ---
+
+  Direct API probe:
+    /api/veri-chat                  → 404 (NOT FOUND)
+    /api/veri-chat/messages         → 404
+    /api/veri-chat/send             → 404
+    /api/veri-chat/history          → 404
+    /api/veri-chat/conversation     → 404
+    /api/ai/chat                    → 404
+    /api/ai/complete                → 404
+    /api/ai/embed                   → 404
+    /api/ai/extract                 → 404
+    /api/ai/draft                   → 404
+    /api/ai/search                  → 404
+    /api/chat                       → 404
+    /api/messages                   → 404
+
+  Found via manifest.json share_target:
+    POST /api/veri-chat/share-target → 401 {"error":"Unauthorized"}
+                                       (auth required; endpoint exists)
+
+  Found via JS bundle search:
+    No /api/ai/* endpoints found in any client bundle.
+
+--- AI Workflow Sub-tests ---
+
+  21a. AI chat endpoint discoverable
+       Result: Only /api/veri-chat/share-target is exposed. The actual
+              AI chat endpoint is likely:
+                - Server Action (Next.js RPC over fetch, no /api/ route)
+                - Or accessible only after login (route not visible in
+                  unauthenticated JS bundles)
+       VERDICT : UNTESTABLE — cannot verify without authentication.
+
+  21b. AI response schema
+       Result: Cannot test — no AI endpoint accessible without auth.
+       VERDICT : UNTESTABLE
+
+  21c. AI determinism (same input → same output schema)
+       Result: Cannot test.
+       VERDICT : UNTESTABLE
+
+  21d. AI input validation
+       Result: Cannot test.
+       VERDICT : UNTESTABLE
+
+  21e. AI prompt injection resistance
+       Result: Cannot test.
+       VERDICT : UNTESTABLE
+
+  21f. AI rate limiting (per-user token quota)
+       Result: Cannot test.
+       VERDICT : UNTESTABLE
+
+  21g. AI safety / content filtering
+       Result: Cannot test.
+       VERDICT : UNTESTABLE
+
+  21h. Share Target (manifest entry)
+       Configuration in manifest.webmanifest:
+         action  : /api/veri-chat/share-target
+         method  : POST
+         enctype : multipart/form-data
+         params  : {title, text, url}
+       Action: OPTIONS /api/veri-chat/share-target → 204 (CORS preflight OK)
+       Action: POST  /api/veri-chat/share-target → 401 (auth required)
+       VERDICT : PASS — endpoint exists, accepts POST, requires auth.
+                The share_target configuration is valid. PWA users can
+                share content from other apps into VERI Chat.
+
+  21i. AI feature discoverability (UI)
+       Result: Pricing page mentions "AI Document Extraction",
+              "AI Q&A & Drafting", "Semantic Search" as Professional
+              plan features. Login page mentions "VERI Chat" in nav.
+       VERDICT : PASS (marketing claims are visible) but AI features
+                themselves are untestable without auth.
+
+  21j. AI model selection / BYOK (Bring Your Own Key)
+       Result: Pricing page FAQ section mentions "BYOK AI Keys" as a
+              feature comparison column. Cannot verify implementation.
+       VERDICT : UNTESTABLE — feature exists in marketing but not
+                accessible for testing.
+
+Overall VERDICT for Test #21 : UNTESTABLE (BLOCKED)
+Reason   : The AI workflow endpoints are not discoverable without
+           authentication. The only AI-related endpoint visible to
+           unauthenticated users is /api/veri-chat/share-target,
+           which requires authentication to actually use.
+Recommend:
+  - After restoring demo credentials, re-test by:
+      * Navigating to VERI Chat UI
+      * Submitting a query and capturing the network request
+      * Verifying the response schema (deterministic JSON)
+      * Testing prompt injection (e.g., "ignore previous instructions")
+      * Testing rate limiting (sending 50 messages rapidly)
+      * Testing model selection (BYOK key entry)
+      * Verifying AI responses include governance metadata
+        (OCID/UMR references — see Test #22)
+  - Publish API documentation for AI endpoints (after auth).
+  - Add an AI response schema validator (e.g., Zod) on both client
+    and server to ensure deterministic shape.
+
+Artifacts:
+  (No AI responses captured — all endpoints blocked by auth.)
+
+================================================================================
+TEST #22 — GOVERNANCE TESTING
+================================================================================
+Tool               : API probing + JS bundle inspection + Legal page review
+Pass Criteria      : 100% traceability
+
+--- Governance Endpoint Discovery ---
+
+  Direct API probe:
+    /api/ocid              → 404
+    /api/ocid/lookup       → 404
+    /api/ocid/verify       → 404
+    /api/ocid/generate     → 404
+    /api/umr               → 404
+    /api/umr/lookup        → 404
+    /api/umr/verify        → 404
+    /api/umr/generate      → 404
+    /api/governance        → 404
+    /api/trace             → 404
+    /api/traceability      → 404
+    /api/ledger            → 404
+    /api/audit-trail       → 404
+    /api/event-log         → 404
+
+  Found in JS bundles:
+    - "permission_denied" string in 425otf4mblaj_.js
+    - "role" string in 3cnl7y3-0vxmr.js, 2e_515uk27oyy.js
+    - No "OCID", "UMR", "constitution", "traceability", or "ledger"
+      strings found in any client-side JS bundle.
+
+  Found in legal pages (terms, privacy, data-policy):
+    - /terms mentions: "VERIDIAN COGNITIVE AI OS", "VERIDIAN OFFICE
+      AI OS", "THE FIRM AI OS", "VERI FM & CS AI OS", "FORGE"
+    - /terms mentions: "SHOBHA KAMAL SOLUTIONS PRIVATE LIMITED"
+    - /privacy mentions: "data controller", "processor", "GDPR-style"
+    - /data-policy mentions: "Your organisation owns its data"
+    - NO mention of "OCID", "UMR", "constitution", or "ledger"
+      in any legal page.
+
+--- Governance Sub-tests ---
+
+  22a. OCID (Object/Operation/Correlation ID) endpoint exists
+       VERDICT : FAIL — no /api/ocid* endpoint discovered.
+
+  22b. UMR (Unified Message Reference / Universal Master Record) endpoint exists
+       VERDICT : FAIL — no /api/umr* endpoint discovered.
+
+  22c. Governance / audit trail API exists
+       VERDICT : PARTIAL — /api/audit exists but returns 401.
+                Cannot verify if it provides governance trail data
+                (OCID, UMR, etc.) without auth.
+
+  22d. Traceability in AI responses
+       Result: Cannot test (AI endpoints not accessible without auth).
+       VERDICT : UNTESTABLE
+
+  22e. Constitutional AI references (from legal pages)
+       Result: /terms references "VERIDIAN COGNITIVE AI OS" with the
+              tagline "AI cognitive research that becomes advanced,
+              working products. VERIDIAN builds operating systems that
+              perceive a company's state, decide, act, and account
+              for every action — bounded by a constitution,
+              accountable to a ledger."
+       VERDICT : PASS (conceptually) — the product MARKETS
+                constitutional AI and ledger accountability, but
+                no API endpoints implement these concepts visibly.
+                The governance layer may be server-side only.
+
+  22f. Audit log endpoint
+       Result: /api/audit exists but requires auth.
+       VERDICT : UNTESTABLE — cannot verify audit log structure.
+
+  22g. Data residency / sovereignty disclosure
+       Result: /data-policy says "Your organisation owns its data.
+              SHOBHA KAMAL SOLUTIONS PRIVATE LIMITED processes it
+              only to operate, secure, and improve the Services."
+              No mention of data residency (India, EU, US).
+       VERDICT : WARN — for an Indian compliance product, data
+                residency should be explicitly stated (e.g., "data
+                stored in AWS Mumbai region").
+
+  22h. Privacy contact
+       Result: /privacy lists "raajat.agarwal@gmail.com" as the
+              privacy contact. This is a personal Gmail address,
+              not a corporate email (e.g., privacy@projexa-ai.com
+              or dpo@veridian.ai).
+       VERDICT : WARN — unprofessional and may violate GDPR
+                Article 13(1)(b) which requires "the contact details
+                of the controller" (typically a corporate address).
+
+  22i. Legal entity disclosure
+       Result: /terms discloses "SHOBHA KAMAL SOLUTIONS PRIVATE LIMITED,
+              a company incorporated in India under the Companies Act."
+       VERDICT : PASS — legal entity is disclosed. (No CIN number
+                provided, which is required under Indian Companies Act
+                for websites of companies — minor compliance gap.)
+
+  22j. Last-updated dates on legal pages
+       /terms         : "Last updated: 7 July 2026"
+       /privacy       : "Last updated: 7 July 2026"
+       /data-policy   : "Last updated: 7 July 2026"
+       VERDICT : PASS — all legal pages have recent update dates.
+
+  22k. Brand-name consistency in legal docs
+       Result: All three legal pages reference "VERIDIAN AI OS" and
+              its sub-products. None reference "PROJEXA".
+       VERDICT : CONFIRMS Part 2 finding — PROJEXA is the legacy
+                brand on /login only. The actual product is
+                VERIDIAN AI OS.
+
+  22l. Sitemap canonical domain mismatch
+       sitemap.xml references: https://veridian-ai-os.vercel.app/
+       Site is accessed at  : https://projexa-ai.com/
+       VERDICT : FAIL — canonical URL in sitemap does not match the
+                domain being served. This breaks SEO traceability
+                and is a governance/brand issue.
+
+  22m. robots.txt disclosure
+       Disallowed paths reveal internal structure:
+         /home, /settings, /sales-hq, /orchestra, /partner/, /r/
+       VERDICT : WARN — common practice, but discloses route names
+                that could inform attacks.
+
+  22n. Right to be forgotten / data deletion
+       Result: /data-policy says "Your organisation owns its data."
+              No explicit mention of right-to-erasure process.
+       VERDICT : WARN — for an Indian compliance product subject to
+                DPDP Act 2023, the data policy should describe the
+                grievance officer and data deletion request process.
+
+  22o. Sub-processor disclosure
+       Result: /privacy does not list sub-processors (e.g., Vercel,
+              Supabase, OpenAI/Anthropic for AI).
+       VERDICT : WARN — GDPR and DPDP require sub-processor disclosure.
+
+Overall VERDICT for Test #22 : FAIL
+Reason   : 
+  - No public OCID / UMR / governance API endpoints discovered.
+  - Sitemap canonical domain mismatch (veridian-ai-os.vercel.app).
+  - Privacy contact is a personal Gmail address.
+  - No data residency disclosure.
+  - No sub-processor list.
+  - No right-to-erasure process documented.
+  - Governance MARKETING (constitution, ledger) is present in legal
+    copy but not visibly implemented in client-side APIs.
+  - Audit endpoint exists but cannot be verified without auth.
+Recommend:
+  - Publish /api/ocid/<id> for governance traceability lookups.
+  - Publish /api/umr/<id> for unified message reference lookups.
+  - Fix sitemap.xml to reference the canonical domain.
+  - Replace raajat.agarwal@gmail.com with privacy@projexa-ai.com
+    (or the appropriate corporate email).
+  - Add data residency clause to /data-policy.
+  - Add sub-processor list to /privacy.
+  - Add right-to-erasure process to /data-policy.
+  - Add CIN number to /terms footer (Indian Companies Act requirement).
+  - After restoring demo credentials, verify that AI responses include
+    OCID/UMR traceability metadata in their JSON schema.
+
+Artifacts:
+  /home/z/my-project/download/Part5_API_Security_Testing_Report.txt
+  (legal page content extracted in this Part — no separate screenshots
+   saved because legal pages are text-only.)
+
+================================================================================
+PART 6 SUMMARY TABLE
+================================================================================
++-------+-------------------------------------+-----------+----------------------+
+| Test# | Test Name                           | Verdict   | Key Finding          |
++-------+-------------------------------------+-----------+----------------------+
+| 14    | Authorization / RBAC Testing        | PARTIAL   | Auth enforced; fake  |
+|       |                                     |           | tokens rejected;     |
+|       |                                     |           | but passcode brute-  |
+|       |                                     |           | force possible (no   |
+|       |                                     |           | rate limit); role    |
+|       |                                     |           | checks untestable    |
+|       |                                     |           | (login blocked)      |
+| 21    | AI Workflow Testing                 | UNTESTABLE| AI endpoints not     |
+|       |                                     |           | discoverable without |
+|       |                                     |           | auth; only share-    |
+|       |                                     |           | target visible       |
+| 22    | Governance Testing                  | FAIL      | No OCID/UMR APIs;    |
+|       |                                     |           | sitemap domain       |
+|       |                                     |           | mismatch; privacy    |
+|       |                                     |           | contact is Gmail;    |
+|       |                                     |           | missing data         |
+|       |                                     |           | residency, sub-      |
+|       |                                     |           | processors, CIN      |
++-------+-------------------------------------+-----------+----------------------+
+
+CRITICAL FINDINGS:
+  1. Passcode-login endpoint has NO rate limiting — 4-digit passcode
+     can be brute-forced in ~22 minutes. CRITICAL for a compliance
+     product.
+  2. No governance APIs (OCID, UMR) exposed publicly.
+  3. Sitemap.xml points to a different domain (veridian-ai-os.vercel.app).
+  4. Privacy contact is a personal Gmail address.
+
+CARRY-FORWARD ISSUES:
+  - Need valid credentials to verify: AI workflow, RBAC roles,
+    audit log structure, OCID/UMR traceability in AI responses.
+  - Part 7 will address what cannot be tested from end-user perspective
+    (database integrity, multi-tenant isolation, disaster recovery,
+    dependency scan, monitoring).
+
+================================================================================
+END OF PART 6 REPORT
+================================================================================
+Next: Part 7 — Backend/System Tests (as observable from end-user perspective)
+================================================================================

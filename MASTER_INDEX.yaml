@@ -43,6 +43,19 @@ exclusion_rules:
   - /opt/veridian/workspace/main-e2e-check/*
   correct_find_pattern: find <roots> \( -path '*/node_modules' -o -path '*/.git' -o -path '*/ai-os/tasks'
     -o -path '*/workspace/claude-cli-work' \) -prune -o -type f -iname '<pattern>' -print
+  never_find_over_root_filesystem: 'UMR-20260806-103641-2a1f (real false-completion correction): the rule
+    above only ever named /opt/veridian as the scope, and agents were still observed running `find /` (or
+    equivalent) across the ENTIRE root filesystem -- far worse than an unpruned /opt/veridian search. This
+    is now explicit: never run find/grep with a search root broader than /opt/veridian (or a real, narrower,
+    task-specific subpath of it) for anything related to this codebase. There is no legitimate reason to
+    search outside /opt/veridian for VERIDIAN/compliance-tracker/PROJEXA code, config, or data on this box.'
+  never_grep_for_a_umr_id: 'UMR-20260806-103641-2a1f: a UMR identifier (UMR-YYYYMMDD-HHMMSS-xxxx) is NEVER
+    to be found by grepping the filesystem -- superboss-register.sqlite''s umr_tasks table is the single
+    source of truth and answers this instantly via an indexed query: `python3 /opt/veridian/scripts/superboss-register.py
+    --query-umr --search "<term>"` (or `resource_governor.py --query-umr --search`/`--task-identity`).
+    Real incident this cycle: agents ran multi-hundred-second unfiltered greps across ~1416 task directories
+    to find a UMR string the register answers in milliseconds -- the exact anti-pattern find_code.sh and
+    this guidance file exist to eliminate.'
 search_layers_relationship:
   purpose: 'Added 2026-07-30 (master-index-central-entrypoint-confirmation-phase6) directly answering
     the Owner''s question ''is MASTER_INDEX.yaml THE central place to read all documentation.'' Short

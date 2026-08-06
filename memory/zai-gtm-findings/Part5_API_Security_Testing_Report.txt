@@ -1,0 +1,489 @@
+================================================================================
+GTMCert PART 5 of 8 — API CONTRACT + SECURITY TESTING
+================================================================================
+Report Date        : 2026-08-06
+Target URL         : https://projexa-ai.com/
+Tester Role        : END USER (Black-box, no code/server access)
+Tools Used         : agent-browser (Playwright Chromium)
+                    + fetch() for API probing
+                    + Header inspection
+Pages Tested       : All discovered endpoints (see enumeration below)
+Session ID         : web-33afc8e6-7791-4c96-b57e-31217123fa74
+
+TESTS COVERED IN PART 5
+  Test #12 : API Contract Testing
+  Test #18 : Security Testing
+
+ARTIFACT DIRECTORY  : /home/z/my-project/screenshots/part5/
+ARTIFACTS CAPTURED  : API responses (JSON in this report)
+
+================================================================================
+TEST #12 — API CONTRACT TESTING
+================================================================================
+Tool               : fetch() API probing
+Pass Criteria      : All APIs deterministic
+
+--- API Endpoint Enumeration ---
+
+Discovered via network traffic + URL guessing + robots.txt + sitemap.xml:
+
+  PUBLIC APIs:
+    GET  /api/health                       200  application/json
+    POST /api/auth/failure-event           200  application/json
+    GET  /api/auth/failure-event           405  (method not allowed)
+    POST /api/veri-chat/share-target       401  application/json
+    OPTIONS /api/veri-chat/share-target    204  (CORS preflight)
+    OPTIONS /api/auth/failure-event        ?    (preflight, not tested)
+
+  AUTH-REQUIRED APIs (return 401 {"error":"Unauthorized"}):
+    GET  /api/users                        401
+    GET  /api/compliance                   401
+    GET  /api/compliance/items             401
+    GET  /api/compliance/list              401
+    GET  /api/documents                    401
+    GET  /api/notifications                401
+    GET  /api/audit                        401
+
+  404 (NOT FOUND):
+    /api/healthz, /api/status, /api/version, /api/ping
+    /api/auth/session, /api/auth/callback, /api/auth/signout
+    /api/auth/signup, /api/auth/login, /api/auth/refresh
+    /api/auth/logout, /api/auth/me, /api/auth/user
+    /api/ai/chat, /api/veri-chat, /api/veri-chat/messages
+    /api/audit-log, /api/ocid, /api/umr
+    /api/tenant, /api/tenants, /api/organizations
+    /api/gst, /api/filings, /api/reports
+    /api/dashboard, /api/analytics, /api/webhooks
+    /api/stripe, /api/billing
+
+  ROUTES DISCLOSED via robots.txt:
+    /home, /settings, /sales-hq, /orchestra, /partner/, /r/
+    (all redirect to /login when unauthenticated)
+
+  ROUTES DISCLOSED via sitemap.xml (on different domain!):
+    https://veridian-ai-os.vercel.app/   ← the actual production URL
+    /office, /the-firm, /veri-fm-cs, /forge
+    /signup, /terms, /privacy, /data-policy
+
+--- Contract Determinism Tests ---
+
+  12a. GET /api/health
+       Action  : 5 sequential calls
+       Result  : 5 × 200 {"ok":true,"ts":<epoch_millis>}
+       Notes   : "ok" and status code are deterministic. The "ts"
+                 field is the current epoch milliseconds (changes
+                 per call, expected behavior for a health check).
+       VERDICT : PASS — deterministic contract.
+
+  12b. GET /api/health — method whitelist
+       GET     → 200
+       HEAD    → 200
+       OPTIONS → 204 (Allow: GET, HEAD, OPTIONS)
+       POST    → 405
+       PUT     → 405
+       DELETE  → 405
+       PATCH   → 405
+       VERDICT : PASS — proper method enforcement.
+
+  12c. POST /api/auth/failure-event — determinism
+       Action  : 3 sequential calls with same body
+       Result  : 3 × 200 {"ok":true}
+       VERDICT : PASS (response is deterministic).
+
+  12d. POST /api/auth/failure-event — input validation
+       Empty body          → 200 {"ok":true}    FAIL (should 400)
+       Invalid JSON body   → 200 {"ok":true}    FAIL (should 400)
+       SQL injection in    → 200 {"ok":true}    FAIL (should sanitize)
+       XSS payload in      → 200 {"ok":true}    FAIL (should sanitize)
+       100 KB payload      → 200 {"ok":true}    FAIL (no size limit)
+       VERDICT : FAIL — endpoint accepts ANY input without validation.
+                This is a logging endpoint, but it:
+                  - Does not validate JSON structure
+                  - Does not enforce a schema
+                  - Does not limit payload size
+                  - Could be used to pollute logs or exhaust disk
+
+  12e. GET /api/users — auth enforcement
+       Action  : 3 calls without credentials
+       Result  : 3 × 401 {"error":"Unauthorized"}
+       VERDICT : PASS — auth consistently enforced.
+
+  12f. GET /api/compliance, /api/compliance/items, /api/compliance/list,
+       /api/documents, /api/notifications, /api/audit
+       Action  : 1 call each without credentials
+       Result  : 401 {"error":"Unauthorized"} on all
+       VERDICT : PASS — auth consistently enforced across all
+                protected endpoints.
+
+  12g. POST /api/veri-chat/share-target — auth enforcement
+       Action  : POST without credentials
+       Result  : 401 {"error":"Unauthorized"}
+       VERDICT : PASS.
+
+  12h. /auth/callback (OAuth redirect target)
+       Action  : GET without code/state params
+       Result  : 302 → /login?error=auth_callback_failed
+       VERDICT : PASS — graceful error handling.
+
+  12i. /r/{slug} (referral redirect)
+       Action  : GET /r/test
+       Result  : redirected to /signup (fallback for unknown slug)
+       Action  : GET /r/https://evil.com
+       Result  : did NOT redirect to evil.com (good — no open redirect)
+       Action  : GET /r/../etc/passwd
+       Result  : 403 Forbidden (Vercel edge blocked path traversal)
+       VERDICT : PASS — no open redirect, path traversal blocked.
+
+--- Schema Validation ---
+
+  /api/health response schema (inferred):
+    {
+      "ok": boolean,
+      "ts": number (epoch millis)
+    }
+    No formal schema (OpenAPI/Swagger) published at /api/docs,
+    /api/openapi.json, /api/swagger.json, or /docs.
+
+  /api/auth/failure-event response schema:
+    { "ok": boolean }
+    But accepts ANY request body, so input schema is undefined.
+
+  Auth-protected endpoints:
+    Schema cannot be verified without authentication.
+    Response schema: { "error": string }
+
+--- Rate Limiting ---
+
+  12j. /api/auth/failure-event
+       Action  : 20 concurrent POST requests
+       Result  : 20 × 200 in 1.5 seconds. NO rate limiting.
+       VERDICT : FAIL — endpoint is wide open to flooding.
+
+  12k. Supabase /auth/v1/token (login brute-force)
+       Action  : 10 concurrent login attempts with different passwords
+       Result  : 10 × 401 in 272ms. NO rate limiting observed.
+       VERDICT : FAIL — brute-force attacks are NOT mitigated.
+                Supabase Auth has built-in rate limiting that the
+                project owner can configure, but it appears to be
+                either disabled or set too high.
+
+--- OpenAPI / Documentation ---
+
+  12l. /api/docs            → 404 (no Swagger UI)
+  12m. /api/openapi.json    → 404 (no OpenAPI spec)
+  12n. /api/swagger.json    → 404
+  12o. /docs                → 404
+       VERDICT : FAIL — no API documentation published. Contract
+                is implicit and can only be inferred from behavior.
+
+Overall VERDICT for Test #12 : PARTIAL PASS
+Reason   : Public endpoints are deterministic and method-whitelisted
+           correctly. Auth-protected endpoints enforce authentication
+           consistently. However:
+             - /api/auth/failure-event has NO input validation
+             - No rate limiting on any endpoint
+             - No published API contract (OpenAPI/Swagger)
+             - Cannot verify schemas for auth-protected endpoints
+Recommend:
+  - Validate request body against a JSON schema on every POST endpoint.
+  - Add rate limiting (e.g., 10 req/min/IP for /api/auth/failure-event).
+  - Enable Supabase Auth rate limits (5 attempts per email per 10 min,
+    30 attempts per IP per 10 min).
+  - Publish an OpenAPI spec at /api/openapi.json.
+  - Add payload size limit (e.g., max 10 KB for /api/auth/failure-event).
+
+Artifacts:
+  (All API responses captured as JSON in this report — no screenshots
+   because API responses are not visual.)
+
+================================================================================
+TEST #18 — SECURITY TESTING
+================================================================================
+Tool               : Manual probing (OWASP ZAP not available in sandbox;
+                    tests performed via fetch() and header inspection)
+Pass Criteria      : No High/Critical vulnerabilities
+
+--- Security Header Audit ---
+
+  Header                        | Present? | Value
+  ------------------------------|----------|---------------------------
+  strict-transport-security     | YES      | max-age=63072000
+  cache-control (login)         | YES      | private, no-cache, no-store
+  cache-control (api/users)     | YES      | public, max-age=0, must-revalidate
+  content-type                  | YES      | proper (text/html or application/json)
+  server                        | YES      | Vercel (info disclosure - minor)
+  x-powered-by                  | YES      | Next.js (info disclosure - minor)
+  x-vercel-id                   | YES      | request ID (info disclosure - minor)
+  content-security-policy       | NO       | MISSING — CRITICAL
+  x-frame-options               | NO       | MISSING — HIGH (clickjacking risk)
+  x-content-type-options        | NO       | MISSING — MEDIUM (MIME sniffing)
+  referrer-policy               | NO       | MISSING — MEDIUM (referrer leak)
+  permissions-policy            | NO       | MISSING — LOW
+  cross-origin-opener-policy    | NO       | MISSING — MEDIUM
+  cross-origin-embedder-policy  | NO       | MISSING — MEDIUM
+  cross-origin-resource-policy  | NO       | MISSING — MEDIUM
+
+--- Sub-tests ---
+
+  18a. HTTPS enforcement
+       Action  : not tested directly (Vercel enforces HTTPS by default)
+       HSTS    : max-age=63072000 (≈2 years) — good but missing preload
+       VERDICT : PASS (with note: add "preload" directive and submit to
+                HSTS preload list at https://hstspreload.org)
+
+  18b. Content Security Policy (CSP)
+       VERDICT : FAIL — CRITICAL
+       Reason  : No CSP header on any response. Without CSP, the page
+                 is vulnerable to:
+                   - XSS attacks (inline scripts can run)
+                   - Data exfiltration to any domain
+                   - Inline event handlers (onclick="...")
+                   - Unauthorized iframe embedding
+       Recommend: Add a strict CSP:
+         default-src 'self';
+         script-src 'self' 'unsafe-inline' 'unsafe-eval' [hashes];
+         style-src 'self' 'unsafe-inline';
+         img-src 'self' data: https:;
+         font-src 'self' data:;
+         connect-src 'self' https://pcrjmlpuqsbocqfwoxod.supabase.co;
+         frame-ancestors 'none';
+         base-uri 'self';
+         form-action 'self';
+
+  18c. X-Frame-Options (clickjacking)
+       VERDICT : FAIL — HIGH
+       Reason  : No X-Frame-Options or frame-ancestors in CSP.
+                 The login page can be embedded in an iframe on any
+                 domain, allowing clickjacking attacks where an
+                 attacker overlays invisible UI on top of the login
+                 form to trick users into submitting credentials.
+       Recommend: Add X-Frame-Options: DENY (or frame-ancestors 'none'
+                 in CSP).
+
+  18d. X-Content-Type-Options (MIME sniffing)
+       VERDICT : FAIL — MEDIUM
+       Reason  : Without "X-Content-Type-Options: nosniff", browsers
+                 may sniff and execute files as a different MIME type
+                 than declared. Particularly risky for user-uploaded
+                 content (compliance documents).
+
+  18e. Referrer-Policy
+       VERDICT : FAIL — MEDIUM
+       Reason  : Without Referrer-Policy, the browser may leak the
+                 full URL (including query params) to third-party
+                 domains via the Referer header. The login page loads
+                 analytics scripts (Vercel Analytics) that may receive
+                 referrer data.
+
+  18f. Information disclosure (Server, X-Powered-By, X-Vercel-Id)
+       VERDICT : WARN — LOW
+       Reason  : Headers reveal tech stack (Vercel + Next.js). This is
+                 not a direct vulnerability but helps attackers target
+                 known CVEs in those technologies.
+       Recommend: Set `poweredByHeader: false` in next.config.js and
+                 remove Server header via Vercel routes (limited control).
+
+  18g. Sensitive file exposure
+       /package.json     → 404    PASS
+       /.env             → 404    PASS
+       /.git/config      → 404    PASS
+       /next.config.js   → 404    PASS
+       /vercel.json      → 404    PASS
+       /.well-known/security.txt → 404    WARN (should exist for
+                                          responsible disclosure)
+       VERDICT : PASS — no sensitive files exposed.
+
+  18h. Path traversal
+       /login/../../../etc/passwd       → 403 (Vercel edge)
+       /api/../etc/passwd               → 403
+       /static/../../package.json       → 404
+       /_next/../package.json           → 404
+       /api/health/../../../etc/passwd  → 403
+       VERDICT : PASS — Vercel edge blocks path traversal.
+
+  18i. Open redirect
+       /login?redirectTo=https://evil.com → no redirect fired (good)
+       /r/https://evil.com                → no external redirect
+       /r/test                            → /signup (safe internal)
+       /r/a                               → /signup (safe internal)
+       /auth/callback (no params)         → /login?error=auth_callback_failed
+       VERDICT : PASS — no open redirect vulnerability.
+
+  18j. SQL injection (on API endpoints)
+       POST /api/auth/failure-event with email: "' OR '1'='1"
+       Result  : 200 {"ok":true} (endpoint accepted but didn't appear
+                to execute SQL — it's likely a NoSQL or logging-only
+                endpoint. Cannot verify without backend access.)
+       VERDICT : UNVERIFIABLE — but no error returned suggests no
+                direct SQL exposure.
+
+  18k. XSS (reflected)
+       Action  : Tried to inject <script>alert(1)</script> via URL
+                 params and form fields
+       Result  : React escapes user input by default; no reflected
+                 XSS observed.
+       VERDICT : PASS (for visible surfaces).
+
+  18l. XSS (stored)
+       Result  : Cannot test without authentication.
+       VERDICT : UNTESTABLE.
+
+  18m. CSRF protection
+       Login form method    : GET (wrong! should be POST)
+       CSRF token in form   : NOT PRESENT
+       CSRF cookie          : NOT PRESENT
+       SameSite on cookies  : unknown (cannot read from JS)
+       VERDICT : WARN — login form uses GET method (React intercepts
+                the submit via JS, but the form's declared method is
+                wrong). No CSRF token. However:
+                  - Auth calls go to Supabase with Content-Type:
+                    application/json, which triggers CORS preflight,
+                    providing implicit CSRF protection.
+                  - Cookie-based session (post-login) would need
+                    explicit CSRF tokens. Cannot verify.
+       Recommend: Change form method to POST. Add SameSite=Lax or
+                 Strict to all auth cookies.
+
+  18n. Cookie security attributes
+       Cookie: sb-pcrjmlpuqsbocqfwoxod-auth-token-code-verifier
+         HttpOnly   : NO  (visible to JavaScript — XSS exfiltration risk)
+         Secure     : unknown (cannot read from JS; HTTPS-only delivery
+                     suggests yes, but unverified)
+         SameSite   : unknown
+       Cookie: NEXT_LOCALE
+         Not sensitive — no concern.
+       VERDICT : FAIL — Supabase code-verifier cookie is NOT HttpOnly.
+                If an XSS executes on the page, the attacker can steal
+                the code verifier and hijack the OAuth flow.
+       Recommend: Use @supabase/ssr package which sets HttpOnly cookies
+                 server-side. The current setup appears to use the
+                 browser-only @supabase/supabase-js which stores the
+                 verifier in a JS-readable cookie.
+
+  18o. Authentication rate limiting (brute-force)
+       Action  : 10 rapid Supabase auth attempts
+       Result  : All 10 returned 401 within 272ms. No rate limit.
+       VERDICT : FAIL — HIGH. Brute-force attacks on user passwords
+                are not mitigated at the application layer. Supabase
+                Auth supports rate limiting but it appears disabled.
+
+  18p. Account enumeration
+       Action  : Try login with valid email + wrong password
+                 Try login with invalid email + wrong password
+       Result  : Both return same error: "Invalid login credentials"
+       VERDICT : PASS — Supabase correctly returns a generic error to
+                prevent user enumeration. (Note: timing-based
+                enumeration could still be possible but not tested.)
+
+  18q. HTTPS certificate validity
+       VERDICT : PASS (no browser warnings; Vercel auto-renews certs).
+
+  18r. CORS configuration
+       Action  : OPTIONS /api/users from Origin: https://evil.com
+       Result  : 204 with NO Access-Control-Allow-Origin header
+       VERDICT : PASS — API does not allow cross-origin requests from
+                arbitrary domains. Same-origin policy enforced.
+
+  18s. HTTP method override
+       Action  : Tried POST/PUT/DELETE/PATCH on /api/health
+       Result  : 405 Method Not Allowed
+       VERDICT : PASS — proper method enforcement.
+
+  18t. robots.txt information disclosure
+       Disallowed paths reveal internal route structure:
+         /home, /settings, /sales-hq, /orchestra, /partner/, /r/
+       VERDICT : WARN — common practice, but security-through-obscurity
+                purists argue these should not be listed. Acceptable
+                for SEO purposes.
+
+  18u. sitemap.xml information disclosure
+       Sitemap points to DIFFERENT DOMAIN: https://veridian-ai-os.vercel.app/
+       This reveals the production deployment URL.
+       VERDICT : WARN — minor info leak. The sitemap should reference
+                the canonical domain (projexa-ai.com) or be removed
+                if the site is not meant to be indexed.
+
+  18v. Vercel Analytics scripts
+       Two scripts loaded from /771b847594094cc8/script.js and
+       /04809683687b4e12/script.js. Identified as Vercel Analytics
+       (or Speed Insights). They detect headless browsers via
+       navigator.webdriver and userAgent checks.
+       VERDICT : PASS — first-party analytics, no third-party tracking.
+
+  18w. Dependency / supply chain (preview for Part 7)
+       Next.js version: not directly disclosed (X-Powered-By: Next.js
+       without version). Could be extracted from chunk hashes but
+       not attempted in this Part.
+       VERDICT : see Part 7.
+
+  18x. JWT inspection
+       Cannot inspect auth JWTs because login is blocked.
+       VERDICT : UNTESTABLE.
+
+Overall VERDICT for Test #18 : FAIL
+Reason   : Multiple HIGH and MEDIUM severity security gaps:
+  - CRITICAL: No Content Security Policy
+  - HIGH: No X-Frame-Options (clickjacking possible)
+  - HIGH: No rate limiting on auth endpoint (brute-force possible)
+  - MEDIUM: No X-Content-Type-Options
+  - MEDIUM: No Referrer-Policy
+  - MEDIUM: Supabase code-verifier cookie not HttpOnly
+  - MEDIUM: No COOP/COEP/CORP headers
+  - LOW: Information disclosure (Server, X-Powered-By, X-Vercel-Id)
+  - LOW: No /.well-known/security.txt
+  - LOW: Sitemap references different domain (veridian-ai-os.vercel.app)
+
+Recommend (priority order):
+  1. Add Content-Security-Policy header with strict default-src.
+  2. Add X-Frame-Options: DENY (or frame-ancestors 'none' in CSP).
+  3. Enable Supabase Auth rate limiting (5 attempts/10min/email).
+  4. Add X-Content-Type-Options: nosniff.
+  5. Add Referrer-Policy: strict-origin-when-cross-origin.
+  6. Migrate to @supabase/ssr for HttpOnly auth cookies.
+  7. Add COOP: same-origin, CORP: same-origin.
+  8. Disable X-Powered-By header (poweredByHeader: false in next.config.js).
+  9. Add /.well-known/security.txt for responsible disclosure.
+  10. Fix sitemap.xml to reference the canonical domain.
+  11. Change login form method from GET to POST.
+
+Artifacts:
+  (All findings captured as JSON in this report. No additional
+   screenshots saved because security testing produces text/JSON
+   output, not visual artifacts.)
+
+================================================================================
+PART 5 SUMMARY TABLE
+================================================================================
++-------+-------------------------------------+---------+----------------------+
+| Test# | Test Name                           | Verdict | Key Finding          |
++-------+-------------------------------------+---------+----------------------+
+| 12    | API Contract Testing                | PARTIAL | Public APIs         |
+|       |                                     |         | deterministic; no   |
+|       |                                     |         | rate limiting; no   |
+|       |                                     |         | input validation    |
+|       |                                     |         | on failure-event;   |
+|       |                                     |         | no OpenAPI spec     |
+| 18    | Security Testing                    | FAIL    | No CSP, no XFO,     |
+|       |                                     |         | no rate limit on    |
+|       |                                     |         | auth, code-verifier |
+|       |                                     |         | cookie not HttpOnly,|
+|       |                                     |         | multiple missing    |
+|       |                                     |         | security headers    |
++-------+-------------------------------------+---------+----------------------+
+
+CRITICAL FINDINGS (must fix before production):
+  1. No Content-Security-Policy — XSS risk is wide open.
+  2. No X-Frame-Options — clickjacking possible.
+  3. No rate limiting on /auth/v1/token — brute-force possible.
+  4. Supabase code-verifier cookie not HttpOnly — XSS exfiltration risk.
+
+CARRY-FORWARD ISSUES:
+  - Sitemap references veridian-ai-os.vercel.app (brand inconsistency) — Part 7.
+  - No /api/openapi.json — Part 6 (governance).
+  - Login form method is GET — Part 8 (regression).
+
+================================================================================
+END OF PART 5 REPORT
+================================================================================
+Next: Part 6 — Authorization/RBAC + AI Workflow + Governance Testing
+================================================================================

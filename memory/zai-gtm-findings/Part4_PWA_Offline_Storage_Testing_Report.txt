@@ -1,0 +1,378 @@
+================================================================================
+GTMCert PART 4 of 8 — PWA + OFFLINE/SYNC + BROWSER STORAGE TESTING
+================================================================================
+Report Date        : 2026-08-06
+Target URL         : https://projexa-ai.com/
+Tester Role        : END USER (Black-box, no code/server access)
+Tools Used         : agent-browser (Playwright Chromium)
+                    + Manifest fetch + Storage inspection
+Pages Tested       : /login (offline, online, post-OAuth)
+Session ID         : web-33afc8e6-7791-4c96-b57e-31217123fa74
+
+TESTS COVERED IN PART 4
+  Test #9  : PWA Testing
+  Test #10 : Offline/Sync Testing
+  Test #11 : Browser Storage Testing
+
+ARTIFACT DIRECTORY  : /home/z/my-project/screenshots/part4/
+ARTIFACTS CAPTURED  : 1 screenshot (offline-reload.png)
+
+================================================================================
+TEST #9 — PWA TESTING
+================================================================================
+Tool               : Manifest inspection + Service Worker check + Lighthouse
+                    (PWA category was deprecated in Lighthouse 13 — assessed
+                     manually using Chrome PWA installability criteria)
+Pass Criteria      : Installable, Offline Ready
+
+--- PWA Manifest Analysis ---
+
+  URL                : https://projexa-ai.com/manifest.webmanifest
+  HTTP status        : 200
+  Content-Type       : application/manifest+json (assumed; fetch succeeded)
+  Cache-Control      : public, max-age=0, must-revalidate (suboptimal)
+  ETag               : present
+
+  Manifest contents:
+    name             : "VERIDIAN AI"
+    short_name       : "VERIDIAN AI"
+    description      : "One Portal. One Truth."  (PROJEXA's tagline —
+                       brand inconsistency carried into manifest)
+    start_url        : "/home"
+    display          : "standalone"
+    background_color : "#FFFDF9"
+    theme_color      : "#1C2B3A"
+    icons            : [ {src:"/logo-mark.svg", sizes:"any", type:"image/svg+xml"} ]
+    share_target     : { action:"/api/veri-chat/share-target",
+                         method:"POST",
+                         enctype:"multipart/form-data",
+                         params:{title,text,url} }
+
+--- PWA Installability Criteria (Chrome) ---
+
+  Criterion 1: Served over HTTPS                              PASS
+  Criterion 2: Has web app manifest with required fields      PASS
+               (name, short_name, start_url, display, icons)
+  Criterion 3: Has a registered service worker                FAIL
+               (0 service workers registered; no /sw.js, no
+                /service-worker.js, no /workbox-sw.js — all 404)
+  Criterion 4: Has at least one PNG icon 192x192              FAIL
+               (only SVG icon present; iOS Safari requires PNG)
+  Criterion 5: Has at least one PNG icon 512x512              FAIL
+               (only SVG icon present)
+  Criterion 6: Manifest display mode is "standalone"          PASS
+  Criterion 7: start_url is reachable                         PARTIAL
+               (GET /home → 302 → /login?redirectTo=%2Fhome;
+                requires auth, but URL is valid)
+
+  Chrome installability result: NOT INSTALLABLE
+  Reason: Missing service worker (mandatory for Chrome install
+          prompt). Missing PNG icons (mandatory for Android home
+          screen install).
+
+  iOS installability result: PARTIAL
+  iOS requires: <link rel="apple-touch-icon"> (MISSING),
+                <meta name="apple-mobile-web-app-capable" content="yes">
+                (MISSING). Without these, "Add to Home Screen"
+                on iOS will work but will use a screenshot as icon
+                and open in Safari, not as a standalone app.
+
+--- Other PWA-related APIs ---
+
+  Background Sync API (SyncManager)        : supported but UNUSED
+  Periodic Background Sync API             : supported but UNUSED
+  Push Manager API                         : supported but UNUSED
+  Notifications API                       : supported, permission "default"
+  Web Share API (navigator.share)         : NOT supported (desktop context)
+  Share Target API (manifest.share_target) : configured for /api/veri-chat/share-target
+                                              OPTIONS /api/veri-chat/share-target → 204
+                                              (endpoint exists; not tested POST)
+
+Sub-checks:
+
+  9a. Manifest is valid JSON with required fields
+      VERDICT : PASS (name, short_name, start_url, display, icons present)
+
+  9b. Service worker is registered
+      VERDICT : FAIL — 0 SW registrations; all common SW paths return 404
+
+  9c. App is installable on Chrome (Android/desktop)
+      VERDICT : FAIL — no SW means no install prompt
+
+  9d. App is installable on iOS Safari
+      VERDICT : FAIL — no apple-touch-icon, no apple-mobile-web-app-capable
+
+  9e. App can run in standalone display mode
+      VERDICT : FAIL — without SW, even when launched from home screen,
+                the app opens in browser, not standalone
+
+  9f. Theme color is set in manifest AND meta tag
+      Manifest theme_color  : #1C2B3A (set)
+      Meta theme-color      : NOT PRESENT
+      VERDICT : PARTIAL — manifest has theme_color but the <meta name="theme-color">
+                tag is missing from the HTML <head>. Android Chrome uses the
+                meta tag for the address bar tint, not the manifest.
+
+  9g. Splash screen (Android)
+      VERDICT : FAIL — Android Chrome generates splash screen from PNG icons
+                and manifest colors. Without PNG icons, splash screen
+                will be blank or default.
+
+  9h. Share Target (receiving shares from other apps)
+      Manifest entry: yes
+      Endpoint       : /api/veri-chat/share-target (OPTIONS 204)
+      POST test      : not performed (would require valid session)
+      VERDICT : PASS (configuration present; functionality unverified
+                because no auth session available)
+
+Overall VERDICT for Test #9 : FAIL
+Reason   : App is NOT installable as a PWA on any platform because:
+             (1) No service worker is registered
+             (2) No PNG icons (only SVG)
+             (3) No apple-touch-icon for iOS
+             (4) No apple-mobile-web-app-capable meta tag
+           App CANNOT run in standalone display mode.
+           App CANNOT show a custom splash screen.
+Recommend:
+  - Register a service worker at /sw.js using Workbox or next-pwa.
+    Cache the app shell (HTML, CSS, JS, SVG logo, manifest) for
+    offline use.
+  - Generate PNG icons (192x192, 512x512, plus maskable variants).
+  - Add <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    (180x180 PNG).
+  - Add <meta name="apple-mobile-web-app-capable" content="yes">.
+  - Add <meta name="theme-color" content="#1C2B3A">.
+  - Add cache-control: public, max-age=31536000, immutable to
+    /logo-mark.svg and other static assets (currently max-age=0).
+
+Artifacts:
+  /home/z/my-project/screenshots/part4/offline-reload.png
+  (Manifest is JSON; not saved as image — see raw JSON in this report)
+
+================================================================================
+TEST #10 — OFFLINE/SYNC TESTING
+================================================================================
+Tool               : agent-browser (offline mode toggle)
+Pass Criteria      : Offline → Sync works
+
+Sub-checks:
+
+  10a. App can be loaded offline (after first online load)
+       Action  : Load /login online → toggle offline → reload
+       Result  : Browser shows ERR_INTERNET_DISCONNECTED page
+                 (Chrome default offline page; not the app's
+                 custom offline page)
+       VERDICT : FAIL — no offline support. Without a service worker,
+                 the browser has nothing to fall back to when network
+                 is unavailable.
+
+  10b. App serves a custom offline fallback page
+       VERDICT : FAIL — no offline page. Browser default shown.
+
+  10c. App caches static assets for offline use
+       Cache API: 0 caches
+       HTTP cache: max-age=0, must-revalidate on /logo-mark.svg
+                   (browser must re-fetch on every navigation)
+       VERDICT : FAIL — no caching strategy in place.
+
+  10d. App queues mutations while offline and syncs when online
+       Background Sync API: supported by browser but UNUSED by app
+       VERDICT : FAIL — no sync implementation.
+
+  10e. App detects online/offline transitions
+       navigator.onLine: true (online)
+       Action: toggled offline via Playwright
+       Result: app did NOT show any "You are offline" banner or
+               disable submission buttons. User could still attempt
+               to click "Sign In" (which would fail silently).
+       VERDICT : FAIL — no offline detection in the UI.
+
+  10f. Periodic Background Sync
+       VERDICT : FAIL — unused.
+
+  10g. Push Notifications
+       VERDICT : FAIL — no push subscription, no notification permission
+                 requested.
+
+  10h. Sync indicator (UI feedback)
+       VERDICT : FAIL — no sync status shown to user.
+
+Overall VERDICT for Test #10 : FAIL
+Reason   : No offline support whatsoever. No service worker means no
+           offline page, no cached assets, no background sync, no
+           push notifications. The app is a "thin client" that
+           requires constant network connectivity.
+Recommend:
+  - Implement a service worker with Workbox strategies:
+      * App shell: CacheFirst (HTML, CSS, JS, SVG)
+      * API calls: NetworkFirst with timeout fallback to cache
+      * Auth: NetworkOnly (cannot cache auth responses)
+  - Add an "offline" banner that appears when navigator.onLine is false.
+  - Implement Background Sync for any user submissions (e.g., form drafts).
+  - Test the offline flow end-to-end after implementation.
+
+Artifacts:
+  /home/z/my-project/screenshots/part4/offline-reload.png
+
+================================================================================
+TEST #11 — BROWSER STORAGE TESTING
+================================================================================
+Tool               : agent-browser (Storage inspection)
+Pass Criteria      : Local database healthy
+
+--- Storage State at Unauthenticated Login (/login) ---
+
+  localStorage   : EMPTY (0 entries)
+  sessionStorage : EMPTY (0 entries)
+  cookies        : 2 cookies
+                   1. sb-pcrjmlpuqsbocqfwoxod-auth-token-code-verifier
+                      (Supabase PKCE code verifier — base64-encoded
+                      64-byte random value. Set when OAuth/magic link
+                      flow starts. NOT HttpOnly — accessible to JS.)
+                   2. NEXT_LOCALE=en
+                      (Next.js locale preference. Not sensitive.)
+  IndexedDB      : 0 databases (none created)
+  Cache API      : 0 caches
+  OPFS           : supported, 0 entries
+  Storage quota  : 10 GB (standard Chromium quota)
+  Storage usage  : 0 bytes
+
+--- Storage State After OAuth Flow Attempt ---
+
+  (Same as above — no additional storage created by the abandoned
+   OAuth dance. The Supabase code-verifier cookie persists.)
+
+--- Cookie Attribute Analysis ---
+
+  Cookie 1: sb-pcrjmlpuqsbocqfwoxod-auth-token-code-verifier
+    - Secure attribute   : unknown (cannot read attribute from JS;
+                           HttpOnly cookies are invisible to JS, but
+                           this cookie is NOT HttpOnly so it appears
+                           in document.cookie)
+    - HttpOnly attribute : NO (visible to JavaScript → XSS risk if
+                           code verifier is sensitive)
+    - SameSite attribute : unknown (not readable from JS)
+    - Domain             : projexa-ai.com (host-only, not wildcard)
+    - Path               : / (assumed)
+    Note: Supabase Auth JS library stores the code verifier in a
+    cookie rather than localStorage so it can be read by the server-
+    side callback handler. This is the expected Supabase pattern.
+    However, the verifier SHOULD be HttpOnly to prevent XSS exfiltration.
+
+  Cookie 2: NEXT_LOCALE=en
+    - Not sensitive, no security concern.
+
+Sub-checks:
+
+  11a. localStorage is empty at unauthenticated state
+       VERDICT : PASS — no orphaned data, no leaked auth tokens
+
+  11b. sessionStorage is empty at unauthenticated state
+       VERDICT : PASS
+
+  11c. IndexedDB has no databases at unauthenticated state
+       VERDICT : PASS (clean slate; will need to re-test after login
+                to see if the app creates IndexedDB stores for
+                compliance data, AI chat history, etc.)
+
+  11d. Cache API has no caches
+       VERDICT : PASS (expected — no service worker means no Cache API
+                usage. If a SW were registered, we'd expect to see
+                "workbox-precache-v2-..." caches here.)
+
+  11e. OPFS is supported
+       VERDICT : PASS (browser supports it; app doesn't use it yet)
+
+  11f. Storage quota is reasonable (10 GB)
+       VERDICT : PASS
+
+  11g. Storage usage is 0 bytes
+       VERDICT : PASS (no orphaned storage)
+
+  11h. Supabase auth token storage
+       Result: After successful login, Supabase JS client typically
+               stores the access+refresh token in localStorage under
+               key "sb-<project>-auth-token". Cannot verify because
+               login is blocked.
+       VERDICT : UNTESTABLE — blocked by Part 1 credential issue.
+
+  11i. Cookie security attributes (Secure, HttpOnly, SameSite)
+       Result: Cannot read these attributes from JavaScript.
+       VERDICT : UNTESTABLE from browser. Recommend server-side
+                verification that all auth cookies are:
+                - Secure: yes (mandatory)
+                - HttpOnly: yes (mandatory for refresh tokens)
+                - SameSite=Lax or Strict (mandatory for CSRF)
+
+  11j. Storage quota persistence (navigator.storage.persist)
+       Result: not requested. App may lose localStorage under
+               storage pressure.
+       VERDICT : WARN — for a compliance product that may store
+                documents locally, requesting persistent storage
+                would prevent data loss.
+
+  11k. Storage cleanup on logout
+       Result: cannot test (login blocked).
+       VERDICT : UNTESTABLE.
+
+Overall VERDICT for Test #11 : PARTIAL PASS
+Reason   : At unauthenticated state, browser storage is clean and
+           well-behaved. No orphaned data, no excessive usage.
+           However:
+             - Cannot verify post-login storage behavior (blocked).
+             - Cannot verify cookie security attributes from JS.
+             - Supabase code-verifier cookie is NOT HttpOnly
+               (potential XSS exfiltration risk).
+Recommend:
+  - After restoring credentials, re-run this test to inspect:
+      * localStorage for sb-*-auth-token
+      * IndexedDB stores created by the app
+      * Cache API entries
+      * Cookie attributes (via browser DevTools, not JS)
+  - Configure Supabase client to set HttpOnly on the code-verifier
+    cookie (requires server-side cookie handling — see
+    @supabase/ssr package).
+  - Request persistent storage on first login:
+    navigator.storage.persist().
+
+Artifacts:
+  (Storage inspection output is JSON in this report; no screenshots
+   saved because storage is not visible in screenshots.)
+
+================================================================================
+PART 4 SUMMARY TABLE
+================================================================================
++-------+-------------------------------------+---------+----------------------+
+| Test# | Test Name                           | Verdict | Key Finding          |
++-------+-------------------------------------+---------+----------------------+
+| 9     | PWA Testing                         | FAIL    | Not installable —   |
+|       |                                     |         | no SW, no PNG icons,|
+|       |                                     |         | no apple-touch-icon |
+| 10    | Offline/Sync Testing                | FAIL    | Zero offline        |
+|       |                                     |         | capability; no      |
+|       |                                     |         | sync; no offline    |
+|       |                                     |         | detection in UI     |
+| 11    | Browser Storage Testing             | PARTIAL | Clean at unauth     |
+|       |                                     |         | state; cannot test  |
+|       |                                     |         | post-login; code-   |
+|       |                                     |         | verifier cookie not |
+|       |                                     |         | HttpOnly            |
++-------+-------------------------------------+---------+----------------------+
+
+CRITICAL GAP:
+  The app is marketed as "Indian compliance management" SaaS, but it
+  has ZERO offline capability. Compliance work often happens in low-
+  connectivity environments (factory floors, client sites, court
+  visits). Without offline support, the app is unusable in those
+  scenarios. This is a major product gap.
+
+CARRY-FORWARD ISSUES:
+  - Supabase code-verifier cookie not HttpOnly — Part 5 (Security).
+  - Static assets have max-age=0 cache-control — Part 7 (observability).
+  - No persistent storage request — Part 5 (data integrity).
+
+================================================================================
+END OF PART 4 REPORT
+================================================================================
+Next: Part 5 — API Contract + Security Testing
+================================================================================
