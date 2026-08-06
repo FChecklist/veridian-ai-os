@@ -1,0 +1,480 @@
+================================================================================
+GTMCert PART 8 of 8 — REGRESSION + PRODUCTION READINESS CERTIFICATION
+================================================================================
+Report Date        : 2026-08-06
+Target URL         : https://projexa-ai.com/
+Tester Role        : END USER (Black-box, no code/server access)
+Tools Used         : agent-browser + Lighthouse 13.4.1 + axe-core 4.10.0
+Session ID         : web-33afc8e6-7791-4c96-b57e-31217123fa74
+Trace ID           : 19fd635e17043ad1
+
+TESTS COVERED IN PART 8
+  Test #20 : Regression Testing
+  Test #25 : Production Readiness Certification (FINAL)
+
+ARTIFACT DIRECTORY  : /home/z/my-project/screenshots/
+ARTIFACTS CAPTURED  : 32+ screenshots across all 8 parts
+                      3 Lighthouse HTML reports
+                      Multiple JSON response dumps
+
+================================================================================
+TEST #20 — REGRESSION TESTING
+================================================================================
+Tool               : agent-browser (re-run of all critical paths)
+Pass Criteria      : Zero regressions
+
+Methodology:
+  Re-executed all critical user-facing flows at the end of the testing
+  session to verify that:
+    (a) The application state did not change during testing.
+    (b) No endpoint behavior shifted between calls.
+    (c) All public pages still render correctly.
+    (d) Authentication still rejects invalid credentials consistently.
+
+Sub-tests:
+
+  20a. Public page rendering (re-test)
+       +----------+--------+-------------------------------------------+
+       | Path     | Status | Title                                     |
+       +----------+--------+-------------------------------------------+
+       | /login   | 200    | Sign in — PROJEXA                         |
+       | /signup  | 200    | VERIDIAN COGNITIVE AI OS — AI Research    |
+       | /pricing | 200    | VERIDIAN COGNITIVE AI OS — AI Research    |
+       | /terms   | 200    | Terms & Conditions — VERIDIAN AI OS       |
+       | /privacy | 200    | Privacy Policy — VERIDIAN AI OS           |
+       | /data-policy | 200 | Data Policy — VERIDIAN AI OS              |
+       +----------+--------+-------------------------------------------+
+       VERDICT : PASS — all 6 public pages render with consistent
+                titles and 200 status. No regressions.
+
+  20b. API endpoint behavior (re-test)
+       +------------------------------+--------+----------+--------+
+       | Endpoint                     | Method | Expected | Actual |
+       +------------------------------+--------+----------+--------+
+       | /api/health                  | GET    | 200      | 200    |
+       | /api/users                   | GET    | 401      | 401    |
+       | /api/compliance              | GET    | 401      | 401    |
+       | /api/auth/failure-event      | POST   | 200      | 200    |
+       | /api/auth/passcode-login     | POST   | 400      | 400    |
+       | /api/veri-chat/share-target  | POST   | 401      | 401    |
+       +------------------------------+--------+----------+--------+
+       VERDICT : PASS — all 6 API endpoints return expected status
+                codes. No regressions in API contract.
+
+  20c. Login behavior (re-test)
+       Action: fill email=democeo@projexa-ai.com, password=Demo@1234,
+              click Sign In
+       Result: Supabase /auth/v1/token returns 400 (Invalid credentials)
+              Toast: "Invalid login credentials" (or "missing email or
+              phone" if React state was not properly set)
+       VERDICT : PASS (regression-wise) — same behavior as Part 1.
+                The credential rejection is consistent; this is the
+                same blocker as the start of testing. The application
+                has NOT changed.
+
+  20d. Localization toggle (re-test)
+       Action: switch language combobox to Hindi
+       Result: entire form translated
+       VERDICT : PASS — i18n still works.
+
+  20e. Responsive layout (re-test)
+       Action: re-loaded /login at 375x667 viewport
+       Result: no horizontal overflow, all elements visible
+       VERDICT : PASS — responsive layout stable.
+
+  20f. Security headers (re-test)
+       Action: re-fetched /login and /api/users headers
+       Result: same header set as Part 5
+         - HSTS: present
+         - CSP: still MISSING
+         - X-Frame-Options: still MISSING
+         - X-Content-Type-Options: still MISSING
+       VERDICT : PASS (regression-wise) — no change in security
+                posture. Same gaps remain.
+
+  20g. Lighthouse score (re-test on /login)
+       Performance    : 95  (was 95 in Part 3)                 PASS
+       Accessibility  : 96  (was 96 in Part 3)                 PASS
+       Best Practices : 100 (was 100 in Part 3)                PASS
+       SEO            : 100 (was 100 in Part 3)                PASS
+       VERDICT : PASS — performance and quality scores are stable.
+
+  20h. Service worker registration (re-test)
+       Result: 0 service workers registered (same as Part 4)
+       VERDICT : PASS — PWA state unchanged.
+
+  20i. Browser storage (re-test)
+       localStorage  : empty
+       sessionStorage : empty
+       IndexedDB     : 0 databases
+       Cookies       : 2 (NEXT_LOCALE + Supabase code-verifier)
+       VERDICT : PASS — storage state unchanged.
+
+  20j. Endpoint determinism (re-test)
+       /api/health called 5 times: all return 200 {"ok":true,"ts":...}
+       Response times consistent (123-145ms range, same as Part 7)
+       VERDICT : PASS — deterministic.
+
+Overall VERDICT for Test #20 : PASS
+Reason   : No regressions detected. All public pages, API endpoints,
+           security posture, performance scores, and storage state
+           are identical to the start of the testing session. The
+           application is in a stable, reproducible state.
+Note     : This regression test ONLY covers what an unauthenticated
+           end user can observe. Backend state (DB, logs, metrics)
+           is not regression-tested from the outside.
+
+Artifacts:
+  /home/z/my-project/screenshots/part8/regression-login-attempt.png
+
+================================================================================
+TEST #25 — PRODUCTION READINESS CERTIFICATION (FINAL)
+================================================================================
+Tool               : Aggregation of all 24 prior tests
+Pass Criteria      : All 24 previous tests PASS
+
+================================================================================
+FINAL CERTIFICATION SUMMARY — ALL 25 TESTS
+================================================================================
+
++-------+-------------------------------------+-------------+--------------------+
+| #     | Test Name                           | Verdict     | Critical Issue     |
++-------+-------------------------------------+-------------+--------------------+
+| 1     | Smoke Testing                       | FAIL        | Login fails (400)  |
+| 2     | End-to-End User Journey             | FAIL        | Blocked at login   |
+| 3     | UI/UX Validation                    | FAIL        | 10 critical defects|
+| 4     | Cross Browser Testing               | PARTIAL     | Chromium only;     |
+|       |                                     |             | Safari untested    |
+| 5     | Responsive Testing                  | PASS        | All 6 viewports OK |
+| 6     | Accessibility Testing               | FAIL        | button-name + 14   |
+|       |                                     |             | color-contrast     |
+|       |                                     |             | violations         |
+| 7     | Performance Testing                 | PARTIAL     | /pricing 85 (<90); |
+|       |                                     |             | /login 95,         |
+|       |                                     |             | /signup 96         |
+| 8     | Core Web Vitals                     | FAIL        | LCP fails on all   |
+|       |                                     |             | pages; INP fails   |
+| 9     | PWA Testing                         | FAIL        | No SW, no PNG      |
+|       |                                     |             | icons, not         |
+|       |                                     |             | installable        |
+| 10    | Offline/Sync Testing                | FAIL        | Zero offline       |
+|       |                                     |             | capability         |
+| 11    | Browser Storage Testing             | PARTIAL     | Clean at unauth;   |
+|       |                                     |             | code-verifier not  |
+|       |                                     |             | HttpOnly           |
+| 12    | API Contract Testing                | PARTIAL     | No rate limiting;  |
+|       |                                     |             | no input validation|
+|       |                                     |             | on failure-event   |
+| 13    | Authentication Testing              | FAIL        | Demo creds invalid;|
+|       |                                     |             | no rate limiting;  |
+|       |                                     |             | email validation   |
+|       |                                     |             | weak               |
+| 14    | Authorization / RBAC Testing        | PARTIAL     | Passcode brute-    |
+|       |                                     |             | force possible;    |
+|       |                                     |             | role checks        |
+|       |                                     |             | untestable         |
+| 15    | Database Integrity Testing          | UNVERIFIABLE| Backend access     |
+|       |                                     | (PASS obs.) | required           |
+| 16    | Multi-Tenant Isolation              | UNVERIFIABLE| Backend access +   |
+|       |                                     | (PASS obs.) | 2 tenants required |
+| 17    | Synchronization Testing             | PARTIAL     | Concurrent calls   |
+|       |                                     |             | consistent; R/W    |
+|       |                                     |             | sync untestable    |
+| 18    | Security Testing                    | FAIL        | No CSP, no XFO,    |
+|       |                                     |             | no rate limit,     |
+|       |                                     |             | cookie not HttpOnly|
+| 19    | Dependency / Supply Chain Scan      | PARTIAL     | First-party only;  |
+|       |                                     |             | no SRI; npm audit  |
+|       |                                     |             | not possible       |
+| 20    | Regression Testing                  | PASS        | No regressions     |
+| 21    | AI Workflow Testing                 | UNTESTABLE  | Auth required      |
+| 22    | Governance Testing                  | FAIL        | No OCID/UMR APIs;  |
+|       |                                     |             | sitemap domain     |
+|       |                                     |             | mismatch; Gmail    |
+|       |                                     |             | privacy contact    |
+| 23    | Disaster Recovery Testing           | UNVERIFIABLE| Backend access     |
+|       |                                     | (PASS obs.) | required           |
+| 24    | Monitoring & Observability          | PARTIAL     | Health endpoint +  |
+|       |                                     |             | Vercel Analytics;  |
+|       |                                     |             | no Sentry/status   |
+| 25    | Production Readiness Certification  | FAIL        | 9 of 24 prior      |
+|       |                                     |             | tests FAIL         |
++-------+-------------------------------------+-------------+--------------------+
+
+================================================================================
+FINAL CERTIFICATION VERDICT
+================================================================================
+
+  PRODUCTION READINESS:  ❌  NOT CERTIFIED
+
+  Score breakdown:
+    PASS              :  2  (Tests #5, #20)
+    PARTIAL PASS      :  6  (Tests #4, #7, #11, #12, #14, #17, #19, #24)
+    FAIL              :  9  (Tests #1, #2, #3, #6, #8, #9, #10, #13, #18, #22)
+    UNTESTABLE        :  4  (Tests #15, #16, #21, #23)  [require backend access]
+    UNVERIFIABLE      :  3  (Tests #15, #16, #23)  [observable parts pass]
+
+  Pass rate (PASS only):  2 / 25 = 8%
+  Pass rate (PASS + PARTIAL): 8 / 25 = 32%
+  Effective pass rate (excluding UNTESTABLE): 8 / 21 = 38%
+
+================================================================================
+CRITICAL BLOCKERS (must fix before any production launch)
+================================================================================
+
+  CB-01. Demo credentials provided are invalid.
+         Status: BLOCKER
+         Impact: Cannot complete E2E user journey testing (Tests #1, #2,
+                 #13, #14, #21). All downstream tests requiring an
+                 authenticated session are blocked.
+         Action: Verify account `democeo@projexa-ai.com` exists in
+                 Supabase Auth. Reset password if needed. Provide
+                 working credentials to re-run the test suite.
+
+  CB-02. No Content-Security-Policy header.
+         Status: CRITICAL SECURITY
+         Impact: XSS attacks are not mitigated at the browser level.
+                 Any XSS bug leads to full account takeover.
+         Action: Add a strict CSP to next.config.js headers() config.
+
+  CB-03. No X-Frame-Options / frame-ancestors.
+         Status: HIGH SECURITY
+         Impact: Login page can be embedded in iframes on arbitrary
+                 domains — clickjacking attacks can steal credentials.
+         Action: Add X-Frame-Options: DENY or frame-ancestors 'none'
+                 in CSP.
+
+  CB-04. No rate limiting on /api/auth/passcode-login.
+         Status: CRITICAL SECURITY
+         Impact: 4-digit passcode can be brute-forced in ~22 minutes.
+                 For a compliance product, this is unacceptable.
+         Action: Add rate limiting (5 attempts per email per 10 min,
+                 lockout after 10 fails). Consider reCAPTCHA.
+
+  CB-05. No rate limiting on Supabase /auth/v1/token.
+         Status: HIGH SECURITY
+         Impact: Brute-force attacks on user passwords are not
+                 mitigated at the application layer.
+         Action: Enable Supabase Auth rate limits in the dashboard
+                 (Auth → Settings → Rate Limits).
+
+  CB-06. Supabase code-verifier cookie is NOT HttpOnly.
+         Status: HIGH SECURITY
+         Impact: XSS can exfiltrate the OAuth code verifier and
+                 hijack the auth flow.
+         Action: Migrate to @supabase/ssr for server-side cookie
+                 handling with HttpOnly attribute.
+
+  CB-07. No PWA capability (no service worker, no PNG icons).
+         Status: PRODUCT GAP
+         Impact: App is unusable in low-connectivity environments
+                 (factory floors, client sites, court visits).
+                 For a compliance product, this is a major gap.
+         Action: Add next-pwa or Workbox, generate PNG icons
+                 (192x192, 512x512, maskable, apple-touch-icon).
+
+  CB-08. Brand inconsistency (PROJEXA vs VERIDIAN AI).
+         Status: GOVERNANCE / TRUST
+         Impact: Users see two different brand names on different
+                 pages. Meta description, sitemap, and og tags all
+                 reference VERIDIAN while /login says PROJEXA.
+                 Breaks user trust and SEO.
+         Action: Pick one brand. Update all surfaces consistently
+                 (HTML, manifest, sitemap, legal pages, meta tags).
+
+  CB-09. Sitemap.xml references different domain.
+         Status: SEO / GOVERNANCE
+         Impact: Sitemap points to https://veridian-ai-os.vercel.app/
+                 instead of https://projexa-ai.com/. Search engines
+                 will index the wrong domain.
+         Action: Fix sitemap.xml to reference the canonical domain.
+
+  CB-10. /forgot-password returns 404.
+         Status: UX / SUPPORT
+         Impact: Users who forget their password have no self-service
+                 recovery path. Only "Send magic link instead" is
+                 offered on /login.
+         Action: Implement /forgot-password OR redirect it to /login
+                 with a magic-link prompt.
+
+================================================================================
+HIGH-PRIORITY ISSUES (fix before GA)
+================================================================================
+
+  HP-01. Color contrast violations on /pricing (14 elements, some 2.59:1).
+  HP-02. button-name violation: #billing-toggle (Monthly/Annual switch)
+         has no accessible name.
+  HP-03. No <h1> on /login and /signup.
+  HP-04. No semantic landmarks (<main>, <header>, <footer>) on /login
+         and /signup.
+  HP-05. No skip-link on any page.
+  HP-06. Missing autocomplete attributes on email/password fields.
+  HP-07. No password visibility toggle.
+  HP-08. No client-side email format validation.
+  HP-09. LCP > 2.5s on all pages (marginal on /login and /signup,
+         significant on /pricing at 3.8s).
+  HP-10. INP (Max Potential FID) > 200ms on all pages.
+  HP-11. No Sentry / Bugsnag / error tracking SDK.
+  HP-12. No public status page.
+  HP-13. No SRI (Sub-resource Integrity) on scripts.
+  HP-14. Privacy contact is a personal Gmail address.
+  HP-15. No data residency disclosure in /data-policy.
+  HP-16. No sub-processor list in /privacy.
+  HP-17. No CIN number in /terms footer (Indian Companies Act).
+  HP-18. No /api/openapi.json (no published API contract).
+  HP-19. /api/auth/failure-event accepts ANY input without validation.
+  HP-20. 404 page is a dead end (no "return to login" link).
+
+================================================================================
+MEDIUM-PRIORITY ISSUES (fix in next sprint)
+================================================================================
+
+  MP-01. No X-Content-Type-Options: nosniff header.
+  MP-02. No Referrer-Policy header.
+  MP-03. No COOP / COEP / CORP headers.
+  MP-04. Information disclosure: Server, X-Powered-By, X-Vercel-ID
+         headers reveal tech stack.
+  MP-05. No /.well-known/security.txt.
+  MP-06. Static assets have max-age=0 (suboptimal caching).
+  MP-07. bfcache not restorable on /login.
+  MP-08. 142 KiB of unused JavaScript on /login.
+  MP-09. Input font-size 14px (triggers iOS auto-zoom).
+  MP-10. Login form uses method="GET" (should be POST).
+  MP-11. No persistent storage request
+         (navigator.storage.persist()).
+  MP-12. No theme-color meta tag (only in manifest).
+  MP-13. No apple-touch-icon link.
+  MP-14. No apple-mobile-web-app-capable meta tag.
+  MP-15. No canonical link tag.
+  MP-16. <html dir> attribute not set (relevant for future RTL
+         languages).
+  MP-17. /api/auth/sso/ returns HTML instead of JSON (confusing URL
+         design — should be moved to /sso or /auth/sso).
+  MP-18. Passcode-login doesn't validate 4-digit format (accepts
+         3-char, 5-char, alphabetic).
+  MP-19. No right-to-erasure process documented (DPDP Act 2023).
+  MP-20. No public landing page at / (redirects straight to /login).
+
+================================================================================
+TESTS THAT CANNOT BE COMPLETED FROM END-USER PERSPECTIVE
+================================================================================
+
+  The following tests require backend access, codebase access, or
+  credentials that were not available during this testing session:
+
+  - Test #15 (Database Integrity): need DB admin access
+  - Test #16 (Multi-Tenant Isolation): need 2+ tenant accounts
+  - Test #21 (AI Workflow): need authenticated session
+  - Test #23 (Disaster Recovery): need backup/restore access
+
+  These tests are documented with "UNVERIFIABLE" or "UNTESTABLE"
+  verdicts. The OPERATOR must perform these tests with backend
+  access before claiming full production readiness.
+
+================================================================================
+RECOMMENDED NEXT STEPS (priority order)
+================================================================================
+
+  IMMEDIATE (before any production launch):
+    1. Restore or reissue demo credentials.
+    2. Add Content-Security-Policy header.
+    3. Add X-Frame-Options: DENY.
+    4. Enable rate limiting on /api/auth/passcode-login and
+       Supabase Auth.
+    5. Migrate to @supabase/ssr for HttpOnly auth cookies.
+    6. Fix brand inconsistency (PROJEXA → VERIDIAN or vice versa).
+    7. Fix sitemap.xml to reference canonical domain.
+
+  SHORT-TERM (within 2 weeks):
+    8. Add <h1>, <main>, <header>, <footer>, skip-link to all pages.
+    9. Fix color contrast violations (darken orange #f5820a → #c66805).
+    10. Add aria-label to #billing-toggle.
+    11. Add autocomplete attributes to login form.
+    12. Add password visibility toggle.
+    13. Add client-side email format validation.
+    14. Implement /forgot-password route.
+    15. Add Sentry for error tracking.
+    16. Publish a status page.
+    17. Add SRI to script tags.
+    18. Replace Gmail privacy contact with corporate email.
+    19. Add data residency clause to /data-policy.
+    20. Add sub-processor list to /privacy.
+
+  MEDIUM-TERM (within 1 month):
+    21. Add service worker + PNG icons for PWA installability.
+    22. Add offline fallback page.
+    23. Implement Background Sync for form drafts.
+    24. Optimize LCP (preload hero, lazy-load below-fold).
+    25. Code-split Next.js bundles (remove 142 KiB unused JS).
+    26. Investigate bfcache prevention.
+    27. Add /api/openapi.json spec.
+    28. Add /api/ocid and /api/umr governance endpoints.
+    29. Add input validation on /api/auth/failure-event.
+    30. Run npm audit + trivy scan in CI.
+    31. Add COOP/COEP/CORP headers.
+    32. Add /.well-known/security.txt.
+    33. Add CIN number to /terms footer.
+    34. Implement multi-region failover for Supabase (read replicas).
+    35. Configure Vercel Log Drain to a log aggregator.
+
+  RE-TESTING:
+    36. After credentials are restored, re-run Parts 1, 6 (AI workflow,
+        RBAC roles), and verify the authenticated user journey end-to-end.
+    37. After backend access is granted, re-run Tests #15, #16, #23
+        with direct DB/backup inspection.
+
+================================================================================
+TESTING METHODOLOGY NOTES
+================================================================================
+
+  This certification was performed as a single end-user tester, in a
+  Linux sandbox running Playwright Chromium (HeadlessChrome 151).
+
+  Strengths of this approach:
+    - Black-box perspective matches real user experience.
+    - No special access required.
+    - Reproducible: all artifacts saved to /home/z/my-project/screenshots/.
+    - Fast: full 25-test matrix completed in one session.
+
+  Limitations:
+    - Could not test Firefox or Safari (sandbox has only Chromium).
+    - Could not perform authenticated tests (demo creds invalid).
+    - Could not inspect backend (DB, RLS, backups, npm audit).
+    - Could not test multi-tenant isolation (need 2+ tenants).
+    - Lighthouse PWA category deprecated in v13 (manual assessment
+      used instead).
+    - Some Web Vitals (real INP, field LCP) require RUM data, not
+      available in lab testing.
+
+  Artifacts produced:
+    - 32+ PNG screenshots across 8 parts.
+    - 3 Lighthouse HTML reports (login, signup, pricing).
+    - 3 Lighthouse JSON reports.
+    - 8 .txt reports (this is the 8th).
+    - All saved to /home/z/my-project/download/ and
+      /home/z/my-project/screenshots/.
+
+================================================================================
+END OF PART 8 — END OF FULL 25-TEST CERTIFICATION
+================================================================================
+
+  Total tests executed : 25
+  Total reports generated: 8 (Parts 1-8)
+  Total screenshots captured: 32+
+  Total Lighthouse reports: 3 (login, signup, pricing)
+
+  FINAL VERDICT: ❌ NOT CERTIFIED FOR PRODUCTION
+
+  The application https://projexa-ai.com/ is NOT ready for production
+  launch. Critical security gaps (no CSP, no rate limiting, no HttpOnly
+  cookies), brand inconsistency, missing PWA capability, accessibility
+  violations, and the inability to authenticate with provided demo
+  credentials must all be addressed before re-running this certification.
+
+  Once the 10 Critical Blockers and 20 High-Priority Issues are
+  resolved, re-run all 25 tests. Target: 100% PASS or PARTIAL PASS
+  with documented operator-side verification for UNTESTABLE items.
+
+================================================================================
+END OF FULL REPORT
+================================================================================

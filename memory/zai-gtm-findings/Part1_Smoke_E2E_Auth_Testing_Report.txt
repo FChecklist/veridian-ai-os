@@ -1,0 +1,340 @@
+================================================================================
+GTMCert PART 1 of 8 — SMOKE + E2E JOURNEY + AUTHENTICATION TESTING
+================================================================================
+Report Date        : 2026-08-06
+Target URL         : https://projexa-ai.com/
+Tester Role        : END USER (Black-box, no code/server access)
+Provided Creds     : democeo@projexa-ai.com / Demo@1234
+Tool Used          : agent-browser (Playwright-based headless CLI)
+Browser Engine     : Chromium (Playwright default)
+Session ID         : web-33afc8e6-7791-4c96-b57e-31217123fa74
+Trace ID           : 19fd635e17043ad1
+================================================================================
+
+TESTS COVERED IN PART 1
+  Test #1   : Smoke Testing
+  Test #2   : End-to-End User Journey
+  Test #13  : Authentication Testing
+
+ARTIFACT DIRECTORY  : /home/z/my-project/screenshots/
+ARTIFACTS CAPTURED  : 13 PNG screenshots + 1 network trace
+
+--------------------------------------------------------------------------------
+CRITICAL BLOCKER SUMMARY (READ FIRST)
+--------------------------------------------------------------------------------
+[BLOCKER-001] The provided demo credentials `democeo@projexa-ai.com` / 
+`Demo@1234` were rejected by Supabase Auth with the message 
+"Invalid login credentials". The Supabase token endpoint 
+`POST https://pcrjmlpuqsbocqfwoxod.supabase.co/auth/v1/token?grant_type=password`
+returned HTTP 400 on every attempt (5 attempts made).
+
+Impact:
+  - Tests #1, #2, #13 cannot achieve full PASS state.
+  - All downstream tests (#3-#25) that depend on an authenticated
+    session are blocked until valid credentials are provided.
+  - Tests still executable as unauthenticated user are limited to:
+      * Public page UI validation (login, signup, pricing, 404)
+      * HTTP security headers
+      * Login form behavior and validation
+      * Localization toggle
+      * Alternative auth entry points (Google OAuth, Passcode, SSO)
+
+Required user action:
+  Please verify the demo credentials. Possibilities:
+    (a) The password was changed/expired.
+    (b) The demo user was deleted from Supabase Auth.
+    (c) The email confirmation step was never completed.
+    (d) The intended user is at a different email (e.g. demo@projexa-ai.com).
+  Until credentials are restored, the bulk of the 25-test matrix cannot be
+  executed from the END USER perspective.
+
+--------------------------------------------------------------------------------
+TEST #1 — SMOKE TESTING
+--------------------------------------------------------------------------------
+Tool              : agent-browser
+URL tested        : https://projexa-ai.com/
+Pass Criteria     : App starts, login works, dashboard loads
+
+Evidence:
+  - GET https://projexa-ai.com/      → 200, redirected to /login (see 01-login-initial.png)
+  - GET https://projexa-ai.com/login → 200 (see 01-login-initial.png)
+  - Server header: Vercel
+  - X-Powered-By: Next.js
+  - HSTS: max-age=63072000 (enabled, good)
+  - Login form rendered correctly (3 input fields: EMAIL, PASSWORD, Language)
+  - 4 auth buttons present: Google, Sign In, Passcode, SSO
+  - POST to Supabase /auth/v1/token → HTTP 400 (see network trace below)
+  - Dashboard (/dashboard) NOT loaded; redirect to /login?redirectTo=%2Fdashboard
+
+Sub-checks:
+  1a. App starts                 : PASS  (HTTP 200 on / and /login)
+  1b. Login works                : FAIL  (Supabase 400 — invalid credentials)
+  1c. Dashboard loads            : FAIL  (blocked by 1b)
+
+VERDICT  : FAIL
+Reason   : Provided demo credentials rejected by Supabase Auth; dashboard unreachable.
+Recommend:
+  - Re-verify the demo account exists and password is correct.
+  - Add an explicit, user-visible error message near the form (currently only
+    a transient toast appears and disappears within ~4s — easy to miss).
+  - Add a "Forgot password" link on the login page (currently only
+    "Send magic link instead" is offered, and /forgot-password returns 404).
+
+Artifacts:
+  /home/z/my-project/screenshots/01-login-initial.png
+  /home/z/my-project/screenshots/02-after-login-attempt.png
+  /home/z/my-project/screenshots/03-login-filled.png
+
+--------------------------------------------------------------------------------
+TEST #2 — END-TO-END USER JOURNEY
+--------------------------------------------------------------------------------
+Tool              : agent-browser
+URL tested        : https://projexa-ai.com/  (intended flow: login → dashboard)
+Pass Criteria     : Complete workflow executes successfully
+
+Intended user journey (assumed from URL structure):
+  Step 1: Land on /                          → redirected to /login
+  Step 2: Enter email + password             → entered correctly
+  Step 3: Click "Sign In"                    → clicked
+  Step 4: Supabase /auth/v1/token (password) → HTTP 400 (FAIL)
+  Step 5: Redirect to /home or /dashboard    → NEVER REACHED
+  Step 6: Browse compliance dashboard         → NEVER REACHED
+
+Evidence:
+  - Pre-submit form values verified:
+      EMAIL field    = "democeo@projexa-ai.com" (9 chars after @)
+      PASSWORD field = "Demo@1234"               (9 chars)
+  - POST https://pcrjmlpuqsbocqfwoxod.supabase.co/auth/v1/token?grant_type=password
+        → HTTP 400 (5 attempts, all 400)
+  - POST https://projexa-ai.com/api/auth/failure-event → HTTP 200
+        (server is correctly logging the auth failure)
+  - Toast shown: "Invalid login credentials" (auto-dismissed in ~4s)
+
+Side-paths explored (as unauthenticated user):
+  - /signup           → 200, signup form loads (see 04-signup-page.png)
+  - /pricing          → 200, public pricing page loads (see 05-pricing-page.png)
+  - /forgot-password  → 404 page (BROKEN LINK) (see 06-forgot-password.png)
+  - /about            → 404 page
+  - /dashboard        → 302 → /login?redirectTo=%2Fdashboard (correctly gated)
+
+VERDICT  : FAIL (BLOCKED)
+Reason   : Authentication failed at Step 4; downstream steps cannot execute.
+Recommend:
+  - Restore or reissue demo credentials.
+  - Add a self-service password reset that actually works (current
+    /forgot-password returns 404).
+  - Provide a public landing page at / — current behavior immediately
+    redirects to /login, which is unfriendly to first-time visitors.
+
+Artifacts:
+  /home/z/my-project/screenshots/02-after-login-attempt.png
+  /home/z/my-project/screenshots/04-signup-page.png
+  /home/z/my-project/screenshots/05-pricing-page.png
+  /home/z/my-project/screenshots/06-forgot-password.png
+
+--------------------------------------------------------------------------------
+TEST #13 — AUTHENTICATION TESTING
+--------------------------------------------------------------------------------
+Tool              : agent-browser
+URL tested        : https://projexa-ai.com/login
+Pass Criteria     : Login, Logout, Session pass
+
+Sub-tests executed:
+
+  13a. Login with valid demo credentials
+       Action  : fill EMAIL=democeo@projexa-ai.com, PASSWORD=Demo@1234, click Sign In
+       Result  : HTTP 400 from Supabase, toast "Invalid login credentials"
+       Verdict : FAIL
+
+  13b. Login form — required field validation
+       Action  : leave EMAIL empty, leave PASSWORD empty, click Sign In
+       Result  : HTML5 `required` attribute blocks submit; no request sent
+       Verdict : PASS (basic HTML5 validation works)
+
+  13c. Login form — email format validation
+       Action  : EMAIL="notanemail", PASSWORD="password", click Sign In
+       Result  : Request still fires to Supabase (no client-side email regex)
+                 Supabase returns 401 (it does its own validation)
+       Verdict : FAIL — client-side should reject malformed email BEFORE
+                 sending to the auth provider (leaks user attempts and
+                 creates unnecessary noise in auth logs).
+
+  13d. Google OAuth entry point
+       Action  : click "Sign in with Google"
+       Result  : Browser navigates to
+                 https://pcrjmlpuqsbocqfwoxod.supabase.co/auth/v1/authorize
+                 ?provider=google&redirect_to=...%2Fauth%2Fcallback%3Fnext%3D%252Fhome
+                 with PKCE code_challenge (S256) — OAuth flow correctly wired.
+       Verdict : PASS (entry point functional; not fully completed because
+                 this would require a real Google account)
+
+  13e. Passcode login entry point
+       Action  : click "Sign in with passcode"
+       Result  : Inline 4-digit passcode field appears, Continue button enabled.
+       Verdict : PASS (UI flow functional; cannot test passcode value without
+                 a valid passcode)
+
+  13f. Company SSO entry point
+       Action  : click "Sign in with company SSO"
+       Result  : Inline "COMPANY ID" field appears, Continue button enabled.
+       Verdict : PASS (UI flow functional; cannot test without a real Company ID)
+
+  13g. Magic link entry point
+       Action  : observed "Send magic link instead" button on login form
+       Result  : button present and clickable; not exercised (would send email).
+       Verdict : PASS (entry point present)
+
+  13h. Logout flow
+       Result  : CANNOT TEST — login is blocked, no session to terminate.
+       Verdict : BLOCKED
+
+  13i. Session persistence
+       Result  : CANNOT TEST — no session created.
+       Verdict : BLOCKED
+
+  13j. Session expiry
+       Result  : CANNOT TEST — no session created.
+       Verdict : BLOCKED
+
+  13k. Rate-limiting / brute-force protection
+       Action  : submitted invalid creds 5 times in rapid succession
+       Result  : No rate-limit observed; all 5 attempts got the same 400
+                 response immediately. No lockout, no captcha, no delay.
+       Verdict : FAIL — this is a security gap. See Part 5 (Security Testing)
+                 for full treatment.
+
+  13l. Localization of auth UI
+       Action  : toggle Language combobox from English to हिन्दी
+       Result  : entire login form translated to Hindi
+                 ("वापसी पर स्वागत है", "साइन इन करें", etc.)
+       Verdict : PASS (i18n works for login page)
+
+  13m. Toast notifications UX
+       Action  : observe toast on auth failure
+       Result  : toast appears top-level, auto-dismisses in ~4s. Easy to miss.
+                 No persistent error text near the form.
+       Verdict : WARN — accessible-enough but suboptimal for users with
+                 cognitive load or screen-reader-only reliance.
+
+Overall VERDICT for Test #13 : FAIL
+Reason   : Primary login path fails with provided credentials. Email-format
+           validation missing client-side. No rate-limiting observed. Logout,
+           session, and expiry flows cannot be exercised.
+Recommend:
+  - Restore demo credentials OR provide a working set.
+  - Add client-side email regex validation (type="email" alone is not enough).
+  - Add rate-limiting after 3-5 failed attempts (exponential backoff or
+    short lockout). Consider reCAPTCHA on the login form.
+  - Make error message persistent near the form, not only in a toast.
+  - Fix /forgot-password 404.
+
+Artifacts:
+  /home/z/my-project/screenshots/01-login-initial.png
+  /home/z/my-project/screenshots/07-empty-password.png
+  /home/z/my-project/screenshots/08-invalid-email.png
+  /home/z/my-project/screenshots/09-google-signin.png
+  /home/z/my-project/screenshots/10b-passcode-modal.png
+  /home/z/my-project/screenshots/11-sso-modal.png
+  /home/z/my-project/screenshots/12-hindi-ui.png
+
+--------------------------------------------------------------------------------
+ADDITIONAL OBSERVATIONS (carried forward to later parts)
+--------------------------------------------------------------------------------
+OBS-001  Brand inconsistency
+  - /login page title : "Sign in — PROJEXA"
+  - /login page brand : "PROJEXA" / "One Portal. One Truth."
+  - /pricing page     : "VERIDIAN AI" / "VERIDIAN COGNITIVE AI OS"
+  - /signup page      : "VERIDIAN COGNITIVE AI OS"
+  - <title> tag on /pricing, /signup, /forgot-password, /about is
+    "VERIDIAN COGNITIVE AI OS — AI Cognitive Research" (NOT "PROJEXA")
+  → Suggests incomplete rebrand. Will be re-evaluated in Part 2 (UI/UX).
+
+OBS-002  No public landing page at /
+  - GET / → 302 → /login
+  - First-time visitors have no marketing/landing surface.
+  - This is unusual for a SaaS product. Will be re-evaluated in Part 2.
+
+OBS-003  /forgot-password returns 404
+  - The login form offers no "Forgot password?" link — only "Send magic
+    link instead". But navigating directly to /forgot-password yields 404.
+  - Suggests the route was removed but not redirected.
+
+OBS-004  Security headers (observed on /login)
+  - strict-transport-security   : max-age=63072000          ✓ (HSTS on)
+  - cache-control               : no-store, no-cache        ✓ (sensitive page)
+  - content-type                : text/html; charset=utf-8  ✓
+  - server                      : Vercel                    (info leak — minor)
+  - x-powered-by                : Next.js                   (info leak — minor)
+  - content-security-policy     : NOT PRESENT               ✗ (CSP missing)
+  - x-frame-options             : NOT PRESENT               ✗ (clickjacking risk)
+  - x-content-type-options      : NOT PRESENT               ✗ (MIME sniffing risk)
+  - referrer-policy             : NOT PRESENT               ✗ (referrer leak risk)
+  - permissions-policy          : NOT PRESENT               ✗
+  → Will be re-evaluated in Part 5 (Security Testing).
+
+OBS-005  Cookies
+  - At unauthenticated state, ZERO cookies are set on the projexa-ai.com
+    domain. Good (no tracking cookies on login).
+  - Supabase auth cookies (`sb-*-auth-token`) only appear AFTER successful
+    login — cannot verify Secure/HttpOnly/SameSite attributes yet.
+
+OBS-006  LocalStorage / IndexedDB
+  - At unauthenticated state, localStorage is empty. IndexedDB not yet
+    probed (will be done in Part 4 — Browser Storage Testing).
+
+OBS-007  Manifest / PWA hints
+  - GET https://projexa-ai.com/manifest.webmanifest → HTTP 200
+  - Next.js app, likely a Next-PWA setup. Will be evaluated in Part 4.
+
+OBS-008  Network requests observed on login page
+  - Two analytics scripts loaded:
+      /771b847594094cc8/script.js
+      /04809683687b4e12/script.js
+    (likely Vercel Analytics / Speed Insights or PostHog). Cannot identify
+     without response body access. Will be noted in Part 5.
+
+OBS-009  Supabase project URL
+  - https://pcrjmlpuqsbocqfwoxod.supabase.co  (visible in client bundle)
+  - This is the auth backend. Anon key is also exposed in client JS (normal
+    for Supabase, but should be paired with Row-Level Security policies).
+    Will be re-evaluated in Part 5 (Security) and Part 6 (RBAC).
+
+OBS-010  API endpoints inferred
+  - /api/auth/failure-event  (POST, observed firing on login failure, 200)
+  - /auth/callback           (OAuth redirect target)
+  - More endpoints will be enumerated in Part 5 (API Contract Testing).
+
+--------------------------------------------------------------------------------
+PART 1 SUMMARY TABLE
+--------------------------------------------------------------------------------
++-------+-------------------------------------+---------+----------------------+
+| Test# | Test Name                           | Verdict | Reason / Blocker     |
++-------+-------------------------------------+---------+----------------------+
+| 1     | Smoke Testing                       | FAIL    | Login fails (400)    |
+| 2     | End-to-End User Journey             | FAIL    | Blocked at login     |
+| 13    | Authentication Testing              | FAIL    | Creds rejected;      |
+|       |                                     |         | no rate-limit;       |
+|       |                                     |         | email validation     |
+|       |                                     |         | weak; logout/session |
+|       |                                     |         | untestable           |
++-------+-------------------------------------+---------+----------------------+
+
+BLOCKING ISSUES (must be resolved before Parts 2-8 can complete):
+  1. Demo credentials `democeo@projexa-ai.com / Demo@1234` are INVALID.
+     → User action required: provide working credentials OR confirm the
+       account is active in Supabase.
+  2. /forgot-password returns 404 — no self-service password reset.
+
+NON-BLOCKING ISSUES (logged for later parts):
+  - Brand inconsistency (PROJEXA vs VERIDIAN AI) — Part 2.
+  - Missing security headers (CSP, XFO, XCTO, Referrer-Policy) — Part 5.
+  - No rate-limiting on login — Part 5.
+  - No client-side email format validation — Part 5.
+  - No public landing page at / — Part 2.
+
+--------------------------------------------------------------------------------
+END OF PART 1 REPORT
+================================================================================
+Next: Part 2 — UI/UX Validation + Cross-Browser + Responsive Testing
+       (will proceed with unauthenticated exploration if creds remain invalid)
+================================================================================
