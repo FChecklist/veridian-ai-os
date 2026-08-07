@@ -33,5 +33,9 @@
       sanctioned exception) with quiescence + backup-first, never bypassing superboss-register.py
       for anything else.
 
+- [x] record-completion call to agent_work_briefing.py (AGENT-20260807-075748-3f33)
+- [x] Final verification: df stable at 35G avail/89% used, live DB integrity_check=ok,
+      both cron timers confirmed restored to active
+
 ## Remaining
-- [ ] record-completion call to agent_work_briefing.py (final step)
+(none -- task complete)
