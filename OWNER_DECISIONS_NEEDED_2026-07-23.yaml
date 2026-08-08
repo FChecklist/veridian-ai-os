@@ -559,29 +559,27 @@ decisions:
 - id: stop-all-cron-and-worker-units-oom-incident-2026-07-26
   raised_by_task: emergency-recovery-2026-07-26-oom-and-fail2ban-incident
   raised_ts: '2026-07-26T21:00:55.000000+00:00'
-  title: Stop all 19 cron jobs and disable all 44 worker-unit auto-start symlinks during real OOM/SSH outage recovery
+  title: Stop all 19 cron jobs and disable all 44 worker-unit auto-start symlinks
+    during real OOM/SSH outage recovery
   what: 'During a real, multi-hour SSH outage on 2026-07-26 (root-caused to a kernel
-    OOM-kill from uncoordinated concurrent worker dispatch, then separately to a
-    self-inflicted fail2ban ban during rescue-mode recovery), the Owner explicitly
-    directed via direct chat instruction: "STOP ALL CRON JOBS" and "STOP ALL 35
-    worker systemd units directly enabled to auto-start on boot (independent of
-    cron)". All 19 entries in rajat''s crontab were commented out with a
-    #STOPPED-ALL-CRON-2026-07-26# marker (original backed up at
-    ai-os/CRONTAB_BACKUP_BEFORE_OOM_PAUSE_2026-07-26.txt). All 44 (not 35 -- recounted
-    live) veridian-worker@*.service symlinks in
-    /home/rajat/.config/systemd/user/default.target.wants/ were removed (backup of
-    the list and real symlink targets at
-    ai-os/DISABLED_WORKER_UNITS_BACKUP_2026-07-26/{list.txt,symlink_targets.txt}).
-    This decision entry documents that real, explicit Owner instruction so the
-    crontab-drift pre-flight gate recognizes the current all-stopped state as
-    approved rather than rejecting future task dispatches.'
+    OOM-kill from uncoordinated concurrent worker dispatch, then separately to a self-inflicted
+    fail2ban ban during rescue-mode recovery), the Owner explicitly directed via direct
+    chat instruction: "STOP ALL CRON JOBS" and "STOP ALL 35 worker systemd units directly
+    enabled to auto-start on boot (independent of cron)". All 19 entries in rajat''s
+    crontab were commented out with a #STOPPED-ALL-CRON-2026-07-26# marker (original
+    backed up at ai-os/CRONTAB_BACKUP_BEFORE_OOM_PAUSE_2026-07-26.txt). All 44 (not
+    35 -- recounted live) veridian-worker@*.service symlinks in /home/rajat/.config/systemd/user/default.target.wants/
+    were removed (backup of the list and real symlink targets at ai-os/DISABLED_WORKER_UNITS_BACKUP_2026-07-26/{list.txt,symlink_targets.txt}).
+    This decision entry documents that real, explicit Owner instruction so the crontab-drift
+    pre-flight gate recognizes the current all-stopped state as approved rather than
+    rejecting future task dispatches.'
   needed_action: Owner acceptance that the crontab is intentionally fully stopped
-    as of this timestamp, pending a real consolidation task (already dispatched)
-    that will design a smaller, deduplicated replacement schedule for Owner
-    approval before anything is re-enabled.
+    as of this timestamp, pending a real consolidation task (already dispatched) that
+    will design a smaller, deduplicated replacement schedule for Owner approval before
+    anything is re-enabled.
   why_not_done_automatically: Same standing AI_ENGINEERING_POLICY.yaml requirement
-    as every other crontab-item entry in this file -- crontab changes are never
-    silently self-approved.
+    as every other crontab-item entry in this file -- crontab changes are never silently
+    self-approved.
   status: approved
   approved_ts: '2026-07-26T21:00:55.000000+00:00'
   approved_via: Direct, explicit, verbatim Owner chat instruction ("STOP ALL CRON
@@ -589,3 +587,10 @@ decisions:
     enabled to auto-start on boot") during the live incident -- the highest-authority
     approval basis this project uses, same standing as every other Owner-directed
     change recorded in this file.
+- id: stop-work-order-lifted-2026-08-08
+  status: approved
+  what: Owner directly lifts the standing stop-work order (task-20260806-165921-owner-absolute-stop-work-order--complete)
+    for all PR/push work on resource_governor.py, superboss-register.py, task-gateway.py,
+    and resource_governor_tick_loop.sh, effective immediately.
+  decided_by: rajat (real, on-server, own git identity — not the PM relay)
+  decided_at: '2026-08-08T10:37:57.454708Z'
