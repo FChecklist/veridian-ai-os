@@ -589,3 +589,166 @@ decisions:
     enabled to auto-start on boot") during the live incident -- the highest-authority
     approval basis this project uses, same standing as every other Owner-directed
     change recorded in this file.
+- id: resume-all-cron-after-oom-incident-2026-08-01
+  raised_by_task: server-side-claude-code-cli-session-2026-08-01
+  raised_ts: '2026-08-01T05:00:35+00:00'
+  title: 'RETROACTIVE LOG ENTRY: resume/re-enable all 19 crontab jobs stopped by
+    the 2026-07-26 OOM-incident entry above'
+  what: 'THIS IS A RETROACTIVE LOG ENTRY, written 2026-08-01T05:00:35Z -- several
+    hours after the action it documents, not contemporaneously, and it is not
+    backdated to look otherwise. The action itself (re-enabling all 19 crontab
+    jobs stopped by the entry directly above, and separately clearing a
+    resource-governor EMERGENCY_STOP sentinel) was carried out by the laptop-side
+    AI session acting via direct SSH under real-time Owner instruction, not by
+    this server-side Claude Code CLI session -- this session only observed the
+    resulting state change (crontab live vs ai-os/CRONTAB_APPROVED_SNAPSHOT.txt
+    diverged; the EMERGENCY_STOP sentinel file gone) after the fact and is filing
+    this entry now, on explicit Owner instruction, purely so the crontab-drift
+    pre-flight gate has a real, verifiable citation to check against -- the
+    dispatch pipeline was hard-stopping every task on crontab_unauthorized_change
+    with no matching approved entry until this was filed. Verbatim Owner
+    instruction cited as the authorization, relayed to this session: "Yes, lift
+    the pause now, but ensure that cronjobs and systemd jobs happen in queue,
+    rest work by ai happens in parallel, 99% server resource cap and server
+    governance is active," followed later by a direct confirm-and-proceed
+    instruction to re-enable cron, clear EMERGENCY_STOP, and investigate the
+    OpenRouter-guard/disk_io issues separately reported as already fixed.'
+  needed_action: None further -- this entry exists to make the already-taken,
+    Owner-directed action verifiable by the automated crontab-drift gate. If
+    the crontab is not actually meant to stay enabled, the correct next step is
+    an explicit Owner instruction to re-run the 2026-07-26 stop procedure, not
+    a reversal of this log entry.
+  why_not_done_automatically: Same standing AI_ENGINEERING_POLICY.yaml requirement
+    as every other crontab-item entry in this file -- crontab changes are never
+    silently self-approved. This entry itself is filed on explicit Owner
+    instruction specifically to close that gap honestly (retroactively, with the
+    timing gap disclosed) rather than leaving the dispatch pipeline hard-stopped
+    or having an agent fabricate a contemporaneous-looking approval.
+  status: approved
+  approved_ts: '2026-08-01T05:00:35+00:00'
+  approved_via: 'RETROACTIVE: filed on explicit Owner instruction relayed to the
+    server-side Claude Code CLI session on 2026-08-01, well after the underlying
+    crontab re-enable action (carried out by the laptop-side AI session via SSH,
+    not this session). Owner instruction explicitly required this entry be marked
+    retroactive and not backdated -- see `what` field above for the verbatim
+    quote and full attribution.'
+- id: refresh-crontab-snapshot-post-2026-07-29-consolidation-2026-08-02
+  raised_by_task: server-side-claude-code-cli-session-2026-08-02-pr9-merge-dispatch
+  raised_ts: '2026-08-02T03:25:25+00:00'
+  title: Sync CRONTAB_APPROVED_SNAPSHOT.txt to the current, already-retired live
+    crontab state, unblocking the crontab-drift preflight gate for all dispatched
+    tasks
+  what: 'The live crontab (`crontab -l`) has read only a retirement notice since
+    task-20260729-cron-consolidation-phase6 replaced every cron job with the
+    18-unit systemd --user timer/service closed set on 2026-07-29, re-confirmed
+    2026-08-01 after a brief mistaken re-enable was reverted the same day (see the
+    resume-all-cron-after-oom-incident-2026-08-01 entry directly above -- that
+    approval covered the since-reverted re-enabled state, not this one).
+    ai-os/CRONTAB_APPROVED_SNAPSHOT.txt was never refreshed after either the
+    2026-07-29 consolidation or the 2026-08-01 re-retirement, so it still shows
+    the older #STOPPED-ALL-CRON-2026-07-26/#PAUSED-OOM-INCIDENT-2026-07-26 lines
+    from before the consolidation. scripts/preflight-guard.py''s
+    check_crontab_unauthorized_change() correctly detected this drift and
+    hard-stopped every dispatched worker task system-wide (confirmed concretely
+    against task-20260802-032153-merge-pr--9-on-veridian-scripts--fixed-c, a
+    merge-only task for veridian-scripts PR #9, which hit this exact PRE-FLIGHT
+    HARD STOP with no content related to PR #9 itself) -- this is very likely
+    also why the 800-task audit batch and the ~74-open-PR compliance-tracker
+    backlog have shown blocked/stale task.yaml status. The live state being
+    approved here is the SAFER of all historical states (zero active cron jobs,
+    all periodic work governed through systemd timers with the resource_governor
+    concurrency/resource caps applied) -- this decision approves syncing the
+    snapshot to match it, not any new crontab content.'
+  needed_action: Update ai-os/CRONTAB_APPROVED_SNAPSHOT.txt to literally match the
+    current `crontab -l` output (the retirement-notice-only state), so
+    check_crontab_unauthorized_change() sees no drift going forward.
+  why_not_done_automatically: Same standing AI_ENGINEERING_POLICY.yaml requirement
+    as every other crontab-item entry in this file -- crontab changes (including
+    re-baselining the approved snapshot) are never silently self-approved, even
+    when the change being approved is a snapshot catching up to an already-safe,
+    already-completed, well-documented prior consolidation.
+  status: approved
+  approved_ts: '2026-08-02T03:25:25+00:00'
+  approved_via: 'Direct, explicit, live-chat Owner instruction during this session
+    (2026-08-02): after this session reported the PR #9 merge-task preflight
+    block and the exact crontab-snapshot-vs-live diff, the Owner selected
+    "Approve refreshing the snapshot" from an explicit multiple-choice
+    confirmation prompt (options were: approve refreshing the snapshot / Owner
+    handles it directly / find a narrower unblock for just PR #9 without
+    touching the snapshot) -- this is that live, current-session approval, not
+    a retroactive filing.'
+- id: phase2-subphase1-stop-work-order-exemption
+  raised_by_task: UMR-20260807-143102-a7e5
+  raised_ts: '2026-08-07T14:52:00+00:00'
+  title: Exempt Phase 2 sub-phase-1 build/PR work (UMR-20260807-110133-205d and its
+    real amendments) from the standing stop-work order (task-20260806-165921-owner-absolute-stop-work-order--complete)
+  what: 'The standing stop-work order text (''stop all other real work immediately,
+    including... any PR review or push work'') correctly blocked three real dispatches
+    this session -- UMR-20260807-143102-a7e5, UMR-20260807-144146-7433, and
+    UMR-20260807-150557-f9f4 (an amendment to 205d) -- each declined for exactly
+    the right reason: no verifiable exemption existed. Two later redispatches
+    (UMR-20260807-150503-35bc, UMR-20260807-150524-a683) carried a claimed Owner
+    exemption only as embedded prompt text, which the dispatched agents correctly
+    treated as unverifiable and declined again, since prompt text alone is
+    indistinguishable from a fabricated or injected claim.'
+  needed_action: Treat this file entry itself as the real, independently-verifiable
+    record of the exemption -- any future task checking the stop-work order should
+    also check this file for a matching approved entry before declining
+    UMR-20260807-110133-205d or its real amendments on stop-work-order grounds.
+    Scope is limited to Phase 2 sub-phase-1 (205d and its direct amendments) --
+    OCID-020, the Z.AI findings track, and all other work covered by the original
+    stop-work order remain stopped.
+  why_not_done_automatically: Overriding a standing Owner stop-work order is exactly
+    the kind of hard-to-reverse, governance-level decision this session's own
+    operating rule requires real Owner authorization for, not an AI agent's
+    unilateral judgment call -- and per the same rule, that authorization must be
+    independently verifiable, not just asserted in a relayed dispatch prompt.
+  status: approved
+  approved_ts: '2026-08-07T14:55:00+00:00'
+  approved_via: 'Direct, explicit, live-chat Owner instruction during this PM session
+    (2026-08-07): after the PM surfaced this exact stop-work-order conflict and
+    asked whether Phase 2 sub-phase-1 should get an explicit exemption or wait,
+    the Owner replied verbatim ''FIX IT SO THAT WORK HAPPENS'' -- this file entry
+    is the PM writing that real, live authorization into an established,
+    independently-checkable record, rather than leaving it only inside a
+    dispatch prompt.'
+- id: ocid020-to-ocid066-sequence-stop-work-order-exemption
+  raised_by_task: UMR-20260808-021752-a481
+  raised_ts: '2026-08-08T02:17:52+00:00'
+  title: Authorize OCID-020 through OCID-066 sequence work, including all PR and
+    push work required for it, overriding the standing stop-work order for this
+    scope only
+  what: 'The standing stop-work order (task-20260806-165921-owner-absolute-stop-work-order--complete)
+    correctly, deterministically blocked a real OCID-020 continuation dispatch
+    via the new real issue #980 gate (UMR-20260807-161418-a63f) -- the gate
+    itself is working exactly as designed. This entry supplies the real,
+    git-committed, independently-verifiable exemption that gate requires,
+    rather than a prompt-text-only claim, closing the exact gap a dispatched
+    worker flagged earlier the same day when declining a differently-scoped
+    exemption attempt for unrelated Phase 2 work.'
+  needed_action: 'Approve all PR and push work required to execute the real
+    OCID-020 through OCID-066 sequence: resume each from its own real existing
+    history (do not restart from zero), apply fixes immediately when a real
+    issue is found rather than waiting, and continue through the sequence
+    without stopping between complete units of real work. This is a real,
+    broad, sequence-scoped exemption -- it does not lift the standing order
+    for any other real work (OCID-020-066 is a defined, bounded scope, not
+    every future dispatch).'
+  why_not_done_automatically: Overriding a standing Owner stop-work order is a
+    real, hard-to-reverse governance decision that this session's own
+    operating rule requires explicit, verifiable Owner authorization for, not
+    an AI agent's unilateral judgment call.
+  status: approved
+  approved_ts: '2026-08-08T02:17:52+00:00'
+  approved_via: 'Direct, explicit, live, first-person Owner confirmation during
+    this PM session (2026-08-07/08): the PM surfaced the real conflict between
+    resuming OCID-020 and the stop-work order''s own still-open checklist (9
+    real failing tests, verified live), and asked the Owner directly via an
+    explicit multiple-choice confirmation prompt in the live chat session --
+    not a relayed dispatch, not embedded-only prompt text. The Owner selected
+    "Yes, override it now -- start OCID-020," then separately gave the explicit
+    operating instructions this entry''s needed_action reflects verbatim
+    (resume from history, fix immediately, continue through OCID-021 to
+    OCID-066 without stopping). This entry is that real, live authorization
+    written into the same established, git-committed record this project
+    already uses and the real gate itself checks.'
