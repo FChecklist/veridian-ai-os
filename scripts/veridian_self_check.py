@@ -132,6 +132,44 @@ check("rule_6.recent_work_items_have_status", recent_close_out_check)
 
 check("rule_5.no_guessed_schemas", lambda: (None, "NOT_MECHANICALLY_TESTABLE -- this rule is a discipline requirement (read real sample before writing a check); no generic script can verify a human/AI followed it retroactively. Honestly flagged, not claimed as automated."))
 
+# task-20260814-033917-live-checkouts-are-parked-on-stray-branc: recurring drift guard.
+# A live checkout parked on a stray worker/docs branch (or merged-but-not-pulled) means
+# merged != deployed for whatever that checkout serves, silently, until someone happens to
+# check by hand -- this is exactly what let /opt/veridian/repos/veridian-scripts sit 15
+# commits behind and ai-os sit 12 commits behind + on a stray branch for hours undetected.
+# Reuses check_live_scripts_drift.py's own real check_drift() logic (already the canonical,
+# tested drift-vs-origin/main check registered for /opt/veridian/scripts) via subprocess --
+# same idiom as guard_self_test() above -- against every real live checkout on this box,
+# rather than rebuilding the same git-fetch/rev-parse/rev-list logic a second time here.
+LIVE_CHECKOUTS = [
+    "/opt/veridian/scripts",   # veridian-scripts: real deploy target (3 systemd ExecStart= hits)
+    "/opt/veridian/ai-os",     # this repo: 3 systemd units execute code straight out of ai-os/scripts/*.py
+]
+
+def live_checkout_drift_check():
+    details = []
+    all_clean = True
+    for live_dir in LIVE_CHECKOUTS:
+        out = run(f'python3 /opt/veridian/scripts/check_live_scripts_drift.py --live-dir {live_dir}')
+        try:
+            d = json.loads(out.stdout)
+        except (ValueError, TypeError):
+            all_clean = False
+            details.append(f"{live_dir}: could not parse drift-check output (exit={out.returncode}): {out.stdout[:150]!r} {out.stderr[:150]!r}")
+            continue
+        on_main = d.get("on_main_branch")
+        behind = d.get("commits_behind")
+        drifted = (on_main is False) or (isinstance(behind, int) and behind > 0) or d.get("error")
+        if drifted:
+            all_clean = False
+        details.append(
+            f"{live_dir}: branch={d.get('current_branch')} on_main={on_main} "
+            f"behind={behind} ahead={d.get('commits_ahead')} head={d.get('live_head')}"
+            + (f" ERROR={d['error']}" if d.get("error") else "")
+        )
+    return (all_clean, " | ".join(details))
+check("deploy.live_checkout_drift", live_checkout_drift_check)
+
 print("=" * 70)
 print(f"VERIDIAN STANDING_DIRECTIVE COMPLIANCE CHECK -- {RUN_ID}")
 print("=" * 70)
