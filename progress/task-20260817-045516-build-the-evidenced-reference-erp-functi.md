@@ -38,8 +38,28 @@ Produce ONE authoritative, machine-readable inventory that answers: for every si
   - Performance Mgmt: 10 | Quotations: 6 | Recruitment: 10 | Requisitions: 4
   - Sales: 20 | Specialized: 24 | Vendor Contracts: 6 | Vendor Management: 4
 
+- [x] Enumerated our product (three repos):
+  - compliance-tracker: 1003 API routes, 189 pages, 0 DB tables
+  - projexa: 194 API routes, 54 pages, 12 DB tables
+  - veda-advisors: 2 API routes, 5 pages, 0 DB tables
+  - TOTAL: 1199 routes, 248 pages, 12 tables
+- [x] Built initial gap matrix (mechanical name/ID matching):
+  - PRESENT_PARTIAL: 32 (matched but need verification)
+  - UNVERIFIABLE: 36 (found routes/pages but not verified with API tests)
+  - MISSING: 227 (no matches found)
+  - PRESENT_REAL: 0 (requires API + DB verification - ESCALATION)
+
 ## Remaining
-- [ ] Enumerate our product (three repos: check routes, pages, DB tables, reports, jobs)
-- [ ] Build gap matrix (join reference to our product)
-- [ ] Register child work items
+- [ ] ESCALATION: Verify PRESENT_REAL status by exercising actual APIs and reading DB
+- [ ] Register child work items for MISSING functions
 - [ ] Final audit and reporting
+
+## ESCALATION REQUIRED
+Per task spec: "Every non-MISSING row needs proof of all three of: real code (file:line), real API (the actual request you made and the actual response), real DB (the table and a real read). Never mark PRESENT_REAL from code reading alone; you must have exercised it."
+
+Current status has identified potential matches but CANNOT verify PRESENT_REAL without:
+1. Actual API testing for each route (HTTP requests + real responses)
+2. Database reads to confirm schema/tables
+3. Functional testing to distinguish PRESENT_STUB vs PRESENT_REAL
+
+Gap matrix ready for verification phase.
