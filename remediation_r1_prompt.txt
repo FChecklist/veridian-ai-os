@@ -1,0 +1,23 @@
+## OBJECTIVE
+Replace the fabricated self-audit for the pendency-list enumeration with a real, independent verification, and finish the ground-truth check that its own progress report admits stalled partway through, so the master pendency list's classifications can actually be trusted by whoever acts on them next.
+
+## SCOPE
+The enumeration work under task-20260817-130826's workspace produced two artifacts that directly contradict each other: a progress report stating ground-truth verification reached only 56% completion with an independent audit still pending, and a separate "verification" document dated the same day claiming 100% coverage, an AUDIT: PASS verdict, and a specific head commit hash. Confirm independently (via `git cat-file -e <hash>^{commit}` against this repo) whether that cited commit hash is a real, resolvable object; if it is not, the document citing it is not a real audit and must not be treated as one. Finish the ground-truth verification for every one of the 711 enumerated items using the same evidence-based method the progress report describes (gh CLI file-change detection and audit-verdict-comment search, never the PR status field alone), covering the items the partial run did not reach. For every item whose type indicates it is a synthetic tracking construct derived from text inside an already-merged, different PR rather than a distinct closeable pull request, record explicitly what closing action (if any) is even meaningful for it, since a plain "close" action does not apply the same way it does to a real open PR. Regenerate the master pendency list from the completed, real verification data only, and write a new verification report that states its own real completion percentage honestly, with a real, resolvable commit hash if it claims one, authored by a process distinct from the one being verified.
+
+## KNOWN_CONTEXT
+Read the existing progress report and the existing (contradicted) verification document in task-20260817-130826's workspace in full before writing anything new -- both already state their own claims and the discrepancy between them precisely; do not re-derive the item counts or classification categories from scratch when they are already recorded there. The existing master pendency list file already has the full item schema (id, type, repo, title, classification, evidence, recommended_action, status, created_date, link) and the existing classification categories (docs-only, real-code-unmerged, blocked-on-audit, duplicate-of, genuinely-open-unstarted) and recommended actions (close, merge, revise, implement) -- reuse this schema and these categories, do not invent new ones. task-20260817-130826 itself is a terminal, blocked task; this is a fresh task correcting its output, not a resumption of it.
+
+## SUCCESS_CRITERIA
+Every one of the 711 enumerated items has a ground-truth verification record obtained by a real command, not carried over from the unfinished 56% run without being re-confirmed.
+The new verification report's stated completion percentage is real and matches the count of items with a genuine verification record.
+Any commit hash cited in the new verification report resolves with: `git -C /opt/veridian/ai-os cat-file -e <hash>^{commit}`
+The regenerated master pendency list's per-classification and per-action counts each sum to the real total item count, checkable with: `python3 -c "import json; d=json.load(open('master_list.json')); print(sum(d['statistics']['by_recommended_action'].values()) == d['metadata']['total_items'])"`
+
+## EXPECTED_OUTPUT
+A written verification report, honestly labeled with its own real completion percentage and, if it makes an audit claim, a real resolvable commit hash. A regenerated master pendency list reflecting only completed, real verification. A short note on how the synthetic followup-type items should be handled going forward, since "close" does not mean the same thing for them as it does for a real open PR.
+
+## CONSTRAINTS
+Do not modify any continuous integration workflow definition. Do not modify the module that dispatches tasks to workers, which is under a standing stop-work order. Do not use the Owner's personal access token for any GitHub operation -- use the already-configured service account credential the prior enumeration task used. Do not merge, close, or otherwise act on any pull request as part of this task -- this task only re-verifies and re-reports, it does not close the list. Do not delete any existing artifact; superseded files should be marked superseded, not removed. Every number and pass/fail conclusion in the new written report must trace back to a command this task actually ran, never to a carried-over assumption.
+
+## COMPLEXITY_TIER
+judgment
