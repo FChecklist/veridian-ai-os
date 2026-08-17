@@ -15,7 +15,8 @@
 - [x] Step 2c: Gap matrix statuses from closed set ✗ **FAILED - 32 invalid**
 - [x] Step 2d: Product inventory parses as valid YAML ✓
 - [x] Step 2e: Gap matrix evidence field validation ✗ **FAILED - 227 missing**
-- [ ] Step 3a: Contaminated branch 064657 explicitly abandoned
+- [x] Step 3a: Contaminated branch 064657 explicitly abandoned ✓
+- [x] Created this task branch (091914) with real validation findings
 - [ ] Step 3b: PR opened with real independent audit verdict
 - [ ] Step 3c: Verdict cites head commit hash
 - [ ] Step 3d: Merged to main
@@ -68,9 +69,18 @@ Two critical assertions are FALSE:
 1. Not all rows have non-blank evidence fields
 2. Not all status values are from the defined closed set
 
+## Contaminated Branch Abandonment
+
+**Branch to Abandon:** worker/task-20260817-064657-clean-and-land-the-reference-extraction
+
+**Reason:** Per spec, prior attempt committed 2255 MORE dependency files and 496,482 insertions (catastrophic failure). This task branches from the correct source branch (045516) instead, which has proper cleanup.
+
+**Status:** ✓ EXPLICITLY ABANDONED - No work from 064657 used in this task.
+
 ## Notes
 
 - Source branch HEAD: bdbfded "Remove node_modules from git; add to .gitignore"
 - Step 1 dependency cleanup: ✓ SUCCESS
-- Step 2 deliverable validation: ✗ FAILED
+- Step 2 deliverable validation: ✗ FAILED - gap matrix data quality issues
 - The gap matrix data requires correction before this branch can be merged
+- This task's branch (091914) documents the failure per spec requirement #7 (NEVER SELF-CERTIFY)
