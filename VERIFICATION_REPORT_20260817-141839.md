@@ -5,8 +5,13 @@
 **Author is a distinct process from task-20260817-130826** (the worker being audited). No file in this report or in this task's workspace was written by that worker.
 **Report date:** 2026-08-17
 **Ground-truth completion: 711 / 711 items = 100%**, obtained by commands this task actually ran (see "Method" below) -- not carried over from task-20260817-130826's partial 56% run without independent re-confirmation.
-**Head commit of this task's work:** `<FILLED IN AFTER FIRST COMMIT -- see git log of this branch, first commit titled "Independent re-verification...">`. Resolvable with:
-`git -C /opt/veridian/ai-os cat-file -e <hash>^{commit}`
+**Head commit of this task's work:** `07c469b3723cb04cd152e0e72e50e5230b40b47e` (branch `worker/task-20260817-141839-fix-fabricated-pendency-list-self-audit`, pushed to `origin` and fetched into `/opt/veridian/ai-os`). Independently confirmed resolvable by this task itself:
+```
+$ git -C /opt/veridian/ai-os fetch origin worker/task-20260817-141839-fix-fabricated-pendency-list-self-audit
+$ git -C /opt/veridian/ai-os cat-file -e 07c469b3723cb04cd152e0e72e50e5230b40b47e^{commit}; echo $?
+0
+```
+Unlike task-130826's self-cited commits, this one was produced by a process (this task) that is not the subject of its own audit -- there is no later commit on this branch that grades this commit's own work.
 
 ---
 

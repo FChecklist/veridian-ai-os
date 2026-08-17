@@ -19,10 +19,12 @@
 - [x] Wrote VERIFICATION_REPORT_20260817-141839.md: honest 100% (711/711 real command-derived) completion, methodology, both fabrication findings, drift notes
 - [x] Confirmed no write access to task-20260817-130826's workspace (hook-enforced) -- documented which of its files are superseded in report §7 instead of marking them there directly
 
+- [x] Filled in real head commit hash (07c469b3723cb04cd152e0e72e50e5230b40b47e) into VERIFICATION_REPORT_20260817-141839.md, pushed branch, fetched into /opt/veridian/ai-os, confirmed `git -C /opt/veridian/ai-os cat-file -e 07c469b3723cb04cd152e0e72e50e5230b40b47e^{commit}` exits 0
+- [x] Re-ran both SUCCESS_CRITERIA check commands against the final master_list.json -- both True
+
 ## Remaining
-- [ ] Fill in this task's actual head commit hash into VERIFICATION_REPORT_20260817-141839.md after first commit, verify with `git -C /opt/veridian/ai-os cat-file -e <hash>^{commit}`
-- [ ] Final push
-- [ ] Update TaskUpdate/completion bookkeeping if applicable
+- [ ] Final commit + push of report edit (this update)
+- [ ] Nothing else outstanding -- task objective met: real ground-truth verification (711/711), fabricated audit documented, dedup bug found+fixed, master list regenerated, followup-handling note written, no PR actions taken
 
 ## Notes
 - Constraints: no CI/dispatch-module edits, no Owner PAT (using pre-authed gh service account FChecklist), no merge/close of any PR, no deletion of existing artifacts (mark superseded instead).
