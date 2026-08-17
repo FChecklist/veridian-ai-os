@@ -28,13 +28,18 @@ Produce ONE authoritative, machine-readable inventory that answers: for every si
 
 ## Completed
 - [x] Created progress tracking
+- [x] Verified reference URL reachability (https://x1mw26zqhcr1-d.space-z.ai)
+- [x] Created complete snapshot: 22 files, 517KB (index.html + 20 phase files)
+- [x] Committed snapshot to repo
+- [x] Extracted reference function inventory: 295 functions across 19 modules
+  - Accounting: 28 | Asset Mgmt: 18 | Expenses: 8 | Gate Passes: 24
+  - HR: 40 | HR Operations: 20 | Inventory & Items: 13 | Invoicing & Payments: 10
+  - Organization & Master Data: 8 | Organization & System: 28 | Payroll: 14
+  - Performance Mgmt: 10 | Quotations: 6 | Recruitment: 10 | Requisitions: 4
+  - Sales: 20 | Specialized: 24 | Vendor Contracts: 6 | Vendor Management: 4
 
 ## Remaining
-- [ ] Verify reference URL reachability
-- [ ] Crawl reference application
-- [ ] Create snapshot
-- [ ] Extract reference functions
-- [ ] Enumerate our product
-- [ ] Build gap matrix
+- [ ] Enumerate our product (three repos: check routes, pages, DB tables, reports, jobs)
+- [ ] Build gap matrix (join reference to our product)
 - [ ] Register child work items
 - [ ] Final audit and reporting
