@@ -1,0 +1,713 @@
+================================================================================
+PHASE 13: HR OPERATIONS - ATTENDANCE, LEAVE & SHIFTS - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the HR Operations - Attendance, Leave & Shifts modules, scraped from the live application.
+
+Phase Description: Attendance tracking, shift management, leave management, and attendance regularization workflows.
+
+Modules Covered: 14
+  - attendance_settings [SCRAPE]
+  - shifts [SCRAPE]
+  - shift_settings [NO FORM]
+  - emp_shifts [SCRAPE]
+  - emp_locations [SCRAPE]
+  - emp_clock_status [SCRAPE]
+  - holidays [SCRAPE]
+  - leave_categories [SCRAPE]
+  - leave_types [NO FORM]
+  - employee_leaves [NO FORM]
+  - attedenace_regularizaton_reasons [SCRAPE]
+  - attendenace_regularization_request [SCRAPE]
+  - attendenace_regularization_setting [SCRAPE]
+  - work_attendances [NO FORM]
+
+---
+1. APPLICATION ARCHITECTURE (SHARED)
+---
+
+  1.1 Routing Convention
+    COM_LIST_XXX     -> List/view page (DataTables)
+    COM_INSERT_XXX   -> Insert form (POST to /views/new_from.php)
+    COM_UPDATE_XXX   -> Update form
+    COM_VIEW_XXX    -> View/detail/report page
+
+  1.2 AJAX Endpoints
+    POST /ajax.php?page=submitstatusdynamicworkflow
+    POST /ajax.php?page=updatedynamicfied
+    POST /ajax.php?page=setdynamichelptext
+    POST /ajax.php?page=getstockbalanceavailability
+    POST /views/custon_list_dynamic_table.php
+    POST /views/new_from.php?option=COM_INSERT_XXX
+
+  1.3 Standard Hidden Fields (in every form)
+    option, table_name, duplicate_table_name,
+    in_date_pic, in_currency_fileds, in_phone_fileds,
+    mandatory_str, add_mandatory_str, notification_users,
+    notification_message, status, from_date, to_date
+
+---
+2. DATABASE SCHEMAS
+---
+
+  2.1 Table: attendance_settings
+    Module: Attendance Settings
+    Insert Option: COM_INSERT_ATTENDANCE_SETTINGS
+    Form Fields: 13 user-visible, 27 total
+    Mandatory columns: minimum_hours_required,maximum_hours_cap,full_day_hours,half_day_hours,break_time,grace_perieod,entry_grace_perieod,exit_perieod,working_days,remarks,location_id
+
+  CREATE TABLE attendance_settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    minimum_hours_required VARCHAR(255)  NOT NULL,
+    maximum_hours_cap VARCHAR(255),
+    full_day_hours VARCHAR(255),
+    half_day_hours VARCHAR(255),
+    break_time VARCHAR(255),
+    grace_perieod VARCHAR(255),
+    entry_grace_perieod VARCHAR(255),
+    exit_perieod VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    working_days[] INT  -- (FK dropdown),
+    location_id INT  -- (FK dropdown),
+    remarks TEXT,
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      minimum_hours_required                   time         [REQUIRED]
+      maximum_hours_cap                        time        
+      full_day_hours                           time        
+      half_day_hours                           time        
+      break_time                               time        
+      grace_perieod                            time        
+      entry_grace_perieod                      time        
+      exit_perieod                             time        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      working_days[]                           select      
+      location_id                              select      
+      remarks                                  textarea    
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=minimum_hours_required,maximum_hours_cap,full_day_
+      add_mandatory_str                        hidden       value=
+
+  2.2 Table: shifts
+    Module: Shifts
+    Insert Option: COM_INSERT_SHIFTS
+    Form Fields: 8 user-visible, 22 total
+    Mandatory columns: shift_name,short_code,description,shift_setting_id,clock_in,clock_out
+
+  CREATE TABLE shifts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    shift_name VARCHAR(255),
+    clock_in VARCHAR(255),
+    short_code VARCHAR(50),
+    clock_out VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    shift_setting_id INT  -- (FK dropdown),
+    description TEXT,
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      shift_name                               text        
+      clock_in                                 time        
+      short_code                               text        
+      clock_out                                time        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      shift_setting_id                         select      
+      description                              textarea    
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=shift_name,short_code,description,shift_setting_id
+      add_mandatory_str                        hidden       value=
+
+  2.3 Table: shift_settings
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.4 Table: emp_shifts
+    Module: Emp Shifts
+    Insert Option: COM_INSERT_EMP_SHIFTS
+    Form Fields: 6 user-visible, 20 total
+    Mandatory columns: emp_id,shift_id,shift_from,shift_to
+
+  CREATE TABLE emp_shifts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    shift_from VARCHAR(255),
+    shift_to VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    emp_id INT  -- (FK dropdown),
+    shift_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      shift_from                               text        
+      shift_to                                 text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      emp_id                                   select      
+      shift_id                                 select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=shift_from,shift_to
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=emp_id,shift_id,shift_from,shift_to
+      add_mandatory_str                        hidden       value=
+
+  2.5 Table: emp_locations
+    Module: Emp Locations
+    Insert Option: COM_INSERT_EMP_LOCATIONS
+    Form Fields: 8 user-visible, 23 total
+    Mandatory columns: emp_id,location_id,start_date,end_date,comments,is_active
+
+  CREATE TABLE emp_locations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    start_date VARCHAR(255),
+    end_date VARCHAR(255),
+    is_active TINYINT(1) DEFAULT 0,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    emp_id INT  -- (FK dropdown),
+    location_id INT  -- (FK dropdown),
+    comments TEXT,
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      start_date                               text        
+      end_date                                 text        
+      is_active                                checkbox    
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      emp_id                                   select      
+      location_id                              select      
+      comments                                 textarea    
+    Hidden Metadata Fields:
+      is_active                                hidden       value=
+      in_date_pic                              hidden       value=start_date,end_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=emp_id,location_id,start_date,end_date,comments,is
+
+  2.6 Table: emp_clock_status
+    Module: Emp Clock Status
+    Insert Option: COM_INSERT_EMP_CLOCK_STATUS
+    Form Fields: 5 user-visible, 19 total
+    Mandatory columns: user_id,effective_from_date,effective_to_date
+
+  CREATE TABLE emp_clock_status (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    effective_from_date VARCHAR(255),
+    effective_to_date VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    user_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      effective_from_date                      text        
+      effective_to_date                        text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      user_id                                  select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=effective_from_date,effective_to_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=user_id,effective_from_date,effective_to_date
+      add_mandatory_str                        hidden       value=
+
+  2.7 Table: holidays
+    Module: Holidays
+    Insert Option: COM_INSERT_HOLIDAYS
+    Form Fields: 6 user-visible, 21 total
+    Mandatory columns: location_id,holiday_date,holiday_name,is_active
+
+  CREATE TABLE holidays (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    holiday_date VARCHAR(255),
+    holiday_name VARCHAR(255),
+    is_active TINYINT(1) DEFAULT 0,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    location_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      holiday_date                             text        
+      holiday_name                             text        
+      is_active                                checkbox    
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      location_id                              select      
+    Hidden Metadata Fields:
+      is_active                                hidden       value=
+      in_date_pic                              hidden       value=holiday_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=location_id,holiday_date,holiday_name,is_active
+
+  2.8 Table: leave_categories
+    Module: Leave Categories
+    Insert Option: COM_INSERT_LEAVE_CATEGORIES
+    Form Fields: 6 user-visible, 20 total
+    Mandatory columns: name,description,back_ground_color
+
+  CREATE TABLE leave_categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    description VARCHAR(255),
+    back_ground_color VARCHAR(255),
+    back_ground_color VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      name                                     text        
+      description                              text        
+      back_ground_color                        text        
+      back_ground_color                        text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=name,description,back_ground_color
+      add_mandatory_str                        hidden       value=
+
+  2.9 Table: leave_types
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.10 Table: employee_leaves
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.11 Table: attedenace_regularizaton_reasons
+    Module: Attedenace Regularizaton Reasons
+    Insert Option: COM_INSERT_ATTEDENACE_REGULARIZATON_REASONS
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: reason_name,reason_description
+
+  CREATE TABLE attedenace_regularizaton_reasons (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    reason_name VARCHAR(255),
+    reason_description VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      reason_name                              text        
+      reason_description                       text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=reason_name,reason_description
+      add_mandatory_str                        hidden       value=
+
+  2.12 Table: attendenace_regularization_request
+    Module: Attendenace Regularization Request
+    Insert Option: COM_INSERT_ATTENDENACE_REGULARIZATION_REQUEST
+    Form Fields: 11 user-visible, 27 total
+    Mandatory columns: employee_id,request_date,regularization_date,regularization_of_checkin,regularization_of_checkout,regularization_reason,remarks,image
+
+  CREATE TABLE attendenace_regularization_request (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    request_date VARCHAR(255),
+    regularization_date VARCHAR(255),
+    regularization_of_checkin VARCHAR(255),
+    regularization_of_checkout VARCHAR(255),
+    remarks VARCHAR(255),
+    image VARCHAR(500)  -- &nbsp; Change Image,
+    image VARCHAR(500)  -- &nbsp; Change Image,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    employee_id INT  -- (FK dropdown),
+    regularization_reason INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      request_date                             text        
+      regularization_date                      text        
+      regularization_of_checkin                time        
+      regularization_of_checkout               time        
+      remarks                                  text        
+      image                                    file         (&nbsp; Change Image)
+      image                                    file         (&nbsp; Change Image)
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      employee_id                              select      
+      regularization_reason                    select      
+    Hidden Metadata Fields:
+      hidimage                                 hidden       value=
+      hidimage                                 hidden       value=
+      in_date_pic                              hidden       value=request_date,regularization_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+
+  2.13 Table: attendenace_regularization_setting
+    Module: Attendenace Regularization Setting
+    Insert Option: COM_INSERT_ATTENDENACE_REGULARIZATION_SETTING
+    Form Fields: 6 user-visible, 20 total
+    Mandatory columns: regularization_limit_in_days,regularization_request_times_limit,regularization_request_times_frequency,regularization_request_treatment
+
+  CREATE TABLE attendenace_regularization_setting (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    regularization_limit_in_days VARCHAR(255),
+    regularization_request_times_limit VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    regularization_request_times_frequency INT  -- (FK dropdown),
+    regularization_request_treatment INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      regularization_limit_in_days             text        
+      regularization_request_times_limit       text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      regularization_request_times_frequency   select      
+      regularization_request_treatment         select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=regularization_limit_in_days,regularization_reques
+      add_mandatory_str                        hidden       value=
+
+  2.14 Table: work_attendances
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  attendance_settings.working_days[]  -->  working_days[]_lookup.id
+  attendance_settings.location_id  -->  locations.id
+  shifts.shift_setting_id  -->  shift_settings.id
+  emp_shifts.emp_id  -->  emps.id
+  emp_shifts.shift_id  -->  shifts.id
+  emp_locations.emp_id  -->  emps.id
+  emp_locations.location_id  -->  locations.id
+  emp_clock_status.user_id  -->  users.id
+  holidays.location_id  -->  locations.id
+  attendenace_regularization_request.employee_id  -->  employees.id
+  attendenace_regularization_request.regularization_reason  -->  regularization_reason_lookup.id
+  attendenace_regularization_setting.regularization_request_times_frequency  -->  regularization_request_times_frequency_lookup.id
+  attendenace_regularization_setting.regularization_request_treatment  -->  regularization_request_treatment_lookup.id
+
+  ER Summary:
+  Tables: 17
+  Relationships: 13
+
+---
+4. BUSINESS RULES
+---
+
+  4.1 Effective Dating (all modules)
+    Every record has from_date/to_date. Records are valid
+    only within this range. from_date is mandatory.
+
+  4.2 Soft Delete / Status (all modules)
+    status=0 Active, status=1 Inactive, status=2 Draft
+    Records are never physically deleted. Status changes go
+    through the workflow API (submitstatusdynamicworkflow).
+
+  4.3 Module-Specific Rules
+    4.3.1 Attendance Settings
+      Mandatory fields: minimum_hours_required, maximum_hours_cap, full_day_hours, half_day_hours, break_time, grace_perieod, entry_grace_perieod, exit_perieod, working_days, remarks, location_id
+
+    4.3.2 Attendance Settings
+      Has 2 foreign key dropdown fields
+
+    4.3.3 Shifts
+      Mandatory fields: shift_name, short_code, description, shift_setting_id, clock_in, clock_out
+
+    4.3.4 Shifts
+      Has 1 foreign key dropdown fields
+
+    4.3.5 Emp Shifts
+      Mandatory fields: emp_id, shift_id, shift_from, shift_to
+
+    4.3.6 Emp Shifts
+      Has 2 foreign key dropdown fields
+
+    4.3.7 Emp Locations
+      Mandatory fields: emp_id, location_id, start_date, end_date, comments, is_active
+
+    4.3.8 Emp Locations
+      Has 2 foreign key dropdown fields
+
+    4.3.9 Emp Locations
+      Has 4 date fields (effective dating + business dates)
+
+    4.3.10 Emp Clock Status
+      Mandatory fields: user_id, effective_from_date, effective_to_date
+
+    4.3.11 Emp Clock Status
+      Has 1 foreign key dropdown fields
+
+    4.3.12 Emp Clock Status
+      Has 4 date fields (effective dating + business dates)
+
+    4.3.13 Holidays
+      Mandatory fields: location_id, holiday_date, holiday_name, is_active
+
+    4.3.14 Holidays
+      Has 1 foreign key dropdown fields
+
+    4.3.15 Holidays
+      Has 3 date fields (effective dating + business dates)
+
+    4.3.16 Leave Categories
+      Mandatory fields: name, description, back_ground_color
+
+    4.3.17 Attedenace Regularizaton Reasons
+      Mandatory fields: reason_name, reason_description
+
+    4.3.18 Attendenace Regularization Request
+      Mandatory fields: employee_id, request_date, regularization_date, regularization_of_checkin, regularization_of_checkout, regularization_reason, remarks, image
+
+    4.3.19 Attendenace Regularization Request
+      Has 2 foreign key dropdown fields
+
+    4.3.20 Attendenace Regularization Request
+      Has 4 date fields (effective dating + business dates)
+
+    4.3.21 Attendenace Regularization Setting
+      Mandatory fields: regularization_limit_in_days, regularization_request_times_limit, regularization_request_times_frequency, regularization_request_treatment
+
+    4.3.22 Attendenace Regularization Setting
+      Has 2 foreign key dropdown fields
+
+---
+5. API ENDPOINTS
+---
+
+  5.1 Standard CRUD APIs (shared across all modules)
+    POST /views/new_from.php?option=COM_INSERT_XXX
+      Renders insert form HTML
+    POST /index.php
+      Form submit (multipart/form-data)
+    POST /views/custon_list_dynamic_table.php
+      List data with pagination, filtering
+      Params: option, table, status, filter_text,
+              current_page, limit_select
+
+  5.2 Workflow APIs
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Status transitions (Draft->Pending->Approved)
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Params: table_name, current_status, transaction_id,
+              next_status
+
+  5.3 Module-Specific API Routes
+    COM_INSERT_ATTENDANCE_SETTINGS  -> Insert attendance_settings
+    COM_LIST_ATTENDANCE_SETTINGS -> List attendance_settings
+    COM_INSERT_SHIFTS  -> Insert shifts
+    COM_LIST_SHIFTS -> List shifts
+    COM_INSERT_EMP_SHIFTS  -> Insert emp_shifts
+    COM_LIST_EMP_SHIFTS -> List emp_shifts
+    COM_INSERT_EMP_LOCATIONS  -> Insert emp_locations
+    COM_LIST_EMP_LOCATIONS -> List emp_locations
+    COM_INSERT_EMP_CLOCK_STATUS  -> Insert emp_clock_status
+    COM_LIST_EMP_CLOCK_STATUS -> List emp_clock_status
+    COM_INSERT_HOLIDAYS  -> Insert holidays
+    COM_LIST_HOLIDAYS -> List holidays
+    COM_INSERT_LEAVE_CATEGORIES  -> Insert leave_categories
+    COM_LIST_LEAVE_CATEGORIES -> List leave_categories
+    COM_INSERT_ATTEDENACE_REGULARIZATON_REASONS  -> Insert attedenace_regularizaton_reasons
+    COM_LIST_ATTEDENACE_REGULARIZATON_REASONS -> List attedenace_regularizaton_reasons
+    COM_INSERT_ATTENDENACE_REGULARIZATION_REQUEST  -> Insert attendenace_regularization_request
+    COM_LIST_ATTENDENACE_REGULARIZATION_REQUEST -> List attendenace_regularization_request
+    COM_INSERT_ATTENDENACE_REGULARIZATION_SETTING  -> Insert attendenace_regularization_setting
+    COM_LIST_ATTENDENACE_REGULARIZATION_SETTING -> List attendenace_regularization_setting
+
+---
+6. CODE-LEVEL PATTERNS
+---
+
+  6.1 Generic Form Pattern
+    All modules use views/new_from.php as the form renderer.
+    The form HTML includes:
+    - validateForm() JS function driven by mandatory_str
+    - select2 dropdowns for FK fields
+    - datepicker for date fields (jQuery UI)
+    - Bootstrap 4 form layout (card > card-body > form-group)
+
+  6.2 Hidden Metadata Pattern (every form)
+    - option: The COM_ route constant
+    - table_name: Physical DB table name
+    - duplicate_table_name: For duplicate checking
+    - in_date_pic: Array of date fields for datepicker init
+    - in_currency_fileds: Currency fields for formatting
+    - in_phone_fileds: Phone fields for validation
+    - mandatory_str: Comma-separated required fields
+    - notification_users: User IDs to notify on create
+    - notification_message: Notification template
+
+  6.3 DataTables Pattern (all list pages)
+    - Uses custom AJAX, not built-in server-side mode
+    - Supports CSV, Excel, PDF, Print export
+    - Column visibility toggle
+    - Status-based filtering
+    - Text search via filter_text parameter
+
+---
+7. MODULE-SPECIFIC DETAILS
+---
+
+  7.1 Attendance Settings
+    User Fields: 13
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 14869 bytes
+    Mandatory: minimum_hours_required,maximum_hours_cap,full_day_hours,half_day_hours,break_time,grace_perieod,entry_grace_perieod,exit_perieod,working_days,remarks,location_id
+    Insert Option: COM_INSERT_ATTENDANCE_SETTINGS
+
+  7.2 Shifts
+    User Fields: 8
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 12503 bytes
+    Mandatory: shift_name,short_code,description,shift_setting_id,clock_in,clock_out
+    Insert Option: COM_INSERT_SHIFTS
+
+  7.3 Emp Shifts
+    User Fields: 6
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11634 bytes
+    Mandatory: emp_id,shift_id,shift_from,shift_to
+    Insert Option: COM_INSERT_EMP_SHIFTS
+
+  7.4 Emp Locations
+    User Fields: 8
+    Hidden Fields: 15
+    Line Item Fields: 0
+    HTML Form Size: 12355 bytes
+    Mandatory: emp_id,location_id,start_date,end_date,comments,is_active
+    Insert Option: COM_INSERT_EMP_LOCATIONS
+
+  7.5 Emp Clock Status
+    User Fields: 5
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11481 bytes
+    Mandatory: user_id,effective_from_date,effective_to_date
+    Insert Option: COM_INSERT_EMP_CLOCK_STATUS
+
+  7.6 Holidays
+    User Fields: 6
+    Hidden Fields: 15
+    Line Item Fields: 0
+    HTML Form Size: 11933 bytes
+    Mandatory: location_id,holiday_date,holiday_name,is_active
+    Insert Option: COM_INSERT_HOLIDAYS
+
+  7.7 Leave Categories
+    User Fields: 6
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11960 bytes
+    Mandatory: name,description,back_ground_color
+    Insert Option: COM_INSERT_LEAVE_CATEGORIES
+
+  7.8 Attedenace Regularizaton Reasons
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11587 bytes
+    Mandatory: reason_name,reason_description
+    Insert Option: COM_INSERT_ATTEDENACE_REGULARIZATON_REASONS
+
+  7.9 Attendenace Regularization Request
+    User Fields: 11
+    Hidden Fields: 16
+    Line Item Fields: 0
+    HTML Form Size: 15076 bytes
+    Mandatory: employee_id,request_date,regularization_date,regularization_of_checkin,regularization_of_checkout,regularization_reason,remarks,image
+    Insert Option: COM_INSERT_ATTENDENACE_REGULARIZATION_REQUEST
+
+  7.10 Attendenace Regularization Setting
+    User Fields: 6
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 13363 bytes
+    Mandatory: regularization_limit_in_days,regularization_request_times_limit,regularization_request_times_frequency,regularization_request_treatment
+    Insert Option: COM_INSERT_ATTENDENACE_REGULARIZATION_SETTING

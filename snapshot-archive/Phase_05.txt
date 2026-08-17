@@ -1,0 +1,345 @@
+================================================================================
+PHASE 5: VENDOR MANAGEMENT - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the Vendor Management modules, scraped from the live application.
+
+---
+1. APPLICATION ARCHITECTURE (CODE LEVEL)
+---
+
+1.1 Technology Stack
+  - Backend: PHP (server-rendered, no REST framework)
+  - Frontend: jQuery + Bootstrap 4 + DataTables + Select2
+  - Database: MySQL (inferred from PHP/LAMP stack)
+  - Session: PHP sessions (PHPSESSID cookie)
+  - Routing: Single entry point (index.php) with option-based routing
+
+1.2 Module Overview
+  The Vendor module comprises 2 sub-modules:
+  - vendors             (COM_INSERT_VENDORS)
+  - vendor_invitations  (COM_INSERT_VENDOR_INVITATIONS)
+
+  The vendors module is the primary entity for supplier management.
+  The vendor_invitations module has no user-visible form fields,
+  suggesting it is system-managed or triggered via a separate workflow
+  (e.g., email invitation sent to prospective vendors with a
+  self-registration link).
+
+1.3 Routing Convention
+  COM_LIST_VENDORS           -> List/view page
+  COM_INSERT_VENDORS         -> Insert form
+  COM_UPDATE_VENDORS         -> Update form
+  COM_LIST_VENDOR_INVITATIONS -> List/view page
+  COM_INSERT_VENDOR_INVITATIONS -> Insert form (empty/generate-only)
+
+---
+2. DATABASE SCHEMA - VENDOR MODULES
+---
+
+2.1 Table: vendors
+  Module: Vendors
+  Insert Option: COM_INSERT_VENDORS
+
+  CREATE TABLE vendors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    image VARCHAR(500),
+      -- Vendor logo/photo (file upload, stored path)
+    hidimage VARCHAR(500),
+      -- Hidden: previous image path for update diff detection
+    first_name VARCHAR(100),
+    middle_name VARCHAR(100),
+    last_name VARCHAR(100),
+    display_name VARCHAR(255),
+      -- Composite name shown in dropdowns and lists
+    email VARCHAR(255),
+      -- Primary contact email (duplicated as 2 phone fields)
+    phone VARCHAR(50),
+      -- Primary contact phone (duplicated in form as 2 entries)
+    vendor_since DATE,
+      -- Date when vendor relationship started
+    from_date DATE NOT NULL,
+      -- Effective date start (mandatory)
+    to_date DATE,
+      -- Effective date end (defaults to from_date + 5 years)
+    state_id INT DEFAULT 0,
+      -- FK to states table (inferred from GST workflow)
+    gst_number VARCHAR(50),
+      -- GST registration number (inferred)
+    pan_number VARCHAR(20),
+      -- PAN for tax (inferred)
+    status TINYINT DEFAULT 0,
+      -- 0=Active, 1=Inactive, 2=Draft
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Mandatory columns: first_name,middle_name,last_name,email,phone,display_name,image,vendor_since
+  duplicate_table_name = vendors
+  notification_users = 3 (notify user ID 3 on creation)
+  notification_message = "New vendors page has been created"
+  dis_label = URL-encoded JSON mapping field names to display labels
+
+  Note: The phone field appears twice in the form - once as a
+  standard text input and once potentially as a phone-type input.
+  The in_phone_fileds hidden field (empty) would normally list
+  which fields are phone-prefixed, but is unset.
+
+2.2 Table: vendor_invitations
+  Module: Vendor Invitations
+  Insert Option: COM_INSERT_VENDOR_INVITATIONS
+
+  CREATE TABLE vendor_invitations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255),
+      -- Invitation recipient email
+    token VARCHAR(255),
+      -- Unique registration token (UUID/hash)
+    invited_by INT,
+      -- FK to users.id who triggered the invitation
+    invitation_date DATETIME,
+    accepted_date DATETIME,
+      -- NULL until vendor registers
+    vendor_id INT DEFAULT 0,
+      -- FK to vendors.id, set after acceptance
+    status TINYINT DEFAULT 0,
+      -- 0=Pending, 1=Accepted, 2=Expired, 3=Revoked
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Note: This table has NO scraped form fields (empty user_fields
+  and all_fields). The invitation workflow is likely triggered from
+  a vendor list action button or a dedicated invitation page that
+  submits directly without the generic form generator. The form may
+  be generated dynamically via JavaScript/AJAX when the user clicks
+  "Invite Vendor".
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  vendors.state_id    -->  states.id (inferred from GST state workflow)
+  vendor_invitations.vendor_id  -->  vendors.id
+  vendor_invitations.invited_by  -->  users.id (inferred)
+
+  Transaction tables reference vendors via party_id:
+  quotations.party_id      -->  vendors.id
+  purchase_orders.party_id  -->  vendors.id
+  purchase_invoices.party_id --> vendors.id
+  supplier_bills.party_id   -->  vendors.id
+
+  ER Diagram (text):
+  +---------+     +------------------+     +----------------+
+  | vendors | 1-* | vendor_invitations|     | Transaction    |
+  | -name   |     | -email           |     | Tables         |
+  | -state  |     | -token           |     | (quotations,   |
+  +---------+     | -vendor_id (FK)  |     |  purchase_orders|
+       |          +------------------+     |  etc.)         |
+       |                                      | -party_id (FK) |
+       +--------------------------------------+----------------+
+
+---
+4. BUSINESS RULES
+---
+
+4.1 Vendor Name Composition
+  The vendor form splits name into three parts: first_name,
+  middle_name, last_name. A separate display_name field allows
+  a custom display string (e.g., company name) to be shown in
+  dropdowns and transaction headers. All four fields are MANDATORY.
+
+4.2 Effective Dating
+  Vendors support effective dating (from_date/to_date).
+  from_date is mandatory. to_date defaults to from_date + 5 years.
+  Only vendors with valid effective date ranges appear in
+  transaction dropdowns (party_id select).
+
+4.3 Duplicate Detection
+  duplicate_table_name = vendors triggers server-side duplicate
+  checking before INSERT. Likely checks display_name and email
+  uniqueness.
+
+4.4 Image Upload
+  The image field is a file upload (type="file") with a hidden
+  companion hidimage field. On update, hidimage stores the
+  previous image path, enabling the system to detect whether
+  the image was changed and potentially clean up old files.
+  Client-side validation via .fileinputvalidation class enforces
+  format restrictions.
+
+4.5 Phone Field Duplication
+  The phone field appears twice in the form HTML. This pattern
+  appears in other modules (departments, vendors) and likely
+  represents: (1) a visible text input and (2) a hidden input
+  for the in_phone_fileds framework. When in_phone_fileds is
+  populated, the system adds country code prefix handling.
+
+4.6 Vendor Invitation Workflow (Inferred)
+  Since the vendor_invitations form is empty, the workflow is:
+  1. User triggers invitation (list page action or direct URL)
+  2. System generates unique token, sends email to vendor
+  3. Vendor clicks email link with token
+  4. System validates token, shows self-registration form
+  5. On registration, vendor record is created in vendors table
+  6. vendor_invitations.status updated to Accepted (1)
+  7. vendor_invitations.vendor_id set to new vendor's ID
+
+4.7 Notification on Creation
+  When a vendor is created, user ID 3 receives a notification
+  with the message "New vendors page has been created".
+  This is configured via the notification_users and
+  notification_message hidden fields.
+
+4.8 Vendor as Party
+  In all transaction modules (quotations, POs, invoices, supplier
+  bills), the vendor is referenced as party_id via a SELECT2
+  dropdown labeled "Party". The party concept is polymorphic -
+  the same field name is used for vendors in procurement and
+  for customers in sales modules.
+
+---
+5. API ENDPOINT CATALOG
+---
+
+5.1 List/Filter API
+  POST /views/custon_list_dynamic_table.php
+  Params: option, table=vendors|vendor_invitations, status,
+          filterajax, current_page, limit_select,
+          filter_text, filter_dynamic_select
+  Response: HTML table with pagination
+
+5.2 Insert Form Render
+  POST /views/new_from.php?option=COM_INSERT_VENDORS
+  Response: HTML form with image upload, name fields, dates
+
+5.3 Insert Form Submit
+  POST /index.php (multipart/form-data for image upload)
+  All form fields + hidden framework fields
+
+5.4 Status Workflow
+  POST /ajax.php?page=submitstatusdynamicworkflow
+  Params: table_name=vendors, current_status, transaction_id,
+          next_status
+  Response: JSON {transaction_update:{status,message}}
+
+5.5 Vendor/Party Search
+  POST /ajax.php?page=getenquiryvendororcustomer
+  Params: value (min 3 chars), searchvendorcustomertype
+  Response: HTML search results (vendor list for selection)
+  Triggered by getEnquiryVendororCustomer() JS function.
+  Requires minimum 3 characters before firing.
+
+5.6 Vendor Detail Popup
+  POST /views/custom_view_party_detail_popup.php
+  Params: part_table, party_id
+  Response: HTML modal with vendor details
+  Triggered by getEnquiryVendororCustomerPartyDetailspopup().
+
+5.7 Dynamic Field Update
+  POST /ajax.php?page=updatedynamicfied
+  Params: table, hid, fid, rid
+  Used to toggle boolean fields on vendors (e.g., is_active).
+
+---
+6. SOURCE CODE PATTERNS
+---
+
+6.1 Vendor/Party Search Function (custom_insert.php)
+  function getEnquiryVendororCustomer(valu) {
+    if (valu.length >= 3) {
+      var searchvendorcustomertype =
+        $('.searchvendorcustomertype:checked').val();
+      var htmloader = '<div class="text-center"><img src="assets/images/spiner/"
+        + 'spiner3.gif" style="width: 300px;"></div>';
+      $('#search_result_employee').html(htmloader);
+      $("#search_result_employee").show('slow');
+      jQuery.ajax({
+        url: "ajax.php",
+        data: "page=getenquiryvendororcustomer&value=" + valu
+          + "&searchvendorcustomertype=" + searchvendorcustomertype,
+        type: "POST",
+        success: function(data) {
+          $("#search_result_employee").html(data);
+        }
+      });
+    } else {
+      $("#search_result_employee").hide();
+    }
+  }
+
+  This function demonstrates the vendor search pattern:
+  - Minimum 3-character threshold prevents excessive queries
+  - searchvendorcustomertype radio button filters by party type
+  - Results rendered into #search_result_employee container
+  - No debouncing is implemented
+
+6.2 Vendor Detail Popup (custom_insert.php)
+  function getEnquiryVendororCustomerPartyDetailspopup(
+    party_id, part_table='') {
+    $.ajax({
+      url: "views/custom_view_party_detail_popup.php",
+      data: 'part_table=' + part_table
+        + '&party_id=' + party_id,
+      type: "POST",
+      success: function(data) {
+        $('#dynamic_popup1').html(data);
+        $('#kt_modal_dynamic_popup').modal("show");
+      }
+    });
+  }
+
+  The part_table parameter allows the same popup to serve
+  both vendor and customer detail views. For procurement,
+  part_table would be 'vendors'.
+
+6.3 Image Upload Pattern
+  Vendors use the .onchangeimagepreview class for live image
+  preview and .fileinputvalidation for format/size validation:
+  - File type validation via accept attribute + JS
+  - File size validation via data-size attribute
+  - Preview via FileReader.readAsDataURL()
+  - The image is stored on server and path saved in DB
+
+6.4 Display Label Mapping
+  The dis_label hidden field contains a URL-encoded JSON mapping
+  field names to their display labels. Decoded:
+  {"first_name":"First Name", "middle_name":"Middle Name",
+   "last_name":"Last Name", "email":"Email",
+   "phone":"Phone", "display_name":"Display Name",
+   "image":"Image", "vendor_since":"Vendor Since"}
+  This drives the dynamic help text system (setdynamichelptext).
+
+---
+7. INFERRED SYSTEM/METADATA TABLES
+---
+
+  7.1 vendor_contacts - Multiple contacts per vendor
+      Columns: id, vendor_id, contact_name, email, phone,
+               is_primary, designation, department
+      The form only captures one name/phone/email. Additional
+      contacts are likely managed via a sub-form on update.
+
+  7.2 vendor_addresses - Multiple addresses per vendor
+      Columns: id, vendor_id, address_type (BILLING/SHIPPING/
+               REGISTERED), address_line1, address_line2,
+               city_id, state_id, pincode, country_id,
+               gst_number
+      Required for GST compliance - place of supply
+      calculation needs vendor state.
+
+  7.3 vendor_bank_details - Bank account information
+      Columns: id, vendor_id, bank_name, account_number,
+               ifsc_code, branch_name, account_type,
+               is_default
+      Referenced by payment processing in Phase 8.
+
+  7.4 vendor_items - Approved item catalogue per vendor
+      Columns: id, vendor_id, item_id, approved_price,
+               lead_time_days, min_order_qty, status
+      Links vendors to the inventory items they supply.
+
+  7.5 vendor_categories - Vendor classification
+      Columns: id, vendor_id, category_id
+      Allows tagging vendors with item categories they serve.

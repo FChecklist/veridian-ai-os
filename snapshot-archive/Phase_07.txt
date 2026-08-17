@@ -1,0 +1,510 @@
+================================================================================
+PHASE 7: QUOTATIONS & PURCHASE ORDERS - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the Quotations and Purchase Orders modules, scraped from the live
+application.
+
+---
+1. APPLICATION ARCHITECTURE (CODE LEVEL)
+---
+
+1.1 Technology Stack
+  - Backend: PHP (server-rendered, no REST framework)
+  - Frontend: jQuery + Bootstrap 4 + DataTables + Select2
+  - Database: MySQL (inferred from PHP/LAMP stack)
+  - Session: PHP sessions (PHPSESSID cookie)
+  - Routing: Single entry point (index.php) with option-based routing
+
+1.2 Module Overview
+  Two tightly-coupled transaction modules:
+  - quotations       (COM_INSERT_QUOTATIONS)  Table: quotations
+  - purchase_orders   (COM_INSERT_PURCHASE_ORDERS)  Table: purchase_orders
+
+  Both share near-identical header structure with the key difference
+  being ref_type options (quotation links from requisition; PO links
+  from requisition, quotation, or sales order).
+
+  Both have has_line_items: False (line items loaded via AJAX).
+
+1.3 Routing Convention
+  COM_LIST_QUOTATIONS      -> List/view with status tabs
+  COM_INSERT_QUOTATIONS    -> Insert form
+  COM_UPDATE_QUOTATIONS    -> Update form
+  COM_LIST_PURCHASE_ORDERS      -> List/view with status tabs
+  COM_INSERT_PURCHASE_ORDERS    -> Insert form
+  COM_UPDATE_PURCHASE_ORDERS    -> Update form
+
+---
+2. DATABASE SCHEMA
+---
+
+2.1 Table: quotations (Header)
+
+  CREATE TABLE quotations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(50),
+    transaction_date DATE,
+    opex_cpex TINYINT DEFAULT 0,
+      -- 0=OPEX, 1=CAPEX (inherited from requisition)
+    ref_type VARCHAR(50) DEFAULT NULL,
+      -- 'requisitions' (single source option)
+    ref_id INT DEFAULT 0,
+      -- FK to requisitions.id
+    type VARCHAR(50),
+      -- 'RURAL REQUIREMENT' | 'URBAN REQUIREMENT'
+      -- 'HO REQUIREMENTS' | 'PROJECT REQUIREMENTS'
+    originator VARCHAR(50) DEFAULT 'ADMIN',
+    cost_center_id INT DEFAULT 0,
+      -- FK to cost_centers.id
+    party_id INT DEFAULT 0,
+      -- FK to vendors.id (the quoting vendor)
+    payment_terms VARCHAR(50),
+      -- Payment term code (e.g., 'NET +30 DAYS')
+    place_of_supply VARCHAR(100),
+      -- State/location for GST calculation
+    transaction_location_id INT DEFAULT 0,
+      -- Hidden: delivery/ship-to location
+    originator_currency_id INT DEFAULT 0,
+      -- Hidden: buyer's default currency
+    transaction_warehouse_id INT DEFAULT 0,
+      -- Hidden: delivery warehouse
+    originator_state_id INT DEFAULT 0,
+      -- Hidden: buyer's state (for GST)
+    supplier_state_id INT DEFAULT 0,
+      -- Hidden: vendor's state (for GST)
+    status TINYINT DEFAULT 0,
+    created_by INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Key differences from requisitions:
+  - Adds party_id (vendor assignment)
+  - Adds payment_terms
+  - Adds transaction_location_id and transaction_warehouse_id
+  - ref_type limited to 'requisitions' only
+  - No currency_id (uses originator_currency_id)
+  - No currency_rate field
+
+2.2 Table: quotation_items (Line Items - Inferred)
+
+  CREATE TABLE quotation_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    quotation_id INT NOT NULL,
+    seq INT DEFAULT 0,
+    item_id INT DEFAULT 0,
+      -- FK to items.id
+    item_description TEXT,
+    quantity DECIMAL(15,2) DEFAULT 0,
+    uom_id INT DEFAULT 0,
+    quoted_unit_price DECIMAL(15,2) DEFAULT 0,
+    quoted_total DECIMAL(15,2) DEFAULT 0,
+      -- quantity * quoted_unit_price
+    hsn_sac_code_id INT DEFAULT 0,
+    gst_rate DECIMAL(5,2) DEFAULT 0,
+    cgst_amount DECIMAL(15,2) DEFAULT 0,
+    sgst_amount DECIMAL(15,2) DEFAULT 0,
+    igst_amount DECIMAL(15,2) DEFAULT 0,
+    gst_amount DECIMAL(15,2) DEFAULT 0,
+      -- Sum of CGST + SGST or IGST
+    total_amount DECIMAL(15,2) DEFAULT 0,
+      -- quoted_total + gst_amount
+    discount_amount DECIMAL(15,2) DEFAULT 0,
+    remarks TEXT,
+    required_by_date DATE,
+    status TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+
+2.3 Table: purchase_orders (Header)
+
+  CREATE TABLE purchase_orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(50),
+    transaction_date DATE,
+    opex_cpex TINYINT DEFAULT 0,
+    ref_type VARCHAR(50) DEFAULT NULL,
+      -- THREE source options:
+      -- 'requisitions'    -> Direct PO from requisition
+      -- 'quotations'      -> PO from approved quotation
+      -- 'sales_orders'    -> PO linked to sales order (drop-ship)
+    ref_id INT DEFAULT 0,
+      -- FK to source document ID
+    type VARCHAR(50),
+      -- 'RURAL REQUIREMENT' | 'URBAN REQUIREMENT'
+      -- 'HO REQUIREMENTS' | 'PROJECT REQUIREMENTS'
+    originator VARCHAR(50) DEFAULT 'ADMIN',
+    cost_center_id INT DEFAULT 0,
+      -- FK to cost_centers.id
+    party_id INT DEFAULT 0,
+      -- FK to vendors.id
+    payment_terms VARCHAR(50),
+    place_of_supply VARCHAR(100),
+    transaction_location_id INT DEFAULT 0,
+      -- Hidden: delivery location
+    originator_currency_id INT DEFAULT 0,
+      -- Hidden: buyer's default currency
+    transaction_warehouse_id INT DEFAULT 0,
+      -- Hidden: delivery warehouse
+    status TINYINT DEFAULT 0,
+    created_by INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Key differences from quotations:
+  - ref_type has 3 options vs 1 (requisitions + quotations + sales_orders)
+  - No originator_state_id / supplier_state_id hidden fields
+    (GST state may be inherited from reference document)
+
+2.4 Table: purchase_order_items (Line Items - Inferred)
+
+  CREATE TABLE purchase_order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    purchase_order_id INT NOT NULL,
+    seq INT DEFAULT 0,
+    item_id INT DEFAULT 0,
+    item_description TEXT,
+    quantity DECIMAL(15,2) DEFAULT 0,
+    uom_id INT DEFAULT 0,
+    ordered_unit_price DECIMAL(15,2) DEFAULT 0,
+    ordered_total DECIMAL(15,2) DEFAULT 0,
+    hsn_sac_code_id INT DEFAULT 0,
+    gst_rate DECIMAL(5,2) DEFAULT 0,
+    cgst_amount DECIMAL(15,2) DEFAULT 0,
+    sgst_amount DECIMAL(15,2) DEFAULT 0,
+    igst_amount DECIMAL(15,2) DEFAULT 0,
+    gst_amount DECIMAL(15,2) DEFAULT 0,
+    total_amount DECIMAL(15,2) DEFAULT 0,
+    discount_amount DECIMAL(15,2) DEFAULT 0,
+    received_quantity DECIMAL(15,2) DEFAULT 0,
+      -- Cumulative qty received via GRN
+    pending_quantity DECIMAL(15,2) DEFAULT 0,
+      -- quantity - received_quantity
+    remarks TEXT,
+    status TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  quotations.ref_id           -->  requisitions.id
+  quotations.party_id         -->  vendors.id
+  quotations.cost_center_id   -->  cost_centers.id
+  quotation_items.quotation_id --> quotations.id
+  quotation_items.item_id     -->  items.id
+
+  purchase_orders.ref_id              -->  requisitions.id
+                                       OR quotations.id
+                                       OR sales_orders.id
+    (determined by ref_type value)
+  purchase_orders.party_id             -->  vendors.id
+  purchase_orders.cost_center_id       -->  cost_centers.id
+  purchase_order_items.purchase_order_id --> purchase_orders.id
+  purchase_order_items.item_id         -->  items.id
+
+  ER Diagram (text):
+  +--------------+ 1   * +--------------+ 1   * +---------------+
+  | requisitions |-----|  quotations  |-----| purchase_orders|
+  |              |     | -party_id    |     | -party_id     |
+  +--------------+     +--------------+     +-------+-------+
+         |                                          |
+         | (direct path)                            | 1
+         +----------------------------------+      | *
+  +--------------+                           |      | *
+  |purchase_orders| (from requisition)     | +----+-------+
+  +--------------+                           | |po_items     |
+                                             +-------------+
+
+  PO Generation Paths:
+  Path A: requisitions --[ref_type=requisitions]--> purchase_orders
+  Path B: requisitions --> quotations --[ref_type=quotations]--> purchase_orders
+  Path C: sales_orders --[ref_type=sales_orders]--> purchase_orders (drop-ship)
+
+---
+4. BUSINESS RULES
+---
+
+4.1 Quotation Generation
+  Quotations are created FROM approved requisitions:
+  - ref_type is fixed to 'requisitions'
+  - User selects a specific requisition via ref_id dropdown
+  - Line items are copied from the requisition
+  - Estimated prices become quoted prices (editable)
+  - A vendor (party_id) must be assigned
+  - Multiple quotations can be created from one requisition
+    (enabling vendor comparison)
+
+4.2 Purchase Order Generation - Three Paths
+  Path A: Direct from Requisition
+    - ref_type = 'requisitions'
+    - Used for direct procurement without formal quotation
+    - Prices from requisition estimates carried forward
+    - Vendor must be assigned (party_id)
+
+  Path B: From Quotation (Standard Path)
+    - ref_type = 'quotations'
+    - User selects an approved quotation via ref_id
+    - Quoted prices are locked into the PO
+    - Vendor is inherited from quotation's party_id
+
+  Path C: From Sales Order (Drop-Ship)
+    - ref_type = 'sales_orders'
+    - Used when a customer order requires direct vendor shipment
+    - Bridges the sales and procurement cycles
+
+4.3 Payment Terms
+  Payment terms appear on quotations and POs as a SELECT2 dropdown.
+  Values are loaded from the payment_terms lookup table.
+  Known values (from debit_notes form):
+  - NET +7 DAYS
+  - NET +15 DAYS
+  - NET +30 DAYS
+  - NET +45 DAYS
+  - NET +60 DAYS
+  - NET +90 DAYS
+  Payment terms flow from PO to Purchase Invoice.
+
+4.4 OPEX/CAPEX Flow
+  The opex_cpex classification is inherited through the chain:
+  Requisition.opex_cpex --> Quotation.opex_cpex --> PO.opex_cpex
+  The value is set at requisition time and propagates downstream.
+  It cannot be changed on quotation or PO.
+
+4.5 Type Classification
+  The type field (RURAL/URBAN/HO/PROJECT REQUIREMENTS) follows
+  the same inheritance pattern as opex_cpex. Set at requisition,
+  propagated to quotation and PO.
+
+4.6 GST Calculation Context
+  Quotations carry both originator_state_id and supplier_state_id
+  as hidden fields, enabling real-time GST calculation:
+  - Same state: CGST + SGST (split tax)
+  - Different state: IGST (integrated tax)
+  The place_of_supply field determines the GST jurisdiction.
+  Purchase Orders do NOT have these hidden fields, suggesting
+  GST is calculated at quotation time and frozen into PO line items.
+
+4.7 Location and Warehouse
+  Both quotations and POs have hidden fields for:
+  - transaction_location_id: Delivery destination location
+  - transaction_warehouse_id: Delivery destination warehouse
+  These are populated when cost_center_id or other fields change,
+  based on org structure defaults.
+
+4.8 Workflow States (Inferred)
+  Quotation lifecycle:
+  Draft -> Pending -> Quoted -> Approved -> Converted-to-PO -> Closed
+  Rejected (returns to vendor for re-quote)
+
+  PO lifecycle:
+  Draft -> Pending Approval -> Approved -> Sent-to-Vendor
+  -> Partially Received -> Fully Received -> Closed
+  Cancelled
+
+---
+5. API ENDPOINT CATALOG
+---
+
+5.1 List/Filter API
+  POST /views/custon_list_dynamic_table.php
+  Params: option, table=quotations|purchase_orders, status,
+          filterajax, current_page, limit_select,
+          filter_text, filter_dynamic_select
+
+5.2 Insert Form Render
+  POST /views/new_from.php?option=COM_INSERT_QUOTATIONS
+  POST /views/new_from.php?option=COM_INSERT_PURCHASE_ORDERS
+
+5.3 Status Workflow
+  POST /ajax.php?page=submitstatusdynamicworkflow
+  Params: table_name, current_status, transaction_id, next_status
+
+5.4 Status Dropdown
+  POST /ajax.php?page=current_status_drop_table
+  Params: id, current_status, table
+
+5.5 Status Popup
+  POST /views/custom_insert_dynamic_status_popup.php
+  Params: table_name, current_status, transaction_id, next_status
+
+5.6 Quotation Vendor Selection (changestatus)
+  POST /views/custom_quotation_vender_pop.php
+  Params: table, field, rid, tranid, allowitemid
+  Response: HTML modal with vendor selection form
+  Triggered by the changestatus() JS function.
+
+5.7 Approved Documents Tab
+  POST /views/custom_list_approved_table.php
+  Params: table, clone, ajaxpage=Y
+  Response: HTML table of approved documents
+  Triggered by openApprovedPage() JS function.
+
+5.8 Reference Document Loading
+  POST /ajax.php (inferred)
+  Params: ref_type, ref_id
+  Loads reference document header and line items into the form.
+
+---
+6. SOURCE CODE PATTERNS
+---
+
+6.1 changestatus() - Quotation Vendor Assignment (custom_insert.php)
+  function changestatus(val, tranid, allowitemid, table_name) {
+    var x = val;
+    jQuery.ajax({
+      url: "views/custom_quotation_vender_pop.php",
+      data: 'table=' + table_name
+        + '&field=' + x
+        + '&rid=' + tranid
+        + '&tranid=' + tranid
+        + '&allowitemid=' + allowitemid,
+      type: "POST",
+      success: function(data) {
+        $('#popupm').html(data);
+        $('#kt_modal_KTDatatable_remotem').modal("show");
+        $(".js-example-basic-multiple").select2();
+      }
+    });
+  }
+
+  This function is the bridge between the quotation list and
+  vendor assignment. Parameters:
+  - val: The status value or action identifier
+  - tranid: The quotation transaction ID
+  - allowitemid: Controls whether line items are editable
+  - table_name: Target table (typically 'quotations')
+
+  It opens a modal (kt_modal_KTDatatable_remotem - note the 'm'
+  suffix indicating a different modal than the primary one)
+  with a vendor selection interface. After vendor selection,
+  the quotation is updated with party_id.
+
+6.2 openApprovedPage() - Approved Documents Tab (custom_insert.php)
+  function openApprovedPage(table, clone) {
+    var loader = '<div class="text-center"><img src="assets/images/spiner/'
+      + 'spiner3.gif" style="width: 300px;"></div>';
+    $("#tabsopen").html(loader);
+    jQuery.ajax({
+      url: "views/custom_list_approved_table.php",
+      data: 'table=' + table + '&clone=' + clone + '&ajaxpage=Y',
+      type: "POST",
+      success: function(data) {
+        $('#tabsopen').html(data);
+        $(".js-example-basic-single").select2();
+        $(".datepicker").datepicker({
+          showOn: "both",
+          buttonText: "<i class='ti-calendar text-dark f-20'></i>",
+          dateFormat: date_format,
+          yearRange: "-60:+10",
+          changeMonth: true,
+          changeYear: true
+        });
+      }
+    });
+  }
+
+  Used on quotation and PO list pages to load the 'Approved'
+  tab content. The 'clone' parameter enables 'Clone from Approved'
+  workflow. When a user clicks an approved document in the tab,
+  the system creates a new child document (e.g., PO from Quotation).
+  After AJAX load, initializes Select2 and jQuery UI datepickers.
+
+6.3 displaystausdrop() - Per-Row Status Actions
+  function displaystausdrop(id, table, status_id, tab) {
+    $.ajax({
+      url: "ajax.php",
+      data: 'page=current_status_drop_table&id=' + id
+        + '&current_status=' + status_id
+        + '&table=' + table,
+      type: "POST",
+      success: function(data) {
+        $("#dropdownlist_" + tab + "_" + id).html(data);
+      }
+    });
+  }
+
+  Each row in the quotation/PO list has a status action dropdown.
+  The dropdown HTML is loaded on-demand when the row's action
+  button is clicked. The 'tab' parameter supports different
+  status views (e.g., 'all', 'pending', 'approved', 'closed').
+
+6.4 submitDynamiPopUpForm() - Status Change with Validation (custom.js)
+  function submitDynamiPopUpForm() {
+    var table = $("#updatedstatusetransactiontable").val();
+    var id = $("#updatedstatusetransactionid").val();
+    let returnresult = 0;
+    if (table == 'delivery_orders' || table == 'sales_invoices') {
+      returnresult = getStockBalanceAvailability(table, id);
+    }
+    if (returnresult == 0) {
+      $("#statuspopupbtn").text("Please Wait........");
+      $("#statuspopupbtn").addClass("disabled");
+      var formdata = $("#dynamic_status_forms").serialize();
+      $.ajax({
+        url: "ajax.php",
+        type: "POST",
+        data: 'page=submitstatusdynamicworkflow&' + formdata,
+        success: function(response) {
+          var res = JSON.parse(response);
+          if (res.transaction_update.status == 'sucess') {
+            swal({ title: "", text: 'Submission Successful',
+              type: "success", showCancelButton: false,
+              confirmButtonText: "Yes", closeOnConfirm: true },
+              function(isConfirm) {
+                if (isConfirm) {
+                  $('#kt_modal_KTDatatable_remote').modal('hide');
+                  window.location.href = window.location.href;
+                }
+              });
+          }
+        }
+      });
+    }
+  }
+
+  Currently stock check is only for delivery_orders/sales_invoices.
+  For quotations and POs, the function proceeds directly to
+  workflow submission. The button is disabled during submission
+  to prevent double-clicks.
+
+6.5 Modal Architecture
+  The application uses multiple modal instances:
+  - #kt_modal_KTDatatable_remote (primary popup)
+  - #kt_modal_KTDatatable_remotem (vendor selection popup)
+  - #kt_modal_dynamic_popup (party details, dashboards)
+  - #kt_modal_dynamic_popup2 (job hiring, secondary)
+
+  The changestatus() function uses the 'remotem' modal variant,
+  while submitDynamicWorkflowPopUp() and submitDynamiPopUpForm()
+  use the primary 'remote' modal.
+
+---
+7. INFERRED SYSTEM/METADATA TABLES
+---
+
+  7.1 quotation_vendors - Vendor assignment per quotation
+      Columns: id, quotation_id, vendor_id, quoted_amount,
+               is_selected, rank, response_date
+      Supports multi-vendor quoting on a single requisition.
+
+  7.2 quotation_comparisons - Vendor price comparison
+      Columns: id, requisition_id, quotation_id, vendor_id,
+               item_id, quoted_price, lowest_price, is_lowest
+      Powers the vendor comparison matrix used during
+      quotation evaluation before PO creation.
+
+  7.3 po_delivery_schedule - PO delivery milestones
+      Columns: id, po_id, item_id, delivery_date,
+               delivery_quantity, location_id, status
+      Breaks PO into scheduled deliveries.
+
+  7.4 payment_terms_config - Payment terms definitions
+      Columns: id, term_code, term_name, description,
+               due_days, discount_percent, discount_days
+      Lookup table for the payment_terms dropdown.
+      Known codes: NET +7/15/30/45/60/90 DAYS.

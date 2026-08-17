@@ -1,0 +1,471 @@
+================================================================================
+PHASE 4: INVENTORY & ITEM MANAGEMENT - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the Inventory & Item Management modules, scraped from the live application.
+
+---
+1. APPLICATION ARCHITECTURE (CODE LEVEL)
+---
+
+1.1 Technology Stack
+  - Backend: PHP (server-rendered, no REST framework)
+  - Frontend: jQuery + Bootstrap 4 + DataTables + Select2
+  - Database: MySQL (inferred from PHP/LAMP stack)
+  - Session: PHP sessions (PHPSESSID cookie)
+  - Routing: Single entry point (index.php) with option-based routing
+
+1.2 Module Overview
+  The Inventory module comprises 6 sub-modules:
+  - item_categories    (COM_INSERT_ITEM_CATEGORIES)
+  - item_types         (COM_INSERT_ITEM_TYPES)
+  - unit_of_measurements (COM_INSERT_UNIT_OF_MEASUREMENTS)
+  - items              (COM_INSERT_ITEMS)
+  - hsn_and_sac_codes  (COM_INSERT_HSN_AND_SAC_CODES)
+  - currencies         (COM_INSERT_CURRENCIES)
+
+  All modules follow the generic form generator pattern via
+  views/new_from.php?option=COM_INSERT_XXX. The items module is
+  flagged as has_line_items=True, indicating a line-item sub-form
+  for item-level details (pricing tiers, stock entries, etc.).
+
+1.3 Routing Convention
+  COM_LIST_ITEM_CATEGORIES        -> List/view page
+  COM_INSERT_ITEM_CATEGORIES      -> Insert form
+  COM_UPDATE_ITEM_CATEGORIES      -> Update form
+  COM_LIST_ITEM_TYPES             -> List/view page
+  COM_INSERT_ITEM_TYPES           -> Insert form
+  COM_LIST_UNIT_OF_MEASUREMENTS   -> List/view page
+  COM_INSERT_UNIT_OF_MEASUREMENTS -> Insert form
+  COM_LIST_ITEMS                  -> List/view page
+  COM_INSERT_ITEMS                -> Insert form
+  COM_LIST_HSN_AND_SAC_CODES      -> List/view page
+  COM_INSERT_HSN_AND_SAC_CODES    -> Insert form
+  COM_LIST_CURRENCIES             -> List/view page
+  COM_INSERT_CURRENCIES           -> Insert form
+
+---
+2. DATABASE SCHEMA - INVENTORY MODULES
+---
+
+2.1 Table: item_categories
+  Module: Item Categories
+  Insert Option: COM_INSERT_ITEM_CATEGORIES
+
+  CREATE TABLE item_categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category_description VARCHAR(500),
+    default_costing_type ENUM('S','W') DEFAULT 'S',
+      -- S = Standard Costing, W = Weighted Average
+    first_removal_strategy ENUM('FIFO','LIFO','LEFO','CL') DEFAULT 'FIFO',
+      -- CL = Close (lot/serial)
+    price_variance ENUM('Y','N') DEFAULT 'N',
+    price_variance_amount_min DECIMAL(15,2) DEFAULT 0,
+    price_variance_amount_max DECIMAL(15,2) DEFAULT 0,
+    price_variance_type ENUM('P','A') DEFAULT 'P',
+      -- P = Percentage, A = Amount
+    qty_variance ENUM('Y','N') DEFAULT 'N',
+    qty_variance_amount_min DECIMAL(15,2) DEFAULT 0,
+    qty_variance_amount_max DECIMAL(15,2) DEFAULT 0,
+    qty_variance_type VARCHAR(20) DEFAULT 'Percentage',
+      -- 'Percentage' or 'Amount' (note: inconsistent enum vs string)
+    industry_id INT DEFAULT 0,
+      -- FK to industries/sectors lookup
+    inventory_asset_account INT DEFAULT 0,
+      -- FK to chart_of_accounts for inventory valuation
+    status TINYINT DEFAULT 0,
+      -- 0=Active, 1=Inactive, 2=Draft
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Note: No effective dating (from_date/to_date) on this table.
+  No mandatory_str was scraped (may be set dynamically).
+
+2.2 Table: item_types
+  Module: Item Types
+  Insert Option: COM_INSERT_ITEM_TYPES
+
+  CREATE TABLE item_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    item_type_name VARCHAR(255),
+    item_type_description VARCHAR(255),
+    mapping_code VARCHAR(100),
+      -- External system mapping code (for ERP integration)
+    from_date DATE NOT NULL,
+    to_date DATE,
+    status TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Mandatory columns: item_type_name,item_type_description,mapping_code
+  duplicate_table_name = item_types
+
+2.3 Table: unit_of_measurements
+  Module: Unit of Measurements
+  Insert Option: COM_INSERT_UNIT_OF_MEASUREMENTS
+
+  CREATE TABLE unit_of_measurements (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    uom_short_code VARCHAR(10),
+      -- e.g., 'KG', 'PCS', 'LTR', 'MTR'
+    uom_name VARCHAR(100),
+      -- Full name e.g., 'Kilogram', 'Pieces'
+    uom_description VARCHAR(255),
+    from_date DATE NOT NULL,
+    to_date DATE,
+    status TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Mandatory columns: uom_short_code,uom_name,uom_description
+  duplicate_table_name = unit_of_measurements
+
+2.4 Table: items
+  Module: Items
+  Insert Option: COM_INSERT_ITEMS
+
+  CREATE TABLE items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sku VARCHAR(100),
+      -- Stock Keeping Unit (unique item identifier)
+    ref_sku VARCHAR(100),
+      -- Reference/alternate SKU for cross-referencing
+    item_name VARCHAR(255),
+    item_description TEXT,
+    category_id INT DEFAULT 0,
+      -- FK to item_categories.id
+    item_type INT DEFAULT 0,
+      -- FK to item_types.id
+    default_costing_type ENUM('F','L','S','W') DEFAULT 'S',
+      -- F=FIFO, L=LIFO, S=Standard, W=Weighted Average
+    uom_id INT DEFAULT 0,
+      -- FK to unit_of_measurements.id (inferred, not in form)
+    hsn_sac_code_id INT DEFAULT 0,
+      -- FK to hsn_and_sac_codes.id (inferred)
+    tracking_type TINYINT DEFAULT 0,
+      -- 0=None, 1=Batch, 2=Serial
+    quantity_check TINYINT DEFAULT 1,
+      -- 1=Enable quantity check, 2=Disable
+    opening_quantity DECIMAL(15,2) DEFAULT 0,
+    sold_individually TINYINT(1) DEFAULT 0,
+    sold_in_groups TINYINT(1) DEFAULT 0,
+    quality_check TINYINT(1) DEFAULT 0,
+    negative_stock TINYINT(1) DEFAULT 0,
+    allow_back_order TINYINT(1) DEFAULT 0,
+    status TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  has_line_items = True (item-level pricing, stock lots, etc.)
+  Hidden meta fields map to checkbox defaults:
+    sold_individually: "" (unchecked)
+    sold_in_groups: "" (unchecked)
+    quality_check: "" (unchecked)
+    negative_stock: "" (unchecked)
+    allow_back_order: "" (unchecked)
+
+2.5 Table: hsn_and_sac_codes
+  Module: HSN and SAC Codes
+  Insert Option: COM_INSERT_HSN_AND_SAC_CODES
+
+  CREATE TABLE hsn_and_sac_codes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(20),
+      -- HSN (Goods) or SAC (Services) code per Indian GST
+    code_description TEXT,
+    gst DECIMAL(5,2) DEFAULT 0,
+      -- GST rate percentage (e.g., 5, 12, 18, 28)
+    from_date DATE NOT NULL,
+    to_date DATE,
+    status TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Mandatory columns: code,code_description,gst
+  duplicate_table_name = hsn_and_sac_codes
+  Note: GST rate is stored directly on HSN/SAC code, enabling
+  automatic tax calculation at item level. The HSN code is the
+  primary determinant of tax rate applied during transactions.
+
+2.6 Table: currencies
+  Module: Currencies
+  Insert Option: COM_INSERT_CURRENCIES
+
+  CREATE TABLE currencies (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    currency_name VARCHAR(100),
+    currency_short_code VARCHAR(10),
+      -- e.g., 'INR', 'USD', 'EUR'
+    status TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Note: Minimal form (only 2 fields). No effective dating.
+  Exchange rates are likely managed in a separate currency_rates
+  table (not scraped). The currency_rate field appears on
+  transaction forms (requisitions) as a manual override.
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  items.category_id       -->  item_categories.id
+  items.item_type         -->  item_types.id
+  items.uom_id            -->  unit_of_measurements.id (inferred)
+  items.hsn_sac_code_id   -->  hsn_and_sac_codes.id (inferred)
+  item_categories.industry_id           -->  industries.id (lookup)
+  item_categories.inventory_asset_account --> chart_of_accounts.id (lookup)
+
+  ER Diagram (text):
+  +-------------------+     +-------------+     +----------+
+  | item_categories  | 1-* |    items    | *-1 | hsn_and_ |
+  | -costing_type    |     | -sku        |     | sac_codes |
+  | -removal_strategy|     | -tracking   |     | -gst     |
+  | -price_variance  |     | -costing    |     +----------+
+  +-------------------+     | -category_id|
+                           +-------------+
+                                |     |
+                           +----+     +----+
+                           |               |
+                    +---------+    +---------+
+                    |item_types|    |unit_of_ |
+                    |-mapping  |    |measure- |
+                    |   _code  |    |ments    |
+                    +---------+    +---------+
+
+---
+4. BUSINESS RULES
+---
+
+4.1 Costing Types
+  Two levels of costing configuration exist:
+  1. Category-level default_costing_type: ENUM('S','W')
+     S=Standard, W=Weighted Average (simplified at category level)
+  2. Item-level default_costing_type: ENUM('F','L','S','W')
+     F=FIFO, L=LIFO, S=Standard, W=Weighted Average
+  Item-level setting overrides category default when specified.
+
+4.2 Removal Strategies
+  Configured at item category level via first_removal_strategy:
+  - FIFO  (First In First Out)
+  - LIFO  (Last In First Out)
+  - LEFO  (Last Expiry First Out)
+  - CL    (Close / Lot-specific)
+  This determines which stock lots are consumed first in
+  dispatch/delivery transactions.
+
+4.3 Price and Quantity Variance Tolerance
+  At category level, two variance controls exist:
+  - price_variance (Y/N): Enable price tolerance checking
+    price_variance_type: P=Percentage, A=Amount
+    price_variance_amount_min/max: tolerance bounds
+  - qty_variance (Y/N): Enable quantity tolerance checking
+    qty_variance_type: 'Percentage' or 'Amount'
+    qty_variance_amount_min/max: tolerance bounds
+  These control whether purchase orders/invoices can deviate
+  from quotations without approval.
+
+4.4 Item Tracking
+  tracking_type determines inventory traceability:
+  - 0: No tracking (quantity-only)
+  - 1: Batch tracking (batch/lot numbers)
+  - 2: Serial number tracking (individual serial numbers)
+  quantity_check (1=enabled, 2=disabled) controls whether
+  the system validates stock availability at transaction time.
+
+4.5 Stock Control Flags
+  - negative_stock: If Y, allows stock to go below zero
+  - allow_back_order: If Y, enables back-ordering when stock
+    is insufficient
+  - quality_check: If Y, requires quality inspection before
+    stock is made available
+  - sold_individually: If Y, item is sold as single unit
+  - sold_in_groups: If Y, item is sold in predefined groups
+
+4.6 GST Handling via HSN/SAC Codes
+  HSN (Harmonized System Nomenclature) codes for goods
+  SAC (Services Accounting Code) for services
+  Each code carries a default GST rate (gst field).
+  During transaction line-item entry, the HSN code of the item
+  determines the applicable tax rate. The system calculates:
+  - CGST = (taxable_value * gst_rate / 2) for intra-state
+  - SGST = (taxable_value * gst_rate / 2) for intra-state
+  - IGST = (taxable_value * gst_rate) for inter-state
+  This is inferred from the originator_state_id and
+  supplier_state_id hidden fields on transaction forms.
+
+4.7 Opening Quantity
+  Items support an opening_quantity field for initial stock
+  setup during implementation. Default is 0.
+
+4.8 Effective Dating
+  item_types, unit_of_measurements, and hsn_and_sac_codes
+  support effective dating (from_date/to_date). item_categories
+  and currencies do not. from_date is always mandatory.
+
+---
+5. API ENDPOINT CATALOG
+---
+
+5.1 List/Filter API
+  POST /views/custon_list_dynamic_table.php
+  Params: option, table (item_categories|item_types|
+          unit_of_measurements|items|hsn_and_sac_codes|currencies),
+          status, filterajax, current_page, limit_select,
+          filter_text, filter_dynamic_select
+  Response: HTML table with pagination
+
+5.2 Insert Form Render
+  POST /views/new_from.php?option=COM_INSERT_XXX
+  Where XXX = ITEM_CATEGORIES | ITEM_TYPES |
+               UNIT_OF_MEASUREMENTS | ITEMS |
+               HSN_AND_SAC_CODES | CURRENCIES
+  Response: HTML form fragment
+
+5.3 Insert Form Submit
+  POST /index.php (multipart/form-data)
+  All form fields + hidden framework fields
+
+5.4 Stock Balance Availability Check
+  POST /ajax.php?page=getstockbalanceavailability
+  Params: transaction_table, transaction_id
+  Response: JSON {
+    errorthrow: {
+      errorcount: INT,
+      details: [{
+        item_name: STRING,
+        closing_qty: DECIMAL,
+        sum_item_quantity: DECIMAL
+      }]
+    }
+  }
+  This is called synchronously (async:false) before status
+  changes on delivery_orders and sales_invoices. Checks each
+  line item's requested qty against available closing stock.
+
+5.5 Status Workflow
+  POST /ajax.php?page=submitstatusdynamicworkflow
+  Params: table_name, current_status, transaction_id, next_status
+  Response: JSON {transaction_update:{status,message}}
+
+5.6 Status Popup (with mandatory check)
+  POST /views/custom_insert_dynamic_status_popup.php
+  Params: table_name, current_status, transaction_id, next_status
+  Response: HTML modal with optional comment/attachment fields
+
+5.7 Help Text
+  POST /ajax.php?page=setdynamichelptext&table_name={table}
+  Response: JSON {field_name:{helptext,sequence,type}}
+
+---
+6. SOURCE CODE PATTERNS
+---
+
+6.1 Stock Balance Check (custom.js lines 1138-1164)
+  The getStockBalanceAvailability() function is a synchronous
+  AJAX call that validates inventory before status transitions:
+
+  function getStockBalanceAvailability(transaction_table, transaction_id) {
+    var session_config_json = JSON.parse($("#session_config_json").val());
+    let retres = 0;
+    $.ajax({
+      url: 'ajax.php',
+      type: "POST",
+      async: false,   // BLOCKING - waits for response
+      data: 'page=getstockbalanceavailability&transaction_table='
+            + transaction_table + '&transaction_id=' + transaction_id,
+      success: function(response) {
+        var res = JSON.parse(response);
+        if (res.errorthrow.errorcount != 0) {
+          var errormsg = "Item ";
+          $.each(res.errorthrow.details, function(index, itemdet) {
+            errormsg += itemdet.item_name + " has only "
+              + itemdet.closing_qty + " qty available - you applied "
+              + itemdet.sum_item_quantity + " qty. , ";
+          });
+          errormsg += "Please check stock before applying.";
+          swal(session_config_json.name, errormsg, "error");
+          retres = 1;  // BLOCK the status change
+        }
+      }
+    });
+    return retres;
+  }
+
+  Currently gated for delivery_orders and sales_invoices only.
+  The pattern in submitDynamiPopUpForm() shows:
+    if (table == 'delivery_orders' || table == 'sales_invoices') {
+      result = getStockBalanceAvailability(table, id);
+    }
+    if (result == 0) { proceed with status change; }
+
+6.2 HSN-GST Calculation (Inferred Backend Pattern)
+  While no client-side GST calculation JS was scraped, the
+  backend calculates tax based on:
+  1. Item's hsn_sac_code_id -> hsn_and_sac_codes.gst
+  2. Transaction's originator_state_id vs supplier_state_id
+  3. If states match (intra-state): CGST + SGST = gst/2 each
+  4. If states differ (inter-state): IGST = full gst
+  The hidden fields originator_state_id and supplier_state_id
+  on transaction forms carry these values. Place of supply
+  determines the GST type.
+
+6.3 Checkbox to Hidden Field Pattern
+  The application uses dual hidden+checkbox fields for booleans:
+  Hidden field: <input type="hidden" name="sold_individually" value="">
+  Visible field: <input type="checkbox" name="sold_individually" value="0">
+  When unchecked, the hidden field carries empty string.
+  When checked, the checkbox value (0) is submitted.
+  This is a known pattern where value="0" maps to Y/true.
+
+6.4 Category-Level Inheritance
+  Items inherit defaults from their item_category:
+  - default_costing_type (if item-level not set)
+  - first_removal_strategy
+  - price_variance tolerance
+  - qty_variance tolerance
+  The item form has its own costing_type dropdown with 4 options
+  (F/L/S/W) which overrides the category's 2-option (S/W) default.
+
+6.5 Generic Form Generator
+  All inventory modules use views/new_from.php which reads
+  field metadata from the system's field_metadata table and
+  renders the appropriate form controls. The hidden fields
+  (in_date_pic, mandatory_str, duplicate_table_name, etc.)
+  drive framework behavior.
+
+---
+7. INFERRED SYSTEM/METADATA TABLES
+---
+
+  7.1 item_stocks - Inventory stock ledger
+      Columns: id, item_id, location_id, warehouse_id,
+               batch_no, serial_no, qty_in, qty_out,
+               closing_qty, transaction_table, transaction_id,
+               valuation_rate, created_at
+      This table drives the getstockbalanceavailability API.
+
+  7.2 item_line_items - Item sub-details (since has_line_items=True)
+      Columns: id, item_id, pricing_tier_id, price,
+               uom_id, min_order_qty, lead_time_days
+
+  7.3 industries - Industry lookup for item categories
+      Columns: id, industry_name, status
+
+  7.4 currency_rates - Exchange rates (inferred)
+      Columns: id, currency_id, from_currency_id,
+               exchange_rate, effective_date
+      Referenced by currency_rate field on requisitions.
+
+  7.5 stock_valuation - Costing calculation results
+      Columns: id, item_id, valuation_method (FIFO/LIFO/
+               STANDARD/WEIGHTED_AVG), unit_cost,
+               total_value, valuation_date
+      Populated based on default_costing_type setting.

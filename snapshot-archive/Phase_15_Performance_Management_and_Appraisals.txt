@@ -1,0 +1,326 @@
+================================================================================
+PHASE 15: PERFORMANCE MANAGEMENT & APPRAISALS - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the Performance Management & Appraisals modules, scraped from the live application.
+
+Phase Description: Goal setting, employee appraisals, bell curve normalization, and feedback management.
+
+Modules Covered: 6
+  - goals [SCRAPE]
+  - feedbacks [SCRAPE]
+  - employee_performance_appraisals [SCRAPE]
+  - performance_appraisal_setups [SCRAPE]
+  - appraisal_bell_curves [SCRAPE]
+  - normalizations [NO FORM]
+
+---
+1. APPLICATION ARCHITECTURE (SHARED)
+---
+
+  1.1 Routing Convention
+    COM_LIST_XXX     -> List/view page (DataTables)
+    COM_INSERT_XXX   -> Insert form (POST to /views/new_from.php)
+    COM_UPDATE_XXX   -> Update form
+    COM_VIEW_XXX    -> View/detail/report page
+
+  1.2 AJAX Endpoints
+    POST /ajax.php?page=submitstatusdynamicworkflow
+    POST /ajax.php?page=updatedynamicfied
+    POST /ajax.php?page=setdynamichelptext
+    POST /ajax.php?page=getstockbalanceavailability
+    POST /views/custon_list_dynamic_table.php
+    POST /views/new_from.php?option=COM_INSERT_XXX
+
+  1.3 Standard Hidden Fields (in every form)
+    option, table_name, duplicate_table_name,
+    in_date_pic, in_currency_fileds, in_phone_fileds,
+    mandatory_str, add_mandatory_str, notification_users,
+    notification_message, status, from_date, to_date
+
+---
+2. DATABASE SCHEMAS
+---
+
+  2.1 Table: goals
+    Module: Goals
+    Insert Option: COM_INSERT_GOALS
+    Form Fields: 5 user-visible, 19 total
+    Mandatory columns: employee_id,goal_start_date,goal_end_date
+
+  CREATE TABLE goals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    goal_start_date VARCHAR(255),
+    goal_end_date VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    employee_id[] INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      goal_start_date                          text        
+      goal_end_date                            text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      employee_id[]                            select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=goal_start_date,goal_end_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=employee_id,goal_start_date,goal_end_date
+      add_mandatory_str                        hidden       value=
+
+  2.2 Table: feedbacks
+    Module: Feedbacks
+    Insert Option: COM_INSERT_FEEDBACKS
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE feedbacks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+  2.3 Table: employee_performance_appraisals
+    Module: Employee Performance Appraisals
+    Insert Option: COM_INSERT_EMPLOYEE_PERFORMANCE_APPRAISALS
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE employee_performance_appraisals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+  2.4 Table: performance_appraisal_setups
+    Module: Performance Appraisal Setups
+    Insert Option: COM_INSERT_PERFORMANCE_APPRAISAL_SETUPS
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE performance_appraisal_setups (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+  2.5 Table: appraisal_bell_curves
+    Module: Appraisal Bell Curves
+    Insert Option: COM_INSERT_APPRAISAL_BELL_CURVES
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE appraisal_bell_curves (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+  2.6 Table: normalizations
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  goals.employee_id[]  -->  employee_id[]_lookup.id
+
+  ER Summary:
+  Tables: 2
+  Relationships: 1
+
+---
+4. BUSINESS RULES
+---
+
+  4.1 Effective Dating (all modules)
+    Every record has from_date/to_date. Records are valid
+    only within this range. from_date is mandatory.
+
+  4.2 Soft Delete / Status (all modules)
+    status=0 Active, status=1 Inactive, status=2 Draft
+    Records are never physically deleted. Status changes go
+    through the workflow API (submitstatusdynamicworkflow).
+
+  4.3 Module-Specific Rules
+    4.3.1 Goals
+      Mandatory fields: employee_id, goal_start_date, goal_end_date
+
+    4.3.2 Goals
+      Has 1 foreign key dropdown fields
+
+    4.3.3 Goals
+      Has 4 date fields (effective dating + business dates)
+
+---
+5. API ENDPOINTS
+---
+
+  5.1 Standard CRUD APIs (shared across all modules)
+    POST /views/new_from.php?option=COM_INSERT_XXX
+      Renders insert form HTML
+    POST /index.php
+      Form submit (multipart/form-data)
+    POST /views/custon_list_dynamic_table.php
+      List data with pagination, filtering
+      Params: option, table, status, filter_text,
+              current_page, limit_select
+
+  5.2 Workflow APIs
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Status transitions (Draft->Pending->Approved)
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Params: table_name, current_status, transaction_id,
+              next_status
+
+  5.3 Module-Specific API Routes
+    COM_INSERT_GOALS  -> Insert goals
+    COM_LIST_GOALS -> List goals
+    COM_INSERT_FEEDBACKS  -> Insert feedbacks
+    COM_LIST_FEEDBACKS -> List feedbacks
+    COM_INSERT_EMPLOYEE_PERFORMANCE_APPRAISALS  -> Insert employee_performance_appraisals
+    COM_LIST_EMPLOYEE_PERFORMANCE_APPRAISALS -> List employee_performance_appraisals
+    COM_INSERT_PERFORMANCE_APPRAISAL_SETUPS  -> Insert performance_appraisal_setups
+    COM_LIST_PERFORMANCE_APPRAISAL_SETUPS -> List performance_appraisal_setups
+    COM_INSERT_APPRAISAL_BELL_CURVES  -> Insert appraisal_bell_curves
+    COM_LIST_APPRAISAL_BELL_CURVES -> List appraisal_bell_curves
+
+---
+6. CODE-LEVEL PATTERNS
+---
+
+  6.1 Generic Form Pattern
+    All modules use views/new_from.php as the form renderer.
+    The form HTML includes:
+    - validateForm() JS function driven by mandatory_str
+    - select2 dropdowns for FK fields
+    - datepicker for date fields (jQuery UI)
+    - Bootstrap 4 form layout (card > card-body > form-group)
+
+  6.2 Hidden Metadata Pattern (every form)
+    - option: The COM_ route constant
+    - table_name: Physical DB table name
+    - duplicate_table_name: For duplicate checking
+    - in_date_pic: Array of date fields for datepicker init
+    - in_currency_fileds: Currency fields for formatting
+    - in_phone_fileds: Phone fields for validation
+    - mandatory_str: Comma-separated required fields
+    - notification_users: User IDs to notify on create
+    - notification_message: Notification template
+
+  6.3 DataTables Pattern (all list pages)
+    - Uses custom AJAX, not built-in server-side mode
+    - Supports CSV, Excel, PDF, Print export
+    - Column visibility toggle
+    - Status-based filtering
+    - Text search via filter_text parameter
+
+---
+7. MODULE-SPECIFIC DETAILS
+---
+
+  7.1 Goals
+    User Fields: 5
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11302 bytes
+    Mandatory: employee_id,goal_start_date,goal_end_date
+    Insert Option: COM_INSERT_GOALS
+
+  7.2 Feedbacks
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10423 bytes
+    Insert Option: COM_INSERT_FEEDBACKS
+
+  7.3 Employee Performance Appraisals
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10577 bytes
+    Insert Option: COM_INSERT_EMPLOYEE_PERFORMANCE_APPRAISALS
+
+  7.4 Performance Appraisal Setups
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10556 bytes
+    Insert Option: COM_INSERT_PERFORMANCE_APPRAISAL_SETUPS
+
+  7.5 Appraisal Bell Curves
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10507 bytes
+    Insert Option: COM_INSERT_APPRAISAL_BELL_CURVES

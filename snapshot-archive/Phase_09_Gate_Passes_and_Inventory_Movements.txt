@@ -1,0 +1,1165 @@
+================================================================================
+PHASE 9: GATE PASSES & INVENTORY MOVEMENTS - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the Gate Passes & Inventory Movements modules, scraped from the live application.
+
+Phase Description: Physical inventory movement tracking including gate passes, goods receipts, delivery orders, stock transfers, and stock adjustments.
+
+Modules Covered: 12
+  - returnable_gate_passes [SCRAPE]
+  - non_returnable_gate_passes [SCRAPE]
+  - goods_receipt_notes [SCRAPE]
+  - grn_returns [SCRAPE]
+  - delivery_orders [SCRAPE]
+  - sales_returns [SCRAPE]
+  - stock_requests [SCRAPE]
+  - stock_transfers [SCRAPE]
+  - stock_transfer_receipts [SCRAPE]
+  - stock_transfer_returns [SCRAPE]
+  - stock_adjustments [SCRAPE]
+  - stocktakes [SCRAPE]
+
+---
+1. APPLICATION ARCHITECTURE (SHARED)
+---
+
+  1.1 Routing Convention
+    COM_LIST_XXX     -> List/view page (DataTables)
+    COM_INSERT_XXX   -> Insert form (POST to /views/new_from.php)
+    COM_UPDATE_XXX   -> Update form
+    COM_VIEW_XXX    -> View/detail/report page
+
+  1.2 AJAX Endpoints
+    POST /ajax.php?page=submitstatusdynamicworkflow
+    POST /ajax.php?page=updatedynamicfied
+    POST /ajax.php?page=setdynamichelptext
+    POST /ajax.php?page=getstockbalanceavailability
+    POST /views/custon_list_dynamic_table.php
+    POST /views/new_from.php?option=COM_INSERT_XXX
+
+  1.3 Standard Hidden Fields (in every form)
+    option, table_name, duplicate_table_name,
+    in_date_pic, in_currency_fileds, in_phone_fileds,
+    mandatory_str, add_mandatory_str, notification_users,
+    notification_message, status, from_date, to_date
+
+---
+2. DATABASE SCHEMAS
+---
+
+  2.1 Table: returnable_gate_passes
+    Module: Returnable Gate Passes
+    Insert Option: N/A
+    Form Fields: 11 user-visible, 19 total
+
+  CREATE TABLE returnable_gate_passes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    due_date VARCHAR(255),
+    type INT  -- Type  -- (FK dropdown),
+    originator INT  -- Originator  -- (FK dropdown),
+    cost_center_id INT  -- Cost Center  -- (FK dropdown),
+    party_id INT  -- Party  -- (FK dropdown),
+    payment_terms INT  -- Payment Terms  -- (FK dropdown),
+    tax_state INT  -- Tax State  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      due_date                                 text        
+      type                                     select       (Type)
+      originator                               select       (Originator)
+      cost_center_id                           select       (Cost Center)
+      party_id                                 select       (Party)
+      payment_terms                            select       (Payment Terms)
+      tax_state                                select       (Tax State)
+    Hidden Metadata Fields:
+      ref_type                                 hidden       value=
+      ref_id                                   hidden       value=
+      transaction_location_id                  hidden       value=
+      transaction_warehouse_id                 hidden       value=
+      originator_state_id                      hidden       value=
+
+  2.2 Table: non_returnable_gate_passes
+    Module: Non Returnable Gate Passes
+    Insert Option: N/A
+    Form Fields: 11 user-visible, 19 total
+
+  CREATE TABLE non_returnable_gate_passes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    due_date VARCHAR(255),
+    type INT  -- Type  -- (FK dropdown),
+    originator INT  -- Originator  -- (FK dropdown),
+    cost_center_id INT  -- Cost Center  -- (FK dropdown),
+    party_id INT  -- Party  -- (FK dropdown),
+    payment_terms INT  -- Payment Terms  -- (FK dropdown),
+    tax_state INT  -- Tax State  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      due_date                                 text        
+      type                                     select       (Type)
+      originator                               select       (Originator)
+      cost_center_id                           select       (Cost Center)
+      party_id                                 select       (Party)
+      payment_terms                            select       (Payment Terms)
+      tax_state                                select       (Tax State)
+    Hidden Metadata Fields:
+      ref_type                                 hidden       value=
+      ref_id                                   hidden       value=
+      transaction_location_id                  hidden       value=
+      transaction_warehouse_id                 hidden       value=
+      originator_state_id                      hidden       value=
+
+  2.3 Table: goods_receipt_notes
+    Module: Goods Receipt Notes
+    Insert Option: COM_INSERT_GOODS_RECEIPT_NOTES
+    Form Fields: 28 user-visible, 46 total
+    Mandatory columns: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,originator_currency_id,currency_id,currency_rate,originator,party_id,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,originator_state_id,supplier_state_id,place_of_supply,tax_state,opex_cpex,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+
+  CREATE TABLE goods_receipt_notes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    ref_date VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    ref_no VARCHAR(255),
+    currency_rate VARCHAR(255),
+    party_name VARCHAR(255),
+    party_email VARCHAR(255),
+    party_tax_number VARCHAR(255),
+    party_phone VARCHAR(20),
+    party_address VARCHAR(255),
+    party_ship_adderss VARCHAR(255),
+    tax_state VARCHAR(255),
+    due_date VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    ref_id INT  -- (FK dropdown),
+    party_id INT  -- (FK dropdown),
+    originator INT  -- (FK dropdown),
+    transaction_location_id INT  -- (FK dropdown),
+    transaction_warehouse_id INT  -- (FK dropdown),
+    cost_center_id INT  -- (FK dropdown),
+    place_of_supply INT  -- (FK dropdown),
+    ref_type INT  -- (FK dropdown),
+    currency_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      ref_date                                 text        
+      opex_cpex                                radio       
+      opex_cpex                                radio       
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      ref_no                                   text        
+      currency_rate                            text        
+      party_name                               text        
+      party_email                              text        
+      party_tax_number                         text        
+      party_phone                              text        
+      party_address                            text        
+      party_ship_adderss                       text        
+      tax_state                                text        
+      due_date                                 text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      ref_id                                   select      
+      party_id                                 select      
+      originator                               select      
+      transaction_location_id                  select      
+      transaction_warehouse_id                 select      
+      cost_center_id                           select      
+      place_of_supply                          select      
+      ref_type                                 select      
+      currency_id                              select      
+    Hidden Metadata Fields:
+      originator                               hidden       value=
+      originator_currency_id                   hidden       value=
+      originator_state_id                      hidden       value=
+      supplier_state_id                        hidden       value=
+      in_date_pic                              hidden       value=transaction_date,doc_ref_date
+
+  2.4 Table: grn_returns
+    Module: Grn Returns
+    Insert Option: COM_INSERT_GRN_RETURNS
+    Form Fields: 29 user-visible, 47 total
+    Mandatory columns: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,originator_currency_id,currency_id,currency_rate,originator,party_id,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,originator_state_id,supplier_state_id,place_of_supply,payment_terms,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+
+  CREATE TABLE grn_returns (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    party_name VARCHAR(255),
+    party_email VARCHAR(255),
+    party_tax_number VARCHAR(255),
+    party_phone VARCHAR(20),
+    party_address VARCHAR(255),
+    party_ship_adderss VARCHAR(255),
+    currency_rate VARCHAR(255),
+    tax_state VARCHAR(255),
+    due_date VARCHAR(255),
+    ref_no VARCHAR(255),
+    ref_date VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    ref_id INT  -- (FK dropdown),
+    transaction_location_id INT  -- (FK dropdown),
+    transaction_warehouse_id INT  -- (FK dropdown),
+    type INT  -- (FK dropdown),
+    originator INT  -- (FK dropdown),
+    cost_center_id INT  -- (FK dropdown),
+    place_of_supply INT  -- (FK dropdown),
+    payment_terms INT  -- (FK dropdown),
+    party_id INT  -- (FK dropdown),
+    currency_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      opex_cpex                                radio       
+      opex_cpex                                radio       
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      party_name                               text        
+      party_email                              text        
+      party_tax_number                         text        
+      party_phone                              text        
+      party_address                            text        
+      party_ship_adderss                       text        
+      currency_rate                            text        
+      tax_state                                text        
+      due_date                                 text        
+      ref_no                                   text        
+      ref_date                                 text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      ref_id                                   select      
+      transaction_location_id                  select      
+      transaction_warehouse_id                 select      
+      type                                     select      
+      originator                               select      
+      cost_center_id                           select      
+      place_of_supply                          select      
+      payment_terms                            select      
+      party_id                                 select      
+      currency_id                              select      
+    Hidden Metadata Fields:
+      ref_type                                 hidden       value=
+      originator_currency_id                   hidden       value=
+      originator_state_id                      hidden       value=
+      supplier_state_id                        hidden       value=
+      in_date_pic                              hidden       value=transaction_date,doc_ref_date,due_date,ref_date
+
+  2.5 Table: delivery_orders
+    Module: Delivery Orders
+    Insert Option: COM_INSERT_DELIVERY_ORDERS
+    Form Fields: 27 user-visible, 48 total
+    Mandatory columns: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,originator_currency_id,currency_id,currency_rate,originator,party_id,salesmen_id,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,originator_state_id,supplier_state_id,place_of_supply,payment_terms,tax_state,opex_cpex,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+
+  CREATE TABLE delivery_orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    ref_date VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    ref_no VARCHAR(255),
+    party_name VARCHAR(255),
+    party_email VARCHAR(255),
+    party_tax_number VARCHAR(255),
+    party_phone VARCHAR(20),
+    party_address VARCHAR(255),
+    party_ship_adderss VARCHAR(255),
+    tax_state VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    ref_type INT  -- (FK dropdown),
+    ref_id INT  -- (FK dropdown),
+    party_id INT  -- (FK dropdown),
+    originator INT  -- (FK dropdown),
+    transaction_location_id INT  -- (FK dropdown),
+    transaction_warehouse_id INT  -- (FK dropdown),
+    cost_center_id INT  -- (FK dropdown),
+    salesmen_id INT  -- (FK dropdown),
+    place_of_supply INT  -- (FK dropdown),
+    payment_terms INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      ref_date                                 text        
+      opex_cpex                                radio       
+      opex_cpex                                radio       
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      ref_no                                   text        
+      party_name                               text        
+      party_email                              text        
+      party_tax_number                         text        
+      party_phone                              text        
+      party_address                            text        
+      party_ship_adderss                       text        
+      tax_state                                text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      ref_type                                 select      
+      ref_id                                   select      
+      party_id                                 select      
+      originator                               select      
+      transaction_location_id                  select      
+      transaction_warehouse_id                 select      
+      cost_center_id                           select      
+      salesmen_id                              select      
+      place_of_supply                          select      
+      payment_terms                            select      
+    Hidden Metadata Fields:
+      originator                               hidden       value=
+      originator_currency_id                   hidden       value=
+      originator_state_id                      hidden       value=
+      supplier_state_id                        hidden       value=
+      currency_id                              hidden       value=
+
+  2.6 Table: sales_returns
+    Module: Sales Returns
+    Insert Option: COM_INSERT_SALES_RETURNS
+    Form Fields: 24 user-visible, 38 total
+    Mandatory columns: transaction_number,transaction_date,currency_id,currency_rate,originator,party_id,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,place_of_supply,payment_terms,tax_state,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+
+  CREATE TABLE sales_returns (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    party_id VARCHAR(255),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    ref_no VARCHAR(255),
+    ref_date VARCHAR(255),
+    place_of_supply VARCHAR(255),
+    payment_terms VARCHAR(255),
+    currency_rate VARCHAR(255),
+    party_name VARCHAR(255),
+    party_email VARCHAR(255),
+    party_tax_number VARCHAR(255),
+    party_phone VARCHAR(20),
+    party_address VARCHAR(255),
+    party_ship_adderss VARCHAR(255),
+    tax_state VARCHAR(255),
+    ref_type VARCHAR(255),
+    ref_id VARCHAR(255),
+    due_date VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    originator INT  -- (FK dropdown),
+    currency_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      party_id                                 text        
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      ref_no                                   text        
+      ref_date                                 text        
+      place_of_supply                          text        
+      payment_terms                            text        
+      currency_rate                            text        
+      party_name                               text        
+      party_email                              text        
+      party_tax_number                         text        
+      party_phone                              text        
+      party_address                            text        
+      party_ship_adderss                       text        
+      tax_state                                text        
+      ref_type                                 text        
+      ref_id                                   text        
+      due_date                                 text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      originator                               select      
+      currency_id                              select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=transaction_date,doc_ref_date,ref_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=transaction_number,transaction_date,currency_id,cu
+      add_mandatory_str                        hidden       value=
+
+  2.7 Table: stock_requests
+    Module: Stock Requests
+    Insert Option: COM_INSERT_STOCK_REQUESTS
+    Form Fields: 16 user-visible, 31 total
+    Mandatory columns: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,currency_id,currency_rate,originator,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date,request_warehouse_id
+
+  CREATE TABLE stock_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    currency_rate VARCHAR(255),
+    tax_state VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    cost_center_id INT  -- (FK dropdown),
+    type INT  -- (FK dropdown),
+    originator INT  -- (FK dropdown),
+    transaction_warehouse_id INT  -- (FK dropdown),
+    request_warehouse_id INT  -- (FK dropdown),
+    currency_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      opex_cpex                                radio       
+      opex_cpex                                radio       
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      currency_rate                            text        
+      tax_state                                text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      cost_center_id                           select      
+      type                                     select      
+      originator                               select      
+      transaction_warehouse_id                 select      
+      request_warehouse_id                     select      
+      currency_id                              select      
+    Hidden Metadata Fields:
+      transaction_location_id                  hidden       value=
+      in_date_pic                              hidden       value=transaction_date,doc_ref_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=cost_center_id,transaction_number,transaction_date
+
+  2.8 Table: stock_transfers
+    Module: Stock Transfers
+    Insert Option: COM_INSERT_STOCK_TRANSFERS
+    Form Fields: 19 user-visible, 34 total
+    Mandatory columns: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,currency_id,currency_rate,originator,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date,ref_type,ref_id,ref_no,request_warehouse_id
+
+  CREATE TABLE stock_transfers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    ref_no VARCHAR(255),
+    currency_rate VARCHAR(255),
+    tax_state VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    ref_type INT  -- (FK dropdown),
+    ref_id INT  -- (FK dropdown),
+    cost_center_id INT  -- (FK dropdown),
+    type INT  -- (FK dropdown),
+    originator INT  -- (FK dropdown),
+    transaction_warehouse_id INT  -- (FK dropdown),
+    request_warehouse_id INT  -- (FK dropdown),
+    currency_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      opex_cpex                                radio       
+      opex_cpex                                radio       
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      ref_no                                   text        
+      currency_rate                            text        
+      tax_state                                text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      ref_type                                 select      
+      ref_id                                   select      
+      cost_center_id                           select      
+      type                                     select      
+      originator                               select      
+      transaction_warehouse_id                 select      
+      request_warehouse_id                     select      
+      currency_id                              select      
+    Hidden Metadata Fields:
+      transaction_location_id                  hidden       value=
+      in_date_pic                              hidden       value=transaction_date,doc_ref_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=cost_center_id,transaction_number,transaction_date
+
+  2.9 Table: stock_transfer_receipts
+    Module: Stock Transfer Receipts
+    Insert Option: COM_INSERT_STOCK_TRANSFER_RECEIPTS
+    Form Fields: 19 user-visible, 34 total
+    Mandatory columns: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,currency_id,currency_rate,originator,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date,ref_type,ref_id,ref_no,request_warehouse_id
+
+  CREATE TABLE stock_transfer_receipts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    ref_no VARCHAR(255),
+    currency_rate VARCHAR(255),
+    tax_state VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    ref_type INT  -- (FK dropdown),
+    ref_id INT  -- (FK dropdown),
+    cost_center_id INT  -- (FK dropdown),
+    type INT  -- (FK dropdown),
+    originator INT  -- (FK dropdown),
+    transaction_warehouse_id INT  -- (FK dropdown),
+    request_warehouse_id INT  -- (FK dropdown),
+    currency_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      opex_cpex                                radio       
+      opex_cpex                                radio       
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      ref_no                                   text        
+      currency_rate                            text        
+      tax_state                                text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      ref_type                                 select      
+      ref_id                                   select      
+      cost_center_id                           select      
+      type                                     select      
+      originator                               select      
+      transaction_warehouse_id                 select      
+      request_warehouse_id                     select      
+      currency_id                              select      
+    Hidden Metadata Fields:
+      transaction_location_id                  hidden       value=
+      in_date_pic                              hidden       value=transaction_date,doc_ref_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=cost_center_id,transaction_number,transaction_date
+
+  2.10 Table: stock_transfer_returns
+    Module: Stock Transfer Returns
+    Insert Option: COM_INSERT_STOCK_TRANSFER_RETURNS
+    Form Fields: 24 user-visible, 38 total
+    Mandatory columns: transaction_number,transaction_date,currency_id,currency_rate,originator,customer_id,customer_name,customer_email,customer_tax_number,customer_phone,customer_address,customer_ship_adderss,place_of_supply,payment_terms,tax_state,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+
+  CREATE TABLE stock_transfer_returns (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    ref_no VARCHAR(255),
+    ref_date VARCHAR(255),
+    customer_name VARCHAR(255),
+    customer_email VARCHAR(255),
+    customer_tax_number VARCHAR(255),
+    customer_phone VARCHAR(20),
+    customer_address VARCHAR(255),
+    customer_ship_adderss VARCHAR(255),
+    place_of_supply VARCHAR(255),
+    currency_rate VARCHAR(255),
+    ref_type VARCHAR(255),
+    ref_id VARCHAR(255),
+    due_date VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    originator INT  -- (FK dropdown),
+    customer_id INT  -- (FK dropdown),
+    payment_terms INT  -- (FK dropdown),
+    currency_id INT  -- (FK dropdown),
+    tax_state INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      ref_no                                   text        
+      ref_date                                 text        
+      customer_name                            text        
+      customer_email                           text        
+      customer_tax_number                      text        
+      customer_phone                           text        
+      customer_address                         text        
+      customer_ship_adderss                    text        
+      place_of_supply                          text        
+      currency_rate                            text        
+      ref_type                                 text        
+      ref_id                                   text        
+      due_date                                 text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      originator                               select      
+      customer_id                              select      
+      payment_terms                            select      
+      currency_id                              select      
+      tax_state                                select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=transaction_date,doc_ref_date,ref_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=transaction_number,transaction_date,currency_id,cu
+      add_mandatory_str                        hidden       value=
+
+  2.11 Table: stock_adjustments
+    Module: Stock Adjustments
+    Insert Option: COM_INSERT_STOCK_ADJUSTMENTS
+    Form Fields: 15 user-visible, 30 total
+    Mandatory columns: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,currency_id,currency_rate,originator,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date
+
+  CREATE TABLE stock_adjustments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    currency_rate VARCHAR(255),
+    tax_state VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    cost_center_id INT  -- (FK dropdown),
+    type INT  -- (FK dropdown),
+    originator INT  -- (FK dropdown),
+    transaction_warehouse_id INT  -- (FK dropdown),
+    currency_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      opex_cpex                                radio       
+      opex_cpex                                radio       
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      currency_rate                            text        
+      tax_state                                text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      cost_center_id                           select      
+      type                                     select      
+      originator                               select      
+      transaction_warehouse_id                 select      
+      currency_id                              select      
+    Hidden Metadata Fields:
+      transaction_location_id                  hidden       value=
+      in_date_pic                              hidden       value=transaction_date,doc_ref_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=cost_center_id,transaction_number,transaction_date
+
+  2.12 Table: stocktakes
+    Module: Stocktakes
+    Insert Option: COM_INSERT_STOCKTAKES
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE stocktakes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  returnable_gate_passes.type  -->  type_lookup.id
+  returnable_gate_passes.originator  -->  originator_lookup.id
+  returnable_gate_passes.cost_center_id  -->  cost_centers.id
+  returnable_gate_passes.party_id  -->  partys.id
+  returnable_gate_passes.payment_terms  -->  payment_terms_lookup.id
+  returnable_gate_passes.tax_state  -->  tax_state_lookup.id
+  non_returnable_gate_passes.type  -->  type_lookup.id
+  non_returnable_gate_passes.originator  -->  originator_lookup.id
+  non_returnable_gate_passes.cost_center_id  -->  cost_centers.id
+  non_returnable_gate_passes.party_id  -->  partys.id
+  non_returnable_gate_passes.payment_terms  -->  payment_terms_lookup.id
+  non_returnable_gate_passes.tax_state  -->  tax_state_lookup.id
+  goods_receipt_notes.ref_id  -->  refs.id
+  goods_receipt_notes.party_id  -->  partys.id
+  goods_receipt_notes.originator  -->  originator_lookup.id
+  goods_receipt_notes.transaction_location_id  -->  transaction_locations.id
+  goods_receipt_notes.transaction_warehouse_id  -->  transaction_warehouses.id
+  goods_receipt_notes.cost_center_id  -->  cost_centers.id
+  goods_receipt_notes.place_of_supply  -->  place_of_supply_lookup.id
+  goods_receipt_notes.ref_type  -->  ref_type_lookup.id
+  goods_receipt_notes.currency_id  -->  currencys.id
+  grn_returns.ref_id  -->  refs.id
+  grn_returns.transaction_location_id  -->  transaction_locations.id
+  grn_returns.transaction_warehouse_id  -->  transaction_warehouses.id
+  grn_returns.type  -->  type_lookup.id
+  grn_returns.originator  -->  originator_lookup.id
+  grn_returns.cost_center_id  -->  cost_centers.id
+  grn_returns.place_of_supply  -->  place_of_supply_lookup.id
+  grn_returns.payment_terms  -->  payment_terms_lookup.id
+  grn_returns.party_id  -->  partys.id
+  grn_returns.currency_id  -->  currencys.id
+  delivery_orders.ref_type  -->  ref_type_lookup.id
+  delivery_orders.ref_id  -->  refs.id
+  delivery_orders.party_id  -->  partys.id
+  delivery_orders.originator  -->  originator_lookup.id
+  delivery_orders.transaction_location_id  -->  transaction_locations.id
+  delivery_orders.transaction_warehouse_id  -->  transaction_warehouses.id
+  delivery_orders.cost_center_id  -->  cost_centers.id
+  delivery_orders.salesmen_id  -->  salesmens.id
+  delivery_orders.place_of_supply  -->  place_of_supply_lookup.id
+  delivery_orders.payment_terms  -->  payment_terms_lookup.id
+  sales_returns.originator  -->  originator_lookup.id
+  sales_returns.currency_id  -->  currencys.id
+  stock_requests.cost_center_id  -->  cost_centers.id
+  stock_requests.type  -->  type_lookup.id
+  stock_requests.originator  -->  originator_lookup.id
+  stock_requests.transaction_warehouse_id  -->  transaction_warehouses.id
+  stock_requests.request_warehouse_id  -->  request_warehouses.id
+  stock_requests.currency_id  -->  currencys.id
+  stock_transfers.ref_type  -->  ref_type_lookup.id
+  stock_transfers.ref_id  -->  refs.id
+  stock_transfers.cost_center_id  -->  cost_centers.id
+  stock_transfers.type  -->  type_lookup.id
+  stock_transfers.originator  -->  originator_lookup.id
+  stock_transfers.transaction_warehouse_id  -->  transaction_warehouses.id
+  stock_transfers.request_warehouse_id  -->  request_warehouses.id
+  stock_transfers.currency_id  -->  currencys.id
+  stock_transfer_receipts.ref_type  -->  ref_type_lookup.id
+  stock_transfer_receipts.ref_id  -->  refs.id
+  stock_transfer_receipts.cost_center_id  -->  cost_centers.id
+  stock_transfer_receipts.type  -->  type_lookup.id
+  stock_transfer_receipts.originator  -->  originator_lookup.id
+  stock_transfer_receipts.transaction_warehouse_id  -->  transaction_warehouses.id
+  stock_transfer_receipts.request_warehouse_id  -->  request_warehouses.id
+  stock_transfer_receipts.currency_id  -->  currencys.id
+  stock_transfer_returns.originator  -->  originator_lookup.id
+  stock_transfer_returns.customer_id  -->  customers.id
+  stock_transfer_returns.payment_terms  -->  payment_terms_lookup.id
+  stock_transfer_returns.currency_id  -->  currencys.id
+  stock_transfer_returns.tax_state  -->  tax_state_lookup.id
+  stock_adjustments.cost_center_id  -->  cost_centers.id
+  stock_adjustments.type  -->  type_lookup.id
+  stock_adjustments.originator  -->  originator_lookup.id
+  stock_adjustments.transaction_warehouse_id  -->  transaction_warehouses.id
+  stock_adjustments.currency_id  -->  currencys.id
+
+  ER Summary:
+  Tables: 26
+  Relationships: 75
+
+---
+4. BUSINESS RULES
+---
+
+  4.1 Effective Dating (all modules)
+    Every record has from_date/to_date. Records are valid
+    only within this range. from_date is mandatory.
+
+  4.2 Soft Delete / Status (all modules)
+    status=0 Active, status=1 Inactive, status=2 Draft
+    Records are never physically deleted. Status changes go
+    through the workflow API (submitstatusdynamicworkflow).
+
+  4.3 Module-Specific Rules
+    4.3.1 Returnable Gate Passes
+      Has 6 foreign key dropdown fields
+
+    4.3.2 Returnable Gate Passes
+      Has 3 date fields (effective dating + business dates)
+
+    4.3.3 Non Returnable Gate Passes
+      Has 6 foreign key dropdown fields
+
+    4.3.4 Non Returnable Gate Passes
+      Has 3 date fields (effective dating + business dates)
+
+    4.3.5 Goods Receipt Notes
+      Mandatory fields: cost_center_id, transaction_number, transaction_date, transaction_location_id, transaction_warehouse_id, originator_currency_id, currency_id, currency_rate, originator, party_id, party_name, party_email, party_tax_number, party_phone, party_address, party_ship_adderss, originator_state_id, supplier_state_id, place_of_supply, tax_state, opex_cpex, doc_ref_no, doc_ref_date, due_date, ref_type, ref_id, ref_no, ref_date
+
+    4.3.6 Goods Receipt Notes
+      Has 9 foreign key dropdown fields
+
+    4.3.7 Goods Receipt Notes
+      Has 6 date fields (effective dating + business dates)
+
+    4.3.8 Goods Receipt Notes
+      Complex form with 28 user fields
+
+    4.3.9 Grn Returns
+      Mandatory fields: cost_center_id, transaction_number, transaction_date, transaction_location_id, transaction_warehouse_id, originator_currency_id, currency_id, currency_rate, originator, party_id, party_name, party_email, party_tax_number, party_phone, party_address, party_ship_adderss, originator_state_id, supplier_state_id, place_of_supply, payment_terms, type, tax_state, opex_cpex, doc_ref_no, doc_ref_date, due_date, ref_type, ref_id, ref_no, ref_date
+
+    4.3.10 Grn Returns
+      Has 10 foreign key dropdown fields
+
+    4.3.11 Grn Returns
+      Has 6 date fields (effective dating + business dates)
+
+    4.3.12 Grn Returns
+      Complex form with 29 user fields
+
+    4.3.13 Delivery Orders
+      Mandatory fields: cost_center_id, transaction_number, transaction_date, transaction_location_id, transaction_warehouse_id, originator_currency_id, currency_id, currency_rate, originator, party_id, salesmen_id, party_name, party_email, party_tax_number, party_phone, party_address, party_ship_adderss, originator_state_id, supplier_state_id, place_of_supply, payment_terms, tax_state, opex_cpex, doc_ref_no, doc_ref_date, due_date, ref_type, ref_id, ref_no, ref_date
+
+    4.3.14 Delivery Orders
+      Has 10 foreign key dropdown fields
+
+    4.3.15 Delivery Orders
+      Has 5 date fields (effective dating + business dates)
+
+    4.3.16 Delivery Orders
+      Complex form with 27 user fields
+
+    4.3.17 Sales Returns
+      Mandatory fields: transaction_number, transaction_date, currency_id, currency_rate, originator, party_id, party_name, party_email, party_tax_number, party_phone, party_address, party_ship_adderss, place_of_supply, payment_terms, tax_state, doc_ref_no, doc_ref_date, due_date, ref_type, ref_id, ref_no, ref_date
+
+    4.3.18 Sales Returns
+      Has 2 foreign key dropdown fields
+
+    4.3.19 Sales Returns
+      Has 6 date fields (effective dating + business dates)
+
+    4.3.20 Sales Returns
+      Complex form with 24 user fields
+
+    4.3.21 Stock Requests
+      Mandatory fields: cost_center_id, transaction_number, transaction_date, transaction_location_id, transaction_warehouse_id, currency_id, currency_rate, originator, type, tax_state, opex_cpex, doc_ref_no, doc_ref_date, request_warehouse_id
+
+    4.3.22 Stock Requests
+      Has 6 foreign key dropdown fields
+
+    4.3.23 Stock Requests
+      Has 4 date fields (effective dating + business dates)
+
+    4.3.24 Stock Transfers
+      Mandatory fields: cost_center_id, transaction_number, transaction_date, transaction_location_id, transaction_warehouse_id, currency_id, currency_rate, originator, type, tax_state, opex_cpex, doc_ref_no, doc_ref_date, ref_type, ref_id, ref_no, request_warehouse_id
+
+    4.3.25 Stock Transfers
+      Has 8 foreign key dropdown fields
+
+    4.3.26 Stock Transfers
+      Has 4 date fields (effective dating + business dates)
+
+    4.3.27 Stock Transfer Receipts
+      Mandatory fields: cost_center_id, transaction_number, transaction_date, transaction_location_id, transaction_warehouse_id, currency_id, currency_rate, originator, type, tax_state, opex_cpex, doc_ref_no, doc_ref_date, ref_type, ref_id, ref_no, request_warehouse_id
+
+    4.3.28 Stock Transfer Receipts
+      Has 8 foreign key dropdown fields
+
+    4.3.29 Stock Transfer Receipts
+      Has 4 date fields (effective dating + business dates)
+
+    4.3.30 Stock Transfer Returns
+      Mandatory fields: transaction_number, transaction_date, currency_id, currency_rate, originator, customer_id, customer_name, customer_email, customer_tax_number, customer_phone, customer_address, customer_ship_adderss, place_of_supply, payment_terms, tax_state, doc_ref_no, doc_ref_date, due_date, ref_type, ref_id, ref_no, ref_date
+
+    4.3.31 Stock Transfer Returns
+      Has 5 foreign key dropdown fields
+
+    4.3.32 Stock Transfer Returns
+      Has 6 date fields (effective dating + business dates)
+
+    4.3.33 Stock Transfer Returns
+      Complex form with 24 user fields
+
+    4.3.34 Stock Adjustments
+      Mandatory fields: cost_center_id, transaction_number, transaction_date, transaction_location_id, transaction_warehouse_id, currency_id, currency_rate, originator, type, tax_state, opex_cpex, doc_ref_no, doc_ref_date
+
+    4.3.35 Stock Adjustments
+      Has 5 foreign key dropdown fields
+
+    4.3.36 Stock Adjustments
+      Has 4 date fields (effective dating + business dates)
+
+---
+5. API ENDPOINTS
+---
+
+  5.1 Standard CRUD APIs (shared across all modules)
+    POST /views/new_from.php?option=COM_INSERT_XXX
+      Renders insert form HTML
+    POST /index.php
+      Form submit (multipart/form-data)
+    POST /views/custon_list_dynamic_table.php
+      List data with pagination, filtering
+      Params: option, table, status, filter_text,
+              current_page, limit_select
+
+  5.2 Workflow APIs
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Status transitions (Draft->Pending->Approved)
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Params: table_name, current_status, transaction_id,
+              next_status
+
+  5.3 Module-Specific API Routes
+    COM_INSERT_RETURNABLE_GATE_PASSES  -> Insert returnable_gate_passes
+    COM_LIST_RETURNABLE_GATE_PASSES -> List returnable_gate_passes
+    COM_INSERT_NON_RETURNABLE_GATE_PASSES  -> Insert non_returnable_gate_passes
+    COM_LIST_NON_RETURNABLE_GATE_PASSES -> List non_returnable_gate_passes
+    COM_INSERT_GOODS_RECEIPT_NOTES  -> Insert goods_receipt_notes
+    COM_LIST_GOODS_RECEIPT_NOTES -> List goods_receipt_notes
+    COM_INSERT_GRN_RETURNS  -> Insert grn_returns
+    COM_LIST_GRN_RETURNS -> List grn_returns
+    COM_INSERT_DELIVERY_ORDERS  -> Insert delivery_orders
+    COM_LIST_DELIVERY_ORDERS -> List delivery_orders
+    COM_INSERT_SALES_RETURNS  -> Insert sales_returns
+    COM_LIST_SALES_RETURNS -> List sales_returns
+    COM_INSERT_STOCK_REQUESTS  -> Insert stock_requests
+    COM_LIST_STOCK_REQUESTS -> List stock_requests
+    COM_INSERT_STOCK_TRANSFERS  -> Insert stock_transfers
+    COM_LIST_STOCK_TRANSFERS -> List stock_transfers
+    COM_INSERT_STOCK_TRANSFER_RECEIPTS  -> Insert stock_transfer_receipts
+    COM_LIST_STOCK_TRANSFER_RECEIPTS -> List stock_transfer_receipts
+    COM_INSERT_STOCK_TRANSFER_RETURNS  -> Insert stock_transfer_returns
+    COM_LIST_STOCK_TRANSFER_RETURNS -> List stock_transfer_returns
+    COM_INSERT_STOCK_ADJUSTMENTS  -> Insert stock_adjustments
+    COM_LIST_STOCK_ADJUSTMENTS -> List stock_adjustments
+    COM_INSERT_STOCKTAKES  -> Insert stocktakes
+    COM_LIST_STOCKTAKES -> List stocktakes
+
+---
+6. CODE-LEVEL PATTERNS
+---
+
+  6.1 Generic Form Pattern
+    All modules use views/new_from.php as the form renderer.
+    The form HTML includes:
+    - validateForm() JS function driven by mandatory_str
+    - select2 dropdowns for FK fields
+    - datepicker for date fields (jQuery UI)
+    - Bootstrap 4 form layout (card > card-body > form-group)
+
+  6.2 Hidden Metadata Pattern (every form)
+    - option: The COM_ route constant
+    - table_name: Physical DB table name
+    - duplicate_table_name: For duplicate checking
+    - in_date_pic: Array of date fields for datepicker init
+    - in_currency_fileds: Currency fields for formatting
+    - in_phone_fileds: Phone fields for validation
+    - mandatory_str: Comma-separated required fields
+    - notification_users: User IDs to notify on create
+    - notification_message: Notification template
+
+  6.3 DataTables Pattern (all list pages)
+    - Uses custom AJAX, not built-in server-side mode
+    - Supports CSV, Excel, PDF, Print export
+    - Column visibility toggle
+    - Status-based filtering
+    - Text search via filter_text parameter
+
+---
+7. MODULE-SPECIFIC DETAILS
+---
+
+  7.1 Returnable Gate Passes
+    User Fields: 11
+    Hidden Fields: 8
+    Line Item Fields: 0
+    HTML Form Size: N/A bytes
+    Insert Option: N/A
+
+  7.2 Non Returnable Gate Passes
+    User Fields: 11
+    Hidden Fields: 8
+    Line Item Fields: 0
+    HTML Form Size: N/A bytes
+    Insert Option: N/A
+
+  7.3 Goods Receipt Notes
+    User Fields: 28
+    Hidden Fields: 18
+    Line Item Fields: 0
+    HTML Form Size: 22887 bytes
+    Mandatory: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,originator_currency_id,currency_id,currency_rate,originator,party_id,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,originator_state_id,supplier_state_id,place_of_supply,tax_state,opex_cpex,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+    Insert Option: COM_INSERT_GOODS_RECEIPT_NOTES
+
+  7.4 Grn Returns
+    User Fields: 29
+    Hidden Fields: 18
+    Line Item Fields: 0
+    HTML Form Size: 22975 bytes
+    Mandatory: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,originator_currency_id,currency_id,currency_rate,originator,party_id,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,originator_state_id,supplier_state_id,place_of_supply,payment_terms,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+    Insert Option: COM_INSERT_GRN_RETURNS
+
+  7.5 Delivery Orders
+    User Fields: 27
+    Hidden Fields: 21
+    Line Item Fields: 0
+    HTML Form Size: 22743 bytes
+    Mandatory: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,originator_currency_id,currency_id,currency_rate,originator,party_id,salesmen_id,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,originator_state_id,supplier_state_id,place_of_supply,payment_terms,tax_state,opex_cpex,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+    Insert Option: COM_INSERT_DELIVERY_ORDERS
+
+  7.6 Sales Returns
+    User Fields: 24
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 19737 bytes
+    Mandatory: transaction_number,transaction_date,currency_id,currency_rate,originator,party_id,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,place_of_supply,payment_terms,tax_state,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+    Insert Option: COM_INSERT_SALES_RETURNS
+
+  7.7 Stock Requests
+    User Fields: 16
+    Hidden Fields: 15
+    Line Item Fields: 0
+    HTML Form Size: 17904 bytes
+    Mandatory: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,currency_id,currency_rate,originator,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date,request_warehouse_id
+    Insert Option: COM_INSERT_STOCK_REQUESTS
+
+  7.8 Stock Transfers
+    User Fields: 19
+    Hidden Fields: 15
+    Line Item Fields: 0
+    HTML Form Size: 19141 bytes
+    Mandatory: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,currency_id,currency_rate,originator,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date,ref_type,ref_id,ref_no,request_warehouse_id
+    Insert Option: COM_INSERT_STOCK_TRANSFERS
+
+  7.9 Stock Transfer Receipts
+    User Fields: 19
+    Hidden Fields: 15
+    Line Item Fields: 0
+    HTML Form Size: 19191 bytes
+    Mandatory: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,currency_id,currency_rate,originator,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date,ref_type,ref_id,ref_no,request_warehouse_id
+    Insert Option: COM_INSERT_STOCK_TRANSFER_RECEIPTS
+
+  7.10 Stock Transfer Returns
+    User Fields: 24
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 20837 bytes
+    Mandatory: transaction_number,transaction_date,currency_id,currency_rate,originator,customer_id,customer_name,customer_email,customer_tax_number,customer_phone,customer_address,customer_ship_adderss,place_of_supply,payment_terms,tax_state,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+    Insert Option: COM_INSERT_STOCK_TRANSFER_RETURNS
+
+  7.11 Stock Adjustments
+    User Fields: 15
+    Hidden Fields: 15
+    Line Item Fields: 0
+    HTML Form Size: 17430 bytes
+    Mandatory: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,currency_id,currency_rate,originator,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date
+    Insert Option: COM_INSERT_STOCK_ADJUSTMENTS
+
+  7.12 Stocktakes
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10430 bytes
+    Insert Option: COM_INSERT_STOCKTAKES

@@ -1,0 +1,932 @@
+================================================================================
+PHASE 11: ACCOUNTING & FINANCIAL MANAGEMENT - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the Accounting & Financial Management modules, scraped from the live application.
+
+Phase Description: Chart of accounts, banking, journal entries, voucher management, tax configuration, and financial reporting.
+
+Modules Covered: 21
+  - account_groups [SCRAPE]
+  - account_type [SCRAPE]
+  - banks [SCRAPE]
+  - bank_accounts [SCRAPE]
+  - bank_vouchers [SCRAPE]
+  - cash_vouchers [SCRAPE]
+  - journal_vouchers [SCRAPE]
+  - journal_groupings [SCRAPE]
+  - journal_settings [SCRAPE]
+  - fiscal_positions [SCRAPE]
+  - currency_convertor [SCRAPE]
+  - payment_providers [SCRAPE]
+  - reconciliation_reports [NO FORM]
+  - finance_reports [NO FORM]
+  - bills [SCRAPE]
+  - bill_cancellations [SCRAPE]
+  - sales_invoice_cancellations [NO FORM]
+  - supplier_bill_cancellations [NO FORM]
+  - tax_authorities [NO FORM]
+  - tax_collected_sources [NO FORM]
+  - tax_deducted_sources [NO FORM]
+
+---
+1. APPLICATION ARCHITECTURE (SHARED)
+---
+
+  1.1 Routing Convention
+    COM_LIST_XXX     -> List/view page (DataTables)
+    COM_INSERT_XXX   -> Insert form (POST to /views/new_from.php)
+    COM_UPDATE_XXX   -> Update form
+    COM_VIEW_XXX    -> View/detail/report page
+
+  1.2 AJAX Endpoints
+    POST /ajax.php?page=submitstatusdynamicworkflow
+    POST /ajax.php?page=updatedynamicfied
+    POST /ajax.php?page=setdynamichelptext
+    POST /ajax.php?page=getstockbalanceavailability
+    POST /views/custon_list_dynamic_table.php
+    POST /views/new_from.php?option=COM_INSERT_XXX
+
+  1.3 Standard Hidden Fields (in every form)
+    option, table_name, duplicate_table_name,
+    in_date_pic, in_currency_fileds, in_phone_fileds,
+    mandatory_str, add_mandatory_str, notification_users,
+    notification_message, status, from_date, to_date
+
+---
+2. DATABASE SCHEMAS
+---
+
+  2.1 Table: account_groups
+    Module: Account Groups
+    Insert Option: COM_INSERT_ACCOUNT_GROUPS
+    Form Fields: 8 user-visible, 22 total
+    Mandatory columns: group_name,parent_group_id,pl_yn,tb_seq,bs_seq
+
+  CREATE TABLE account_groups (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    group_name VARCHAR(255),
+    pl_yn VARCHAR(255),
+    pl_yn VARCHAR(255),
+    tb_seq VARCHAR(255),
+    bs_seq VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    parent_group_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      group_name                               text        
+      pl_yn                                    radio       
+      pl_yn                                    radio       
+      tb_seq                                   text        
+      bs_seq                                   text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      parent_group_id                          select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=group_name,parent_group_id,pl_yn,tb_seq,bs_seq
+      add_mandatory_str                        hidden       value=
+
+  2.2 Table: account_type
+    Module: Account Type
+    Insert Option: COM_INSERT_ACCOUNT_TYPE
+    Form Fields: 5 user-visible, 19 total
+    Mandatory columns: account_type_name,description,transaction_type
+
+  CREATE TABLE account_type (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    account_type_name VARCHAR(255),
+    description VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    transaction_type INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      account_type_name                        text        
+      description                              text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      transaction_type                         select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=account_type_name,description,transaction_type
+      add_mandatory_str                        hidden       value=
+
+  2.3 Table: banks
+    Module: Banks
+    Insert Option: COM_INSERT_BANKS
+    Form Fields: 6 user-visible, 20 total
+    Mandatory columns: bank_name,bank_short_code
+
+  CREATE TABLE banks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    bank_name VARCHAR(255),
+    field_1 VARCHAR(255),
+    bank_short_code VARCHAR(50),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    field_2 INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      bank_name                                text        
+      field_1                                  text        
+      bank_short_code                          text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      field_2                                  select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=bank_name,bank_short_code
+      add_mandatory_str                        hidden       value=field_1,field_2
+
+  2.4 Table: bank_accounts
+    Module: Bank Accounts
+    Insert Option: COM_INSERT_BANK_ACCOUNTS
+    Form Fields: 14 user-visible, 28 total
+    Mandatory columns: account_code,account_type,bank_id,currency_id,bank_account_name,bank_account_number,bank_contact_person,bank_contact_no,bank_address,edi_format,bank_ref_key1
+
+  CREATE TABLE bank_accounts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    account_type VARCHAR(255),
+    account_type VARCHAR(255),
+    bank_account_name VARCHAR(255),
+    bank_account_number VARCHAR(255),
+    bank_contact_person VARCHAR(255),
+    bank_contact_no VARCHAR(255),
+    bank_address VARCHAR(255),
+    edi_format VARCHAR(255),
+    bank_ref_key1 VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    account_code INT  -- (FK dropdown),
+    bank_id INT  -- (FK dropdown),
+    currency_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      account_type                             radio       
+      account_type                             radio       
+      bank_account_name                        text        
+      bank_account_number                      text        
+      bank_contact_person                      text        
+      bank_contact_no                          text        
+      bank_address                             text        
+      edi_format                               text        
+      bank_ref_key1                            text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      account_code                             select      
+      bank_id                                  select      
+      currency_id                              select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=account_code,account_type,bank_id,currency_id,bank
+      add_mandatory_str                        hidden       value=
+
+  2.5 Table: bank_vouchers
+    Module: Bank Vouchers
+    Insert Option: COM_INSERT_BANK_VOUCHERS
+    Form Fields: 6 user-visible, 20 total
+    Mandatory columns: transaction_number,transaction_date,originator,bank_account_code
+
+  CREATE TABLE bank_vouchers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    originator INT  -- (FK dropdown),
+    bank_account_code INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      originator                               select      
+      bank_account_code                        select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=transaction_number,transaction_date,originator,ban
+      add_mandatory_str                        hidden       value=
+
+  2.6 Table: cash_vouchers
+    Module: Cash Vouchers
+    Insert Option: COM_INSERT_CASH_VOUCHERS
+    Form Fields: 6 user-visible, 20 total
+    Mandatory columns: transaction_number,transaction_date,originator,cash_account_code
+
+  CREATE TABLE cash_vouchers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    originator INT  -- (FK dropdown),
+    cash_account_code INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      originator                               select      
+      cash_account_code                        select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=transaction_number,transaction_date,originator,cas
+      add_mandatory_str                        hidden       value=
+
+  2.7 Table: journal_vouchers
+    Module: Journal Vouchers
+    Insert Option: COM_INSERT_JOURNAL_VOUCHERS
+    Form Fields: 21 user-visible, 35 total
+    Mandatory columns: department_id,cost_center_id,transaction_number,transaction_date,originator,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,place_of_supply,payment_terms,type,tax_type,opex_cpex,ref_id,ref_no
+
+  CREATE TABLE journal_vouchers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    tax_type VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    party_name VARCHAR(255),
+    party_email VARCHAR(255),
+    party_tax_number VARCHAR(255),
+    party_phone VARCHAR(20),
+    party_address VARCHAR(255),
+    party_ship_adderss VARCHAR(255),
+    payment_terms VARCHAR(255),
+    ref_id VARCHAR(255),
+    ref_no VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    originator INT  -- (FK dropdown),
+    cost_center_id INT  -- (FK dropdown),
+    department_id INT  -- (FK dropdown),
+    place_of_supply INT  -- (FK dropdown),
+    type INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      tax_type                                 text        
+      opex_cpex                                radio       
+      opex_cpex                                radio       
+      party_name                               text        
+      party_email                              text        
+      party_tax_number                         text        
+      party_phone                              text        
+      party_address                            text        
+      party_ship_adderss                       text        
+      payment_terms                            text        
+      ref_id                                   text        
+      ref_no                                   text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      originator                               select      
+      cost_center_id                           select      
+      department_id                            select      
+      place_of_supply                          select      
+      type                                     select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=transaction_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=department_id,cost_center_id,transaction_number,tr
+      add_mandatory_str                        hidden       value=
+
+  2.8 Table: journal_groupings
+    Module: Journal Groupings
+    Insert Option: COM_INSERT_JOURNAL_GROUPINGS
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: journal_grouping_name,grouping_journal_ids
+
+  CREATE TABLE journal_groupings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    journal_grouping_name VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    grouping_journal_ids[] INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      journal_grouping_name                    text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      grouping_journal_ids[]                   select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=journal_grouping_name,grouping_journal_ids
+      add_mandatory_str                        hidden       value=
+
+  2.9 Table: journal_settings
+    Module: Journal Settings
+    Insert Option: COM_INSERT_JOURNAL_SETTINGS
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE journal_settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+  2.10 Table: fiscal_positions
+    Module: Fiscal Positions
+    Insert Option: COM_INSERT_FISCAL_POSITIONS
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE fiscal_positions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+  2.11 Table: currency_convertor
+    Module: Currency Convertor
+    Insert Option: COM_INSERT_CURRENCY_CONVERTOR
+    Form Fields: 5 user-visible, 19 total
+    Mandatory columns: from_currency,to_currency,ex_rate
+
+  CREATE TABLE currency_convertor (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ex_rate VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    from_currency INT  -- (FK dropdown),
+    to_currency INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      ex_rate                                  text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      from_currency                            select      
+      to_currency                              select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=from_currency,to_currency,ex_rate
+      add_mandatory_str                        hidden       value=
+
+  2.12 Table: payment_providers
+    Module: Payment Providers
+    Insert Option: COM_INSERT_PAYMENT_PROVIDERS
+    Form Fields: 19 user-visible, 34 total
+    Mandatory columns: payment_provider_name,website,support_payment,allowed_saving_payment,payment_journal,maximum_amount,countries,marchant_id,currency,sha_key_in,sha_key_out,help_message,pedding_message,done_message,cancel_message
+
+  CREATE TABLE payment_providers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    payment_provider_name VARCHAR(255),
+    website VARCHAR(255),
+    support_payment[] TINYINT(1) DEFAULT 0,
+    support_payment[] TINYINT(1) DEFAULT 0,
+    allowed_saving_payment TINYINT(1) DEFAULT 0,
+    maximum_amount VARCHAR(255),
+    maximum_amount VARCHAR(255),
+    marchant_id VARCHAR(255),
+    sha_key_in VARCHAR(255),
+    sha_key_out VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    payment_journal INT  -- (FK dropdown),
+    countries INT  -- (FK dropdown),
+    currency INT  -- (FK dropdown),
+    help_message TEXT,
+    pedding_message TEXT,
+    done_message TEXT,
+    cancel_message TEXT,
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      payment_provider_name                    text        
+      website                                  text        
+      support_payment[]                        checkbox    
+      support_payment[]                        checkbox    
+      allowed_saving_payment                   checkbox    
+      maximum_amount                           text        
+      maximum_amount                           text        
+      marchant_id                              text        
+      sha_key_in                               text        
+      sha_key_out                              text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      payment_journal                          select      
+      countries                                select      
+      currency                                 select      
+      help_message                             textarea    
+      pedding_message                          textarea    
+      done_message                             textarea    
+      cancel_message                           textarea    
+    Hidden Metadata Fields:
+      allowed_saving_payment                   hidden       value=
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=maximum_amount
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=payment_provider_name,website,support_payment,allo
+
+  2.13 Table: reconciliation_reports
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.14 Table: finance_reports
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.15 Table: bills
+    Module: Bills
+    Insert Option: COM_INSERT_BILLS
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE bills (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+  2.16 Table: bill_cancellations
+    Module: Bill Cancellations
+    Insert Option: COM_INSERT_BILL_CANCELLATIONS
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE bill_cancellations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+  2.17 Table: sales_invoice_cancellations
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.18 Table: supplier_bill_cancellations
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.19 Table: tax_authorities
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.20 Table: tax_collected_sources
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.21 Table: tax_deducted_sources
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  account_groups.parent_group_id  -->  parent_groups.id
+  account_type.transaction_type  -->  transaction_type_lookup.id
+  banks.field_2  -->  field_2_lookup.id
+  bank_accounts.account_code  -->  account_code_lookup.id
+  bank_accounts.bank_id  -->  banks.id
+  bank_accounts.currency_id  -->  currencys.id
+  bank_vouchers.originator  -->  originator_lookup.id
+  bank_vouchers.bank_account_code  -->  bank_account_code_lookup.id
+  cash_vouchers.originator  -->  originator_lookup.id
+  cash_vouchers.cash_account_code  -->  cash_account_code_lookup.id
+  journal_vouchers.originator  -->  originator_lookup.id
+  journal_vouchers.cost_center_id  -->  cost_centers.id
+  journal_vouchers.department_id  -->  departments.id
+  journal_vouchers.place_of_supply  -->  place_of_supply_lookup.id
+  journal_vouchers.type  -->  type_lookup.id
+  journal_groupings.grouping_journal_ids[]  -->  grouping_journal_ids[]_lookup.id
+  currency_convertor.from_currency  -->  from_currency_lookup.id
+  currency_convertor.to_currency  -->  to_currency_lookup.id
+  payment_providers.payment_journal  -->  payment_journal_lookup.id
+  payment_providers.countries  -->  countries_lookup.id
+  payment_providers.currency  -->  currency_lookup.id
+
+  ER Summary:
+  Tables: 28
+  Relationships: 21
+
+---
+4. BUSINESS RULES
+---
+
+  4.1 Effective Dating (all modules)
+    Every record has from_date/to_date. Records are valid
+    only within this range. from_date is mandatory.
+
+  4.2 Soft Delete / Status (all modules)
+    status=0 Active, status=1 Inactive, status=2 Draft
+    Records are never physically deleted. Status changes go
+    through the workflow API (submitstatusdynamicworkflow).
+
+  4.3 Module-Specific Rules
+    4.3.1 Account Groups
+      Mandatory fields: group_name, parent_group_id, pl_yn, tb_seq, bs_seq
+
+    4.3.2 Account Groups
+      Has 1 foreign key dropdown fields
+
+    4.3.3 Account Type
+      Mandatory fields: account_type_name, description, transaction_type
+
+    4.3.4 Account Type
+      Has 1 foreign key dropdown fields
+
+    4.3.5 Banks
+      Mandatory fields: bank_name, bank_short_code
+
+    4.3.6 Banks
+      Has 1 foreign key dropdown fields
+
+    4.3.7 Bank Accounts
+      Mandatory fields: account_code, account_type, bank_id, currency_id, bank_account_name, bank_account_number, bank_contact_person, bank_contact_no, bank_address, edi_format, bank_ref_key1
+
+    4.3.8 Bank Accounts
+      Has 3 foreign key dropdown fields
+
+    4.3.9 Bank Vouchers
+      Mandatory fields: transaction_number, transaction_date, originator, bank_account_code
+
+    4.3.10 Bank Vouchers
+      Has 2 foreign key dropdown fields
+
+    4.3.11 Bank Vouchers
+      Has 3 date fields (effective dating + business dates)
+
+    4.3.12 Cash Vouchers
+      Mandatory fields: transaction_number, transaction_date, originator, cash_account_code
+
+    4.3.13 Cash Vouchers
+      Has 2 foreign key dropdown fields
+
+    4.3.14 Cash Vouchers
+      Has 3 date fields (effective dating + business dates)
+
+    4.3.15 Journal Vouchers
+      Mandatory fields: department_id, cost_center_id, transaction_number, transaction_date, originator, party_name, party_email, party_tax_number, party_phone, party_address, party_ship_adderss, place_of_supply, payment_terms, type, tax_type, opex_cpex, ref_id, ref_no
+
+    4.3.16 Journal Vouchers
+      Has 5 foreign key dropdown fields
+
+    4.3.17 Journal Vouchers
+      Has 3 date fields (effective dating + business dates)
+
+    4.3.18 Journal Vouchers
+      Complex form with 21 user fields
+
+    4.3.19 Journal Groupings
+      Mandatory fields: journal_grouping_name, grouping_journal_ids
+
+    4.3.20 Journal Groupings
+      Has 1 foreign key dropdown fields
+
+    4.3.21 Currency Convertor
+      Mandatory fields: from_currency, to_currency, ex_rate
+
+    4.3.22 Currency Convertor
+      Has 2 foreign key dropdown fields
+
+    4.3.23 Payment Providers
+      Mandatory fields: payment_provider_name, website, support_payment, allowed_saving_payment, payment_journal, maximum_amount, countries, marchant_id, currency, sha_key_in, sha_key_out, help_message, pedding_message, done_message, cancel_message
+
+    4.3.24 Payment Providers
+      Has 3 foreign key dropdown fields
+
+---
+5. API ENDPOINTS
+---
+
+  5.1 Standard CRUD APIs (shared across all modules)
+    POST /views/new_from.php?option=COM_INSERT_XXX
+      Renders insert form HTML
+    POST /index.php
+      Form submit (multipart/form-data)
+    POST /views/custon_list_dynamic_table.php
+      List data with pagination, filtering
+      Params: option, table, status, filter_text,
+              current_page, limit_select
+
+  5.2 Workflow APIs
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Status transitions (Draft->Pending->Approved)
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Params: table_name, current_status, transaction_id,
+              next_status
+
+  5.3 Module-Specific API Routes
+    COM_INSERT_ACCOUNT_GROUPS  -> Insert account_groups
+    COM_LIST_ACCOUNT_GROUPS -> List account_groups
+    COM_INSERT_ACCOUNT_TYPE  -> Insert account_type
+    COM_LIST_ACCOUNT_TYPE -> List account_type
+    COM_INSERT_BANKS  -> Insert banks
+    COM_LIST_BANKS -> List banks
+    COM_INSERT_BANK_ACCOUNTS  -> Insert bank_accounts
+    COM_LIST_BANK_ACCOUNTS -> List bank_accounts
+    COM_INSERT_BANK_VOUCHERS  -> Insert bank_vouchers
+    COM_LIST_BANK_VOUCHERS -> List bank_vouchers
+    COM_INSERT_CASH_VOUCHERS  -> Insert cash_vouchers
+    COM_LIST_CASH_VOUCHERS -> List cash_vouchers
+    COM_INSERT_JOURNAL_VOUCHERS  -> Insert journal_vouchers
+    COM_LIST_JOURNAL_VOUCHERS -> List journal_vouchers
+    COM_INSERT_JOURNAL_GROUPINGS  -> Insert journal_groupings
+    COM_LIST_JOURNAL_GROUPINGS -> List journal_groupings
+    COM_INSERT_JOURNAL_SETTINGS  -> Insert journal_settings
+    COM_LIST_JOURNAL_SETTINGS -> List journal_settings
+    COM_INSERT_FISCAL_POSITIONS  -> Insert fiscal_positions
+    COM_LIST_FISCAL_POSITIONS -> List fiscal_positions
+    COM_INSERT_CURRENCY_CONVERTOR  -> Insert currency_convertor
+    COM_LIST_CURRENCY_CONVERTOR -> List currency_convertor
+    COM_INSERT_PAYMENT_PROVIDERS  -> Insert payment_providers
+    COM_LIST_PAYMENT_PROVIDERS -> List payment_providers
+    COM_INSERT_BILLS  -> Insert bills
+    COM_LIST_BILLS -> List bills
+    COM_INSERT_BILL_CANCELLATIONS  -> Insert bill_cancellations
+    COM_LIST_BILL_CANCELLATIONS -> List bill_cancellations
+
+---
+6. CODE-LEVEL PATTERNS
+---
+
+  6.1 Generic Form Pattern
+    All modules use views/new_from.php as the form renderer.
+    The form HTML includes:
+    - validateForm() JS function driven by mandatory_str
+    - select2 dropdowns for FK fields
+    - datepicker for date fields (jQuery UI)
+    - Bootstrap 4 form layout (card > card-body > form-group)
+
+  6.2 Hidden Metadata Pattern (every form)
+    - option: The COM_ route constant
+    - table_name: Physical DB table name
+    - duplicate_table_name: For duplicate checking
+    - in_date_pic: Array of date fields for datepicker init
+    - in_currency_fileds: Currency fields for formatting
+    - in_phone_fileds: Phone fields for validation
+    - mandatory_str: Comma-separated required fields
+    - notification_users: User IDs to notify on create
+    - notification_message: Notification template
+
+  6.3 DataTables Pattern (all list pages)
+    - Uses custom AJAX, not built-in server-side mode
+    - Supports CSV, Excel, PDF, Print export
+    - Column visibility toggle
+    - Status-based filtering
+    - Text search via filter_text parameter
+
+---
+7. MODULE-SPECIFIC DETAILS
+---
+
+  7.1 Account Groups
+    User Fields: 8
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 12744 bytes
+    Mandatory: group_name,parent_group_id,pl_yn,tb_seq,bs_seq
+    Insert Option: COM_INSERT_ACCOUNT_GROUPS
+
+  7.2 Account Type
+    User Fields: 5
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 12036 bytes
+    Mandatory: account_type_name,description,transaction_type
+    Insert Option: COM_INSERT_ACCOUNT_TYPE
+
+  7.3 Banks
+    User Fields: 6
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 12183 bytes
+    Mandatory: bank_name,bank_short_code
+    Insert Option: COM_INSERT_BANKS
+
+  7.4 Bank Accounts
+    User Fields: 14
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 14712 bytes
+    Mandatory: account_code,account_type,bank_id,currency_id,bank_account_name,bank_account_number,bank_contact_person,bank_contact_no,bank_address,edi_format,bank_ref_key1
+    Insert Option: COM_INSERT_BANK_ACCOUNTS
+
+  7.5 Bank Vouchers
+    User Fields: 6
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 12129 bytes
+    Mandatory: transaction_number,transaction_date,originator,bank_account_code
+    Insert Option: COM_INSERT_BANK_VOUCHERS
+
+  7.6 Cash Vouchers
+    User Fields: 6
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 12109 bytes
+    Mandatory: transaction_number,transaction_date,originator,cash_account_code
+    Insert Option: COM_INSERT_CASH_VOUCHERS
+
+  7.7 Journal Vouchers
+    User Fields: 21
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 19108 bytes
+    Mandatory: department_id,cost_center_id,transaction_number,transaction_date,originator,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,place_of_supply,payment_terms,type,tax_type,opex_cpex,ref_id,ref_no
+    Insert Option: COM_INSERT_JOURNAL_VOUCHERS
+
+  7.8 Journal Groupings
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11342 bytes
+    Mandatory: journal_grouping_name,grouping_journal_ids
+    Insert Option: COM_INSERT_JOURNAL_GROUPINGS
+
+  7.9 Journal Settings
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10472 bytes
+    Insert Option: COM_INSERT_JOURNAL_SETTINGS
+
+  7.10 Fiscal Positions
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10472 bytes
+    Insert Option: COM_INSERT_FISCAL_POSITIONS
+
+  7.11 Currency Convertor
+    User Fields: 5
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11891 bytes
+    Mandatory: from_currency,to_currency,ex_rate
+    Insert Option: COM_INSERT_CURRENCY_CONVERTOR
+
+  7.12 Payment Providers
+    User Fields: 19
+    Hidden Fields: 15
+    Line Item Fields: 0
+    HTML Form Size: 32804 bytes
+    Mandatory: payment_provider_name,website,support_payment,allowed_saving_payment,payment_journal,maximum_amount,countries,marchant_id,currency,sha_key_in,sha_key_out,help_message,pedding_message,done_message,cancel_message
+    Insert Option: COM_INSERT_PAYMENT_PROVIDERS
+
+  7.13 Bills
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10395 bytes
+    Insert Option: COM_INSERT_BILLS
+
+  7.14 Bill Cancellations
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10473 bytes
+    Insert Option: COM_INSERT_BILL_CANCELLATIONS

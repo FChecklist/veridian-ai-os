@@ -1,0 +1,391 @@
+================================================================================
+PHASE 18: REIMBURSEMENT, EXPENSES & PETTY CASH - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the Reimbursement, Expenses & Petty Cash modules, scraped from the live application.
+
+Phase Description: Employee expense claims, reimbursement policies, petty cash management, and budget tracking.
+
+Modules Covered: 7
+  - emp_expenses [NO FORM]
+  - reimbursement_policies [SCRAPE]
+  - petty_cash [SCRAPE]
+  - petty_cash_boxes [SCRAPE]
+  - petty_cash_box_owner [NO FORM]
+  - petty_cash_box_topup_requests [NO FORM]
+  - budget [SCRAPE]
+
+---
+1. APPLICATION ARCHITECTURE (SHARED)
+---
+
+  1.1 Routing Convention
+    COM_LIST_XXX     -> List/view page (DataTables)
+    COM_INSERT_XXX   -> Insert form (POST to /views/new_from.php)
+    COM_UPDATE_XXX   -> Update form
+    COM_VIEW_XXX    -> View/detail/report page
+
+  1.2 AJAX Endpoints
+    POST /ajax.php?page=submitstatusdynamicworkflow
+    POST /ajax.php?page=updatedynamicfied
+    POST /ajax.php?page=setdynamichelptext
+    POST /ajax.php?page=getstockbalanceavailability
+    POST /views/custon_list_dynamic_table.php
+    POST /views/new_from.php?option=COM_INSERT_XXX
+
+  1.3 Standard Hidden Fields (in every form)
+    option, table_name, duplicate_table_name,
+    in_date_pic, in_currency_fileds, in_phone_fileds,
+    mandatory_str, add_mandatory_str, notification_users,
+    notification_message, status, from_date, to_date
+
+---
+2. DATABASE SCHEMAS
+---
+
+  2.1 Table: emp_expenses
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.2 Table: reimbursement_policies
+    Module: Reimbursement Policies
+    Insert Option: COM_INSERT_REIMBURSEMENT_POLICIES
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE reimbursement_policies (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+  2.3 Table: petty_cash
+    Module: Petty Cash
+    Insert Option: COM_INSERT_PETTY_CASH
+    Form Fields: 14 user-visible, 28 total
+    Mandatory columns: transaction_number,transaction_date,currency_id,currency_rate,originator,party_id,party_name,party_email,party_phone,doc_ref_no,doc_ref_date,due_date
+
+  CREATE TABLE petty_cash (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    currency_id VARCHAR(255),
+    currency_rate VARCHAR(255),
+    party_name VARCHAR(255),
+    party_email VARCHAR(255),
+    party_phone VARCHAR(20),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    due_date VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    originator INT  -- (FK dropdown),
+    party_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      currency_id                              text        
+      currency_rate                            text        
+      party_name                               text        
+      party_email                              text        
+      party_phone                              text        
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      due_date                                 text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      originator                               select      
+      party_id                                 select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=transaction_date,doc_ref_date,due_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=transaction_number,transaction_date,currency_id,cu
+      add_mandatory_str                        hidden       value=
+
+  2.4 Table: petty_cash_boxes
+    Module: Petty Cash Boxes
+    Insert Option: COM_INSERT_PETTY_CASH_BOXES
+    Form Fields: 10 user-visible, 24 total
+    Mandatory columns: pc_box_code,pc_box_description,gl_account_assignment,gl_account_pc_cash,topup_start_date,topup_frequency,topup_amount,mapping_code
+
+  CREATE TABLE petty_cash_boxes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    pc_box_code VARCHAR(50),
+    pc_box_description VARCHAR(255),
+    topup_start_date VARCHAR(255),
+    topup_amount VARCHAR(255),
+    mapping_code VARCHAR(50),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    gl_account_assignment INT  -- (FK dropdown),
+    gl_account_pc_cash INT  -- (FK dropdown),
+    topup_frequency INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      pc_box_code                              text        
+      pc_box_description                       text        
+      topup_start_date                         text        
+      topup_amount                             text        
+      mapping_code                             text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      gl_account_assignment                    select      
+      gl_account_pc_cash                       select      
+      topup_frequency                          select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=topup_start_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=pc_box_code,pc_box_description,gl_account_assignme
+      add_mandatory_str                        hidden       value=
+
+  2.5 Table: petty_cash_box_owner
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.6 Table: petty_cash_box_topup_requests
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.7 Table: budget
+    Module: Budget
+    Insert Option: COM_INSERT_BUDGET
+    Form Fields: 18 user-visible, 32 total
+    Mandatory columns: cost_center_id,account_code,fiscal_year,distribution_m1,distribution_m2,distribution_m3,distribution_m4,distribution_m5,distribution_m6,distribution_m7,distribution_m8,distribution_m9,distribution_m10,distribution_m11,distribution_m12,distribution_tot
+
+  CREATE TABLE budget (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    distribution_m1 VARCHAR(255),
+    distribution_m2 VARCHAR(255),
+    distribution_m3 VARCHAR(255),
+    distribution_m4 VARCHAR(255),
+    distribution_m5 VARCHAR(255),
+    distribution_m6 VARCHAR(255),
+    distribution_m7 VARCHAR(255),
+    distribution_m8 VARCHAR(255),
+    distribution_m9 VARCHAR(255),
+    distribution_m10 VARCHAR(255),
+    distribution_m11 VARCHAR(255),
+    distribution_m12 VARCHAR(255),
+    distribution_tot VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    cost_center_id INT  -- (FK dropdown),
+    account_code INT  -- (FK dropdown),
+    fiscal_year INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      distribution_m1                          text        
+      distribution_m2                          text        
+      distribution_m3                          text        
+      distribution_m4                          text        
+      distribution_m5                          text        
+      distribution_m6                          text        
+      distribution_m7                          text        
+      distribution_m8                          text        
+      distribution_m9                          text        
+      distribution_m10                         text        
+      distribution_m11                         text        
+      distribution_m12                         text        
+      distribution_tot                         text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      cost_center_id                           select      
+      account_code                             select      
+      fiscal_year                              select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=cost_center_id,account_code,fiscal_year,distributi
+      add_mandatory_str                        hidden       value=
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  petty_cash.originator  -->  originator_lookup.id
+  petty_cash.party_id  -->  partys.id
+  petty_cash_boxes.gl_account_assignment  -->  gl_account_assignment_lookup.id
+  petty_cash_boxes.gl_account_pc_cash  -->  gl_account_pc_cash_lookup.id
+  petty_cash_boxes.topup_frequency  -->  topup_frequency_lookup.id
+  budget.cost_center_id  -->  cost_centers.id
+  budget.account_code  -->  account_code_lookup.id
+  budget.fiscal_year  -->  fiscal_year_lookup.id
+
+  ER Summary:
+  Tables: 11
+  Relationships: 8
+
+---
+4. BUSINESS RULES
+---
+
+  4.1 Effective Dating (all modules)
+    Every record has from_date/to_date. Records are valid
+    only within this range. from_date is mandatory.
+
+  4.2 Soft Delete / Status (all modules)
+    status=0 Active, status=1 Inactive, status=2 Draft
+    Records are never physically deleted. Status changes go
+    through the workflow API (submitstatusdynamicworkflow).
+
+  4.3 Module-Specific Rules
+    4.3.1 Petty Cash
+      Mandatory fields: transaction_number, transaction_date, currency_id, currency_rate, originator, party_id, party_name, party_email, party_phone, doc_ref_no, doc_ref_date, due_date
+
+    4.3.2 Petty Cash
+      Has 2 foreign key dropdown fields
+
+    4.3.3 Petty Cash
+      Has 5 date fields (effective dating + business dates)
+
+    4.3.4 Petty Cash Boxes
+      Mandatory fields: pc_box_code, pc_box_description, gl_account_assignment, gl_account_pc_cash, topup_start_date, topup_frequency, topup_amount, mapping_code
+
+    4.3.5 Petty Cash Boxes
+      Has 3 foreign key dropdown fields
+
+    4.3.6 Petty Cash Boxes
+      Has 3 date fields (effective dating + business dates)
+
+    4.3.7 Budget
+      Mandatory fields: cost_center_id, account_code, fiscal_year, distribution_m1, distribution_m2, distribution_m3, distribution_m4, distribution_m5, distribution_m6, distribution_m7, distribution_m8, distribution_m9, distribution_m10, distribution_m11, distribution_m12, distribution_tot
+
+    4.3.8 Budget
+      Has 3 foreign key dropdown fields
+
+---
+5. API ENDPOINTS
+---
+
+  5.1 Standard CRUD APIs (shared across all modules)
+    POST /views/new_from.php?option=COM_INSERT_XXX
+      Renders insert form HTML
+    POST /index.php
+      Form submit (multipart/form-data)
+    POST /views/custon_list_dynamic_table.php
+      List data with pagination, filtering
+      Params: option, table, status, filter_text,
+              current_page, limit_select
+
+  5.2 Workflow APIs
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Status transitions (Draft->Pending->Approved)
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Params: table_name, current_status, transaction_id,
+              next_status
+
+  5.3 Module-Specific API Routes
+    COM_INSERT_REIMBURSEMENT_POLICIES  -> Insert reimbursement_policies
+    COM_LIST_REIMBURSEMENT_POLICIES -> List reimbursement_policies
+    COM_INSERT_PETTY_CASH  -> Insert petty_cash
+    COM_LIST_PETTY_CASH -> List petty_cash
+    COM_INSERT_PETTY_CASH_BOXES  -> Insert petty_cash_boxes
+    COM_LIST_PETTY_CASH_BOXES -> List petty_cash_boxes
+    COM_INSERT_BUDGET  -> Insert budget
+    COM_LIST_BUDGET -> List budget
+
+---
+6. CODE-LEVEL PATTERNS
+---
+
+  6.1 Generic Form Pattern
+    All modules use views/new_from.php as the form renderer.
+    The form HTML includes:
+    - validateForm() JS function driven by mandatory_str
+    - select2 dropdowns for FK fields
+    - datepicker for date fields (jQuery UI)
+    - Bootstrap 4 form layout (card > card-body > form-group)
+
+  6.2 Hidden Metadata Pattern (every form)
+    - option: The COM_ route constant
+    - table_name: Physical DB table name
+    - duplicate_table_name: For duplicate checking
+    - in_date_pic: Array of date fields for datepicker init
+    - in_currency_fileds: Currency fields for formatting
+    - in_phone_fileds: Phone fields for validation
+    - mandatory_str: Comma-separated required fields
+    - notification_users: User IDs to notify on create
+    - notification_message: Notification template
+
+  6.3 DataTables Pattern (all list pages)
+    - Uses custom AJAX, not built-in server-side mode
+    - Supports CSV, Excel, PDF, Print export
+    - Column visibility toggle
+    - Status-based filtering
+    - Text search via filter_text parameter
+
+---
+7. MODULE-SPECIFIC DETAILS
+---
+
+  7.1 Reimbursement Policies
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10514 bytes
+    Insert Option: COM_INSERT_REIMBURSEMENT_POLICIES
+
+  7.2 Petty Cash
+    User Fields: 14
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 14465 bytes
+    Mandatory: transaction_number,transaction_date,currency_id,currency_rate,originator,party_id,party_name,party_email,party_phone,doc_ref_no,doc_ref_date,due_date
+    Insert Option: COM_INSERT_PETTY_CASH
+
+  7.3 Petty Cash Boxes
+    User Fields: 10
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 13961 bytes
+    Mandatory: pc_box_code,pc_box_description,gl_account_assignment,gl_account_pc_cash,topup_start_date,topup_frequency,topup_amount,mapping_code
+    Insert Option: COM_INSERT_PETTY_CASH_BOXES
+
+  7.4 Budget
+    User Fields: 18
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 17340 bytes
+    Mandatory: cost_center_id,account_code,fiscal_year,distribution_m1,distribution_m2,distribution_m3,distribution_m4,distribution_m5,distribution_m6,distribution_m7,distribution_m8,distribution_m9,distribution_m10,distribution_m11,distribution_m12,distribution_tot
+    Insert Option: COM_INSERT_BUDGET

@@ -1,0 +1,40 @@
+# Task: Build the Evidenced Reference ERP Function Inventory
+
+## Objective
+Produce ONE authoritative, machine-readable inventory that answers: for every single function of a reference ERP application: does it exist in our product, where, and is it real?
+
+## Step 0 - Preserve the Reference (MANDATORY)
+- [ ] Check if reference URL https://x1mw26zqhcr1-d.space-z.io is reachable
+- [ ] Crawl with headless browser (Next.js client-rendered app)
+- [ ] Save all routes, JS chunks, JSON, OpenAPI schemas
+- [ ] Commit snapshot to repo with file/byte counts
+
+## Step 1 - Enumerate Reference Surface
+- [ ] Extract functions from snapshot into YAML
+- [ ] Each row: id, module, name, kind, evidence
+
+## Step 2 - Enumerate Our Product
+- [ ] Extract from three repos: routes, pages, DB tables, reports, jobs
+- [ ] Use read-only DB tooling
+
+## Step 3 - Build Gap Matrix
+- [ ] Join reference to our product
+- [ ] Status: PRESENT_REAL, PRESENT_STUB, PRESENT_PARTIAL, DUPLICATE, MISSING, UNVERIFIABLE
+- [ ] Every non-MISSING: code proof + API proof + DB proof
+
+## Step 4 - Register Child Work Items
+- [ ] Register work per module
+- [ ] Honest complexity assessment
+
+## Completed
+- [x] Created progress tracking
+
+## Remaining
+- [ ] Verify reference URL reachability
+- [ ] Crawl reference application
+- [ ] Create snapshot
+- [ ] Extract reference functions
+- [ ] Enumerate our product
+- [ ] Build gap matrix
+- [ ] Register child work items
+- [ ] Final audit and reporting

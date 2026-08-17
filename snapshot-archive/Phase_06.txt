@@ -1,0 +1,445 @@
+================================================================================
+PHASE 6: REQUISITIONS & PROCUREMENT WORKFLOW - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the Requisitions module and its role in the procurement workflow,
+scraped from the live application.
+
+---
+1. APPLICATION ARCHITECTURE (CODE LEVEL)
+---
+
+1.1 Technology Stack
+  - Backend: PHP (server-rendered, no REST framework)
+  - Frontend: jQuery + Bootstrap 4 + DataTables + Select2
+  - Database: MySQL (inferred from PHP/LAMP stack)
+  - Session: PHP sessions (PHPSESSID cookie)
+  - Routing: Single entry point (index.php) with option-based routing
+
+1.2 Module Overview
+  The Requisitions module is the starting point of the procurement
+  workflow chain:
+    Requisition --> Quotation --> Purchase Order --> Purchase Invoice
+
+  Insert Option: COM_INSERT_REQUISITIONS
+  Table: requisitions
+  has_line_items: False (line items loaded dynamically via AJAX)
+
+1.3 Routing Convention
+  COM_LIST_REQUISITIONS    -> List/view page with status tabs
+  COM_INSERT_REQUISITIONS  -> Insert form
+  COM_UPDATE_REQUISITIONS  -> Update form
+  COM_VIEW_REQUISITIONS    -> Detail/view page
+
+---
+2. DATABASE SCHEMA - REQUISITIONS
+---
+
+2.1 Table: requisitions (Header)
+
+  CREATE TABLE requisitions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(50),
+      -- Auto-generated or manual reference number
+    transaction_date DATE,
+      -- Date of requisition creation
+    opex_cpex TINYINT DEFAULT 0,
+      -- 0=OPEX (Operational Expense)
+      -- 1=CAPEX (Capital Expense)
+      -- Drives budget/cost center classification
+    currency_rate DECIMAL(15,6) DEFAULT 1,
+      -- Exchange rate if foreign currency used
+    doc_ref_no VARCHAR(100),
+      -- External document reference number
+    doc_ref_date DATE,
+      -- External document reference date
+    ref_type VARCHAR(50) DEFAULT NULL,
+      -- FK to source document type:
+      -- 'enquiries' or 'estimates'
+    ref_id INT DEFAULT 0,
+      -- FK to source document's ID
+    type VARCHAR(50),
+      -- Requisition classification:
+      -- 'RURAL REQUIREMENT'
+      -- 'URBAN REQUIREMENT'
+      -- 'HO REQUIREMENTS'
+      -- 'PROJECT REQUIREMENTS'
+      -- (only 4 options scraped; 5th likely 'STOCK REQUIREMENT')
+    originator VARCHAR(50) DEFAULT 'ADMIN',
+      -- Who initiated the requisition (role-based)
+      -- Scraped value: 'ADMIN' (single option)
+    cost_center_id INT DEFAULT 0,
+      -- FK to cost_centers.id
+    currency_id INT DEFAULT 0,
+      -- FK to currencies.id
+    place_of_supply VARCHAR(100),
+      -- Location/state for GST calculation
+    originator_currency_id INT DEFAULT 0,
+      -- Hidden: cached currency of the originating entity
+    originator_state_id INT DEFAULT 0,
+      -- Hidden: state of the requisitioner's location
+      -- Used for intra-state vs inter-state GST determination
+    supplier_state_id INT DEFAULT 0,
+      -- Hidden: state of the vendor (set after vendor selection)
+    status TINYINT DEFAULT 0,
+      -- Workflow status (0=Draft, see Section 4.3)
+    created_by INT DEFAULT 0,
+      -- FK to users.id
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  in_date_pic = 'transaction_date,doc_ref_date'
+    -- Fields that render with date picker UI
+
+2.2 Table: requisition_items (Line Items - Inferred)
+
+  CREATE TABLE requisition_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    requisition_id INT NOT NULL,
+      -- FK to requisitions.id
+    seq INT DEFAULT 0,
+      -- Line item sequence number
+    item_id INT DEFAULT 0,
+      -- FK to items.id
+    item_description TEXT,
+    quantity DECIMAL(15,2) DEFAULT 0,
+    uom_id INT DEFAULT 0,
+      -- FK to unit_of_measurements.id
+    estimated_unit_price DECIMAL(15,2) DEFAULT 0,
+    estimated_total DECIMAL(15,2) DEFAULT 0,
+    hsn_sac_code_id INT DEFAULT 0,
+      -- FK to hsn_and_sac_codes.id
+    gst_rate DECIMAL(5,2) DEFAULT 0,
+    gst_amount DECIMAL(15,2) DEFAULT 0,
+    total_amount DECIMAL(15,2) DEFAULT 0,
+      -- quantity * estimated_unit_price + gst_amount
+    remarks TEXT,
+    required_by_date DATE,
+    status TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  requisitions.cost_center_id        -->  cost_centers.id
+  requisitions.currency_id          -->  currencies.id
+  requisitions.ref_id                -->  enquiries.id OR estimates.id
+    (based on ref_type value)
+  requisition_items.requisition_id  -->  requisitions.id
+  requisition_items.item_id         -->  items.id
+  requisition_items.uom_id          -->  unit_of_measurements.id
+  requisition_items.hsn_sac_code_id -->  hsn_and_sac_codes.id
+
+  ER Diagram (text):
+  +-------------+     +-------------------+
+  |  enquiries  |     |  requisitions     |
+  |  estimates  | *-1 |  -transaction_no  |
+  +-------------+     |  -opex_cpex       |
+                      |  -ref_type        |
+                      |  -ref_id (FK)     |
+                      |  -cost_center_id  |
+                      |  -currency_id     |
+                      +---------+---------+
+                                | 1
+                                | *
+                      +---------+---------+
+                      | requisition_items |
+                      | -item_id (FK)    |
+                      | -quantity         |
+                      | -estimated_price  |
+                      +-------------------+
+                                | *
+                      +---------+---------+
+                      |       items       |
+                      +-------------------+
+
+---
+4. BUSINESS RULES
+---
+
+4.1 OPEX/CAPEX Classification
+  Every requisition must be classified as either:
+  - OPEX (value=0): Operational expenses, recurring costs
+  - CAPEX (value=1): Capital expenses, asset purchases
+  This classification flows through to Quotations, POs, and
+  Invoices. It drives budget allocation and approval routing
+  (CAPEX typically requires higher-level approval).
+
+4.2 Requisition Type Categories
+  The type field classifies requisitions by organizational scope:
+  - RURAL REQUIREMENT: Field/rural operations procurement
+  - URBAN REQUIREMENT: Urban/office operations procurement
+  - HO REQUIREMENTS: Head office centralized procurement
+  - PROJECT REQUIREMENTS: Project-specific procurement
+  (A 5th type likely exists - possibly 'STOCK REQUIREMENT'
+  for replenishment-based requisitions)
+
+4.3 Workflow States (Inferred)
+  Requisitions follow a document lifecycle:
+  0. Draft (status=2) -> Initial creation, editable
+  1. Pending Approval (status=0) -> Submitted for review
+  2. Approved (status=3) -> Ready for quotation generation
+  3. Rejected (status=4) -> Returned to originator
+  4. Closed (status=1) -> No further action needed
+
+  Status transitions use the generic workflow engine:
+  - submitDynamicWorkflow() for direct status changes
+  - submitDynamicWorkflowPopUp() for changes requiring input
+  - displaystausdrop() loads available transitions via AJAX
+
+4.4 Reference Document Linking
+  Requisitions can be created from two source document types:
+  - Enquiries (ref_type='enquiries'): Pre-procurement inquiry
+  - Estimates (ref_type='estimates'): Cost estimate reference
+  When ref_type is set, the ref_id dropdown is populated via
+  AJAX with documents of that type. Line items may be copied
+  from the reference document.
+
+4.5 Currency Handling
+  - currency_id selects the transaction currency
+  - currency_rate provides the conversion rate to base currency
+  - originator_currency_id (hidden) caches the originator's
+    default currency for backend calculations
+  - All amounts in the requisition are in the selected currency
+  - The system converts to base currency for reporting
+
+4.6 Place of Supply (GST)
+  The place_of_supply field determines GST applicability:
+  - If place_of_supply state = originator_state_id: Intra-state
+    (CGST + SGST, each at half the GST rate)
+  - If place_of_supply state != originator_state_id: Inter-state
+    (IGST at full GST rate)
+  The hidden originator_state_id is populated when the form
+  loads based on the user's location.
+
+4.7 Procurement Workflow Chain
+  The complete procurement chain is:
+  1. REQUISITION: Internal demand document
+     - No vendor/party assignment
+     - Has estimated pricing
+     - Requires internal approval
+  2. QUOTATION: Vendor response to requisition
+     - Links to requisition via ref_type='requisitions'
+     - Assigns party_id (vendor)
+     - Has quoted pricing
+  3. PURCHASE ORDER: Binding order to vendor
+     - Links to requisition OR quotation
+     - Assigns party_id (vendor)
+     - Has payment terms
+  4. PURCHASE INVOICE: Vendor's invoice against PO
+     - Links to purchase order via ref_id
+     - May link to GRN (Goods Receipt Note) via ref_no
+
+---
+5. API ENDPOINT CATALOG
+---
+
+5.1 List/Filter API
+  POST /views/custon_list_dynamic_table.php
+  Params: option, table=requisitions, status, filterajax,
+          current_page, limit_select, filter_text,
+          filter_dynamic_select
+  Response: HTML table with pagination
+
+5.2 Insert Form Render
+  POST /views/new_from.php?option=COM_INSERT_REQUISITIONS
+  Response: HTML form with header fields + line item table
+
+5.3 Insert/Update Form Submit
+  POST /index.php (multipart/form-data)
+  All header fields + line item array fields + hidden framework fields
+
+5.4 Status Workflow
+  POST /ajax.php?page=submitstatusdynamicworkflow
+  Params: table_name=requisitions, current_status,
+          transaction_id, next_status
+  Response: JSON {transaction_update:{status,message}}
+
+5.5 Status Dropdown (Available Transitions)
+  POST /ajax.php?page=current_status_drop_table
+  Params: id, current_status, table=requisitions
+  Response: HTML <select> with available next statuses
+  Called by displaystausdrop() function.
+
+5.6 Status Popup (with mandatory check)
+  POST /views/custom_insert_dynamic_status_popup.php
+  Params: table_name=requisitions, current_status,
+          transaction_id, next_status
+  Response: HTML modal with comment/approval fields
+
+5.7 Reference Document Loading
+  POST /ajax.php (inferred, page=loadreferencedocument)
+  Params: ref_type, ref_id
+  Response: JSON with reference document header + line items
+  Populates the form when user selects a reference document.
+
+5.8 Cost Center / Currency Cascading
+  POST /ajax.php (inferred)
+  Params: depends on trigger field
+  When cost_center_id changes, may load associated defaults.
+  When currency_id changes, may update currency_rate.
+
+---
+6. SOURCE CODE PATTERNS
+---
+
+6.1 Dynamic Status Dropdown (custom_insert.php)
+  function displaystausdrop(id, table, status_id, tab) {
+    $.ajax({
+      url: "ajax.php",
+      data: 'page=current_status_drop_table&id=' + id
+        + '&current_status=' + status_id
+        + '&table=' + table,
+      type: "POST",
+      success: function(data) {
+        $("#dropdownlist_" + tab + "_" + id).html(data);
+      }
+    });
+  }
+
+  Each row in the requisition list has a dropdown for status
+  change. The dropdown is loaded on-demand via this function.
+  The 'tab' parameter supports multiple status columns in
+  different tabs (e.g., 'pending', 'approved', 'rejected').
+
+6.2 Workflow Submission with Confirmation (custom.js)
+  function submitDynamicWorkflow(table_name, transaction_id,
+      current_status, next_status, old_status_name, new_status_name) {
+    var session_config_json = JSON.parse(
+      $("#session_config_json").val());
+    if (validate == 0) {
+      swal({
+        title: session_config_json.name,
+        text: "Please note the status of the document will change to "
+          + new_status_name,
+        type: "info",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+        closeOnConfirm: false
+      }, function() {
+        jQuery.ajax({
+          url: "ajax.php",
+          data: 'page=submitstatusdynamicworkflow&table_name='
+            + table_name + '&current_status=' + current_status
+            + '&transaction_id=' + transaction_id
+            + '&next_status=' + next_status,
+          type: "POST",
+          success: function(response) {
+            var res = JSON.parse(response);
+            if (res.transaction_update.status == 'sucess') {
+              // Reload page on success
+              window.location.href = window.location.href;
+            } else {
+              // Show error from server
+              swal("Oops...", res.transaction_update.message, "error");
+            }
+          }
+        });
+      });
+    }
+  }
+
+  Key observations:
+  - Uses SweetAlert for confirmation dialog
+  - Reads application name from session_config_json
+  - Server response 'sucess' (sic) - typo in backend
+  - Page reloads on successful status change
+  - Error messages from server are shown in alert
+
+6.3 Workflow with Popup Form (custom.js)
+  function submitDynamicWorkflowPopUp(table_name, transaction_id,
+      current_status, next_status) {
+    // Validates mandatory fields via checkMandatoryArray()
+    var validate = 0;
+    if (typeof checkMandatoryArray === "function") {
+      validate = checkMandatoryArray();
+    }
+    if (validate == 0) {
+      // Load modal with form fields for this transition
+      jQuery.ajax({
+        url: "views/custom_insert_dynamic_status_popup.php",
+        data: 'table_name=' + table_name
+          + '&current_status=' + current_status
+          + '&transaction_id=' + transaction_id
+          + '&next_status=' + next_status,
+        type: "POST",
+        success: function(data) {
+          $('#popup1').html(data);
+          $('#kt_modal_KTDatatable_remote').modal("show");
+        }
+      });
+    }
+  }
+
+  Some status transitions require additional input (comments,
+  approval notes, document uploads). These use a popup modal
+  instead of direct submission. The checkMandatoryArray() is
+  defined per-page and validates transaction-specific fields.
+
+6.4 Approved Page Tab Loading (custom_insert.php)
+  function openApprovedPage(table, clone) {
+    var loader = '<div class="text-center"><img src="assets/images/spiner/'
+      + 'spiner3.gif" style="width: 300px;"></div>';
+    $("#tabsopen").html(loader);
+    jQuery.ajax({
+      url: "views/custom_list_approved_table.php",
+      data: 'table=' + table + '&clone=' + clone + '&ajaxpage=Y',
+      type: "POST",
+      success: function(data) {
+        $('#tabsopen').html(data);
+        $(".js-example-basic-single").select2();
+        $(".datepicker").datepicker({
+          showOn: "both",
+          buttonText: "<i class='ti-calendar text-dark f-20'></i>",
+          dateFormat: date_format,
+          yearRange: "-60:+10",
+          changeMonth: true,
+          changeYear: true
+        });
+      }
+    });
+  }
+
+  Loads the 'approved' tab content for a transaction table.
+  The 'clone' parameter likely enables a 'Create from Approved'
+  workflow. After loading, initializes Select2 dropdowns and
+  jQuery UI datepickers.
+
+6.5 Date Format Global Variable
+  The date_format variable (used in getDateWithFormat() and
+  datepicker initialization) is a global JS variable set by
+  the PHP backend based on user/org preferences. Requisition
+  form dates (transaction_date, doc_ref_date) use this format.
+
+---
+7. INFERRED SYSTEM/METADATA TABLES
+---
+
+  7.1 requisition_approvals - Approval workflow records
+      Columns: id, requisition_id, approver_user_id,
+               from_status, to_status, comments,
+               approval_date, status
+      Tracks each approval step in the requisition lifecycle.
+
+  7.2 requisition_history - Full audit trail
+      Columns: id, requisition_id, action, field_name,
+               old_value, new_value, changed_by, changed_at
+      Every field change on header and line items is logged.
+
+  7.3 workflow_definitions - Status transition rules
+      Columns: id, table_name, from_status, to_status,
+               requires_popup, popup_fields_json,
+               allowed_roles, is_active
+      Defines which status transitions are valid for
+      requisitions and what additional fields they require.
+
+  7.4 document_number_sequences - Auto-numbering
+      Columns: id, table_name, prefix, current_number,
+               padding_length, financial_year
+      Controls transaction_number auto-generation format.

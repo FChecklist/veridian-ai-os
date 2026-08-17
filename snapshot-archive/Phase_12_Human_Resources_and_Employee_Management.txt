@@ -1,0 +1,1102 @@
+================================================================================
+PHASE 12: HUMAN RESOURCES & EMPLOYEE MANAGEMENT - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the Human Resources & Employee Management modules, scraped from the live application.
+
+Phase Description: Employee master data, organizational structure, job architecture, and demographic classifications.
+
+Modules Covered: 21
+  - employees [SCRAPE]
+  - employee_filter [NO FORM]
+  - employee_loans [SCRAPE]
+  - designations [SCRAPE]
+  - employment_bands [SCRAPE]
+  - employment_roles [SCRAPE]
+  - employment_statuses [SCRAPE]
+  - blood_groups [SCRAPE]
+  - marital_statuses [SCRAPE]
+  - nationalities [SCRAPE]
+  - races [SCRAPE]
+  - relations [SCRAPE]
+  - religions [SCRAPE]
+  - skills [SCRAPE]
+  - qualification_levels [SCRAPE]
+  - verticals [SCRAPE]
+  - competencies [SCRAPE]
+  - job_titles [SCRAPE]
+  - job_categories [SCRAPE]
+  - job_descrptions [SCRAPE]
+  - job_descrption_categories [SCRAPE]
+
+---
+1. APPLICATION ARCHITECTURE (SHARED)
+---
+
+  1.1 Routing Convention
+    COM_LIST_XXX     -> List/view page (DataTables)
+    COM_INSERT_XXX   -> Insert form (POST to /views/new_from.php)
+    COM_UPDATE_XXX   -> Update form
+    COM_VIEW_XXX    -> View/detail/report page
+
+  1.2 AJAX Endpoints
+    POST /ajax.php?page=submitstatusdynamicworkflow
+    POST /ajax.php?page=updatedynamicfied
+    POST /ajax.php?page=setdynamichelptext
+    POST /ajax.php?page=getstockbalanceavailability
+    POST /views/custon_list_dynamic_table.php
+    POST /views/new_from.php?option=COM_INSERT_XXX
+
+  1.3 Standard Hidden Fields (in every form)
+    option, table_name, duplicate_table_name,
+    in_date_pic, in_currency_fileds, in_phone_fileds,
+    mandatory_str, add_mandatory_str, notification_users,
+    notification_message, status, from_date, to_date
+
+---
+2. DATABASE SCHEMAS
+---
+
+  2.1 Table: employees
+    Module: Employees
+    Insert Option: COM_INSERT_EMPLOYEES
+    Form Fields: 28 user-visible, 42 total
+    Mandatory columns: emp_code,designation_id,first_name,middle_name,last_name,display_name,employee_type,email_id,address,post_code,gender,phone,date_of_birth,adhar_no,passport,passport_issue_date,passport_expiry_date,joining_date,total_experiance,employee_experiances,employee_qualifications,pf_uan,old_ref_no,job_grade_id
+
+  CREATE TABLE employees (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    emp_code VARCHAR(50),
+    email_id VARCHAR(255),
+    first_name VARCHAR(255),
+    middle_name VARCHAR(255),
+    last_name VARCHAR(255),
+    display_name VARCHAR(255),
+    phone VARCHAR(20),
+    post_code VARCHAR(50),
+    total_experiance VARCHAR(255),
+    date_of_birth VARCHAR(255),
+    gender VARCHAR(255),
+    gender VARCHAR(255),
+    gender VARCHAR(255),
+    joining_date VARCHAR(255),
+    adhar_no VARCHAR(255),
+    passport VARCHAR(255),
+    passport_issue_date VARCHAR(255),
+    passport_expiry_date VARCHAR(255),
+    pf_uan VARCHAR(255),
+    old_ref_no VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    designation_id INT  -- (FK dropdown),
+    employee_type INT  -- (FK dropdown),
+    job_grade_id INT  -- (FK dropdown),
+    address TEXT,
+    employee_experiances TEXT,
+    employee_qualifications TEXT,
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      emp_code                                 text        
+      email_id                                 text        
+      first_name                               text        
+      middle_name                              text        
+      last_name                                text        
+      display_name                             text        
+      phone                                    text        
+      post_code                                text        
+      total_experiance                         text        
+      date_of_birth                            text        
+      gender                                   radio       
+      gender                                   radio       
+      gender                                   radio       
+      joining_date                             text        
+      adhar_no                                 text        
+      passport                                 text        
+      passport_issue_date                      text        
+      passport_expiry_date                     text        
+      pf_uan                                   text        
+      old_ref_no                               text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      designation_id                           select      
+      employee_type                            select      
+      job_grade_id                             select      
+      address                                  textarea    
+      employee_experiances                     textarea    
+      employee_qualifications                  textarea    
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=date_of_birth,joining_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=emp_code,designation_id,first_name,middle_name,las
+      add_mandatory_str                        hidden       value=
+
+  2.2 Table: employee_filter
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.3 Table: employee_loans
+    Module: Employee Loans
+    Insert Option: COM_INSERT_EMPLOYEE_LOANS
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE employee_loans (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+  2.4 Table: designations
+    Module: Designations
+    Insert Option: COM_INSERT_DESIGNATIONS
+    Form Fields: 3 user-visible, 17 total
+    Mandatory columns: designation_name
+
+  CREATE TABLE designations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    designation_name VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      designation_name                         text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=designation_name
+      add_mandatory_str                        hidden       value=
+
+  2.5 Table: employment_bands
+    Module: Employment Bands
+    Insert Option: COM_INSERT_EMPLOYMENT_BANDS
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: band_name,band_description
+
+  CREATE TABLE employment_bands (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    band_name VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    band_description TEXT,
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      band_name                                text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      band_description                         textarea    
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=band_name,band_description
+      add_mandatory_str                        hidden       value=
+
+  2.6 Table: employment_roles
+    Module: Employment Roles
+    Insert Option: COM_INSERT_EMPLOYMENT_ROLES
+    Form Fields: 5 user-visible, 19 total
+    Mandatory columns: role_name,reports_to_role,role_description
+
+  CREATE TABLE employment_roles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    role_name VARCHAR(255),
+    reports_to_role VARCHAR(255),
+    role_description VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      role_name                                text        
+      reports_to_role                          text        
+      role_description                         text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=role_name,reports_to_role,role_description
+      add_mandatory_str                        hidden       value=
+
+  2.7 Table: employment_statuses
+    Module: Employment Statuses
+    Insert Option: COM_INSERT_EMPLOYMENT_STATUSES
+    Form Fields: 3 user-visible, 17 total
+    Mandatory columns: employment_status_name
+
+  CREATE TABLE employment_statuses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employment_status_name VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      employment_status_name                   text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=employment_status_name
+      add_mandatory_str                        hidden       value=
+
+  2.8 Table: blood_groups
+    Module: Blood Groups
+    Insert Option: COM_INSERT_BLOOD_GROUPS
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: blood_group,group_desc
+
+  CREATE TABLE blood_groups (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    blood_group VARCHAR(255),
+    group_desc VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      blood_group                              text        
+      group_desc                               text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=blood_group,group_desc
+      add_mandatory_str                        hidden       value=
+
+  2.9 Table: marital_statuses
+    Module: Marital Statuses
+    Insert Option: COM_INSERT_MARITAL_STATUSES
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: marital_status_name,status_description
+
+  CREATE TABLE marital_statuses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    marital_status_name VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status_description TEXT,
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      marital_status_name                      text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      status_description                       textarea    
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=marital_status_name,status_description
+      add_mandatory_str                        hidden       value=
+
+  2.10 Table: nationalities
+    Module: Nationalities
+    Insert Option: COM_INSERT_NATIONALITIES
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: nationality_name,nationality_description
+
+  CREATE TABLE nationalities (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nationality_name VARCHAR(255),
+    nationality_description VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      nationality_name                         text        
+      nationality_description                  text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=nationality_name,nationality_description
+      add_mandatory_str                        hidden       value=
+
+  2.11 Table: races
+    Module: Races
+    Insert Option: COM_INSERT_RACES
+    Form Fields: 5 user-visible, 19 total
+    Mandatory columns: race_code,race_name,description
+
+  CREATE TABLE races (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    race_code VARCHAR(50),
+    race_name VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    description TEXT,
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      race_code                                text        
+      race_name                                text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      description                              textarea    
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=race_code,race_name,description
+      add_mandatory_str                        hidden       value=
+
+  2.12 Table: relations
+    Module: Relations
+    Insert Option: COM_INSERT_RELATIONS
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: relation_name,relation_description
+
+  CREATE TABLE relations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    relation_name VARCHAR(255),
+    relation_description VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      relation_name                            text        
+      relation_description                     text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=relation_name,relation_description
+      add_mandatory_str                        hidden       value=
+
+  2.13 Table: religions
+    Module: Religions
+    Insert Option: COM_INSERT_RELIGIONS
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: religion_name,religion_description
+
+  CREATE TABLE religions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    religion_name VARCHAR(255),
+    religion_description VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      religion_name                            text        
+      religion_description                     text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=religion_name,religion_description
+      add_mandatory_str                        hidden       value=
+
+  2.14 Table: skills
+    Module: Skills
+    Insert Option: COM_INSERT_SKILLS
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE skills (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+  2.15 Table: qualification_levels
+    Module: Qualification Levels
+    Insert Option: COM_INSERT_QUALIFICATION_LEVELS
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: level_name,level_description
+
+  CREATE TABLE qualification_levels (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    level_name VARCHAR(255),
+    level_description VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      level_name                               text        
+      level_description                        text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=level_name,level_description
+      add_mandatory_str                        hidden       value=
+
+  2.16 Table: verticals
+    Module: Verticals
+    Insert Option: COM_INSERT_VERTICALS
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: vertical_name,vertical_description
+
+  CREATE TABLE verticals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    vertical_name VARCHAR(255),
+    vertical_description VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      vertical_name                            text        
+      vertical_description                     text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=vertical_name,vertical_description
+      add_mandatory_str                        hidden       value=
+
+  2.17 Table: competencies
+    Module: Competencies
+    Insert Option: COM_INSERT_COMPETENCIES
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: competency_name,remarks
+
+  CREATE TABLE competencies (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    competency_name VARCHAR(255),
+    remarks VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      competency_name                          text        
+      remarks                                  text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=competency_name,remarks
+      add_mandatory_str                        hidden       value=
+
+  2.18 Table: job_titles
+    Module: Job Titles
+    Insert Option: COM_INSERT_JOB_TITLES
+    Form Fields: 7 user-visible, 21 total
+    Mandatory columns: job_category_id,job_title,job_description,note
+
+  CREATE TABLE job_titles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    job_title VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    job_category_id INT  -- (FK dropdown),
+    note TEXT,
+    job_description TEXT,
+    job_description TEXT,
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      job_title                                text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      job_category_id                          select      
+      note                                     textarea    
+      job_description                          textarea    
+      job_description                          textarea    
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=job_category_id,job_title,job_description,note
+      add_mandatory_str                        hidden       value=
+
+  2.19 Table: job_categories
+    Module: Job Categories
+    Insert Option: COM_INSERT_JOB_CATEGORIES
+    Form Fields: 3 user-visible, 17 total
+    Mandatory columns: category_name
+
+  CREATE TABLE job_categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category_name VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      category_name                            text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=category_name
+      add_mandatory_str                        hidden       value=
+
+  2.20 Table: job_descrptions
+    Module: Job Descrptions
+    Insert Option: COM_INSERT_JOB_DESCRPTIONS
+    Form Fields: 6 user-visible, 20 total
+    Mandatory columns: job_category_id,job_description_category_id,description
+
+  CREATE TABLE job_descrptions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    job_category_id INT  -- (FK dropdown),
+    job_description_category_id INT  -- (FK dropdown),
+    description TEXT,
+    description TEXT,
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      job_category_id                          select      
+      job_description_category_id              select      
+      description                              textarea    
+      description                              textarea    
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=job_category_id,job_description_category_id,descri
+      add_mandatory_str                        hidden       value=
+
+  2.21 Table: job_descrption_categories
+    Module: Job Descrption Categories
+    Insert Option: COM_INSERT_JOB_DESCRPTION_CATEGORIES
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: name,description
+
+  CREATE TABLE job_descrption_categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    description VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      name                                     text        
+      description                              text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=name,description
+      add_mandatory_str                        hidden       value=
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  employees.designation_id  -->  designations.id
+  employees.employee_type  -->  employee_type_lookup.id
+  employees.job_grade_id  -->  job_grades.id
+  job_titles.job_category_id  -->  job_categorys.id
+  job_descrptions.job_category_id  -->  job_categorys.id
+  job_descrptions.job_description_category_id  -->  job_description_categorys.id
+
+  ER Summary:
+  Tables: 8
+  Relationships: 6
+
+---
+4. BUSINESS RULES
+---
+
+  4.1 Effective Dating (all modules)
+    Every record has from_date/to_date. Records are valid
+    only within this range. from_date is mandatory.
+
+  4.2 Soft Delete / Status (all modules)
+    status=0 Active, status=1 Inactive, status=2 Draft
+    Records are never physically deleted. Status changes go
+    through the workflow API (submitstatusdynamicworkflow).
+
+  4.3 Module-Specific Rules
+    4.3.1 Employees
+      Mandatory fields: emp_code, designation_id, first_name, middle_name, last_name, display_name, employee_type, email_id, address, post_code, gender, phone, date_of_birth, adhar_no, passport, passport_issue_date, passport_expiry_date, joining_date, total_experiance, employee_experiances, employee_qualifications, pf_uan, old_ref_no, job_grade_id
+
+    4.3.2 Employees
+      Has 3 foreign key dropdown fields
+
+    4.3.3 Employees
+      Has 6 date fields (effective dating + business dates)
+
+    4.3.4 Employees
+      Complex form with 28 user fields
+
+    4.3.5 Designations
+      Mandatory fields: designation_name
+
+    4.3.6 Employment Bands
+      Mandatory fields: band_name, band_description
+
+    4.3.7 Employment Roles
+      Mandatory fields: role_name, reports_to_role, role_description
+
+    4.3.8 Employment Statuses
+      Mandatory fields: employment_status_name
+
+    4.3.9 Blood Groups
+      Mandatory fields: blood_group, group_desc
+
+    4.3.10 Marital Statuses
+      Mandatory fields: marital_status_name, status_description
+
+    4.3.11 Nationalities
+      Mandatory fields: nationality_name, nationality_description
+
+    4.3.12 Races
+      Mandatory fields: race_code, race_name, description
+
+    4.3.13 Relations
+      Mandatory fields: relation_name, relation_description
+
+    4.3.14 Religions
+      Mandatory fields: religion_name, religion_description
+
+    4.3.15 Qualification Levels
+      Mandatory fields: level_name, level_description
+
+    4.3.16 Verticals
+      Mandatory fields: vertical_name, vertical_description
+
+    4.3.17 Competencies
+      Mandatory fields: competency_name, remarks
+
+    4.3.18 Job Titles
+      Mandatory fields: job_category_id, job_title, job_description, note
+
+    4.3.19 Job Titles
+      Has 1 foreign key dropdown fields
+
+    4.3.20 Job Categories
+      Mandatory fields: category_name
+
+    4.3.21 Job Descrptions
+      Mandatory fields: job_category_id, job_description_category_id, description
+
+    4.3.22 Job Descrptions
+      Has 2 foreign key dropdown fields
+
+    4.3.23 Job Descrption Categories
+      Mandatory fields: name, description
+
+---
+5. API ENDPOINTS
+---
+
+  5.1 Standard CRUD APIs (shared across all modules)
+    POST /views/new_from.php?option=COM_INSERT_XXX
+      Renders insert form HTML
+    POST /index.php
+      Form submit (multipart/form-data)
+    POST /views/custon_list_dynamic_table.php
+      List data with pagination, filtering
+      Params: option, table, status, filter_text,
+              current_page, limit_select
+
+  5.2 Workflow APIs
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Status transitions (Draft->Pending->Approved)
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Params: table_name, current_status, transaction_id,
+              next_status
+
+  5.3 Module-Specific API Routes
+    COM_INSERT_EMPLOYEES  -> Insert employees
+    COM_LIST_EMPLOYEES -> List employees
+    COM_INSERT_EMPLOYEE_LOANS  -> Insert employee_loans
+    COM_LIST_EMPLOYEE_LOANS -> List employee_loans
+    COM_INSERT_DESIGNATIONS  -> Insert designations
+    COM_LIST_DESIGNATIONS -> List designations
+    COM_INSERT_EMPLOYMENT_BANDS  -> Insert employment_bands
+    COM_LIST_EMPLOYMENT_BANDS -> List employment_bands
+    COM_INSERT_EMPLOYMENT_ROLES  -> Insert employment_roles
+    COM_LIST_EMPLOYMENT_ROLES -> List employment_roles
+    COM_INSERT_EMPLOYMENT_STATUSES  -> Insert employment_statuses
+    COM_LIST_EMPLOYMENT_STATUSES -> List employment_statuses
+    COM_INSERT_BLOOD_GROUPS  -> Insert blood_groups
+    COM_LIST_BLOOD_GROUPS -> List blood_groups
+    COM_INSERT_MARITAL_STATUSES  -> Insert marital_statuses
+    COM_LIST_MARITAL_STATUSES -> List marital_statuses
+    COM_INSERT_NATIONALITIES  -> Insert nationalities
+    COM_LIST_NATIONALITIES -> List nationalities
+    COM_INSERT_RACES  -> Insert races
+    COM_LIST_RACES -> List races
+    COM_INSERT_RELATIONS  -> Insert relations
+    COM_LIST_RELATIONS -> List relations
+    COM_INSERT_RELIGIONS  -> Insert religions
+    COM_LIST_RELIGIONS -> List religions
+    COM_INSERT_SKILLS  -> Insert skills
+    COM_LIST_SKILLS -> List skills
+    COM_INSERT_QUALIFICATION_LEVELS  -> Insert qualification_levels
+    COM_LIST_QUALIFICATION_LEVELS -> List qualification_levels
+    COM_INSERT_VERTICALS  -> Insert verticals
+    COM_LIST_VERTICALS -> List verticals
+    COM_INSERT_COMPETENCIES  -> Insert competencies
+    COM_LIST_COMPETENCIES -> List competencies
+    COM_INSERT_JOB_TITLES  -> Insert job_titles
+    COM_LIST_JOB_TITLES -> List job_titles
+    COM_INSERT_JOB_CATEGORIES  -> Insert job_categories
+    COM_LIST_JOB_CATEGORIES -> List job_categories
+    COM_INSERT_JOB_DESCRPTIONS  -> Insert job_descrptions
+    COM_LIST_JOB_DESCRPTIONS -> List job_descrptions
+    COM_INSERT_JOB_DESCRPTION_CATEGORIES  -> Insert job_descrption_categories
+    COM_LIST_JOB_DESCRPTION_CATEGORIES -> List job_descrption_categories
+
+---
+6. CODE-LEVEL PATTERNS
+---
+
+  6.1 Generic Form Pattern
+    All modules use views/new_from.php as the form renderer.
+    The form HTML includes:
+    - validateForm() JS function driven by mandatory_str
+    - select2 dropdowns for FK fields
+    - datepicker for date fields (jQuery UI)
+    - Bootstrap 4 form layout (card > card-body > form-group)
+
+  6.2 Hidden Metadata Pattern (every form)
+    - option: The COM_ route constant
+    - table_name: Physical DB table name
+    - duplicate_table_name: For duplicate checking
+    - in_date_pic: Array of date fields for datepicker init
+    - in_currency_fileds: Currency fields for formatting
+    - in_phone_fileds: Phone fields for validation
+    - mandatory_str: Comma-separated required fields
+    - notification_users: User IDs to notify on create
+    - notification_message: Notification template
+
+  6.3 DataTables Pattern (all list pages)
+    - Uses custom AJAX, not built-in server-side mode
+    - Supports CSV, Excel, PDF, Print export
+    - Column visibility toggle
+    - Status-based filtering
+    - Text search via filter_text parameter
+
+---
+7. MODULE-SPECIFIC DETAILS
+---
+
+  7.1 Employees
+    User Fields: 28
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 19176 bytes
+    Mandatory: emp_code,designation_id,first_name,middle_name,last_name,display_name,employee_type,email_id,address,post_code,gender,phone,date_of_birth,adhar_no,passport,passport_issue_date,passport_expiry_date,joining_date,total_experiance,employee_experiances,employee_qualifications,pf_uan,old_ref_no,job_grade_id
+    Insert Option: COM_INSERT_EMPLOYEES
+
+  7.2 Employee Loans
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10458 bytes
+    Insert Option: COM_INSERT_EMPLOYEE_LOANS
+
+  7.3 Designations
+    User Fields: 3
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10868 bytes
+    Mandatory: designation_name
+    Insert Option: COM_INSERT_DESIGNATIONS
+
+  7.4 Employment Bands
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11220 bytes
+    Mandatory: band_name,band_description
+    Insert Option: COM_INSERT_EMPLOYMENT_BANDS
+
+  7.5 Employment Roles
+    User Fields: 5
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11521 bytes
+    Mandatory: role_name,reports_to_role,role_description
+    Insert Option: COM_INSERT_EMPLOYMENT_ROLES
+
+  7.6 Employment Statuses
+    User Fields: 3
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10971 bytes
+    Mandatory: employment_status_name
+    Insert Option: COM_INSERT_EMPLOYMENT_STATUSES
+
+  7.7 Blood Groups
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11100 bytes
+    Mandatory: blood_group,group_desc
+    Insert Option: COM_INSERT_BLOOD_GROUPS
+
+  7.8 Marital Statuses
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11372 bytes
+    Mandatory: marital_status_name,status_description
+    Insert Option: COM_INSERT_MARITAL_STATUSES
+
+  7.9 Nationalities
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11304 bytes
+    Mandatory: nationality_name,nationality_description
+    Insert Option: COM_INSERT_NATIONALITIES
+
+  7.10 Races
+    User Fields: 5
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11566 bytes
+    Mandatory: race_code,race_name,description
+    Insert Option: COM_INSERT_RACES
+
+  7.11 Relations
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11225 bytes
+    Mandatory: relation_name,relation_description
+    Insert Option: COM_INSERT_RELATIONS
+
+  7.12 Religions
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11225 bytes
+    Mandatory: religion_name,religion_description
+    Insert Option: COM_INSERT_RELIGIONS
+
+  7.13 Skills
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10402 bytes
+    Insert Option: COM_INSERT_SKILLS
+
+  7.14 Qualification Levels
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11251 bytes
+    Mandatory: level_name,level_description
+    Insert Option: COM_INSERT_QUALIFICATION_LEVELS
+
+  7.15 Verticals
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11395 bytes
+    Mandatory: vertical_name,vertical_description
+    Insert Option: COM_INSERT_VERTICALS
+
+  7.16 Competencies
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11108 bytes
+    Mandatory: competency_name,remarks
+    Insert Option: COM_INSERT_COMPETENCIES
+
+  7.17 Job Titles
+    User Fields: 7
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 12731 bytes
+    Mandatory: job_category_id,job_title,job_description,note
+    Insert Option: COM_INSERT_JOB_TITLES
+
+  7.18 Job Categories
+    User Fields: 3
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10855 bytes
+    Mandatory: category_name
+    Insert Option: COM_INSERT_JOB_CATEGORIES
+
+  7.19 Job Descrptions
+    User Fields: 6
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 12553 bytes
+    Mandatory: job_category_id,job_description_category_id,description
+    Insert Option: COM_INSERT_JOB_DESCRPTIONS
+
+  7.20 Job Descrption Categories
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11143 bytes
+    Mandatory: name,description
+    Insert Option: COM_INSERT_JOB_DESCRPTION_CATEGORIES

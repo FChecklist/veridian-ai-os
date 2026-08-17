@@ -1,0 +1,623 @@
+================================================================================
+PHASE 8: INVOICING, PAYMENTS & FINANCIAL DOCUMENTS - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the financial document modules in the procurement cycle, scraped
+from the live application.
+
+---
+1. APPLICATION ARCHITECTURE (CODE LEVEL)
+---
+
+1.1 Technology Stack
+  - Backend: PHP (server-rendered, no REST framework)
+  - Frontend: jQuery + Bootstrap 4 + DataTables + Select2
+  - Database: MySQL (inferred from PHP/LAMP stack)
+  - Session: PHP sessions (PHPSESSID cookie)
+  - Routing: Single entry point (index.php) with option-based routing
+
+1.2 Module Overview
+  Five financial document modules form the accounting layer:
+  - purchase_invoices (COM_INSERT_PURCHASE_INVOICES)  Table: purchase_invoices
+  - payments         (COM_INSERT_PAYMENTS)               Table: payments
+  - debit_notes      (COM_INSERT_DEBIT_NOTES)            Table: debit_notes
+  - supplier_bills   (COM_INSERT_SUPPLIER_BILLS)         Table: supplier_bills
+  - credit_notes     (COM_INSERT_CREDIT_NOTES)           Table: credit_notes
+
+  All use has_line_items: False (line items loaded via AJAX).
+
+1.3 Document Lifecycle Chain
+
+  Supplier Bill (external) --> Purchase Invoice (internal record)
+  Purchase Invoice --> Payment (settlement)
+  Purchase Invoice --> Debit Note (return/adjustment)
+  Debit Note --> Credit Note (reversal of debit)
+
+  Inter-document reference chain:
+  PO (purchase_orders) --> PI (purchase_invoices) via ref_id
+  GRN (goods_receipt_notes) --> PI via ref_no
+  SB (supplier_bills) --> PI (inferred, supplier_bill_ref_id)
+  PI (purchase_invoices) --> Payment via ref_id
+
+1.4 Routing Convention
+  COM_LIST_PURCHASE_INVOICES  -> List/view
+  COM_INSERT_PURCHASE_INVOICES -> Insert
+  COM_LIST_PAYMENTS            -> List/view
+  COM_INSERT_PAYMENTS          -> Insert
+  COM_LIST_DEBIT_NOTES         -> List/view
+  COM_INSERT_DEBIT_NOTES       -> Insert
+  COM_LIST_SUPPLIER_BILLS      -> List/view
+  COM_INSERT_SUPPLIER_BILLS    -> Insert
+  COM_LIST_CREDIT_NOTES        -> List/view
+  COM_INSERT_CREDIT_NOTES      -> Insert
+
+---
+2. DATABASE SCHEMA
+---
+
+2.1 Table: purchase_invoices (Header)
+
+  CREATE TABLE purchase_invoices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ref_type VARCHAR(50),
+      -- Hidden field, empty value scraped
+      -- Likely: 'purchase_orders' (PI created from PO)
+    transaction_number VARCHAR(50),
+    transaction_date DATE,
+    opex_cpex TINYINT DEFAULT 0,
+    ref_date DATE,
+      -- Date of the reference PO
+    doc_ref_no VARCHAR(100),
+      -- Vendor's invoice number (external reference)
+    doc_ref_date DATE,
+      -- Vendor's invoice date
+    ref_id INT DEFAULT 0,
+      -- FK to purchase_orders.id (PO Reference No)
+    ref_no INT DEFAULT 0,
+      -- FK to goods_receipt_notes.id (GRN Ref No)
+      -- Links PI to the goods receipt
+    type VARCHAR(50),
+      -- 'RURAL REQUIREMENT' | 'URBAN REQUIREMENT'
+      -- 'HO REQUIREMENTS' | 'PROJECT REQUIREMENTS'
+    originator VARCHAR(50) DEFAULT 'ADMIN',
+    cost_center_id INT DEFAULT 0,
+      -- FK to cost_centers.id
+    party_id INT DEFAULT 0,
+      -- FK to vendors.id
+    payment_terms VARCHAR(50),
+    transaction_location_id INT DEFAULT 0,
+      -- Hidden: delivery/receiving location
+    transaction_warehouse_id INT DEFAULT 0,
+      -- Hidden: receiving warehouse
+    originator_state_id INT DEFAULT 0,
+      -- Hidden: buyer's state (GST)
+    supplier_state_id INT DEFAULT 0,
+      -- Hidden: vendor's state (GST)
+    total_amount DECIMAL(15,2) DEFAULT 0,
+      -- Inferred: sum of line item totals
+    gst_total DECIMAL(15,2) DEFAULT 0,
+      -- Inferred: total GST amount
+    grand_total DECIMAL(15,2) DEFAULT 0,
+      -- Inferred: total_amount + gst_total
+    status TINYINT DEFAULT 0,
+    created_by INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Key fields unique to purchase_invoices:
+  - ref_type: Hidden, determines source document type
+  - ref_date: Date from reference PO
+  - doc_ref_no/doc_ref_date: External vendor invoice reference
+  - ref_id: FK to purchase_orders (the PO being invoiced)
+  - ref_no: FK to goods_receipt_notes (GRN being invoiced)
+
+2.2 Table: purchase_invoice_items (Line Items - Inferred)
+
+  CREATE TABLE purchase_invoice_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    purchase_invoice_id INT NOT NULL,
+    seq INT DEFAULT 0,
+    item_id INT DEFAULT 0,
+    item_description TEXT,
+    quantity DECIMAL(15,2) DEFAULT 0,
+    uom_id INT DEFAULT 0,
+    unit_price DECIMAL(15,2) DEFAULT 0,
+    line_total DECIMAL(15,2) DEFAULT 0,
+    hsn_sac_code_id INT DEFAULT 0,
+    gst_rate DECIMAL(5,2) DEFAULT 0,
+    cgst_amount DECIMAL(15,2) DEFAULT 0,
+    sgst_amount DECIMAL(15,2) DEFAULT 0,
+    igst_amount DECIMAL(15,2) DEFAULT 0,
+    gst_amount DECIMAL(15,2) DEFAULT 0,
+    total_amount DECIMAL(15,2) DEFAULT 0,
+    po_item_id INT DEFAULT 0,
+      -- FK to purchase_order_items.id (traceability)
+    grn_item_id INT DEFAULT 0,
+      -- FK to grn_items.id (traceability)
+    remarks TEXT,
+    status TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+
+2.3 Table: payments
+
+  CREATE TABLE payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    payment_number VARCHAR(50),
+      -- Auto-generated payment reference
+    payment_date DATE,
+    ref_id INT DEFAULT 0,
+      -- FK to purchase_invoices.id or supplier_bills.id
+    ref_type VARCHAR(50),
+      -- 'purchase_invoices' | 'supplier_bills'
+    party_id INT DEFAULT 0,
+      -- FK to vendors.id
+    payment_amount DECIMAL(15,2) DEFAULT 0,
+    payment_method VARCHAR(50),
+      -- 'BANK_TRANSFER' | 'CASH' | 'CHEQUE' | 'UPI' etc.
+    bank_account_id INT DEFAULT 0,
+      -- FK to vendor_bank_details.id
+    reference_number VARCHAR(100),
+      -- Bank transaction reference / cheque number
+    from_date DATE NOT NULL,
+      -- Mandatory (scraped)
+    to_date DATE,
+    status TINYINT DEFAULT 0,
+    created_by INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Note: The payments form is extremely minimal (only from_date,
+  to_date visible). All payment-specific fields (amount, method,
+  bank account) are likely in a line-item or dynamic sub-form.
+  The hidden metadata shows:
+  - notification_users = 3
+  - notification_message = "New payments page has been created"
+  - duplicate_table_name = payments
+  This module appears to be configured for date-range-based
+  filtering rather than direct creation via the generic form.
+  Payments may be created from the PI or SB detail page.
+
+2.4 Table: debit_notes
+
+  CREATE TABLE debit_notes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(50),
+    transaction_date DATE,
+    ref_type VARCHAR(50),
+      -- Hidden field, empty value scraped
+      -- Likely: 'purchase_invoices'
+    opex_cpex TINYINT DEFAULT 0,
+    place_of_supply VARCHAR(100),
+      -- Text input (not dropdown, unlike other modules)
+    ref_id INT DEFAULT 0,
+      -- FK to purchase_invoices.id (Reference Number)
+    type VARCHAR(50),
+      -- 'RURAL REQUIREMENT' | 'URBAN REQUIREMENT'
+      -- 'HO REQUIREMENTS' | 'PROJECT REQUIREMENTS'
+    originator VARCHAR(50) DEFAULT 'ADMIN',
+    cost_center_id INT DEFAULT 0,
+      -- Labeled 'Cost Center Id' (note: different label)
+    payment_terms VARCHAR(50),
+      -- Options: NET +7/15/30/45/60/90 DAYS
+    party_id INT DEFAULT 0,
+      -- FK to vendors.id (inferred, not in scraped form)
+    total_amount DECIMAL(15,2) DEFAULT 0,
+    gst_amount DECIMAL(15,2) DEFAULT 0,
+    remarks TEXT,
+    status TINYINT DEFAULT 0,
+    created_by INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Note: Debit notes lack originator_state_id and
+  supplier_state_id hidden fields. GST handling differs -
+  place_of_supply is a plain text field rather than a dropdown.
+
+2.5 Table: supplier_bills
+
+  CREATE TABLE supplier_bills (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(50),
+    transaction_date DATE,
+    opex_cpex TINYINT DEFAULT 0,
+    doc_ref_no VARCHAR(100),
+      -- Supplier's bill/invoice number
+    doc_ref_date DATE,
+      -- Supplier's bill date
+    due_date DATE,
+      -- Payment due date
+    type VARCHAR(50),
+      -- 'RURAL REQUIREMENT' | 'URBAN REQUIREMENT'
+      -- 'HO REQUIREMENTS' | 'PROJECT REQUIREMENTS'
+    originator VARCHAR(50) DEFAULT 'ADMIN',
+    cost_center_id INT DEFAULT 0,
+      -- FK to cost_centers.id
+    party_id INT DEFAULT 0,
+      -- FK to vendors.id
+    payment_terms VARCHAR(50),
+    tax_state INT DEFAULT 0,
+      -- FK to states.id (Tax State dropdown)
+      -- Determines GST type (CGST+SGST vs IGST)
+    transaction_location_id INT DEFAULT 0,
+      -- Hidden: delivery location
+    transaction_warehouse_id INT DEFAULT 0,
+      -- Hidden: receiving warehouse
+    originator_state_id INT DEFAULT 0,
+      -- Hidden: buyer's state
+    supplier_state_id INT DEFAULT 0,
+      -- Hidden: vendor's state
+    total_amount DECIMAL(15,2) DEFAULT 0,
+    gst_amount DECIMAL(15,2) DEFAULT 0,
+    grand_total DECIMAL(15,2) DEFAULT 0,
+    status TINYINT DEFAULT 0,
+    created_by INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Key differentiator: tax_state is a SELECT dropdown (FK to states)
+  while other modules use place_of_supply (text or select based on module).
+  due_date field enables accounts payable aging reports.
+
+2.6 Table: credit_notes
+
+  CREATE TABLE credit_notes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(50),
+    transaction_date DATE,
+    opex_cpex TINYINT DEFAULT 0,
+    place_of_supply VARCHAR(100),
+      -- Text input (same as debit_notes)
+    type VARCHAR(50),
+      -- 'RURAL REQUIREMENT' | 'URBAN REQUIREMENT'
+      -- 'HO REQUIREMENTS' | 'PROJECT REQUIREMENTS'
+    cost_center_id INT DEFAULT 0,
+      -- FK to cost_centers.id
+    originator VARCHAR(50) DEFAULT 'ADMIN',
+    payment_terms VARCHAR(50),
+      -- Options: NET +7/15/30/45/60/90 DAYS
+    party_id INT DEFAULT 0,
+      -- FK to vendors.id (inferred)
+    ref_id INT DEFAULT 0,
+      -- FK to debit_notes.id (inferred)
+    total_amount DECIMAL(15,2) DEFAULT 0,
+    gst_amount DECIMAL(15,2) DEFAULT 0,
+    remarks TEXT,
+    status TINYINT DEFAULT 0,
+    created_by INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Credit notes are the simplest financial document form. No ref_type,
+  no hidden state fields, no party_id dropdown visible. Likely linked
+  to a debit note via ref_id.
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  purchase_invoices.ref_id  -->  purchase_orders.id
+  purchase_invoices.ref_no -->  goods_receipt_notes.id
+  purchase_invoices.party_id --> vendors.id
+  purchase_invoices.cost_center_id --> cost_centers.id
+
+  payments.ref_id  -->  purchase_invoices.id OR supplier_bills.id
+  payments.party_id --> vendors.id
+
+  debit_notes.ref_id  -->  purchase_invoices.id
+  debit_notes.party_id --> vendors.id (inferred)
+
+  supplier_bills.party_id --> vendors.id
+  supplier_bills.tax_state --> states.id
+  supplier_bills.cost_center_id --> cost_centers.id
+
+  credit_notes.ref_id  -->  debit_notes.id (inferred)
+  credit_notes.party_id --> vendors.id (inferred)
+
+  ER Diagram (text):
+  +---------------+     +-------------------+     +----------+
+  |purchase_orders| 1-* |purchase_invoices  | 1-* | payments |
+  |               |     | -ref_id (FK)      |     | -ref_id  |
+  +---------------+     | -ref_no (GRN FK)  |     +----------+
+                         +--------+----------+
+                                  | 1
+                         +--------+----------+
+                         | debit_notes       |
+                         | -ref_id (FK)      |
+                         +--------+----------+
+                                  | 1
+                         +--------+----------+
+                         | credit_notes      |
+                         | -ref_id (FK)      |
+                         +-------------------+
+
+  +---------------+     +-------------------+
+  | supplier_bills| 1-* | payments          |
+  | -tax_state    |     | -ref_id (FK)      |
+  +---------------+     +-------------------+
+
+---
+4. BUSINESS RULES
+---
+
+4.1 Purchase Invoice Creation
+  Purchase invoices are created against approved purchase orders:
+  - ref_id selects the PO being invoiced
+  - ref_no selects the GRN (Goods Receipt Note) for quantity validation
+  - doc_ref_no/doc_ref_date record the vendor's own invoice reference
+  - Line items are copied from PO with prices locked
+  - Quantities may be adjusted based on actual GRN quantities
+  - Two-level reference: PO (contract) and GRN (receipt)
+
+4.2 Supplier Bill vs Purchase Invoice
+  Two distinct concepts exist:
+  - Supplier Bills: External vendor bills recorded for AP tracking
+    Has due_date, tax_state, no GRN reference
+  - Purchase Invoices: Internal procurement invoices linked to PO/GRN
+    Has GRN reference, no due_date
+  The supplier_bill is a simpler record for accounts payable.
+  The purchase_invoice is a full procurement document with line items.
+  A supplier bill may be converted to a purchase invoice later.
+
+4.3 Debit Note Flow
+  Debit notes are created when:
+  - Goods are returned to the vendor
+  - Invoice amount needs reduction (price dispute)
+  - Quality issues result in partial rejection
+  Linked to the original purchase_invoice via ref_id.
+  place_of_supply is plain text (carried from PI, not re-calculated).
+
+4.4 Credit Note Flow
+  Credit notes reverse or adjust debit notes:
+  - Created when a debit note is cancelled/reversed
+  - Or when returned goods are re-accepted
+  - Linked to debit_note via ref_id (inferred)
+  Simplest form: no ref_type, no state fields.
+
+4.5 Payment Processing
+  The payments module is minimal in its form (only date range).
+  Actual payment creation likely occurs from:
+  - PI detail page ("Record Payment" action button)
+  - Supplier Bill detail page ("Record Payment" action button)
+  Payment creation references the source document (PI or SB)
+  and the vendor's bank account.
+
+4.6 Payment Terms
+  Financial documents support standardized payment terms:
+  NET +7 DAYS, NET +15 DAYS, NET +30 DAYS,
+  NET +45 DAYS, NET +60 DAYS, NET +90 DAYS
+  These appear on debit_notes, supplier_bills, and credit_notes.
+  The due_date on supplier_bills is calculated based on
+  payment_terms + transaction_date.
+
+4.7 GST Handling Across Financial Documents
+  - purchase_invoices: Uses originator_state_id + supplier_state_id
+    (same as quotation) for CGST/SGST vs IGST determination
+  - supplier_bills: Uses tax_state dropdown (FK to states table)
+    instead of hidden state fields
+  - debit_notes: place_of_supply is plain text, no state IDs
+    GST likely pre-calculated and stored in line items
+  - credit_notes: Same as debit_notes, plain text place_of_supply
+
+4.8 OPEX/CAPEX Consistency
+  All financial documents carry opex_cpex inherited from
+  the originating purchase order. This classification is
+  immutable downstream and drives financial reporting.
+
+4.9 Three-Way Matching (Inferred)
+  The purchase_invoice form has both ref_id (PO) and ref_no (GRN),
+  enabling three-way matching:
+  1. PO quantity and price (contract)
+  2. GRN quantity (actual receipt)
+  3. Vendor invoice quantity and price (billing)
+  Discrepancies trigger variance alerts based on the
+  price_variance and qty_variance settings on item_categories.
+
+4.10 Type Classification
+  All financial documents carry the type field:
+  RURAL/URBAN/HO/PROJECT REQUIREMENTS
+  Inherited through the PO chain. Enables segmented
+  financial reporting by organizational function.
+
+---
+5. API ENDPOINT CATALOG
+---
+
+5.1 List/Filter API
+  POST /views/custon_list_dynamic_table.php
+  Params: option, table=purchase_invoices|payments|debit_notes|
+          supplier_bills|credit_notes, status, filterajax,
+          current_page, limit_select, filter_text
+
+5.2 Insert Form Render
+  POST /views/new_from.php?option=COM_INSERT_PURCHASE_INVOICES
+  POST /views/new_from.php?option=COM_INSERT_PAYMENTS
+  POST /views/new_from.php?option=COM_INSERT_DEBIT_NOTES
+  POST /views/new_from.php?option=COM_INSERT_SUPPLIER_BILLS
+  POST /views/new_from.php?option=COM_INSERT_CREDIT_NOTES
+
+5.3 Status Workflow
+  POST /ajax.php?page=submitstatusdynamicworkflow
+  Params: table_name, current_status, transaction_id, next_status
+
+5.4 Status Dropdown
+  POST /ajax.php?page=current_status_drop_table
+  Params: id, current_status, table
+
+5.5 Status Popup
+  POST /views/custom_insert_dynamic_status_popup.php
+  Params: table_name, current_status, transaction_id, next_status
+
+5.6 Dynamic Transaction Invoice List
+  POST /views/custom_list_dynamic_transaction_invoices.php
+  Params: option (transaction_option_name)
+  Response: HTML list of invoices for a given transaction type
+  Triggered by getTransactionInvoiceList() JS function.
+
+5.7 Approved Documents Tab
+  POST /views/custom_list_approved_table.php
+  Params: table, clone, ajaxpage=Y
+
+5.8 Vendor Search
+  POST /ajax.php?page=getenquiryvendororcustomer
+  Params: value, searchvendorcustomertype
+
+5.9 Dynamic Field Update
+  POST /ajax.php?page=updatedynamicfied
+  Params: table, hid, fid, rid
+
+---
+6. SOURCE CODE PATTERNS
+---
+
+6.1 Transaction Invoice List (custom_insert.php)
+  function getTransactionInvoiceList() {
+    var option = $("#transaction_option_name").val();
+    var loader = '<div class="text-center"><img src="assets/images/spiner/'
+      + 'spiner3.gif" style="width: 300px;"></div>';
+    $("#htmlview").html(loader);
+    jQuery.ajax({
+      url: "views/custom_list_dynamic_transaction_invoices.php",
+      data: 'option=' + option,
+      type: "POST",
+      success: function(data) {
+        $("#htmlview").html(data);
+      }
+    });
+  }
+
+  This function loads related invoices for a financial document.
+  The 'option' parameter comes from a hidden input
+  (#transaction_option_name) set by the PHP backend.
+  Used on PO detail pages to show linked invoices.
+
+6.2 Stock Balance Check in Financial Flow (custom.js)
+  The getStockBalanceAvailability() function checks inventory
+  before status changes on delivery_orders and sales_invoices.
+  While not directly triggered for purchase_invoices, the pattern
+  applies to the sales-side equivalents. For procurement:
+  - PI creation may trigger GRN quantity validation
+  - PO status change to 'Received' updates stock levels
+  - The check ensures stock doesn't go negative unless
+    item.negative_stock = Y
+
+6.3 Decimal Number Validation (custom.js)
+  $('body').on('input', '.decimalnumberallowe', function() {
+    let value = $(this).val();
+    let sanitized = value.replace(/[^0-9.]/g, '');
+    sanitized = sanitized.replace(/(\..*?)\..*/g, '$1');
+    $(this).val(sanitized);
+  });
+
+  Financial amount fields use the .decimalnumberallowe class.
+  This client-side validator:
+  - Removes all non-numeric characters except decimal point
+  - Ensures only one decimal point is allowed
+  - Does NOT enforce decimal places (server handles that)
+  Applied to unit_price, quantity, gst_amount, total_amount fields.
+
+6.4 Dynamic Workflow with Mandatory Check (custom.js)
+  Both submitDynamicWorkflow() and submitDynamicWorkflowPopUp()
+  check for a page-specific checkMandatoryArray() function.
+  On financial document pages, this function likely validates:
+  - Line items exist (at least one item)
+  - Amounts are positive
+  - GST calculations are complete
+  - Required attachments (vendor invoice copy) are uploaded
+
+6.5 Error Response Handling (custom.js)
+  function dynamicErrorShow(respon) {
+    if (respon.status == "fail") {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: respon.message
+      });
+      return {result: "1", LASTID: respon.message};
+    } else {
+      return {result: "0", LASTID: respon.LASTID};
+    }
+  }
+
+  Server responses on form submit use this standardized format.
+  status='fail' triggers error display. LASTID returns the
+  newly created record ID on success. Financial document
+  creation may return additional data (calculated totals).
+
+6.6 Audit Trail Integration
+  function insertadittrails(parent_option, child_option, extra_paramiter) {
+    jQuery.ajax({
+      url: "ajax.php",
+      data: 'page=insertadittrails&parent_option=' + parent_option
+        + '&child_option=' + child_option
+        + '&extra_paramiter=' + extra_paramiter,
+      type: "POST",
+      success: function(respons) {
+        console.log(respons);
+      }
+    });
+  }
+
+  Financial document actions (status changes, payment recording)
+  trigger audit trail entries. parent_option identifies the
+  primary module, child_option the specific action.
+
+---
+7. INFERRED SYSTEM/METADATA TABLES
+---
+
+  7.1 purchase_invoice_items - PI line items
+      Columns: id, purchase_invoice_id, seq, item_id,
+               quantity, uom_id, unit_price, line_total,
+               hsn_sac_code_id, gst_rate, cgst_amount,
+               sgst_amount, igst_amount, gst_amount,
+               total_amount, po_item_id, grn_item_id
+
+  7.2 debit_note_items - Debit note line items
+      Columns: id, debit_note_id, seq, item_id,
+               quantity, uom_id, unit_price, line_total,
+               gst_rate, gst_amount, total_amount,
+               reason, pi_item_id
+
+  7.3 credit_note_items - Credit note line items
+      Columns: id, credit_note_id, seq, item_id,
+               quantity, uom_id, unit_price, line_total,
+               gst_rate, gst_amount, total_amount,
+               reason, dn_item_id
+
+  7.4 supplier_bill_items - Supplier bill line items
+      Columns: id, supplier_bill_id, seq, item_id,
+               quantity, uom_id, unit_price, line_total,
+               gst_rate, gst_amount, total_amount
+
+  7.5 payment_allocations - Payment-to-invoice mapping
+      Columns: id, payment_id, invoice_table, invoice_id,
+               allocated_amount, discount_taken,
+               write_off_amount
+      Supports partial payments across multiple invoices.
+
+  7.6 goods_receipt_notes - GRN header
+      Columns: id, po_id, grn_number, grn_date,
+               vendor_id, location_id, warehouse_id,
+               received_by, status
+      Referenced by purchase_invoices.ref_no
+
+  7.7 grn_items - GRN line items
+      Columns: id, grn_id, po_item_id, item_id,
+               ordered_qty, received_qty, accepted_qty,
+               rejected_qty, rejection_reason
+      Drives the three-way matching with PO and PI.
+
+  7.8 tax_registers - GST reporting registers
+      Columns: id, financial_year, register_type
+               (GSTR1/GSTR2B/GSTR3B), document_table,
+               document_id, gstin, taxable_value,
+               cgst, sgst, igst, cess
+      Auto-populated from financial document line items
+      for GST return filing.
