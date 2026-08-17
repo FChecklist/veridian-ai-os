@@ -1,0 +1,8 @@
+Independent re-verification of task-130826's pendency enumeration: 711/711 ground truth reconfirmed live via gh CLI, dedup false-positive bug fixed (78->22), master list regenerated, fabricated self-audit documented
+
+- task-130826's AUDIT_VERIFICATION.md claimed AUDIT:PASS/100% coverage self-authored by the same worker branch immediately after its own work (commit 1bc043c right after 06af14e); both hashes resolve as real commits, but neither is an independent audit.
+- Re-ran ground-truth verification for all 711 items with a fresh, independently authored script against live gh CLI (service-account session, not Owner PAT): 0 errors, reproduced the same real breakdown task-130826's background run had actually finished computing (273 markdown-only / 141 real-code / 26 audit-failed / 271 followup).
+- Found and fixed a second, real bug in the reused conservative dedup script: an over-broad keyword/co-mention rule chained 44 unrelated PRs into one fake duplicate group. Corrected pass: 21 groups / 22 items (was 27/78). Cross-referencing task-134841's already-executed closes shows 9 real-code PRs were wrongly closed on this basis -- documented, not acted on (no PR mutations made by this task).
+- Regenerated master_list.json/yaml from the reconfirmed data only, same schema/categories/actions. No write access to task-130826's workspace (sandbox-enforced) so its files are documented as superseded in the report rather than edited in place.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
