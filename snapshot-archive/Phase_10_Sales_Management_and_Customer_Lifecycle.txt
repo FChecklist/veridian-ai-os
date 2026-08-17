@@ -1,0 +1,824 @@
+================================================================================
+PHASE 10: SALES MANAGEMENT & CUSTOMER LIFECYCLE - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the Sales Management & Customer Lifecycle modules, scraped from the live application.
+
+Phase Description: Complete sales pipeline from customer onboarding through enquiries, estimates, sales orders, invoicing, and payment collection.
+
+Modules Covered: 11
+  - customers [SCRAPE]
+  - customers_invitations [NO FORM]
+  - enquiries [SCRAPE]
+  - estimates [SCRAPE]
+  - sales_orders [SCRAPE]
+  - sales_invoices [SCRAPE]
+  - receipts [SCRAPE]
+  - incoterms [SCRAPE]
+  - payment_terms [SCRAPE]
+  - additional_charges [SCRAPE]
+  - deferred_revenues [SCRAPE]
+
+---
+1. APPLICATION ARCHITECTURE (SHARED)
+---
+
+  1.1 Routing Convention
+    COM_LIST_XXX     -> List/view page (DataTables)
+    COM_INSERT_XXX   -> Insert form (POST to /views/new_from.php)
+    COM_UPDATE_XXX   -> Update form
+    COM_VIEW_XXX    -> View/detail/report page
+
+  1.2 AJAX Endpoints
+    POST /ajax.php?page=submitstatusdynamicworkflow
+    POST /ajax.php?page=updatedynamicfied
+    POST /ajax.php?page=setdynamichelptext
+    POST /ajax.php?page=getstockbalanceavailability
+    POST /views/custon_list_dynamic_table.php
+    POST /views/new_from.php?option=COM_INSERT_XXX
+
+  1.3 Standard Hidden Fields (in every form)
+    option, table_name, duplicate_table_name,
+    in_date_pic, in_currency_fileds, in_phone_fileds,
+    mandatory_str, add_mandatory_str, notification_users,
+    notification_message, status, from_date, to_date
+
+---
+2. DATABASE SCHEMAS
+---
+
+  2.1 Table: customers
+    Module: Customers
+    Insert Option: COM_INSERT_CUSTOMERS
+    Form Fields: 18 user-visible, 32 total
+    Mandatory columns: first_name,middle_name,last_name,suffix,email,phone,mobile,company,display_name,billing_address,billing_city,billing_state,billing_post_code,billing_country,shipping_address,shipping_city
+
+  CREATE TABLE customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    display_name VARCHAR(255),
+    first_name VARCHAR(255),
+    middle_name VARCHAR(255),
+    last_name VARCHAR(255),
+    suffix VARCHAR(255),
+    email VARCHAR(255),
+    phone VARCHAR(20),
+    mobile VARCHAR(20),
+    company VARCHAR(50),
+    billing_address VARCHAR(255),
+    billing_city VARCHAR(255),
+    billing_state VARCHAR(255),
+    billing_post_code VARCHAR(50),
+    billing_country VARCHAR(255),
+    shipping_address VARCHAR(255),
+    shipping_city VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      display_name                             text        
+      first_name                               text        
+      middle_name                              text        
+      last_name                                text        
+      suffix                                   text        
+      email                                    text        
+      phone                                    text        
+      mobile                                   text        
+      company                                  text        
+      billing_address                          text        
+      billing_city                             text        
+      billing_state                            text        
+      billing_post_code                        text        
+      billing_country                          text        
+      shipping_address                         text        
+      shipping_city                            text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=first_name,middle_name,last_name,suffix,email,phon
+      add_mandatory_str                        hidden       value=
+
+  2.2 Table: customers_invitations
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.3 Table: enquiries
+    Module: Enquiries
+    Insert Option: COM_INSERT_ENQUIRIES
+    Form Fields: 12 user-visible, 29 total
+    Mandatory columns: cost_center_id,transaction_number,transaction_date,originator_currency_id,currency_id,currency_rate,originator,originator_state_id,supplier_state_id,place_of_supply,type,opex_cpex
+
+  CREATE TABLE enquiries (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    currency_rate VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    originator INT  -- (FK dropdown),
+    cost_center_id INT  -- (FK dropdown),
+    currency_id INT  -- (FK dropdown),
+    place_of_supply INT  -- (FK dropdown),
+    type INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      opex_cpex                                radio       
+      opex_cpex                                radio       
+      currency_rate                            text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      originator                               select      
+      cost_center_id                           select      
+      currency_id                              select      
+      place_of_supply                          select      
+      type                                     select      
+    Hidden Metadata Fields:
+      originator_currency_id                   hidden       value=
+      originator_state_id                      hidden       value=
+      supplier_state_id                        hidden       value=
+      in_date_pic                              hidden       value=transaction_date
+      in_currency_fileds                       hidden       value=
+
+  2.4 Table: estimates
+    Module: Estimates
+    Insert Option: COM_INSERT_ESTIMATES
+    Form Fields: 28 user-visible, 47 total
+    Mandatory columns: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,originator_currency_id,currency_id,currency_rate,originator,party_id,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,originator_state_id,supplier_state_id,place_of_supply,payment_terms,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+
+  CREATE TABLE estimates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    party_name VARCHAR(255),
+    party_email VARCHAR(255),
+    party_tax_number VARCHAR(255),
+    party_phone VARCHAR(20),
+    party_address VARCHAR(255),
+    party_ship_adderss VARCHAR(255),
+    currency_rate VARCHAR(255),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    due_date VARCHAR(255),
+    ref_no VARCHAR(255),
+    ref_date VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    ref_type INT  -- (FK dropdown),
+    ref_id INT  -- (FK dropdown),
+    type INT  -- (FK dropdown),
+    originator INT  -- (FK dropdown),
+    cost_center_id INT  -- (FK dropdown),
+    party_id INT  -- (FK dropdown),
+    payment_terms INT  -- (FK dropdown),
+    place_of_supply INT  -- (FK dropdown),
+    currency_id INT  -- (FK dropdown),
+    tax_state INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      opex_cpex                                radio       
+      opex_cpex                                radio       
+      party_name                               text        
+      party_email                              text        
+      party_tax_number                         text        
+      party_phone                              text        
+      party_address                            text        
+      party_ship_adderss                       text        
+      currency_rate                            text        
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      due_date                                 text        
+      ref_no                                   text        
+      ref_date                                 text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      ref_type                                 select      
+      ref_id                                   select      
+      type                                     select      
+      originator                               select      
+      cost_center_id                           select      
+      party_id                                 select      
+      payment_terms                            select      
+      place_of_supply                          select      
+      currency_id                              select      
+      tax_state                                select      
+    Hidden Metadata Fields:
+      transaction_location_id                  hidden       value=
+      originator_currency_id                   hidden       value=
+      transaction_warehouse_id                 hidden       value=
+      originator_state_id                      hidden       value=
+      supplier_state_id                        hidden       value=
+
+  2.5 Table: sales_orders
+    Module: Sales Orders
+    Insert Option: COM_INSERT_SALES_ORDERS
+    Form Fields: 29 user-visible, 48 total
+    Mandatory columns: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,originator_currency_id,currency_id,currency_rate,originator,party_id,salesmen_id,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,originator_state_id,supplier_state_id,place_of_supply,payment_terms,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+
+  CREATE TABLE sales_orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    party_name VARCHAR(255),
+    party_email VARCHAR(255),
+    party_tax_number VARCHAR(255),
+    party_phone VARCHAR(20),
+    party_address VARCHAR(255),
+    party_ship_adderss VARCHAR(255),
+    currency_rate VARCHAR(255),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    due_date VARCHAR(255),
+    ref_no VARCHAR(255),
+    ref_date VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    ref_type INT  -- (FK dropdown),
+    ref_id INT  -- (FK dropdown),
+    type INT  -- (FK dropdown),
+    originator INT  -- (FK dropdown),
+    cost_center_id INT  -- (FK dropdown),
+    salesmen_id INT  -- (FK dropdown),
+    party_id INT  -- (FK dropdown),
+    payment_terms INT  -- (FK dropdown),
+    place_of_supply INT  -- (FK dropdown),
+    currency_id INT  -- (FK dropdown),
+    tax_state INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      opex_cpex                                radio       
+      opex_cpex                                radio       
+      party_name                               text        
+      party_email                              text        
+      party_tax_number                         text        
+      party_phone                              text        
+      party_address                            text        
+      party_ship_adderss                       text        
+      currency_rate                            text        
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      due_date                                 text        
+      ref_no                                   text        
+      ref_date                                 text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      ref_type                                 select      
+      ref_id                                   select      
+      type                                     select      
+      originator                               select      
+      cost_center_id                           select      
+      salesmen_id                              select      
+      party_id                                 select      
+      payment_terms                            select      
+      place_of_supply                          select      
+      currency_id                              select      
+      tax_state                                select      
+    Hidden Metadata Fields:
+      transaction_location_id                  hidden       value=
+      originator_currency_id                   hidden       value=
+      transaction_warehouse_id                 hidden       value=
+      originator_state_id                      hidden       value=
+      supplier_state_id                        hidden       value=
+
+  2.6 Table: sales_invoices
+    Module: Sales Invoices
+    Insert Option: COM_INSERT_SALES_INVOICES
+    Form Fields: 29 user-visible, 47 total
+    Mandatory columns: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,originator_currency_id,currency_id,currency_rate,originator,party_id,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,originator_state_id,supplier_state_id,place_of_supply,payment_terms,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+
+  CREATE TABLE sales_invoices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ref_type VARCHAR(255),
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    opex_cpex VARCHAR(255),
+    ref_date VARCHAR(255),
+    doc_ref_no VARCHAR(255),
+    doc_ref_date VARCHAR(255),
+    due_date VARCHAR(255),
+    currency_rate VARCHAR(255),
+    party_name VARCHAR(255),
+    party_email VARCHAR(255),
+    party_tax_number VARCHAR(255),
+    party_phone VARCHAR(20),
+    party_address VARCHAR(255),
+    party_ship_adderss VARCHAR(255),
+    place_of_supply VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    ref_id INT  -- (FK dropdown),
+    type INT  -- (FK dropdown),
+    originator INT  -- (FK dropdown),
+    cost_center_id INT  -- (FK dropdown),
+    party_id INT  -- (FK dropdown),
+    payment_terms INT  -- (FK dropdown),
+    ref_no INT  -- (FK dropdown),
+    tax_state INT  -- (FK dropdown),
+    currency_id INT  -- (FK dropdown),
+    originator_currency_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      ref_type                                 text        
+      transaction_number                       text        
+      transaction_date                         text        
+      opex_cpex                                radio       
+      opex_cpex                                radio       
+      ref_date                                 text        
+      doc_ref_no                               text        
+      doc_ref_date                             text        
+      due_date                                 text        
+      currency_rate                            text        
+      party_name                               text        
+      party_email                              text        
+      party_tax_number                         text        
+      party_phone                              text        
+      party_address                            text        
+      party_ship_adderss                       text        
+      place_of_supply                          text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      ref_id                                   select      
+      type                                     select      
+      originator                               select      
+      cost_center_id                           select      
+      party_id                                 select      
+      payment_terms                            select      
+      ref_no                                   select      
+      tax_state                                select      
+      currency_id                              select      
+      originator_currency_id                   select      
+    Hidden Metadata Fields:
+      transaction_location_id                  hidden       value=
+      transaction_warehouse_id                 hidden       value=
+      originator_state_id                      hidden       value=
+      supplier_state_id                        hidden       value=
+      in_date_pic                              hidden       value=transaction_date,ref_date,doc_ref_date,due_date
+
+  2.7 Table: receipts
+    Module: Receipts
+    Insert Option: COM_INSERT_RECEIPTS
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE receipts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+  2.8 Table: incoterms
+    Module: Incoterms
+    Insert Option: COM_INSERT_INCOTERMS
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: incoterm_name,incoterm_code
+
+  CREATE TABLE incoterms (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    incoterm_name VARCHAR(255),
+    incoterm_code VARCHAR(50),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      incoterm_name                            text        
+      incoterm_code                            text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=incoterm_name,incoterm_code
+      add_mandatory_str                        hidden       value=
+
+  2.9 Table: payment_terms
+    Module: Payment Terms
+    Insert Option: COM_INSERT_PAYMENT_TERMS
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE payment_terms (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+  2.10 Table: additional_charges
+    Module: Additional Charges
+    Insert Option: COM_INSERT_ADDITIONAL_CHARGES
+    Form Fields: 5 user-visible, 19 total
+    Mandatory columns: charge_name,hsn_and_sac_code_id,account_code
+
+  CREATE TABLE additional_charges (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    charge_name VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    hsn_and_sac_code_id INT  -- (FK dropdown),
+    account_code INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      charge_name                              text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      hsn_and_sac_code_id                      select      
+      account_code                             select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=charge_name,hsn_and_sac_code_id,account_code
+      add_mandatory_str                        hidden       value=
+
+  2.11 Table: deferred_revenues
+    Module: Deferred Revenues
+    Insert Option: COM_INSERT_DEFERRED_REVENUES
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE deferred_revenues (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  enquiries.originator  -->  originator_lookup.id
+  enquiries.cost_center_id  -->  cost_centers.id
+  enquiries.currency_id  -->  currencys.id
+  enquiries.place_of_supply  -->  place_of_supply_lookup.id
+  enquiries.type  -->  type_lookup.id
+  estimates.ref_type  -->  ref_type_lookup.id
+  estimates.ref_id  -->  refs.id
+  estimates.type  -->  type_lookup.id
+  estimates.originator  -->  originator_lookup.id
+  estimates.cost_center_id  -->  cost_centers.id
+  estimates.party_id  -->  partys.id
+  estimates.payment_terms  -->  payment_terms_lookup.id
+  estimates.place_of_supply  -->  place_of_supply_lookup.id
+  estimates.currency_id  -->  currencys.id
+  estimates.tax_state  -->  tax_state_lookup.id
+  sales_orders.ref_type  -->  ref_type_lookup.id
+  sales_orders.ref_id  -->  refs.id
+  sales_orders.type  -->  type_lookup.id
+  sales_orders.originator  -->  originator_lookup.id
+  sales_orders.cost_center_id  -->  cost_centers.id
+  sales_orders.salesmen_id  -->  salesmens.id
+  sales_orders.party_id  -->  partys.id
+  sales_orders.payment_terms  -->  payment_terms_lookup.id
+  sales_orders.place_of_supply  -->  place_of_supply_lookup.id
+  sales_orders.currency_id  -->  currencys.id
+  sales_orders.tax_state  -->  tax_state_lookup.id
+  sales_invoices.ref_id  -->  refs.id
+  sales_invoices.type  -->  type_lookup.id
+  sales_invoices.originator  -->  originator_lookup.id
+  sales_invoices.cost_center_id  -->  cost_centers.id
+  sales_invoices.party_id  -->  partys.id
+  sales_invoices.payment_terms  -->  payment_terms_lookup.id
+  sales_invoices.ref_no  -->  ref_no_lookup.id
+  sales_invoices.tax_state  -->  tax_state_lookup.id
+  sales_invoices.currency_id  -->  currencys.id
+  sales_invoices.originator_currency_id  -->  originator_currencys.id
+  additional_charges.hsn_and_sac_code_id  -->  hsn_and_sac_codes.id
+  additional_charges.account_code  -->  account_code_lookup.id
+
+  ER Summary:
+  Tables: 20
+  Relationships: 38
+
+---
+4. BUSINESS RULES
+---
+
+  4.1 Effective Dating (all modules)
+    Every record has from_date/to_date. Records are valid
+    only within this range. from_date is mandatory.
+
+  4.2 Soft Delete / Status (all modules)
+    status=0 Active, status=1 Inactive, status=2 Draft
+    Records are never physically deleted. Status changes go
+    through the workflow API (submitstatusdynamicworkflow).
+
+  4.3 Module-Specific Rules
+    4.3.1 Customers
+      Mandatory fields: first_name, middle_name, last_name, suffix, email, phone, mobile, company, display_name, billing_address, billing_city, billing_state, billing_post_code, billing_country, shipping_address, shipping_city
+
+    4.3.2 Enquiries
+      Mandatory fields: cost_center_id, transaction_number, transaction_date, originator_currency_id, currency_id, currency_rate, originator, originator_state_id, supplier_state_id, place_of_supply, type, opex_cpex
+
+    4.3.3 Enquiries
+      Has 5 foreign key dropdown fields
+
+    4.3.4 Enquiries
+      Has 3 date fields (effective dating + business dates)
+
+    4.3.5 Estimates
+      Mandatory fields: cost_center_id, transaction_number, transaction_date, transaction_location_id, transaction_warehouse_id, originator_currency_id, currency_id, currency_rate, originator, party_id, party_name, party_email, party_tax_number, party_phone, party_address, party_ship_adderss, originator_state_id, supplier_state_id, place_of_supply, payment_terms, type, tax_state, opex_cpex, doc_ref_no, doc_ref_date, due_date, ref_type, ref_id, ref_no, ref_date
+
+    4.3.6 Estimates
+      Has 10 foreign key dropdown fields
+
+    4.3.7 Estimates
+      Has 6 date fields (effective dating + business dates)
+
+    4.3.8 Estimates
+      Complex form with 28 user fields
+
+    4.3.9 Sales Orders
+      Mandatory fields: cost_center_id, transaction_number, transaction_date, transaction_location_id, transaction_warehouse_id, originator_currency_id, currency_id, currency_rate, originator, party_id, salesmen_id, party_name, party_email, party_tax_number, party_phone, party_address, party_ship_adderss, originator_state_id, supplier_state_id, place_of_supply, payment_terms, type, tax_state, opex_cpex, doc_ref_no, doc_ref_date, due_date, ref_type, ref_id, ref_no, ref_date
+
+    4.3.10 Sales Orders
+      Has 11 foreign key dropdown fields
+
+    4.3.11 Sales Orders
+      Has 6 date fields (effective dating + business dates)
+
+    4.3.12 Sales Orders
+      Complex form with 29 user fields
+
+    4.3.13 Sales Invoices
+      Mandatory fields: cost_center_id, transaction_number, transaction_date, transaction_location_id, transaction_warehouse_id, originator_currency_id, currency_id, currency_rate, originator, party_id, party_name, party_email, party_tax_number, party_phone, party_address, party_ship_adderss, originator_state_id, supplier_state_id, place_of_supply, payment_terms, type, tax_state, opex_cpex, doc_ref_no, doc_ref_date, due_date, ref_type, ref_id, ref_no, ref_date
+
+    4.3.14 Sales Invoices
+      Has 10 foreign key dropdown fields
+
+    4.3.15 Sales Invoices
+      Has 6 date fields (effective dating + business dates)
+
+    4.3.16 Sales Invoices
+      Complex form with 29 user fields
+
+    4.3.17 Incoterms
+      Mandatory fields: incoterm_name, incoterm_code
+
+    4.3.18 Additional Charges
+      Mandatory fields: charge_name, hsn_and_sac_code_id, account_code
+
+    4.3.19 Additional Charges
+      Has 2 foreign key dropdown fields
+
+---
+5. API ENDPOINTS
+---
+
+  5.1 Standard CRUD APIs (shared across all modules)
+    POST /views/new_from.php?option=COM_INSERT_XXX
+      Renders insert form HTML
+    POST /index.php
+      Form submit (multipart/form-data)
+    POST /views/custon_list_dynamic_table.php
+      List data with pagination, filtering
+      Params: option, table, status, filter_text,
+              current_page, limit_select
+
+  5.2 Workflow APIs
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Status transitions (Draft->Pending->Approved)
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Params: table_name, current_status, transaction_id,
+              next_status
+
+  5.3 Module-Specific API Routes
+    COM_INSERT_CUSTOMERS  -> Insert customers
+    COM_LIST_CUSTOMERS -> List customers
+    COM_INSERT_ENQUIRIES  -> Insert enquiries
+    COM_LIST_ENQUIRIES -> List enquiries
+    COM_INSERT_ESTIMATES  -> Insert estimates
+    COM_LIST_ESTIMATES -> List estimates
+    COM_INSERT_SALES_ORDERS  -> Insert sales_orders
+    COM_LIST_SALES_ORDERS -> List sales_orders
+    COM_INSERT_SALES_INVOICES  -> Insert sales_invoices
+    COM_LIST_SALES_INVOICES -> List sales_invoices
+    COM_INSERT_RECEIPTS  -> Insert receipts
+    COM_LIST_RECEIPTS -> List receipts
+    COM_INSERT_INCOTERMS  -> Insert incoterms
+    COM_LIST_INCOTERMS -> List incoterms
+    COM_INSERT_PAYMENT_TERMS  -> Insert payment_terms
+    COM_LIST_PAYMENT_TERMS -> List payment_terms
+    COM_INSERT_ADDITIONAL_CHARGES  -> Insert additional_charges
+    COM_LIST_ADDITIONAL_CHARGES -> List additional_charges
+    COM_INSERT_DEFERRED_REVENUES  -> Insert deferred_revenues
+    COM_LIST_DEFERRED_REVENUES -> List deferred_revenues
+
+---
+6. CODE-LEVEL PATTERNS
+---
+
+  6.1 Generic Form Pattern
+    All modules use views/new_from.php as the form renderer.
+    The form HTML includes:
+    - validateForm() JS function driven by mandatory_str
+    - select2 dropdowns for FK fields
+    - datepicker for date fields (jQuery UI)
+    - Bootstrap 4 form layout (card > card-body > form-group)
+
+  6.2 Hidden Metadata Pattern (every form)
+    - option: The COM_ route constant
+    - table_name: Physical DB table name
+    - duplicate_table_name: For duplicate checking
+    - in_date_pic: Array of date fields for datepicker init
+    - in_currency_fileds: Currency fields for formatting
+    - in_phone_fileds: Phone fields for validation
+    - mandatory_str: Comma-separated required fields
+    - notification_users: User IDs to notify on create
+    - notification_message: Notification template
+
+  6.3 DataTables Pattern (all list pages)
+    - Uses custom AJAX, not built-in server-side mode
+    - Supports CSV, Excel, PDF, Print export
+    - Column visibility toggle
+    - Status-based filtering
+    - Text search via filter_text parameter
+
+---
+7. MODULE-SPECIFIC DETAILS
+---
+
+  7.1 Customers
+    User Fields: 18
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 15717 bytes
+    Mandatory: first_name,middle_name,last_name,suffix,email,phone,mobile,company,display_name,billing_address,billing_city,billing_state,billing_post_code,billing_country,shipping_address,shipping_city
+    Insert Option: COM_INSERT_CUSTOMERS
+
+  7.2 Enquiries
+    User Fields: 12
+    Hidden Fields: 17
+    Line Item Fields: 0
+    HTML Form Size: 14916 bytes
+    Mandatory: cost_center_id,transaction_number,transaction_date,originator_currency_id,currency_id,currency_rate,originator,originator_state_id,supplier_state_id,place_of_supply,type,opex_cpex
+    Insert Option: COM_INSERT_ENQUIRIES
+
+  7.3 Estimates
+    User Fields: 28
+    Hidden Fields: 19
+    Line Item Fields: 0
+    HTML Form Size: 22712 bytes
+    Mandatory: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,originator_currency_id,currency_id,currency_rate,originator,party_id,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,originator_state_id,supplier_state_id,place_of_supply,payment_terms,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+    Insert Option: COM_INSERT_ESTIMATES
+
+  7.4 Sales Orders
+    User Fields: 29
+    Hidden Fields: 19
+    Line Item Fields: 0
+    HTML Form Size: 23186 bytes
+    Mandatory: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,originator_currency_id,currency_id,currency_rate,originator,party_id,salesmen_id,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,originator_state_id,supplier_state_id,place_of_supply,payment_terms,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+    Insert Option: COM_INSERT_SALES_ORDERS
+
+  7.5 Sales Invoices
+    User Fields: 29
+    Hidden Fields: 18
+    Line Item Fields: 0
+    HTML Form Size: 22879 bytes
+    Mandatory: cost_center_id,transaction_number,transaction_date,transaction_location_id,transaction_warehouse_id,originator_currency_id,currency_id,currency_rate,originator,party_id,party_name,party_email,party_tax_number,party_phone,party_address,party_ship_adderss,originator_state_id,supplier_state_id,place_of_supply,payment_terms,type,tax_state,opex_cpex,doc_ref_no,doc_ref_date,due_date,ref_type,ref_id,ref_no,ref_date
+    Insert Option: COM_INSERT_SALES_INVOICES
+
+  7.6 Receipts
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10416 bytes
+    Insert Option: COM_INSERT_RECEIPTS
+
+  7.7 Incoterms
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11388 bytes
+    Mandatory: incoterm_name,incoterm_code
+    Insert Option: COM_INSERT_INCOTERMS
+
+  7.8 Payment Terms
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10451 bytes
+    Insert Option: COM_INSERT_PAYMENT_TERMS
+
+  7.9 Additional Charges
+    User Fields: 5
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 12102 bytes
+    Mandatory: charge_name,hsn_and_sac_code_id,account_code
+    Insert Option: COM_INSERT_ADDITIONAL_CHARGES
+
+  7.10 Deferred Revenues
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10479 bytes
+    Insert Option: COM_INSERT_DEFERRED_REVENUES

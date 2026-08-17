@@ -1,0 +1,293 @@
+================================================================================
+PHASE 3: ORGANIZATION & MASTER DATA - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the Organization & Master Data modules, scraped from the live application.
+
+---
+1. APPLICATION ARCHITECTURE (CODE LEVEL)
+---
+
+1.1 Technology Stack
+  - Backend: PHP (server-rendered, no REST framework)
+  - Frontend: jQuery + Bootstrap 4 + DataTables
+  - Database: MySQL (inferred from PHP/LAMP stack)
+  - Session: PHP sessions (PHPSESSID cookie)
+  - Routing: Single entry point (index.php) with option-based routing
+
+1.2 Routing Convention
+  COM_LIST_XXX     -> List/view page
+  COM_INSERT_XXX   -> Insert form
+  COM_UPDATE_XXX   -> Update form
+  COM_VIEW_XXX    -> View/detail page
+
+---
+2. DATABASE SCHEMA - ORGANIZATION MODULES
+---
+
+2.1 Table: divisions
+  Module: Division
+  Insert Option: COM_INSERT_DIVISIONS
+
+  CREATE TABLE divisions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    division_name VARCHAR(255)  -- ,
+    division_description VARCHAR(255)  -- ,
+    hod VARCHAR(255)  -- ,
+    from_date DATE NOT NULL  -- ,
+    to_date DATE  -- ,
+    status TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Mandatory columns: division_name,division_description,hod
+
+2.2 Table: departments
+  Module: Departments
+  Insert Option: COM_INSERT_DEPARTMENTS
+
+  CREATE TABLE departments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    department_name VARCHAR(255)  -- ,
+    department_description VARCHAR(255)  -- ,
+    hod VARCHAR(255)  -- ,
+    from_date DATE NOT NULL  -- ,
+    to_date DATE  -- ,
+    division_id VARCHAR(255)  -- Hod (FK dropdown, 1 options),
+    status TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Mandatory columns: department_name,department_description,hod,division_id
+
+2.3 Table: locations
+  Module: Locations
+  Insert Option: COM_INSERT_LOCATIONS
+
+  CREATE TABLE locations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    short_name VARCHAR(255)  -- ,
+    location_name VARCHAR(255)  -- ,
+    location_description VARCHAR(255)  -- ,
+    location_address VARCHAR(255)  -- ,
+    loc_latitude VARCHAR(255)  -- ,
+    loc_longitude VARCHAR(255)  -- ,
+    location_post_code VARCHAR(255)  -- ,
+    in_location TINYINT(1) DEFAULT 0  -- ,
+    wip_location TINYINT(1) DEFAULT 0  -- ,
+    fg_location TINYINT(1) DEFAULT 0  -- ,
+    parent_location_id VARCHAR(255)  -- Parent Location (FK dropdown, 1 options),
+    location_country VARCHAR(255)  -- Location Country (FK dropdown, 1 options),
+    location_state VARCHAR(255)  -- Location State (FK dropdown, 1 options),
+    location_city VARCHAR(255)  -- Location City (FK dropdown, 1 options),
+    status TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+
+2.4 Table: cost_centers
+  Module: Cost Centres
+  Insert Option: COM_INSERT_COST_CENTERS
+
+  CREATE TABLE cost_centers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cost_center_name VARCHAR(255)  -- ,
+    from_date DATE NOT NULL  -- ,
+    to_date DATE  -- ,
+    cost_center_type VARCHAR(255)  -- Cost Center Type (FK dropdown, 16 options),
+    department_id VARCHAR(255)  -- Department (FK dropdown, 1 options),
+    parent_cost_center_id VARCHAR(255)  -- Parent Cost Center (FK dropdown, 1 options),
+    status TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+  Mandatory columns: cost_center_name,cost_center_type,department_id,parent_cost_center_id
+
+2.5 Table: general_code_details
+  Generic lookup/code table for dropdowns
+  Accessed via URL parameter: CODE=COSTCENTERTYPE
+
+  CREATE TABLE general_code_details (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    code_type VARCHAR(100) NOT NULL,
+    code_value VARCHAR(255) NOT NULL,
+    code_description TEXT,
+    status TINYINT DEFAULT 0,
+    from_date DATE,
+    to_date DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  departments.division_id  -->  divisions.id
+  cost_centers.department_id  -->  departments.id
+  cost_centers.cost_center_type  -->  general_code_details.code_value
+    WHERE code_type = COSTCENTERTYPE
+  cost_centers.parent_cost_center_id  -->  cost_centers.id (self-ref)
+  locations.parent_location_id  -->  locations.id (self-ref)
+  locations.location_country  -->  countries (lookup)
+  locations.location_state  -->  states (lookup)
+  locations.location_city  -->  cities (lookup)
+
+  ER Diagram (text):
+  +-----------+     +--------------+     +--------------+
+  | divisions | 1-* | departments  | 1-* | cost_centers |
+  +-----------+     +--------------+     +--------------+
+       |                                       |
+       +------------------+------------------+
+                          |
+                 +-----------+
+                 | locations |
+                 +-----------+
+                      |
+                   self-ref
+
+---
+4. BUSINESS RULES
+---
+
+4.1 Effective Dating
+  Every master record has from_date/to_date. Records are valid
+  only within this range. from_date is mandatory. to_date defaults
+  to from_date + 5 years.
+
+4.2 Soft Delete / Status
+  status=0 Active, status=1 Inactive, status=2 Draft
+  Records are never physically deleted. Status changes go
+  through the workflow API (ajax.php?page=submitstatusdynamicworkflow)
+
+4.3 Duplicate Checking
+  duplicate_table_name hidden field triggers server-side duplicate
+  detection before INSERT. Checks for same user-visible fields.
+
+4.4 Notifications
+  notification_users (comma-separated user IDs) receive alerts
+  when records are created. notification_message is the template.
+
+4.5 Validation
+  Client-side: mandatory_str drives validateForm() JS function.
+  Server-side validation is implied but not visible in frontend.
+
+4.6 Division Rules
+  - division_name, division_description, hod are MANDATORY
+  - HoD is free-text, not a FK to users table
+  - No parent-child hierarchy
+
+4.7 Department Rules
+  - department_name, description, hod, division_id are MANDATORY
+  - division_id is FK to divisions (select2 dropdown)
+
+4.8 Location Rules
+  - 14 user fields including lat/long coordinates
+  - Self-referencing via parent_location_id
+  - Boolean flags: in_location, wip_location, fg_location
+  - Country/State/City are cascading AJAX dropdowns
+
+4.9 Cost Center Rules
+  - cost_center_name, type, department_id, parent_cc_id MANDATORY
+  - 16 cost center types from general_code_details
+  - Self-referencing hierarchy via parent_cost_center_id
+
+---
+5. API ENDPOINT CATALOG
+---
+
+5.1 List/Filter API
+  POST /views/custon_list_dynamic_table.php
+  Params: option, table, status, filterajax, current_page,
+          limit_select, filter_text, filter_dynamic_select
+  Response: HTML table with pagination
+
+5.2 Insert Form Render
+  POST /views/new_from.php?option=COM_INSERT_XXX
+  Response: HTML form fragment
+
+5.3 Insert Form Submit
+  POST /index.php (multipart/form-data)
+  All form fields + hidden framework fields
+
+5.4 Status Workflow
+  POST /ajax.php?page=submitstatusdynamicworkflow
+  Params: table_name, current_status, transaction_id, next_status
+  Response: JSON {transaction_update:{status,message}}
+
+5.5 Status Popup
+  POST /views/custom_insert_dynamic_status_popup.php
+  Params: table_name, current_status, transaction_id, next_status
+  Response: HTML modal with comment field
+
+5.6 Notifications
+  POST /ajax.php?page=closenotificationinfo&id={id}
+  POST /ajax.php?page=closeallnotifications&type=&user_id=
+  POST /views/custom_list_notification_popup.php
+
+5.7 Help Text
+  POST /ajax.php?page=setdynamichelptext&table_name={table}
+  Response: JSON {field_name:{helptext,sequence,type}}
+
+---
+6. SOURCE CODE PATTERNS
+---
+
+6.1 Generic Form Generator (views/new_from.php)
+  Central PHP script that renders all insert/update forms.
+  Reads option param, queries field metadata, renders HTML.
+  Includes framework hidden fields and effective date fields.
+
+6.2 Generic List Renderer (views/custon_list_dynamic_table.php)
+  Handles all list views. Builds SQL dynamically from params.
+  Supports status filtering, text search, pagination.
+
+6.3 AJAX Router (ajax.php)
+  Central dispatch handler. Routes via page= parameter:
+  - submitstatusdynamicworkflow: Status transitions
+  - updatedynamicfied: Toggle boolean fields
+  - setdynamichelptext: Field help text
+  - getstockbalanceavailability: Inventory check
+  - closenotificationinfo / closeallnotifications
+  - insertadittrails: Audit trail creation
+
+6.4 Frontend JS (custom.js - 45KB)
+  Key functions:
+  - dynamicFilterTable(): Reloads list via AJAX
+  - dynamicinsertpopup(): Opens insert modal
+  - submitDynamicWorkflow(): Status change + confirmation
+  - submitDynamicWorkflowPopUp(): Status change modal
+  - handleArtificialIntelligenceClick(): AI features
+  - getNotificationList(): Load notifications
+
+6.5 DataTables
+  Custom AJAX instead of built-in server-side mode.
+  Supports export (CSV, Excel, PDF, Print) and column toggle.
+
+---
+7. INFERRED SYSTEM/METADATA TABLES
+---
+
+  7.1 field_metadata - Field definitions for generic form generator
+      Columns: table_name, field_name, field_type, label,
+               is_mandatory, is_visible, sort_order
+
+  7.2 workflow_definitions - Status workflows per table
+      Columns: table_name, from_status, to_status,
+               requires_approval, approval_role
+
+  7.3 notifications - User notifications
+      Columns: id, user_id, message, is_read,
+               related_table, related_id, created_at
+
+  7.4 audit_trails - Change audit log
+      Columns: id, table_name, record_id, action,
+               old_values, new_values, changed_by, changed_at
+
+  7.5 general_code_details - Generic lookup/codes table
+      Columns: id, code_type, code_value, code_description, status

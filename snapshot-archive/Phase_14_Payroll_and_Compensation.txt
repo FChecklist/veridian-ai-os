@@ -1,0 +1,536 @@
+================================================================================
+PHASE 14: PAYROLL & COMPENSATION - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the Payroll & Compensation modules, scraped from the live application.
+
+Phase Description: Salary structure, pay areas, tax slabs, contractor payroll, and budget approvals.
+
+Modules Covered: 9
+  - earnings [SCRAPE]
+  - salary [SCRAPE]
+  - pay_areas [SCRAPE]
+  - payroll_admins [SCRAPE]
+  - tax_slabs [SCRAPE]
+  - contract_employee_pay [NO FORM]
+  - manpower_contracts [SCRAPE]
+  - milestone_contracts [NO FORM]
+  - esgin_budget_approvals [SCRAPE]
+
+---
+1. APPLICATION ARCHITECTURE (SHARED)
+---
+
+  1.1 Routing Convention
+    COM_LIST_XXX     -> List/view page (DataTables)
+    COM_INSERT_XXX   -> Insert form (POST to /views/new_from.php)
+    COM_UPDATE_XXX   -> Update form
+    COM_VIEW_XXX    -> View/detail/report page
+
+  1.2 AJAX Endpoints
+    POST /ajax.php?page=submitstatusdynamicworkflow
+    POST /ajax.php?page=updatedynamicfied
+    POST /ajax.php?page=setdynamichelptext
+    POST /ajax.php?page=getstockbalanceavailability
+    POST /views/custon_list_dynamic_table.php
+    POST /views/new_from.php?option=COM_INSERT_XXX
+
+  1.3 Standard Hidden Fields (in every form)
+    option, table_name, duplicate_table_name,
+    in_date_pic, in_currency_fileds, in_phone_fileds,
+    mandatory_str, add_mandatory_str, notification_users,
+    notification_message, status, from_date, to_date
+
+---
+2. DATABASE SCHEMAS
+---
+
+  2.1 Table: earnings
+    Module: Earnings
+    Insert Option: COM_INSERT_EARNINGS
+    Form Fields: 21 user-visible, 35 total
+    Mandatory columns: category_id,name,code,payslip_name,calculation_type,calculation_mode,calculation_category,calculation_number,display_seq,taxable,taxable_limit,min_range,max_range,note
+
+  CREATE TABLE earnings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    code VARCHAR(50),
+    payslip_name VARCHAR(255),
+    calculation_type VARCHAR(255),
+    calculation_type VARCHAR(255),
+    calculation_type VARCHAR(255),
+    calculation_type VARCHAR(255),
+    calculation_mode VARCHAR(255),
+    calculation_mode VARCHAR(255),
+    calculation_number VARCHAR(255),
+    display_seq VARCHAR(255),
+    taxable VARCHAR(255),
+    taxable VARCHAR(255),
+    taxable_limit VARCHAR(255),
+    min_range VARCHAR(255),
+    max_range VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    category_id INT  -- (FK dropdown),
+    calculation_category INT  -- (FK dropdown),
+    note TEXT,
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      name                                     text        
+      code                                     text        
+      payslip_name                             text        
+      calculation_type                         radio       
+      calculation_type                         radio       
+      calculation_type                         radio       
+      calculation_type                         radio       
+      calculation_mode                         radio       
+      calculation_mode                         radio       
+      calculation_number                       text        
+      display_seq                              text        
+      taxable                                  radio       
+      taxable                                  radio       
+      taxable_limit                            text        
+      min_range                                text        
+      max_range                                text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      category_id                              select      
+      calculation_category                     select      
+      note                                     textarea    
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=category_id,name,code,payslip_name,calculation_typ
+      add_mandatory_str                        hidden       value=
+
+  2.2 Table: salary
+    Module: Salary
+    Insert Option: COM_INSERT_SALARY
+    Form Fields: 2 user-visible, 16 total
+
+  CREATE TABLE salary (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=
+      add_mandatory_str                        hidden       value=
+
+  2.3 Table: pay_areas
+    Module: Pay Areas
+    Insert Option: COM_INSERT_PAY_AREAS
+    Form Fields: 8 user-visible, 22 total
+    Mandatory columns: name,description,salary_run_day,salary_pay_day,attendance_by
+
+  CREATE TABLE pay_areas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    description VARCHAR(255),
+    salary_run_day VARCHAR(255),
+    salary_pay_day VARCHAR(255),
+    attendance_by VARCHAR(255),
+    attendance_by VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      name                                     text        
+      description                              text        
+      salary_run_day                           text        
+      salary_pay_day                           text        
+      attendance_by                            radio       
+      attendance_by                            radio       
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=name,description,salary_run_day,salary_pay_day,att
+      add_mandatory_str                        hidden       value=
+
+  2.4 Table: payroll_admins
+    Module: Payroll Admins
+    Insert Option: COM_INSERT_PAYROLL_ADMINS
+    Form Fields: 3 user-visible, 17 total
+    Mandatory columns: user_id
+
+  CREATE TABLE payroll_admins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    user_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      user_id                                  select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=user_id
+      add_mandatory_str                        hidden       value=
+
+  2.5 Table: tax_slabs
+    Module: Tax Slabs
+    Insert Option: COM_INSERT_TAX_SLABS
+    Form Fields: 3 user-visible, 17 total
+    Mandatory columns: assessment_year,categroy_id,slad_from,slad_to,rate
+
+  CREATE TABLE tax_slabs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    rate VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      rate                                     text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=assessment_year,categroy_id,slad_from,slad_to,rate
+      add_mandatory_str                        hidden       value=
+
+  2.6 Table: contract_employee_pay
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.7 Table: manpower_contracts
+    Module: Manpower Contracts
+    Insert Option: COM_INSERT_MANPOWER_CONTRACTS
+    Form Fields: 11 user-visible, 25 total
+    Mandatory columns: transaction_number,transaction_date,originator,effective_from_date,effective_to_date,place_of_supply,payment_terms,ref_no,ref_date
+
+  CREATE TABLE manpower_contracts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    transaction_date VARCHAR(255),
+    ref_date VARCHAR(255),
+    effective_from_date VARCHAR(255),
+    effective_to_date VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    originator INT  -- (FK dropdown),
+    ref_no INT  -- (FK dropdown),
+    place_of_supply INT  -- (FK dropdown),
+    payment_terms INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      transaction_date                         text        
+      ref_date                                 text        
+      effective_from_date                      text        
+      effective_to_date                        text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      originator                               select      
+      ref_no                                   select      
+      place_of_supply                          select      
+      payment_terms                            select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=transaction_date,ref_date,effective_from_date,effe
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=transaction_number,transaction_date,originator,eff
+      add_mandatory_str                        hidden       value=
+
+  2.8 Table: milestone_contracts
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.9 Table: esgin_budget_approvals
+    Module: Esgin Budget Approvals
+    Insert Option: COM_INSERT_ESGIN_BUDGET_APPROVALS
+    Form Fields: 11 user-visible, 25 total
+    Mandatory columns: transaction_number,transaction_date,originator,effective_from_date,effective_to_date,ref_no,ref_date,po_no,po_date
+
+  CREATE TABLE esgin_budget_approvals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(255),
+    ref_no VARCHAR(255),
+    transaction_date VARCHAR(255),
+    ref_date VARCHAR(255),
+    effective_from_date VARCHAR(255),
+    po_no VARCHAR(255),
+    effective_to_date VARCHAR(255),
+    po_date VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    originator INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      transaction_number                       text        
+      ref_no                                   text        
+      transaction_date                         text        
+      ref_date                                 text        
+      effective_from_date                      text        
+      po_no                                    text        
+      effective_to_date                        text        
+      po_date                                  text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      originator                               select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=transaction_date,ref_date,effective_from_date,effe
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=transaction_number,transaction_date,originator,eff
+      add_mandatory_str                        hidden       value=
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  earnings.category_id  -->  categorys.id
+  earnings.calculation_category  -->  calculation_category_lookup.id
+  payroll_admins.user_id  -->  users.id
+  manpower_contracts.originator  -->  originator_lookup.id
+  manpower_contracts.ref_no  -->  ref_no_lookup.id
+  manpower_contracts.place_of_supply  -->  place_of_supply_lookup.id
+  manpower_contracts.payment_terms  -->  payment_terms_lookup.id
+  esgin_budget_approvals.originator  -->  originator_lookup.id
+
+  ER Summary:
+  Tables: 11
+  Relationships: 8
+
+---
+4. BUSINESS RULES
+---
+
+  4.1 Effective Dating (all modules)
+    Every record has from_date/to_date. Records are valid
+    only within this range. from_date is mandatory.
+
+  4.2 Soft Delete / Status (all modules)
+    status=0 Active, status=1 Inactive, status=2 Draft
+    Records are never physically deleted. Status changes go
+    through the workflow API (submitstatusdynamicworkflow).
+
+  4.3 Module-Specific Rules
+    4.3.1 Earnings
+      Mandatory fields: category_id, name, code, payslip_name, calculation_type, calculation_mode, calculation_category, calculation_number, display_seq, taxable, taxable_limit, min_range, max_range, note
+
+    4.3.2 Earnings
+      Has 2 foreign key dropdown fields
+
+    4.3.3 Earnings
+      Complex form with 21 user fields
+
+    4.3.4 Pay Areas
+      Mandatory fields: name, description, salary_run_day, salary_pay_day, attendance_by
+
+    4.3.5 Payroll Admins
+      Mandatory fields: user_id
+
+    4.3.6 Payroll Admins
+      Has 1 foreign key dropdown fields
+
+    4.3.7 Tax Slabs
+      Mandatory fields: assessment_year, categroy_id, slad_from, slad_to, rate
+
+    4.3.8 Manpower Contracts
+      Mandatory fields: transaction_number, transaction_date, originator, effective_from_date, effective_to_date, place_of_supply, payment_terms, ref_no, ref_date
+
+    4.3.9 Manpower Contracts
+      Has 4 foreign key dropdown fields
+
+    4.3.10 Manpower Contracts
+      Has 6 date fields (effective dating + business dates)
+
+    4.3.11 Esgin Budget Approvals
+      Mandatory fields: transaction_number, transaction_date, originator, effective_from_date, effective_to_date, ref_no, ref_date, po_no, po_date
+
+    4.3.12 Esgin Budget Approvals
+      Has 1 foreign key dropdown fields
+
+    4.3.13 Esgin Budget Approvals
+      Has 7 date fields (effective dating + business dates)
+
+---
+5. API ENDPOINTS
+---
+
+  5.1 Standard CRUD APIs (shared across all modules)
+    POST /views/new_from.php?option=COM_INSERT_XXX
+      Renders insert form HTML
+    POST /index.php
+      Form submit (multipart/form-data)
+    POST /views/custon_list_dynamic_table.php
+      List data with pagination, filtering
+      Params: option, table, status, filter_text,
+              current_page, limit_select
+
+  5.2 Workflow APIs
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Status transitions (Draft->Pending->Approved)
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Params: table_name, current_status, transaction_id,
+              next_status
+
+  5.3 Module-Specific API Routes
+    COM_INSERT_EARNINGS  -> Insert earnings
+    COM_LIST_EARNINGS -> List earnings
+    COM_INSERT_SALARY  -> Insert salary
+    COM_LIST_SALARY -> List salary
+    COM_INSERT_PAY_AREAS  -> Insert pay_areas
+    COM_LIST_PAY_AREAS -> List pay_areas
+    COM_INSERT_PAYROLL_ADMINS  -> Insert payroll_admins
+    COM_LIST_PAYROLL_ADMINS -> List payroll_admins
+    COM_INSERT_TAX_SLABS  -> Insert tax_slabs
+    COM_LIST_TAX_SLABS -> List tax_slabs
+    COM_INSERT_MANPOWER_CONTRACTS  -> Insert manpower_contracts
+    COM_LIST_MANPOWER_CONTRACTS -> List manpower_contracts
+    COM_INSERT_ESGIN_BUDGET_APPROVALS  -> Insert esgin_budget_approvals
+    COM_LIST_ESGIN_BUDGET_APPROVALS -> List esgin_budget_approvals
+
+---
+6. CODE-LEVEL PATTERNS
+---
+
+  6.1 Generic Form Pattern
+    All modules use views/new_from.php as the form renderer.
+    The form HTML includes:
+    - validateForm() JS function driven by mandatory_str
+    - select2 dropdowns for FK fields
+    - datepicker for date fields (jQuery UI)
+    - Bootstrap 4 form layout (card > card-body > form-group)
+
+  6.2 Hidden Metadata Pattern (every form)
+    - option: The COM_ route constant
+    - table_name: Physical DB table name
+    - duplicate_table_name: For duplicate checking
+    - in_date_pic: Array of date fields for datepicker init
+    - in_currency_fileds: Currency fields for formatting
+    - in_phone_fileds: Phone fields for validation
+    - mandatory_str: Comma-separated required fields
+    - notification_users: User IDs to notify on create
+    - notification_message: Notification template
+
+  6.3 DataTables Pattern (all list pages)
+    - Uses custom AJAX, not built-in server-side mode
+    - Supports CSV, Excel, PDF, Print export
+    - Column visibility toggle
+    - Status-based filtering
+    - Text search via filter_text parameter
+
+---
+7. MODULE-SPECIFIC DETAILS
+---
+
+  7.1 Earnings
+    User Fields: 21
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 17626 bytes
+    Mandatory: category_id,name,code,payslip_name,calculation_type,calculation_mode,calculation_category,calculation_number,display_seq,taxable,taxable_limit,min_range,max_range,note
+    Insert Option: COM_INSERT_EARNINGS
+
+  7.2 Salary
+    User Fields: 2
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10420 bytes
+    Insert Option: COM_INSERT_SALARY
+
+  7.3 Pay Areas
+    User Fields: 8
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 12307 bytes
+    Mandatory: name,description,salary_run_day,salary_pay_day,attendance_by
+    Insert Option: COM_INSERT_PAY_AREAS
+
+  7.4 Payroll Admins
+    User Fields: 3
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10905 bytes
+    Mandatory: user_id
+    Insert Option: COM_INSERT_PAYROLL_ADMINS
+
+  7.5 Tax Slabs
+    User Fields: 3
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10922 bytes
+    Mandatory: assessment_year,categroy_id,slad_from,slad_to,rate
+    Insert Option: COM_INSERT_TAX_SLABS
+
+  7.6 Manpower Contracts
+    User Fields: 11
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 14338 bytes
+    Mandatory: transaction_number,transaction_date,originator,effective_from_date,effective_to_date,place_of_supply,payment_terms,ref_no,ref_date
+    Insert Option: COM_INSERT_MANPOWER_CONTRACTS
+
+  7.7 Esgin Budget Approvals
+    User Fields: 11
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 13533 bytes
+    Mandatory: transaction_number,transaction_date,originator,effective_from_date,effective_to_date,ref_no,ref_date,po_no,po_date
+    Insert Option: COM_INSERT_ESGIN_BUDGET_APPROVALS

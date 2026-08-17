@@ -1,0 +1,382 @@
+================================================================================
+PHASE 17: RECRUITMENT & ONBOARDING - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the Recruitment & Onboarding modules, scraped from the live application.
+
+Phase Description: Candidate management, job postings, selection process workflows, and hiring source tracking.
+
+Modules Covered: 7
+  - candidates [NO FORM]
+  - job_hiring_source [SCRAPE]
+  - job_feedback_setup [SCRAPE]
+  - job_selection_process [SCRAPE]
+  - job_selection_process_steps [SCRAPE]
+  - job_posting_candidates [NO FORM]
+  - process_task_settings [SCRAPE]
+
+---
+1. APPLICATION ARCHITECTURE (SHARED)
+---
+
+  1.1 Routing Convention
+    COM_LIST_XXX     -> List/view page (DataTables)
+    COM_INSERT_XXX   -> Insert form (POST to /views/new_from.php)
+    COM_UPDATE_XXX   -> Update form
+    COM_VIEW_XXX    -> View/detail/report page
+
+  1.2 AJAX Endpoints
+    POST /ajax.php?page=submitstatusdynamicworkflow
+    POST /ajax.php?page=updatedynamicfied
+    POST /ajax.php?page=setdynamichelptext
+    POST /ajax.php?page=getstockbalanceavailability
+    POST /views/custon_list_dynamic_table.php
+    POST /views/new_from.php?option=COM_INSERT_XXX
+
+  1.3 Standard Hidden Fields (in every form)
+    option, table_name, duplicate_table_name,
+    in_date_pic, in_currency_fileds, in_phone_fileds,
+    mandatory_str, add_mandatory_str, notification_users,
+    notification_message, status, from_date, to_date
+
+---
+2. DATABASE SCHEMAS
+---
+
+  2.1 Table: candidates
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.2 Table: job_hiring_source
+    Module: Job Hiring Source
+    Insert Option: COM_INSERT_JOB_HIRING_SOURCE
+    Form Fields: 8 user-visible, 24 total
+    Mandatory columns: hiring_source_name,description,hiring_source_logo,header_key,authorization_key
+
+  CREATE TABLE job_hiring_source (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    hiring_source_name VARCHAR(255),
+    hiring_source_logo VARCHAR(500)  -- &nbsp; Change Image,
+    hiring_source_logo VARCHAR(500)  -- &nbsp; Change Image,
+    header_key VARCHAR(255),
+    authorization_key VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    description TEXT,
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      hiring_source_name                       text        
+      hiring_source_logo                       file         (&nbsp; Change Image)
+      hiring_source_logo                       file         (&nbsp; Change Image)
+      header_key                               text        
+      authorization_key                        text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      description                              textarea    
+    Hidden Metadata Fields:
+      hidhiring_source_logo                    hidden       value=
+      hidhiring_source_logo                    hidden       value=
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+
+  2.3 Table: job_feedback_setup
+    Module: Job Feedback Setup
+    Insert Option: COM_INSERT_JOB_FEEDBACK_SETUP
+    Form Fields: 5 user-visible, 19 total
+    Mandatory columns: parent_id,name,description
+
+  CREATE TABLE job_feedback_setup (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    parent_id INT  -- (FK dropdown),
+    description TEXT,
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      name                                     text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      parent_id                                select      
+      description                              textarea    
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=parent_id,name,description
+      add_mandatory_str                        hidden       value=
+
+  2.4 Table: job_selection_process
+    Module: Job Selection Process
+    Insert Option: COM_INSERT_JOB_SELECTION_PROCESS
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: process_name,selection_remarks
+
+  CREATE TABLE job_selection_process (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    process_name VARCHAR(255),
+    selection_remarks VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      process_name                             text        
+      selection_remarks                        text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=process_name,selection_remarks
+      add_mandatory_str                        hidden       value=
+
+  2.5 Table: job_selection_process_steps
+    Module: Job Selection Process Steps
+    Insert Option: COM_INSERT_JOB_SELECTION_PROCESS_STEPS
+    Form Fields: 6 user-visible, 20 total
+    Mandatory columns: process_id,select_name,selection_seq,selection_remarks
+
+  CREATE TABLE job_selection_process_steps (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    select_name VARCHAR(255),
+    selection_seq VARCHAR(255),
+    selection_remarks VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    process_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      select_name                              text        
+      selection_seq                            text        
+      selection_remarks                        text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      process_id                               select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=process_id,select_name,selection_seq,selection_rem
+      add_mandatory_str                        hidden       value=
+
+  2.6 Table: job_posting_candidates
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.7 Table: process_task_settings
+    Module: Process Task Settings
+    Insert Option: COM_INSERT_PROCESS_TASK_SETTINGS
+    Form Fields: 3 user-visible, 17 total
+    Mandatory columns: process_id
+
+  CREATE TABLE process_task_settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    process_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      process_id                               select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=process_id
+      add_mandatory_str                        hidden       value=
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  job_feedback_setup.parent_id  -->  parents.id
+  job_selection_process_steps.process_id  -->  processs.id
+  process_task_settings.process_id  -->  processs.id
+
+  ER Summary:
+  Tables: 5
+  Relationships: 3
+
+---
+4. BUSINESS RULES
+---
+
+  4.1 Effective Dating (all modules)
+    Every record has from_date/to_date. Records are valid
+    only within this range. from_date is mandatory.
+
+  4.2 Soft Delete / Status (all modules)
+    status=0 Active, status=1 Inactive, status=2 Draft
+    Records are never physically deleted. Status changes go
+    through the workflow API (submitstatusdynamicworkflow).
+
+  4.3 Module-Specific Rules
+    4.3.1 Job Hiring Source
+      Mandatory fields: hiring_source_name, description, hiring_source_logo, header_key, authorization_key
+
+    4.3.2 Job Feedback Setup
+      Mandatory fields: parent_id, name, description
+
+    4.3.3 Job Feedback Setup
+      Has 1 foreign key dropdown fields
+
+    4.3.4 Job Selection Process
+      Mandatory fields: process_name, selection_remarks
+
+    4.3.5 Job Selection Process Steps
+      Mandatory fields: process_id, select_name, selection_seq, selection_remarks
+
+    4.3.6 Job Selection Process Steps
+      Has 1 foreign key dropdown fields
+
+    4.3.7 Process Task Settings
+      Mandatory fields: process_id
+
+    4.3.8 Process Task Settings
+      Has 1 foreign key dropdown fields
+
+---
+5. API ENDPOINTS
+---
+
+  5.1 Standard CRUD APIs (shared across all modules)
+    POST /views/new_from.php?option=COM_INSERT_XXX
+      Renders insert form HTML
+    POST /index.php
+      Form submit (multipart/form-data)
+    POST /views/custon_list_dynamic_table.php
+      List data with pagination, filtering
+      Params: option, table, status, filter_text,
+              current_page, limit_select
+
+  5.2 Workflow APIs
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Status transitions (Draft->Pending->Approved)
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Params: table_name, current_status, transaction_id,
+              next_status
+
+  5.3 Module-Specific API Routes
+    COM_INSERT_JOB_HIRING_SOURCE  -> Insert job_hiring_source
+    COM_LIST_JOB_HIRING_SOURCE -> List job_hiring_source
+    COM_INSERT_JOB_FEEDBACK_SETUP  -> Insert job_feedback_setup
+    COM_LIST_JOB_FEEDBACK_SETUP -> List job_feedback_setup
+    COM_INSERT_JOB_SELECTION_PROCESS  -> Insert job_selection_process
+    COM_LIST_JOB_SELECTION_PROCESS -> List job_selection_process
+    COM_INSERT_JOB_SELECTION_PROCESS_STEPS  -> Insert job_selection_process_steps
+    COM_LIST_JOB_SELECTION_PROCESS_STEPS -> List job_selection_process_steps
+    COM_INSERT_PROCESS_TASK_SETTINGS  -> Insert process_task_settings
+    COM_LIST_PROCESS_TASK_SETTINGS -> List process_task_settings
+
+---
+6. CODE-LEVEL PATTERNS
+---
+
+  6.1 Generic Form Pattern
+    All modules use views/new_from.php as the form renderer.
+    The form HTML includes:
+    - validateForm() JS function driven by mandatory_str
+    - select2 dropdowns for FK fields
+    - datepicker for date fields (jQuery UI)
+    - Bootstrap 4 form layout (card > card-body > form-group)
+
+  6.2 Hidden Metadata Pattern (every form)
+    - option: The COM_ route constant
+    - table_name: Physical DB table name
+    - duplicate_table_name: For duplicate checking
+    - in_date_pic: Array of date fields for datepicker init
+    - in_currency_fileds: Currency fields for formatting
+    - in_phone_fileds: Phone fields for validation
+    - mandatory_str: Comma-separated required fields
+    - notification_users: User IDs to notify on create
+    - notification_message: Notification template
+
+  6.3 DataTables Pattern (all list pages)
+    - Uses custom AJAX, not built-in server-side mode
+    - Supports CSV, Excel, PDF, Print export
+    - Column visibility toggle
+    - Status-based filtering
+    - Text search via filter_text parameter
+
+---
+7. MODULE-SPECIFIC DETAILS
+---
+
+  7.1 Job Hiring Source
+    User Fields: 8
+    Hidden Fields: 16
+    Line Item Fields: 0
+    HTML Form Size: 13820 bytes
+    Mandatory: hiring_source_name,description,hiring_source_logo,header_key,authorization_key
+    Insert Option: COM_INSERT_JOB_HIRING_SOURCE
+
+  7.2 Job Feedback Setup
+    User Fields: 5
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11540 bytes
+    Mandatory: parent_id,name,description
+    Insert Option: COM_INSERT_JOB_FEEDBACK_SETUP
+
+  7.3 Job Selection Process
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11276 bytes
+    Mandatory: process_name,selection_remarks
+    Insert Option: COM_INSERT_JOB_SELECTION_PROCESS
+
+  7.4 Job Selection Process Steps
+    User Fields: 6
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 12131 bytes
+    Mandatory: process_id,select_name,selection_seq,selection_remarks
+    Insert Option: COM_INSERT_JOB_SELECTION_PROCESS_STEPS
+
+  7.5 Process Task Settings
+    User Fields: 3
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10916 bytes
+    Mandatory: process_id
+    Insert Option: COM_INSERT_PROCESS_TASK_SETTINGS

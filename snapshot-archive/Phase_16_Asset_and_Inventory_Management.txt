@@ -1,0 +1,675 @@
+================================================================================
+PHASE 16: ASSET & INVENTORY MANAGEMENT - CODE & DATABASE LEVEL ANALYSIS
+================================================================================
+
+This document provides deep code-level and database schema analysis
+of the Asset & Inventory Management modules, scraped from the live application.
+
+Phase Description: Fixed asset lifecycle, asset allocation/return, warehouse management, and quality control.
+
+Modules Covered: 14
+  - assets [SCRAPE]
+  - asset_categories [SCRAPE]
+  - asset_condition_type [SCRAPE]
+  - asset_status [SCRAPE]
+  - asset_allocations [NO FORM]
+  - asset_requests [NO FORM]
+  - asset_returns [NO FORM]
+  - warehouses [SCRAPE]
+  - warehouse_users [NO FORM]
+  - item_locations [SCRAPE]
+  - quality_parameters [SCRAPE]
+  - quality_parameters_groups [SCRAPE]
+  - item_quality_parameters_mapping [SCRAPE]
+  - quality_check_form_grn [NO FORM]
+
+---
+1. APPLICATION ARCHITECTURE (SHARED)
+---
+
+  1.1 Routing Convention
+    COM_LIST_XXX     -> List/view page (DataTables)
+    COM_INSERT_XXX   -> Insert form (POST to /views/new_from.php)
+    COM_UPDATE_XXX   -> Update form
+    COM_VIEW_XXX    -> View/detail/report page
+
+  1.2 AJAX Endpoints
+    POST /ajax.php?page=submitstatusdynamicworkflow
+    POST /ajax.php?page=updatedynamicfied
+    POST /ajax.php?page=setdynamichelptext
+    POST /ajax.php?page=getstockbalanceavailability
+    POST /views/custon_list_dynamic_table.php
+    POST /views/new_from.php?option=COM_INSERT_XXX
+
+  1.3 Standard Hidden Fields (in every form)
+    option, table_name, duplicate_table_name,
+    in_date_pic, in_currency_fileds, in_phone_fileds,
+    mandatory_str, add_mandatory_str, notification_users,
+    notification_message, status, from_date, to_date
+
+---
+2. DATABASE SCHEMAS
+---
+
+  2.1 Table: assets
+    Module: Assets
+    Insert Option: COM_INSERT_ASSETS
+    Form Fields: 16 user-visible, 30 total
+    Mandatory columns: asset_code,asset_description,category_id,item_id,serial_no,bar_code,asset_location,asset_cost,accum_depn,purchase_date,disposal_proceeds,depn_rate,depreciation_type
+
+  CREATE TABLE assets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    asset_code VARCHAR(50),
+    asset_description VARCHAR(255),
+    serial_no VARCHAR(255),
+    bar_code VARCHAR(50),
+    asset_cost VARCHAR(255),
+    accum_depn VARCHAR(255),
+    disposal_proceeds VARCHAR(255),
+    purchase_date VARCHAR(255),
+    depn_rate VARCHAR(255),
+    depreciation_type VARCHAR(255),
+    depreciation_type VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    category_id INT  -- (FK dropdown),
+    item_id INT  -- (FK dropdown),
+    asset_location INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      asset_code                               text        
+      asset_description                        text        
+      serial_no                                text        
+      bar_code                                 text        
+      asset_cost                               text        
+      accum_depn                               text        
+      disposal_proceeds                        text        
+      purchase_date                            text        
+      depn_rate                                text        
+      depreciation_type                        radio       
+      depreciation_type                        radio       
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      category_id                              select      
+      item_id                                  select      
+      asset_location                           select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=purchase_date
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=asset_code,asset_description,category_id,item_id,s
+      add_mandatory_str                        hidden       value=
+
+  2.2 Table: asset_categories
+    Module: Asset Categories
+    Insert Option: COM_INSERT_ASSET_CATEGORIES
+    Form Fields: 13 user-visible, 27 total
+    Mandatory columns: category_description,purchase_account,depreciation_account,disposal_account,accum_depreciation_account,default_depn_type,Journal_id,duration,duration_type
+
+  CREATE TABLE asset_categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category_description VARCHAR(255),
+    default_depn_type VARCHAR(255),
+    default_depn_type VARCHAR(255),
+    default_depn_type VARCHAR(255),
+    duration VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    purchase_account INT  -- (FK dropdown),
+    depreciation_account INT  -- (FK dropdown),
+    disposal_account INT  -- (FK dropdown),
+    accum_depreciation_account INT  -- (FK dropdown),
+    Journal_id INT  -- (FK dropdown),
+    duration_type INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      category_description                     text        
+      default_depn_type                        radio       
+      default_depn_type                        radio       
+      default_depn_type                        radio       
+      duration                                 text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      purchase_account                         select      
+      depreciation_account                     select      
+      disposal_account                         select      
+      accum_depreciation_account               select      
+      Journal_id                               select      
+      duration_type                            select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=category_description,purchase_account,depreciation
+      add_mandatory_str                        hidden       value=
+
+  2.3 Table: asset_condition_type
+    Module: Asset Condition Type
+    Insert Option: COM_INSERT_ASSET_CONDITION_TYPE
+    Form Fields: 3 user-visible, 17 total
+    Mandatory columns: condition_name
+
+  CREATE TABLE asset_condition_type (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    condition_name VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      condition_name                           text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=condition_name
+      add_mandatory_str                        hidden       value=
+
+  2.4 Table: asset_status
+    Module: Asset Status
+    Insert Option: COM_INSERT_ASSET_STATUS
+    Form Fields: 3 user-visible, 17 total
+    Mandatory columns: name
+
+  CREATE TABLE asset_status (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      name                                     text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=name
+      add_mandatory_str                        hidden       value=
+
+  2.5 Table: asset_allocations
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.6 Table: asset_requests
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.7 Table: asset_returns
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.8 Table: warehouses
+    Module: Warehouses
+    Insert Option: COM_INSERT_WAREHOUSES
+    Form Fields: 18 user-visible, 37 total
+    Mandatory columns: location_id,warehouse_short_name,warehouse_name,warehouse_description,warehouse_address,warehouse_city,warehouse_state,warehouse_post_code,warehouse_country,in_location,wip_location,fg_location,rej_location,tax_ref,warehouse_incharge,is_active
+
+  CREATE TABLE warehouses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    warehouse_short_name VARCHAR(255),
+    warehouse_name VARCHAR(255),
+    warehouse_post_code VARCHAR(50),
+    in_location TINYINT(1) DEFAULT 0,
+    wip_location TINYINT(1) DEFAULT 0,
+    fg_location TINYINT(1) DEFAULT 0,
+    rej_location TINYINT(1) DEFAULT 0,
+    tax_ref VARCHAR(255),
+    is_active TINYINT(1) DEFAULT 0,
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    location_id INT  -- (FK dropdown),
+    warehouse_country INT  -- (FK dropdown),
+    warehouse_state INT  -- (FK dropdown),
+    warehouse_city INT  -- (FK dropdown),
+    warehouse_incharge INT  -- (FK dropdown),
+    warehouse_description TEXT,
+    warehouse_address TEXT,
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      warehouse_short_name                     text        
+      warehouse_name                           text        
+      warehouse_post_code                      text        
+      in_location                              checkbox    
+      wip_location                             checkbox    
+      fg_location                              checkbox    
+      rej_location                             checkbox    
+      tax_ref                                  text        
+      is_active                                checkbox    
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      location_id                              select      
+      warehouse_country                        select      
+      warehouse_state                          select      
+      warehouse_city                           select      
+      warehouse_incharge                       select      
+      warehouse_description                    textarea    
+      warehouse_address                        textarea    
+    Hidden Metadata Fields:
+      in_location                              hidden       value=
+      wip_location                             hidden       value=
+      fg_location                              hidden       value=
+      rej_location                             hidden       value=
+      is_active                                hidden       value=
+
+  2.9 Table: warehouse_users
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+  2.10 Table: item_locations
+    Module: Item Locations
+    Insert Option: COM_INSERT_ITEM_LOCATIONS
+    Form Fields: 11 user-visible, 25 total
+    Mandatory columns: item_id,location_id,warehouse_id,rack_name,bin_name,min_qty,max_qty,safety_qty,reorder_level
+
+  CREATE TABLE item_locations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    min_qty VARCHAR(255),
+    rack_name VARCHAR(255),
+    max_qty VARCHAR(255),
+    bin_name VARCHAR(255),
+    safety_qty VARCHAR(255),
+    reorder_level VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    item_id INT  -- (FK dropdown),
+    location_id INT  -- (FK dropdown),
+    warehouse_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      min_qty                                  text        
+      rack_name                                text        
+      max_qty                                  text        
+      bin_name                                 text        
+      safety_qty                               text        
+      reorder_level                            text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      item_id                                  select      
+      location_id                              select      
+      warehouse_id                             select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=item_id,location_id,warehouse_id,rack_name,bin_nam
+      add_mandatory_str                        hidden       value=
+
+  2.11 Table: quality_parameters
+    Module: Quality Parameters
+    Insert Option: COM_INSERT_QUALITY_PARAMETERS
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: quality_parameter_group_id,name
+
+  CREATE TABLE quality_parameters (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    quality_parameter_group_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      name                                     text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      quality_parameter_group_id               select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=quality_parameter_group_id,name
+      add_mandatory_str                        hidden       value=
+
+  2.12 Table: quality_parameters_groups
+    Module: Quality Parameters Groups
+    Insert Option: COM_INSERT_QUALITY_PARAMETERS_GROUPS
+    Form Fields: 3 user-visible, 17 total
+    Mandatory columns: group_name
+
+  CREATE TABLE quality_parameters_groups (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    group_name VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      group_name                               text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=group_name
+      add_mandatory_str                        hidden       value=
+
+  2.13 Table: item_quality_parameters_mapping
+    Module: Item Quality Parameters Mapping
+    Insert Option: COM_INSERT_ITEM_QUALITY_PARAMETERS_MAPPING
+    Form Fields: 4 user-visible, 18 total
+    Mandatory columns: item_id,quality_type
+
+  CREATE TABLE item_quality_parameters_mapping (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    quality_type VARCHAR(255),
+    from_date VARCHAR(255)  NOT NULL,
+    to_date VARCHAR(255),
+    item_id INT  -- (FK dropdown),
+    status TINYINT DEFAULT 0,
+    current_status INT DEFAULT 0,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT
+  );
+
+    Field Details:
+      quality_type                             text        
+      from_date                                text         [REQUIRED]
+      to_date                                  text        
+      item_id                                  select      
+    Hidden Metadata Fields:
+      in_date_pic                              hidden       value=Array
+      in_currency_fileds                       hidden       value=
+      in_phone_fileds                          hidden       value=
+      mandatory_str                            hidden       value=item_id,quality_type
+      add_mandatory_str                        hidden       value=
+
+  2.14 Table: quality_check_form_grn
+    Status: No form scraped (VIEW-only or system module)
+    Note: This module may use a specialized view or non-standard form.
+
+---
+3. ENTITY RELATIONSHIPS
+---
+
+  assets.category_id  -->  categorys.id
+  assets.item_id  -->  items.id
+  assets.asset_location  -->  asset_location_lookup.id
+  asset_categories.purchase_account  -->  purchase_account_lookup.id
+  asset_categories.depreciation_account  -->  depreciation_account_lookup.id
+  asset_categories.disposal_account  -->  disposal_account_lookup.id
+  asset_categories.accum_depreciation_account  -->  accum_depreciation_account_lookup.id
+  asset_categories.Journal_id  -->  Journals.id
+  asset_categories.duration_type  -->  duration_type_lookup.id
+  warehouses.location_id  -->  locations.id
+  warehouses.warehouse_country  -->  warehouse_country_lookup.id
+  warehouses.warehouse_state  -->  warehouse_state_lookup.id
+  warehouses.warehouse_city  -->  warehouse_city_lookup.id
+  warehouses.warehouse_incharge  -->  warehouse_incharge_lookup.id
+  item_locations.item_id  -->  items.id
+  item_locations.location_id  -->  locations.id
+  item_locations.warehouse_id  -->  warehouses.id
+  quality_parameters.quality_parameter_group_id  -->  quality_parameter_groups.id
+  item_quality_parameters_mapping.item_id  -->  items.id
+
+  ER Summary:
+  Tables: 21
+  Relationships: 19
+
+---
+4. BUSINESS RULES
+---
+
+  4.1 Effective Dating (all modules)
+    Every record has from_date/to_date. Records are valid
+    only within this range. from_date is mandatory.
+
+  4.2 Soft Delete / Status (all modules)
+    status=0 Active, status=1 Inactive, status=2 Draft
+    Records are never physically deleted. Status changes go
+    through the workflow API (submitstatusdynamicworkflow).
+
+  4.3 Module-Specific Rules
+    4.3.1 Assets
+      Mandatory fields: asset_code, asset_description, category_id, item_id, serial_no, bar_code, asset_location, asset_cost, accum_depn, purchase_date, disposal_proceeds, depn_rate, depreciation_type
+
+    4.3.2 Assets
+      Has 3 foreign key dropdown fields
+
+    4.3.3 Assets
+      Has 3 date fields (effective dating + business dates)
+
+    4.3.4 Asset Categories
+      Mandatory fields: category_description, purchase_account, depreciation_account, disposal_account, accum_depreciation_account, default_depn_type, Journal_id, duration, duration_type
+
+    4.3.5 Asset Categories
+      Has 6 foreign key dropdown fields
+
+    4.3.6 Asset Condition Type
+      Mandatory fields: condition_name
+
+    4.3.7 Asset Status
+      Mandatory fields: name
+
+    4.3.8 Warehouses
+      Mandatory fields: location_id, warehouse_short_name, warehouse_name, warehouse_description, warehouse_address, warehouse_city, warehouse_state, warehouse_post_code, warehouse_country, in_location, wip_location, fg_location, rej_location, tax_ref, warehouse_incharge, is_active
+
+    4.3.9 Warehouses
+      Has 5 foreign key dropdown fields
+
+    4.3.10 Item Locations
+      Mandatory fields: item_id, location_id, warehouse_id, rack_name, bin_name, min_qty, max_qty, safety_qty, reorder_level
+
+    4.3.11 Item Locations
+      Has 3 foreign key dropdown fields
+
+    4.3.12 Quality Parameters
+      Mandatory fields: quality_parameter_group_id, name
+
+    4.3.13 Quality Parameters
+      Has 1 foreign key dropdown fields
+
+    4.3.14 Quality Parameters Groups
+      Mandatory fields: group_name
+
+    4.3.15 Item Quality Parameters Mapping
+      Mandatory fields: item_id, quality_type
+
+    4.3.16 Item Quality Parameters Mapping
+      Has 1 foreign key dropdown fields
+
+---
+5. API ENDPOINTS
+---
+
+  5.1 Standard CRUD APIs (shared across all modules)
+    POST /views/new_from.php?option=COM_INSERT_XXX
+      Renders insert form HTML
+    POST /index.php
+      Form submit (multipart/form-data)
+    POST /views/custon_list_dynamic_table.php
+      List data with pagination, filtering
+      Params: option, table, status, filter_text,
+              current_page, limit_select
+
+  5.2 Workflow APIs
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Status transitions (Draft->Pending->Approved)
+    POST /ajax.php?page=submitstatusdynamicworkflow
+      Params: table_name, current_status, transaction_id,
+              next_status
+
+  5.3 Module-Specific API Routes
+    COM_INSERT_ASSETS  -> Insert assets
+    COM_LIST_ASSETS -> List assets
+    COM_INSERT_ASSET_CATEGORIES  -> Insert asset_categories
+    COM_LIST_ASSET_CATEGORIES -> List asset_categories
+    COM_INSERT_ASSET_CONDITION_TYPE  -> Insert asset_condition_type
+    COM_LIST_ASSET_CONDITION_TYPE -> List asset_condition_type
+    COM_INSERT_ASSET_STATUS  -> Insert asset_status
+    COM_LIST_ASSET_STATUS -> List asset_status
+    COM_INSERT_WAREHOUSES  -> Insert warehouses
+    COM_LIST_WAREHOUSES -> List warehouses
+    COM_INSERT_ITEM_LOCATIONS  -> Insert item_locations
+    COM_LIST_ITEM_LOCATIONS -> List item_locations
+    COM_INSERT_QUALITY_PARAMETERS  -> Insert quality_parameters
+    COM_LIST_QUALITY_PARAMETERS -> List quality_parameters
+    COM_INSERT_QUALITY_PARAMETERS_GROUPS  -> Insert quality_parameters_groups
+    COM_LIST_QUALITY_PARAMETERS_GROUPS -> List quality_parameters_groups
+    COM_INSERT_ITEM_QUALITY_PARAMETERS_MAPPING  -> Insert item_quality_parameters_mapping
+    COM_LIST_ITEM_QUALITY_PARAMETERS_MAPPING -> List item_quality_parameters_mapping
+
+---
+6. CODE-LEVEL PATTERNS
+---
+
+  6.1 Generic Form Pattern
+    All modules use views/new_from.php as the form renderer.
+    The form HTML includes:
+    - validateForm() JS function driven by mandatory_str
+    - select2 dropdowns for FK fields
+    - datepicker for date fields (jQuery UI)
+    - Bootstrap 4 form layout (card > card-body > form-group)
+
+  6.2 Hidden Metadata Pattern (every form)
+    - option: The COM_ route constant
+    - table_name: Physical DB table name
+    - duplicate_table_name: For duplicate checking
+    - in_date_pic: Array of date fields for datepicker init
+    - in_currency_fileds: Currency fields for formatting
+    - in_phone_fileds: Phone fields for validation
+    - mandatory_str: Comma-separated required fields
+    - notification_users: User IDs to notify on create
+    - notification_message: Notification template
+
+  6.3 DataTables Pattern (all list pages)
+    - Uses custom AJAX, not built-in server-side mode
+    - Supports CSV, Excel, PDF, Print export
+    - Column visibility toggle
+    - Status-based filtering
+    - Text search via filter_text parameter
+
+---
+7. MODULE-SPECIFIC DETAILS
+---
+
+  7.1 Assets
+    User Fields: 16
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 15435 bytes
+    Mandatory: asset_code,asset_description,category_id,item_id,serial_no,bar_code,asset_location,asset_cost,accum_depn,purchase_date,disposal_proceeds,depn_rate,depreciation_type
+    Insert Option: COM_INSERT_ASSETS
+
+  7.2 Asset Categories
+    User Fields: 13
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 15237 bytes
+    Mandatory: category_description,purchase_account,depreciation_account,disposal_account,accum_depreciation_account,default_depn_type,Journal_id,duration,duration_type
+    Insert Option: COM_INSERT_ASSET_CATEGORIES
+
+  7.3 Asset Condition Type
+    User Fields: 3
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10866 bytes
+    Mandatory: condition_name
+    Insert Option: COM_INSERT_ASSET_CONDITION_TYPE
+
+  7.4 Asset Status
+    User Fields: 3
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10738 bytes
+    Mandatory: name
+    Insert Option: COM_INSERT_ASSET_STATUS
+
+  7.5 Warehouses
+    User Fields: 18
+    Hidden Fields: 19
+    Line Item Fields: 0
+    HTML Form Size: 17637 bytes
+    Mandatory: location_id,warehouse_short_name,warehouse_name,warehouse_description,warehouse_address,warehouse_city,warehouse_state,warehouse_post_code,warehouse_country,in_location,wip_location,fg_location,rej_location,tax_ref,warehouse_incharge,is_active
+    Insert Option: COM_INSERT_WAREHOUSES
+
+  7.6 Item Locations
+    User Fields: 11
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 13592 bytes
+    Mandatory: item_id,location_id,warehouse_id,rack_name,bin_name,min_qty,max_qty,safety_qty,reorder_level
+    Insert Option: COM_INSERT_ITEM_LOCATIONS
+
+  7.7 Quality Parameters
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11304 bytes
+    Mandatory: quality_parameter_group_id,name
+    Insert Option: COM_INSERT_QUALITY_PARAMETERS
+
+  7.8 Quality Parameters Groups
+    User Fields: 3
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 10858 bytes
+    Mandatory: group_name
+    Insert Option: COM_INSERT_QUALITY_PARAMETERS_GROUPS
+
+  7.9 Item Quality Parameters Mapping
+    User Fields: 4
+    Hidden Fields: 14
+    Line Item Fields: 0
+    HTML Form Size: 11288 bytes
+    Mandatory: item_id,quality_type
+    Insert Option: COM_INSERT_ITEM_QUALITY_PARAMETERS_MAPPING
