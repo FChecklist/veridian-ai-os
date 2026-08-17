@@ -1,0 +1,23 @@
+## OBJECTIVE
+Produce a real, evidence-based coverage map of the 411 master-pendency-list items recommended for merge, revise, or implement action, stating for each one whether an existing dispatched task already targets it or whether it genuinely has zero coverage anywhere in the live task queue -- without dispatching any new merge or implementation work itself, since deciding how to prioritize and sequence thin real work across an already-large in-flight queue is a judgment call for whoever reviews this map, not something this task should decide unilaterally.
+
+## SCOPE
+Only the CLOSE-category items from the master pendency list have been acted on so far; the merge, revise, and implement categories together make up the majority of the list and have not been touched by any closure task in this chain. Read the current master pendency list (regenerate it first if a corrected version has landed from the ground-truth-verification remediation; otherwise use the existing one, noting explicitly that it carries the same unresolved 56%-verification caveat as its source). For every item recommended for merge, revise, or implement, search the real, authoritative task queue (list every post-dispatch task, not only the pre-dispatch backlog) for any existing task whose title, branch name, or referenced PR number plausibly targets that same repo and PR/feature. Record a direct match with the matching task's real id and its real current status; record a plausible-but-uncertain match with your reasoning; record no coverage found when a real search turns up nothing. Do not guess coverage from a task title alone if the title is generic -- open the candidate task's own prompt or PROGRESS file and confirm it actually names the same PR number or the same feature before recording it as a match.
+
+## KNOWN_CONTEXT
+The task queue already contains a very large number of merge-related tasks in many different terminal and non-terminal states (completed, blocked, awaiting_human_approval, in_progress, superseded, and others) built up over multiple weeks -- this is a mature, already-populated queue, not an empty one, so most or all of the merge-category items likely already have some prior task history even if that history did not finish successfully. The implement-category items (the largest single bucket) are much less likely to already have dedicated coverage, since no closure-focused task in this chain has ever addressed them. Read a representative sample of existing merge-related and implement-related task titles and their real outcomes before concluding an item has no coverage, so the map reflects real search effort, not a first-glance guess.
+
+## SUCCESS_CRITERIA
+Every one of the 411 merge/revise/implement items in the source master list appears exactly once in the output coverage map, checkable with a line count against the source list length.
+Every "existing coverage found" entry in the map cites a real task id that is verifiable with: `python3 /opt/veridian/scripts/queue-manager.py list` (id present in that real output)
+The map is written as a real, loadable JSON or YAML file with one entry per item, parseable with: `python3 -c "import json; d=json.load(open('coverage_map.json')); print(len(d))"`
+No new merge, revise, or implement task was created by this task itself -- verified by the reviewer diffing the task queue's post-dispatch task list from before and after this task ran.
+
+## EXPECTED_OUTPUT
+A single coverage-map file (JSON or YAML) with one entry per merge/revise/implement item, each entry stating the item id, its recommended action, whether coverage exists, the matching task id and its real status if coverage exists, and a one-line reasoning note. A short summary at the top of the file: total items, count with existing coverage, count with no coverage found, broken down by recommended action.
+
+## CONSTRAINTS
+Do not modify any continuous integration workflow definition. Do not modify the module that dispatches tasks to workers, which is under a standing stop-work order. Do not use the Owner's personal access token for any GitHub operation. Do not merge, close, revise, or implement any pull request or feature as part of this task. Do not create, submit, or dispatch any new task through the task gateway or any other mechanism -- this task's only output is the coverage-map file itself, never new dispatched work. Do not delete or cancel any existing queued or running task. Do not treat a generic-sounding task title as coverage without opening that task's own real prompt or progress file to confirm it names the same PR number or feature.
+
+## COMPLEXITY_TIER
+integrative
