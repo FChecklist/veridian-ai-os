@@ -29,11 +29,15 @@ The test must genuinely fail if artifacts are missing or malformed (not a stub).
 - [x] Updated package.json test script to run test.js
 - [x] Verified test works correctly with both present and missing artifacts
 
+## Completed (cont'd)
+- [x] Committed test.js, package.json, and TEST_VALIDATION.md documentation
+  - Commit 1: 406f55b - Add real gap-matrix artifact validation test
+  - Commit 2: dd0ecd3 - progress: commit pushed, awaiting PR creation  
+  - Commit 3: bfbdcf1 - Add test validation documentation
+  - All pushed to origin/worker/task-20260818-025849-add-a-real-minimal-test-so-the-reference
+
 ## Remaining
-- [x] Commit test.js and package.json to this branch
-  - Commit: 406f55b (worker/task-20260818-025849-add-a-real-minimal-test-so-the-reference)
-  - Pushed to origin
-- [ ] PR pipeline will open automatically after quality gates
+- [ ] PR pipeline opens automatically after quality gates (in progress)
 - [ ] Get genuinely independent AUDIT:PASS
 - [ ] Merge on real green CI (including test validation)
 - [ ] Verify on post-merge main
