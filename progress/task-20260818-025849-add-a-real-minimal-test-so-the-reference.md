@@ -30,9 +30,11 @@ The test must genuinely fail if artifacts are missing or malformed (not a stub).
 - [x] Verified test works correctly with both present and missing artifacts
 
 ## Remaining
-- [ ] Commit test.js and package.json to this branch
-- [ ] Open/reuse PR with SUCCESS_CRITERIA describing this as data/tooling artifact
+- [x] Commit test.js and package.json to this branch
+  - Commit: 406f55b (worker/task-20260818-025849-add-a-real-minimal-test-so-the-reference)
+  - Pushed to origin
+- [ ] PR pipeline will open automatically after quality gates
 - [ ] Get genuinely independent AUDIT:PASS
-- [ ] Merge on real green CI
+- [ ] Merge on real green CI (including test validation)
 - [ ] Verify on post-merge main
 - [ ] Record completion in UMR registry
